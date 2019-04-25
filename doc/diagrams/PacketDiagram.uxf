@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>140</x>
+      <y>10</y>
+      <w>310</w>
+      <h>580</h>
+    </coordinates>
+    <panel_attributes>type=Package
+JPLM
+	cfg
+	doc
+		diagrams
+	sources
+		App
+			EncoderApp
+			DecoderApp
+		Lib
+			CommonLib
+			EncoderLib
+			DecoderLib
+		ThirdPartLib
+		Tests
+			CommonTests
+			EncoderTests
+			DecoderTests
+		UtilsLib
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
