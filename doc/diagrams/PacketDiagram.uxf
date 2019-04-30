@@ -1,32 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
-  <zoom_level>10</zoom_level>
+  <zoom_level>6</zoom_level>
   <element>
     <id>UMLHierarchy</id>
     <coordinates>
-      <x>140</x>
-      <y>10</y>
-      <w>310</w>
-      <h>580</h>
+      <x>258</x>
+      <y>72</y>
+      <w>198</w>
+      <h>792</h>
     </coordinates>
     <panel_attributes>type=Package
 JPLM
 	cfg
 	doc
 		diagrams
+	bin
+	build
 	sources
 		App
-			EncoderApp
-			DecoderApp
+			Common
+			Encoder
+			Decoder
 		Lib
-			CommonLib
-			EncoderLib
-			DecoderLib
-		ThirdPartLib
+			Part1
+				Common
+				Encoder
+				Decoder
+			Part2
+				Common
+				Encoder
+				Decoder
+			PartX
+				Common
+				Encoder
+				Decoder
+			ThirdPart
+			Utils
 		Tests
-			CommonTests
-			EncoderTests
-			DecoderTests
-		UtilsLib
+			Part1
+				Common
+				Encoder
+				Decoder
+			Part2
+				Common
+				Encoder
+				Decoder
+			PartX
+				Common
+				Encoder
+				Decoder
+			Utils
 </panel_attributes>
     <additional_attributes/>
   </element>
