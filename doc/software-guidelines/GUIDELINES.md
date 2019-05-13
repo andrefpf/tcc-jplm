@@ -177,7 +177,7 @@ void wrappPixel(uint32_t input_s,
 void wrappPixel(input_s, input_t, input_u,
                 original_pixel_value,
                 output_s, output_t, output_u, output_v,
-                wrapped_pixel_value); // BAD CASE - function call
+                wrapped_pixel_value&); // BAD CASE - function call
 
 
 Point4D wrappPoint(Point4D reference_point); // GOOD CASE - function declaration
@@ -796,6 +796,34 @@ A blank line before a comment line usually helps readability.
 
 ## Automated Formatting
 
-As developers, we known that keeping the style conformance is often mistake-prone. To make the development easier, the code can be formatted using the *clang-format tool* and the configuration file attached to these guidelines (available at project's directory root in the file `.clang-format`).
+As developers, we known that keeping the style conformance is often mistake-prone. To make the development easier, the code can be formatted using the *clang-format tool* and the configuration file attached to these guidelines (available at `doc/software-guidelines/jplm.clang-format`). Example:
 
-IDE integration and *clang-format tool* usage is available at [https://clang.llvm.org/docs/ClangFormat.html](https://clang.llvm.org/docs/ClangFormat.html).
+```
+$ clang-format -style=file -i doc/software-guidelines/jplm.clang-format source/App/Decoder/jpl-decoder.cpp
+```
+
+### Visual Studio Code
+
+Install the C/C++ extension and customize settings.json to include:
+
+```
+"C_Cpp.clang_format_path": "/path/to/<clang-format-executable>",
+"C_Cpp.clang_format_style": "file",
+"C_Cpp.clang_format_fallbackStyle": "none"
+```
+
+### Emacs
+
+Add the line `(load "/path/to/clang-format.el")` to `~/.emacs.d/init.el`. Format a source file with `M-x clang-format-region`.
+
+### CLion
+
+1. Go to **File->Settings->Tools->External Tools** and click on the plus sign. A window should pop up. Choose a name, for example "clang-format".
+2. For the Tool settings tab, use this configuration:
+    * Program: clang-format
+    * Arguments: --style=file -i $Projectpath$/doc/software-guidelines/jplm.clang-format $FileName$
+    * Working directory: $FileDir$
+
+Now, with your file open, you can go to **Tools->External** tools and run the config above. It basically calls clang-format and does inplace formatting using the style define in the first .clang-format file found in a parent directory.
+
+More information about IDE integration and *clang-format tool* usage is available at [https://clang.llvm.org/docs/ClangFormat.html](https://clang.llvm.org/docs/ClangFormat.html).
