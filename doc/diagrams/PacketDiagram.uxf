@@ -4,7 +4,7 @@
     <id>UMLHierarchy</id>
     <coordinates>
       <x>258</x>
-      <y>72</y>
+      <y>0</y>
       <w>198</w>
       <h>792</h>
     </coordinates>
@@ -15,7 +15,7 @@ JPLM
 		diagrams
 	bin
 	build
-	sources
+	source
 		App
 			Common
 			Encoder

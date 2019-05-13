@@ -46,8 +46,13 @@ jpl-vm20-decoder-bin
 jpl-vm20-encoder-bin
 jpl-vm-decoder-bin
 jpl-vm-encoder-bin
+jpl-decoder-bin
+jpl-encoder-bin
 mule-decoder-bin
 mule-encoder-bin
+
+cmake-build-debug/
+
 *.swp
 *.o
 *.pdf
