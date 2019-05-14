@@ -77,11 +77,13 @@ Derivative types (i.e., classes, structs, enums, unions, typedefs, and type temp
 
 Consecutive upper-letters are allowed for acronyms and obvious abbreviations: `CODECInterface`, `DCTBlock`, `IOManager`.
 
-### Variable Names
+### Variable Names, Functions and Methods Names
 
 Variable names (including class and struct data members) must have all **lower-case** letters with underscores between words.
 
 ```
+DCTBlock(); // GOOD - only constructor starts with UPPER CASE
+DCTBlock get_next_block(); // GOOD - function declaration
 DCTBlock next_block; // GOOD - uses underscore
 DCTBlock nextblock; // BAD - concatenated words
 DCTBlock nextBlock; // BAD - avoid camelCase
@@ -107,19 +109,6 @@ enum AvailableColorSpaces {
   YCOCG = 1,
   YUV = 2,
 };
-```
-
-### Functions and Methods Names
-
-Methods and functions shall be named using verbs describing the activity and have an initial lower-case letter and **camelCase** shall be used to connect multiple words, where each subsequent word in a name starts with an upper-case letter.
-
-Ordinarily, functions should not start with a capital letter except for constructors.
-
-```
-void doSomething(); // GOOD - uses camelCase
-void do_something(); // BAD - it is not a variable
-void DoSomething(); // BAD - only constructor starts with UPPER CASE
-DCTBlock(); // GOOD - only constructor starts with UPPER CASE
 ```
 
 ### Namespace Names
@@ -291,8 +280,8 @@ Use the `auto` keywords only in contexts where the reader can easily understand 
 ```
 auto x = 4; // GOOD -  x is integer
 auto y = 3.37; // GOOD - y is double
-auto foo = x.add_foo(); // BAD - what is the type of foo?
-auto value = y.Find(key); // BAD - what is the type of value?
+
+
 ```
 
 
@@ -827,3 +816,29 @@ Add the line `(load "/path/to/clang-format.el")` to `~/.emacs.d/init.el`. Format
 Now, with your file open, you can go to **Tools->External** tools and run the config above. It basically calls clang-format and does inplace formatting using the style define in the first .clang-format file found in a parent directory.
 
 More information about IDE integration and *clang-format tool* usage is available at [https://clang.llvm.org/docs/ClangFormat.html](https://clang.llvm.org/docs/ClangFormat.html).
+
+### Eclipse
+
+1. Install cpplint.py:
+
+    ```
+    cpplint.py     https://google.github.io/styleguide/cppguide.html#cpplint
+    clang-format   http://clang.llvm.org/docs/ClangFormat.htm
+    ```
+
+2. Install clang-format. On 64 bit platform, clang-format can also be downloaded from this [page](https://sublime.wbond.net/packages/Clang%20Format). If you prefer, you can download the [entire LLVM toolchain](http://llvm.org/releases/download.html) and extract the clang-format binary yourself. Just extract the .tar.xz file and copy bin/clang-format into your PATH (e.g. /usr/local/bin). - Set the path to the clang-format binaries.
+
+3. Install **CppStyle** from Eclipse Marketplace. [Go to Eclipse Marketplace page] (https://marketplace.eclipse.org/content/cppstyle).
+
+4. Configure **CppStyle**
+
+    * To configure CppStyle globally, go to **Preferences -> C/C++ -> CppStyle** dialog.
+    * To configure CppSytle for a C/C++ project, go to **Project properties -> CppStyle** dialog.
+    * To enable CppStyle(clang-format) as default C/C++ code formatter, go to **Preferences -> C/C++ -> Code Style -> Formatter** page and switch **"Code Formatter"** from **[built-in]** to **"CppStyle (clang-format)"**.
+    * To enable CppStyle(clang-format) as C/C++ code formatter for a project, go to **Project properties -> C/C++ General -> Formatter** page and switch **"Code Formatter"** from **[built-in]** to **"CppStyle (clang-format)"**
+
+
+
+
+
+
