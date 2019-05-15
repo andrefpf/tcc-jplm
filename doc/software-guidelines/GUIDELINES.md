@@ -63,13 +63,30 @@ Use of some C++ features is restricted or disallowed. Do not use *non-standard e
 
 Classes, methods, functions and variables must be given descriptive and meaningful names describing their functionality and purpose.
 
-Abbreviations should be avoided.
+Not commonly known abbreviations should be avoided.
 
 ### File Names
 
-Filenames should be all lowercase and can include underscores (_) or dashes (-).
+Use only ASCII characters in file names. The only characters allowed in file names are: `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
+
+Non-alphanumeric characters are not allowed in file names.
+
+Spaces are not allowed in file names.
+
+Never starts a filename with numbers.
 
 C++ files should end in `.cpp` and header files should end in `.h`.
+
+Examples of allowed file names:
+  * JPLSetup.hh
+  * CodeStream.cpp
+  * CLI11.h
+  * jplm-encoder.cpp
+
+Examples of disallowed file names:
+  * my useful class.cpp
+  * LicençaUTF8.hh
+  * 檔案名稱.cpp
 
 ### Type Names
 
@@ -176,11 +193,14 @@ Point4D wrapped = wrappPoint(reference_point); // GOOD CASE - function call
 
 ### Reference Arguments
 
-In order to avoid dangerous side-effects, all parameters passed by lvalue reference must be labeled `const`.
+Prefer constant references (`const &`) instead of call-by-value, except for builtin types (`char`, `int`, `double`, etc.), iterators and function objects (`lambdas`, classes deriving from `std::*_function`). However, if you the purpose of the parameter is to write something into the argument, then pass it by non-const reference.
 
 ```
-void foo(const string &in); // GOOD
-void foo(string &in); // BAD
+bool is_all_uppercase(my::string const& input); // GOOD - no side-effects
+
+void convert_to_uppercase(my::string const& input, my::string &out); // OK - write result into out
+my::string convert_to_uppercase(my::string const& input); // GOOD
+my::string mystring_object = other_mystring_object.as_uppercase(); // BEST
 ```
 
 ### Return Arguments
