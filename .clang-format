@@ -1,4 +1,4 @@
----Language : Cpp
+# ---Language : Cpp
 BasedOnStyle : Google
 AccessModifierOffset : -1
 AlignAfterOpenBracket : DontAlign 
@@ -7,23 +7,22 @@ AlignConsecutiveDeclarations : false
 AlignEscapedNewlines : Left
 AlignOperands : true
 AlignTrailingComments : true
-AllowAllArgumentsOnNextLine : false
-AllowAllConstructorInitializersOnNextLine : true
+#AllowAllArgumentsOnNextLine : false
+#AllowAllConstructorInitializersOnNextLine : true
 AllowAllParametersOfDeclarationOnNextLine : true
 AllowShortBlocksOnASingleLine : false 
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine : None
-AllowShortIfStatementsOnASingleLine : Never
-AllowShortLambdasOnASingleLine : Inline
+AllowShortIfStatementsOnASingleLine : false
+#AllowShortLambdasOnASingleLine : Inline
 AllowShortLoopsOnASingleLine : true
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : true
-AlwaysBreakTemplateDeclarations : Yes
+AlwaysBreakTemplateDeclarations : true
 BinPackArguments : true
 BinPackParameters : true
 BreakBeforeBraces : Custom
 BraceWrapping : 
-  AfterCaseLabel : false
   AfterClass : false
   AfterControlStatement : false
   AfterEnum : false
@@ -45,9 +44,9 @@ BreakBeforeInheritanceComma : false
 BreakBeforeTernaryOperators : true
 BreakConstructorInitializersBeforeComma : false
 BreakConstructorInitializers : BeforeColon
-BreakInheritanceList : BeforeColon
+#BreakInheritanceList : BeforeColon
 BreakStringLiterals : true
-ColumnLimit : 80
+ColumnLimit : 10
 CommentPragmas : '^ IWYUpragma:'
 CompactNamespaces : false
 ConstructorInitializerAllOnOneLineOrOnePerLine : false
@@ -59,7 +58,7 @@ DisableFormat : false
 ExperimentalAutoDetectBinPacking : false
 FixNamespaceComments : true
 ForEachMacros :
- -foreach
+ - foreach
  - Q_FOREACH
  - BOOST_FOREACH
 IncludeBlocks : Merge
@@ -86,9 +85,9 @@ MacroBlockEnd :   ''
 MaxEmptyLinesToKeep : 0
 NamespaceIndentation : None
 ObjCBlockIndentWidth : 2
-ObjCBinPackProtocolList : Auto
-ObjCSpaceAfterProperty : false
-ObjCSpaceBeforeProtocolList : false
+#ObjCBinPackProtocolList : Auto
+#ObjCSpaceAfterProperty : false
+#ObjCSpaceBeforeProtocolList : false
 PenaltyBreakAssignment : 2
 PenaltyBreakBeforeFirstCallParameter : 1
 PenaltyBreakComment : 300
@@ -97,32 +96,18 @@ PenaltyBreakString : 1000
 PenaltyExcessCharacter : 1000000
 PenaltyReturnTypeOnItsOwnLine : 200
 PointerAlignment : Left
-RawStringFormats :
-  - Language: TextProto
-      Delimiters:
-        - 'pb'
-        - 'proto'
-      EnclosingFunctions:
-        - 'PARSE_TEXT_PROTO'
-      BasedOnStyle: google
-  - Language: Cpp
-      Delimiters:
-        - 'cc'
-        - 'cpp'
-      BasedOnStyle: Google
-      CanonicalDelimiter: 'cpp'
 ReflowComments : true
 SortIncludes : true
 SortUsingDeclarations : true
 SpaceAfterCStyleCast : true
-SpaceAfterLogicalNot : false
+#SpaceAfterLogicalNot : false
 SpaceAfterTemplateKeyword : false
 SpaceBeforeAssignmentOperators : true
-SpaceBeforeCpp11BracedList : false
-SpaceBeforeCtorInitializerColon : true
-SpaceBeforeInheritanceColon : true
+#SpaceBeforeCpp11BracedList : false
+#SpaceBeforeCtorInitializerColon : true
+#SpaceBeforeInheritanceColon : true
 SpaceBeforeParens : ControlStatements
-SpaceBeforeRangeBasedForLoopColon : true
+#SpaceBeforeRangeBasedForLoopColon : true
 SpaceInEmptyParentheses : false
 SpacesBeforeTrailingComments : 2
 SpacesInAngles : false

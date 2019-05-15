@@ -830,7 +830,7 @@ Add the line `(load "/path/to/clang-format.el")` to `~/.emacs.d/init.el`. Format
 1. Go to **File->Settings->Tools->External Tools** and click on the plus sign. A window should pop up. Choose a name, for example "clang-format".
 2. For the Tool settings tab, use this configuration:
     * Program: clang-format
-    * Arguments: --style=file -i $Projectpath$/doc/software-guidelines/jplm.clang-format $FileName$
+    * Arguments: --style=file -i $FileName$
     * Working directory: $FileDir$
 
 Now, with your file open, you can go to **Tools->External** tools and run the config above. It basically calls clang-format and does inplace formatting using the style define in the first .clang-format file found in a parent directory.
