@@ -33,17 +33,21 @@
 
 /** \file     JPLEncoder.h
  *  \brief    Very basic example of using Google Tests.
- *  \details  This example instantiates a test named NameOfCurrentTest in group NameOfGroupTest and checks if 0 == 0.
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-15
+ *  \details  This example instantiates a test named NameOfCurrentTest
+ *            in group NameOfGroupTest and checks if 0 == 0.
+ * \author    Ismael Seidel <i.seidel@samsung.com>
+ * \date      2019-05-15
  */
 
 #include <iostream>
 #include "gtest/gtest.h"
+#include "openjpeg.h"
 
-TEST(NameOfGroupTest, NameOfCurrentTest) { 
-  EXPECT_EQ(0, 0); 
+
+TEST(NameOfGroupTest, NameOfCurrentTest) {
+  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 10);
 }
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
