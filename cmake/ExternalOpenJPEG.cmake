@@ -1,7 +1,5 @@
 message("Configuring openJPEG library.")
 
-# find_package(OpenJPEG REQUIRED)
-
 include(ExternalProject)
 ExternalProject_Add(
     openjpeg
