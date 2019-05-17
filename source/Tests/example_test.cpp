@@ -39,7 +39,12 @@
  */
 
 #include <iostream>
+#include "openjpeg.h"
 #include "gtest/gtest.h"
+
+TEST(NameOfGroupTest, TestJP2K) {
+	EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
+}
 
 TEST(NameOfGroupTest, NameOfCurrentTest) { 
   EXPECT_EQ(0, 0); 

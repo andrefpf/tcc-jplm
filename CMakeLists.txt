@@ -1,46 +1,43 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-endif()
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-  RESULT_VARIABLE result
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
-if(result)
-  message(FATAL_ERROR "Build step for googletest failed: ${result}")
-endif()
-
-# Prevent overriding the parent project's compiler/linker
-# settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-# Add googletest directly to our build. This defines
-# the gtest and gtest_main targets.
-add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
-                 ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
-                 EXCLUDE_FROM_ALL)
-
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
-  include_directories("${gtest_SOURCE_DIR}/include")
-endif()
-
-
 project(jplm)
 
 set(CMAKE_CXX_STANDARD 17)
+
+
+set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
+# find_package(OpenJPEG)
+
+set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
+
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+#including external libraries by downloading them from git..
+include(ExternalOpenJPEG)
+
+include(ExternalGoogleTest)
+
+add_executable(example source/Tests/example_test.cpp)
+
+add_dependencies(example openjpeg)
+target_link_libraries(example ${openjpeg_LIB})
+
+
+
+target_link_libraries(example gtest_main)
+
 
 include_directories(.)
 include_directories(cfg)
 include_directories(doc)
 include_directories(source)
+
+
+
+# set(openjpeg_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/openjpeg-src/src/lib/openjp2/")
+# include_directories(${openjpeg_INCLUDE_DIR})
+# message("open jpeg include dir: ${openjpeg_INCLUDE_DIR}")
 
 add_executable(jpl-encoder-bin
         source/App/Encoder/jpl-encoder.cpp
@@ -50,6 +47,6 @@ add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
 
-add_executable(example source/Tests/example_test.cpp)
-target_link_libraries(example gtest_main)
-# add_test(NAME simple_test COMMAND example)
+
+# add_dependencies(example openjpeg)
+
