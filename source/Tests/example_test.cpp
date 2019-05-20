@@ -48,7 +48,7 @@ TEST(OpenJP2K, TestJP2K_A) {
 }
 
 TEST(OpenJP2K, TestJP2K_B) {
-  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 10);
+  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 33);
 }
 
 TEST(NameOfGroupTest, NameOfCurrentTest) {
