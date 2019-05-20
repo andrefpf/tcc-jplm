@@ -28,6 +28,7 @@ include_directories(.)
 include_directories(cfg)
 include_directories(doc)
 include_directories(source)
+include_directories(source/Lib/Utils/Image)
 
 #defines an example executable, used to test external libraries...
 add_executable(example source/Tests/example_test.cpp)
@@ -50,3 +51,6 @@ add_executable(jpl-encoder-bin
 add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
+
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)

@@ -1,3 +1,6 @@
+#ifndef METRICS_H__
+#define METRICS_H__
+
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -31,31 +34,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     example_test.cpp
- *  \brief    Very basic example of using Google Tests.
- *  \details  This example instantiates a test named NameOfCurrentTest
- *            in group NameOfGroupTest and checks if 0 == 0.
+/** \file     Metrics.h
+ *  \brief    Definition of a few metrics
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-15
+ *  \date     2019-05-20
  */
 
+#include <inttypes.h>
+#include <cmath>
 #include <iostream>
-#include "gtest/gtest.h"
-#include "openjpeg.h"
+#include <limits>
+#include <vector>
 
-TEST(OpenJP2K, TestJP2K_A) {
-  EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
+namespace Metrics {
+template<typename T>
+double get_sum_of_squared_errors(const std::vector<T>& errors) {
+  auto sum = 0.0;
+  for (auto v : errors) {
+    auto diff = static_cast<double>(v);
+    sum += diff * diff;
+  }
+  return sum;
 }
 
-TEST(OpenJP2K, TestJP2K_B) {
-  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 33);
+template<typename T>
+double get_mean_squared_error(const std::vector<T>& errors) {
+  if (errors.size() == 0)
+    return std::numeric_limits<double>::infinity();
+  auto sse = get_sum_of_squared_errors<T>(errors);
+  return sse / errors.size();
 }
 
-TEST(NameOfGroupTest, NameOfCurrentTest) {
-  EXPECT_EQ(0, 0);
+template<typename T>
+double get_peak_signal_to_noise_ratio(
+    const std::vector<T>& errors, T max_value) {
+  auto mse = get_mean_squared_error<T>(errors);
+  if (mse == 0.0)
+    return std::numeric_limits<double>::infinity();
+  if (mse == std::numeric_limits<double>::infinity())
+    return 0.0;
+  return 10.0 * std::log10(max_value*max_value / mse);
 }
+}  // namespace Metrics
 
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: METRICS_H__ */

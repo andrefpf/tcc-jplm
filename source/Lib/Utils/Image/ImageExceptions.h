@@ -1,3 +1,6 @@
+#ifndef IMAGEEXCEPTIONS_H__
+#define IMAGEEXCEPTIONS_H__
+
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -31,31 +34,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     example_test.cpp
- *  \brief    Very basic example of using Google Tests.
- *  \details  This example instantiates a test named NameOfCurrentTest
- *            in group NameOfGroupTest and checks if 0 == 0.
+/** \file     ImageExceptions.h
+ *  \brief    Class that contains all exceptions that may be thrown by Image lib
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-15
+ *  \date     2019-05-20
  */
+#include <exception>
 
-#include <iostream>
-#include "gtest/gtest.h"
-#include "openjpeg.h"
-
-TEST(OpenJP2K, TestJP2K_A) {
-  EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
+namespace ImageChannelExceptions {
+	class InvalidSizeException: public std::exception {
+	    const char* what() const noexcept override {
+	        return "A channel size (width, height, bpp) cannot be zero";
+	    }
+	};
+	class InvalidIndexWriteException: public std::exception {
+	    const char* what() const noexcept override {
+	        return "Trying to write in invalid index";
+	    }
+	};
+	class InvalidIndexReadException: public std::exception {
+	    const char* what() const noexcept override {
+	        return "Trying to read from invalid index";
+	    }
+	};
 }
 
-TEST(OpenJP2K, TestJP2K_B) {
-  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 33);
-}
-
-TEST(NameOfGroupTest, NameOfCurrentTest) {
-  EXPECT_EQ(0, 0);
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: IMAGEEXCEPTIONS_H__ */
