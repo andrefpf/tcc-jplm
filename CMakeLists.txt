@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 3.10)
 
 project(jplm)
 
-#configuring the compiler
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
-
 #configuring paths
 set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+#configuring the compiler
+set(CMAKE_CXX_STANDARD 17)
+include(JPLMWarnings)
 
 #including external libraries by downloading them from git..
 include(ExternalOpenJPEG)
@@ -28,8 +28,11 @@ add_executable(example source/Tests/example_test.cpp)
 add_dependencies(example openjpeg) #this is necessary in this case because 
 #otherwise the executable may not find the include.
 
+target_include_directories(example PRIVATE "${INCLUDE_DIRECTORIES};${openjpeg_INCLUDE}")
+
 #informs the linker that it needs a library
-target_link_libraries(example ${openjpeg_LIB})
+# target_link_libraries(example ${openjpeg_LIB})
+target_link_libraries(example openjp2)
 target_link_libraries(example gtest_main)
 
 
