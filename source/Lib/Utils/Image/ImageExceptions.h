@@ -1,5 +1,5 @@
-#ifndef IMAGEEXCEPTIONS_H__
-#define IMAGEEXCEPTIONS_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
+#define JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
@@ -43,21 +43,21 @@
 #include <exception>
 
 namespace ImageChannelExceptions {
-	class InvalidSizeException: public std::exception {
-	    const char* what() const noexcept override {
-	        return "A channel size (width, height, bpp) cannot be zero";
-	    }
-	};
-	class InvalidIndexWriteException: public std::exception {
-	    const char* what() const noexcept override {
-	        return "Trying to write in invalid index";
-	    }
-	};
-	class InvalidIndexReadException: public std::exception {
-	    const char* what() const noexcept override {
-	        return "Trying to read from invalid index";
-	    }
-	};
-}
+class InvalidSizeException : public std::exception {
+  const char* what() const noexcept override {
+    return "A channel size (width, height, bpp) cannot be zero";
+  }
+};
+class InvalidIndexWriteException : public std::exception {
+  const char* what() const noexcept override {
+    return "Trying to write in invalid index";
+  }
+};
+class InvalidIndexReadException : public std::exception {
+  const char* what() const noexcept override {
+    return "Trying to read from invalid index";
+  }
+};
+}  // namespace ImageChannelExceptions
 
-#endif /* end of include guard: IMAGEEXCEPTIONS_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

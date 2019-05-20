@@ -1,5 +1,5 @@
-#ifndef METRICS_H__
-#define METRICS_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_METRICS_H__
+#define JPLM_LIB_UTILS_IMAGE_METRICS_H__
 
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
@@ -74,8 +74,8 @@ double get_peak_signal_to_noise_ratio(
     return std::numeric_limits<double>::infinity();
   if (mse == std::numeric_limits<double>::infinity())
     return 0.0;
-  return 10.0 * std::log10(max_value*max_value / mse);
+  return 10.0 * std::log10((max_value * max_value) / mse);
 }
 }  // namespace Metrics
 
-#endif /* end of include guard: METRICS_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_METRICS_H__ */

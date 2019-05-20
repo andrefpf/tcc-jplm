@@ -45,13 +45,15 @@
 TEST(Metrics_PSNR, ThreesVector) {
   std::vector<int> vector({3, 3, 3});
   auto max_value = 255;
-  EXPECT_EQ(10.0 * std::log10((max_value * max_value)/9.0), Metrics::get_peak_signal_to_noise_ratio(vector, 255));
+  EXPECT_EQ(10.0 * std::log10((max_value * max_value) / 9.0),
+      Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, TwosVector) {
   std::vector<int> vector({2, 2});
   auto max_value = 255;
-  EXPECT_EQ(10.0 * std::log10((max_value * max_value)/4.0), Metrics::get_peak_signal_to_noise_ratio(vector, 255));
+  EXPECT_EQ(10.0 * std::log10((max_value * max_value) / 4.0),
+      Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, OnesVector) {
@@ -116,14 +118,16 @@ TEST(Metrics_SSE, ZerosVector) {
 
 TEST(Metrics_SSE, ThreesVector) {
   std::vector<int> vector({3, 3, 3});
-  auto three_squared = 3*3;
-  EXPECT_EQ(three_squared*vector.size(), Metrics::get_sum_of_squared_errors(vector));
+  auto three_squared = 3 * 3;
+  EXPECT_EQ(three_squared * vector.size(),
+      Metrics::get_sum_of_squared_errors(vector));
 }
 
 TEST(Metrics_SSE, TwosVector) {
   std::vector<int> vector({2, 2});
-  auto two_squared = 2*2;
-  EXPECT_EQ(two_squared*vector.size(), Metrics::get_sum_of_squared_errors(vector));
+  auto two_squared = 2 * 2;
+  EXPECT_EQ(
+      two_squared * vector.size(), Metrics::get_sum_of_squared_errors(vector));
 }
 
 TEST(Metrics_SSE, OnesVector) {

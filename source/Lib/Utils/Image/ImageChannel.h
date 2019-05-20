@@ -1,5 +1,5 @@
-#ifndef IMAGECHANNEL_H__
-#define IMAGECHANNEL_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
+#define JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
 
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
@@ -222,4 +222,4 @@ class ImageChannel {
   }
 };
 
-#endif /* end of include guard: IMAGECHANNEL_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__ */
