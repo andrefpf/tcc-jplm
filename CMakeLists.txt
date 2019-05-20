@@ -1,3 +1,10 @@
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(.)
+include_directories(cfg)
+include_directories(doc)
+include_directories(source)
+
 cmake_minimum_required(VERSION 3.10)
 
 project(jplm)
