@@ -8,3 +8,6 @@ set(IMAGE_CHANNEL_TESTS_SOURCES "ImageChannelTests.cpp")
 add_executable(image_channel_tests ${IMAGE_CHANNEL_TESTS_SOURCES})
 target_link_libraries(image_channel_tests PRIVATE gtest_main)
 target_link_libraries(image_channel_tests PRIVATE image)
+
+add_test(Metrics ${EXECUTABLE_OUTPUT_PATH}/metrics_tests)
+add_test(ImageChannel ${EXECUTABLE_OUTPUT_PATH}/image_channel_tests)

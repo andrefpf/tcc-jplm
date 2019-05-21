@@ -53,4 +53,7 @@ add_executable(jpl-decoder-bin
         CMakeLists.txt)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
+
+
+enable_testing()
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)

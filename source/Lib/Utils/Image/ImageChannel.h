@@ -1,6 +1,3 @@
-#ifndef JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
-#define JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
-
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -40,6 +37,9 @@
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-20
  */
+
+#ifndef JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
+#define JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
 
 #include <inttypes.h>
 #include <cstring>

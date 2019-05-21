@@ -1,6 +1,3 @@
-#include "ImageChannel.h"
-#include "Metrics.h"
-
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -40,6 +37,13 @@
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-20
  */
+
+#ifndef JPLM_LIB_UTILS_IMAGE_IMAGECHANNELUTILS_H__
+#define JPLM_LIB_UTILS_IMAGE_IMAGECHANNELUTILS_H__
+
+
+#include "ImageChannel.h"
+#include "Metrics.h"
 
 namespace ImageChannelUtils {
 
@@ -87,3 +91,5 @@ double get_peak_signal_to_noise_ratio(const ImageChannel<T>& original_channel,
                            get_mse(original_channel, encoded_channel));
 }
 }  // namespace ImageChannelUtils
+
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGECHANNELUTILS_H__ */
