@@ -46,17 +46,27 @@
 namespace ImageChannelExceptions {
 class InvalidSizeException : public std::exception {
   const char* what() const noexcept override {
-    return "A channel size (width, height, bpp) cannot be zero";
+    return "A image channel size (width, height, bpp) cannot be zero";
   }
 };
 class InvalidIndexWriteException : public std::exception {
   const char* what() const noexcept override {
-    return "Trying to write in invalid index";
+    return "Trying to write in invalid index of image channel";
   }
 };
 class InvalidIndexReadException : public std::exception {
   const char* what() const noexcept override {
-    return "Trying to read from invalid index";
+    return "Trying to read from invalid index of image channel";
+  }
+};
+class InvalidBppException : public std::exception {
+  const char* what() const noexcept override {
+    return "The image channel internal representation does not support a value with the required bpp.";
+  }
+};
+class InvalidValueException : public std::exception {
+  const char* what() const noexcept override {
+    return "The image channel internal representation does not support the required value.";
   }
 };
 }  // namespace ImageChannelExceptions

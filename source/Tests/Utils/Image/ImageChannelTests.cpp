@@ -117,6 +117,18 @@ TEST_F(ImageChannelTestIntT, FillWithMaxValueSetsAllPixelsToMaxValue) {
 }
 
 
+TEST_F(ImageChannelTestIntT, MaxValueOfSignedType) {
+  EXPECT_EQ(static_cast<int>(std::pow(2, bpp - 1) - 1),
+      image_channel->get_max_value());
+}
+
+
+TEST_F(ImageChannelTestIntT, MinValueOfSignedType) {
+  EXPECT_EQ(-1 * static_cast<int>(std::pow(2, bpp - 1)),
+      image_channel->get_min_value());
+}
+
+
 struct ImageChannelTestUInt16T : testing::Test {
   ImageChannel<uint16_t>* image_channel;
   static constexpr auto width = 3;
@@ -131,6 +143,17 @@ struct ImageChannelTestUInt16T : testing::Test {
 };
 
 
+TEST_F(ImageChannelTestUInt16T, MaxValueOfUnsignedType) {
+  EXPECT_EQ(
+      static_cast<int>(std::pow(2, bpp) - 1), image_channel->get_max_value());
+}
+
+
+TEST_F(ImageChannelTestUInt16T, MinValueOfUnsignedType) {
+  EXPECT_EQ(0, image_channel->get_min_value());
+}
+
+
 TEST_F(ImageChannelTestUInt16T, ImageChannelGetWidth) {
   EXPECT_EQ(width, image_channel->get_width());
 }
@@ -138,6 +161,13 @@ TEST_F(ImageChannelTestUInt16T, ImageChannelGetWidth) {
 
 TEST_F(ImageChannelTestUInt16T, ImageChannelGetHeight) {
   EXPECT_EQ(height, image_channel->get_height());
+}
+
+
+TEST_F(ImageChannelTestUInt16T, ImageChannelGetDimensionGetsPairWidthHeight) {
+  auto [w, h] = image_channel->get_dimension();
+  EXPECT_EQ(width, w);
+  EXPECT_EQ(height, h);
 }
 
 
@@ -150,6 +180,17 @@ TEST_F(ImageChannelTestUInt16T, ImageChannelGetNumberOfPixels) {
   EXPECT_EQ(width * height, image_channel->get_number_of_pixels());
 }
 
+
+TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOuNot) {
+  for (auto i = 0; i < width + 100; ++i) {
+    for (auto j = 0; j < height + 100; ++j) {
+      EXPECT_EQ(image_channel->is_index_valid({i, j}),
+          image_channel->is_index_valid(i, j));
+    }
+  }
+}
+
+
 TEST_F(ImageChannelTestUInt16T, ValidIndexMustBeValidated) {
   for (auto i = 0; i < width; ++i) {
     for (auto j = 0; j < height; ++j) {
@@ -158,11 +199,13 @@ TEST_F(ImageChannelTestUInt16T, ValidIndexMustBeValidated) {
   }
 }
 
+
 TEST_F(ImageChannelTestUInt16T, InvalidIndexMustBeNotValidated) {
   EXPECT_FALSE(image_channel->is_index_valid(width - 1, height));
   EXPECT_FALSE(image_channel->is_index_valid(width, height - 1));
   EXPECT_FALSE(image_channel->is_index_valid(width, height));
 }
+
 
 TEST_F(ImageChannelTestUInt16T, SetInInvalidIndexMustThrow) {
   auto value = 42;
@@ -174,6 +217,7 @@ TEST_F(ImageChannelTestUInt16T, SetInInvalidIndexMustThrow) {
       ImageChannelExceptions::InvalidIndexWriteException);
 }
 
+
 TEST_F(ImageChannelTestUInt16T, GetInInvalidIndexMustThrow) {
   EXPECT_THROW(image_channel->get_value_at(width - 1, height),
       ImageChannelExceptions::InvalidIndexReadException);
@@ -182,6 +226,17 @@ TEST_F(ImageChannelTestUInt16T, GetInInvalidIndexMustThrow) {
   EXPECT_THROW(image_channel->get_value_at(width, height),
       ImageChannelExceptions::InvalidIndexReadException);
 }
+
+
+TEST_F(ImageChannelTestUInt16T,
+    AllValuesAreValidIfBppHasTheSameNumberOfBitsThanItsContainerType) {
+  for (uint16_t i = 0; i < std::numeric_limits<uint16_t>::max(); ++i) {
+    EXPECT_NO_THROW(image_channel->set_value_at(i, 0, 0));
+  }
+  EXPECT_NO_THROW(
+      image_channel->set_value_at(std::numeric_limits<uint16_t>::max(), 0, 0));
+}
+
 
 TEST_F(ImageChannelTestUInt16T, FillWithZeroSetsAllPixelsToZero) {
   image_channel->fill_with(0);
@@ -315,6 +370,49 @@ TEST(InvalidImageChannel, ChannelCannotHaveHeightEqualsToZero) {
 TEST(InvalidImageChannel, ChannelCannotHaveBppEqualsToZero) {
   EXPECT_THROW(ImageChannel<uint16_t> image_channel(1, 1, 0),
       ImageChannelExceptions::InvalidSizeException);
+}
+
+
+TEST(InvalidValueSet, AValueCannotExceedTheLimitImposedByBpp) {
+  auto bpp = 10;
+  ImageChannel<uint16_t> image_channel(1, 1, bpp);
+  EXPECT_THROW(image_channel.set_value_at(1024, {0, 0}),
+      ImageChannelExceptions::InvalidValueException);
+}
+
+
+TEST(InvalidValueSet, AValueCannotExceedTheLimitImposedByBppEvenIfNegative) {
+  auto bpp = 11;
+  ImageChannel<int16_t> image_channel(1, 1, bpp);
+  EXPECT_THROW(image_channel.set_value_at(1024, {0, 0}),
+      ImageChannelExceptions::InvalidValueException);
+  EXPECT_THROW(image_channel.set_value_at(-1025, {0, 0}),
+      ImageChannelExceptions::InvalidValueException);
+}
+
+
+TEST(InvalidValueSet, AValueIsValidInTheIntervalDefinedByTheBpp) {
+  auto bpp = 11;
+  ImageChannel<int16_t> image_channel(1, 1, bpp);
+  for (int16_t i = -1024; i < 1024; ++i) {
+    EXPECT_NO_THROW(image_channel.set_value_at(i, {0, 0}));
+  }
+}
+
+
+TEST(InvalidValueSet, NoThrowIfBelowMaxDefinedByBppThrowsOtherwise) {
+  auto bpp = 10;
+  ImageChannel<uint16_t> image_channel(1, 1, bpp);
+  for (uint16_t i = 0; i < 1024; ++i) {
+    EXPECT_NO_THROW(image_channel.set_value_at(i, {0, 0}));
+  }
+  for (uint16_t i = 1024; i < std::numeric_limits<uint16_t>::max(); ++i) {
+    EXPECT_THROW(image_channel.set_value_at(i, {0, 0}),
+        ImageChannelExceptions::InvalidValueException);
+  }
+  EXPECT_THROW(
+      image_channel.set_value_at(std::numeric_limits<uint16_t>::max(), {0, 0}),
+      ImageChannelExceptions::InvalidValueException);
 }
 
 
