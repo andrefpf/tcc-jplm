@@ -1,13 +1,10 @@
+function(add_image_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
+	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE image)
+	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME})
+endfunction()
 
-set(METRICS_TESTS_SOURCES "MetricsTests.cpp")
-add_executable(metrics_tests ${METRICS_TESTS_SOURCES})
-target_link_libraries(metrics_tests PRIVATE gtest_main)
-target_link_libraries(metrics_tests PRIVATE image)
-
-set(IMAGE_CHANNEL_TESTS_SOURCES "ImageChannelTests.cpp")
-add_executable(image_channel_tests ${IMAGE_CHANNEL_TESTS_SOURCES})
-target_link_libraries(image_channel_tests PRIVATE gtest_main)
-target_link_libraries(image_channel_tests PRIVATE image)
-
-add_test(Metrics ${EXECUTABLE_OUTPUT_PATH}/metrics_tests)
-add_test(ImageChannel ${EXECUTABLE_OUTPUT_PATH}/image_channel_tests)
+add_image_lib_test(Metrics metrics_tests MetricsTests.cpp)
+add_image_lib_test(ImageChannel image_channel_tests ImageChannelTests.cpp)
+add_image_lib_test(Image image_tests ImageTests.cpp)

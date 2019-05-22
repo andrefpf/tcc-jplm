@@ -74,11 +74,10 @@ class ImageChannel {
   }
 
 
-
   bool is_value_valid(T value) {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return (get_min_value() <= value && value <= get_max_value());
-    } 
+    }
     return value <= get_max_value();
   }
 
@@ -100,11 +99,19 @@ class ImageChannel {
   }
 
 
-  ImageChannel(ImageChannel<T>&& other)
+  ImageChannel(ImageChannel<T>&& other) noexcept
       : width(other.width), height(other.height), bpp(other.bpp),
         number_of_pixels(other.number_of_pixels) {
-    pixels = std::move(other.pixels);
-    std::swap(pixels_2d, other.pixels_2d);
+    *this = std::move(other);
+  }
+
+
+  ImageChannel<T>& operator=(ImageChannel<T>&& other) noexcept {
+    if (this != &other) {
+      pixels = std::move(other.pixels);
+      std::swap(pixels_2d, other.pixels_2d);
+    }
+    return *this;
   }
 
 
@@ -143,7 +150,7 @@ class ImageChannel {
     if (!is_index_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
-    if(!is_value_valid(value)) {
+    if (!is_value_valid(value)) {
       throw ImageChannelExceptions::InvalidValueException();
     }
     pixels[i * width + j] = value;

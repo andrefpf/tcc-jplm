@@ -298,6 +298,9 @@ TEST_F(ImageChannelTestUInt16T, SameSizeInImagesCreatedWithSameSize) {
   EXPECT_TRUE(image_channel->has_equal_size(other));
 }
 
+TEST_F(ImageChannelTestUInt16T, AChannelHasSameSizeAsItself) {
+  EXPECT_TRUE(image_channel->has_equal_size(*image_channel));
+}
 
 TEST_F(ImageChannelTestUInt16T, DifferentSizeInImagesCreatedWithDifferentSize) {
   ImageChannel<uint16_t> other(width + 1, height + 2, bpp);
@@ -413,6 +416,57 @@ TEST(InvalidValueSet, NoThrowIfBelowMaxDefinedByBppThrowsOtherwise) {
   EXPECT_THROW(
       image_channel.set_value_at(std::numeric_limits<uint16_t>::max(), {0, 0}),
       ImageChannelExceptions::InvalidValueException);
+}
+
+
+struct ImageChannelMove : testing::Test {
+  static constexpr auto width = 2;
+  static constexpr auto height = 3;
+  static constexpr auto bpp = 10;
+};
+
+
+TEST_F(ImageChannelMove, AMoveAssignmentEmptiesContent) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  ImageChannel<uint16_t> moved_channel(width, height, bpp);
+  moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(nullptr, channel_to_be_moved.data());
+}
+
+
+TEST_F(ImageChannelMove, AMoveConstructorEmptiesContent) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  auto moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(nullptr, channel_to_be_moved.data());
+}
+
+
+TEST_F(ImageChannelMove, AMoveConstructorCreatesAChannelWithTheCorrectBpp) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  auto moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(bpp, moved_channel.get_bpp());
+}
+
+
+TEST_F(ImageChannelMove, AMoveConstructorCreatesAChannelWithTheCorrectWidth) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  auto moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(width, moved_channel.get_width());
+}
+
+
+TEST_F(ImageChannelMove, AMoveConstructorCreatesAChannelWithTheCorrectHeight) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  auto moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(height, moved_channel.get_height());
+}
+
+
+TEST_F(ImageChannelMove,
+    AMoveConstructorCreatesAChannelWithTheCorrectNumberOfPixels) {
+  ImageChannel<uint16_t> channel_to_be_moved(width, height, bpp);
+  auto moved_channel = std::move(channel_to_be_moved);
+  EXPECT_EQ(width * height, moved_channel.get_number_of_pixels());
 }
 
 
