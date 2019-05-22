@@ -197,7 +197,8 @@ TEST(RGBImageMove, AMoveConstructorEmptiesTheImageContent) {
 }
 
 
-TEST(RGBImageMove, AMoveConstructorCreatesAImageWithTheCorrectNumberOfChannels) {
+TEST(
+    RGBImageMove, AMoveConstructorCreatesAImageWithTheCorrectNumberOfChannels) {
   auto image_to_move = RGBImage<uint8_t>(1, 1, 2);
   auto moved_image(std::move(image_to_move));
   EXPECT_EQ(3, moved_image.get_number_of_channels());
@@ -211,11 +212,109 @@ TEST(RGBImageMove, AMoveConstructorCreatesAImageWithTheSameType) {
 }
 
 
-TEST(GrayScaleImageMove, AMoveConstructorCreatesAImageThatUsesTheSameAlocatedMemory) {
-  auto image_to_move = GrayScaleImage<uint8_t>(1, 1, 2);
-  auto gray_channel = image_to_move.get_channel(0);
+TEST(RGBImageMove, AMoveConstructorCreatesAImageThatUsesTheSameAlocatedMemory) {
+  auto image_to_move = RGBImage<uint8_t>(1, 1, 2);
+  auto red_channel_ptr = image_to_move.get_channel(0).data();
+  auto green_channel_ptr = image_to_move.get_channel(1).data();
+  auto blue_channel_ptr = image_to_move.get_channel(2).data();
   auto moved_image(std::move(image_to_move));
-  EXPECT_EQ(gray_channel.data(), moved_image.get_channel(0).data());
+  EXPECT_EQ(red_channel_ptr, moved_image.get_channel(0).data());
+  EXPECT_EQ(green_channel_ptr, moved_image.get_channel(1).data());
+  EXPECT_EQ(blue_channel_ptr, moved_image.get_channel(2).data());
+}
+
+
+TEST(GrayScaleImageCopyConstruction, BothImagesHaveTheSameNumberOfChannels) {
+  auto image_to_copy = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_number_of_channels(),
+      copied_image.get_number_of_channels());
+}
+
+
+TEST(GrayScaleImageCopyConstruction,
+    TheCopiedImageHaveNumberOfChannelsDifferentFromZero) {
+  auto image_to_copy = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_TRUE(copied_image.get_number_of_channels() != 0);
+}
+
+
+TEST(GrayScaleImageCopyConstruction, BothImagesHaveTheSameNumberOfPixels) {
+  auto image_to_copy = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_number_of_pixels(),
+      copied_image.get_number_of_pixels());
+}
+
+
+TEST(GrayScaleImageCopyConstruction, BothImagesHaveTheSamePixels) {
+  auto image_to_copy = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_channel(0), copied_image.get_channel(0));
+}
+
+
+TEST(GrayScaleImageCopyConstruction, BothImagesAreEqual) {
+  auto image_to_copy = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy, copied_image);
+}
+
+
+TEST(RGBImageCopyConstruction, BothImagesHaveTheSameNumberOfChannels) {
+  auto image_to_copy = RGBImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_number_of_channels(),
+      copied_image.get_number_of_channels());
+}
+
+
+TEST(RGBImageCopyConstruction,
+    TheCopiedImageHaveNumberOfChannelsDifferentFromZero) {
+  auto image_to_copy = RGBImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_TRUE(copied_image.get_number_of_channels() != 0);
+}
+
+
+TEST(RGBImageCopyConstruction, BothImagesHaveTheSameNumberOfPixels) {
+  auto image_to_copy = RGBImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_number_of_pixels(),
+      copied_image.get_number_of_pixels());
+}
+
+
+TEST(RGBImageCopyConstruction, BothImagesHaveTheSamePixels) {
+  auto image_to_copy = RGBImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy.get_channel(0), copied_image.get_channel(0));
+  EXPECT_EQ(image_to_copy.get_channel(1), copied_image.get_channel(1));
+  EXPECT_EQ(image_to_copy.get_channel(2), copied_image.get_channel(2));
+}
+
+
+TEST(RGBImageCopyConstruction, BothImagesAreEqual) {
+  auto image_to_copy = RGBImage<uint8_t>(1, 1, 2);
+  auto copied_image = image_to_copy;
+  EXPECT_EQ(image_to_copy, copied_image);
+}
+
+TEST(GrayScaleImageMove,
+    AMoveConstructorCreatesAImageThatUsesTheSameAlocatedMemory) {
+  auto image_to_move = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto gray_channel_ptr = image_to_move.get_channel(0).data();
+  auto moved_image(std::move(image_to_move));
+  EXPECT_EQ(gray_channel_ptr, moved_image.get_channel(0).data());
+}
+
+
+TEST(GrayScaleImageMove, AMoveConstructorCreatesAImageWhoseChannelIsNotNull) {
+  auto image_to_move = GrayScaleImage<uint8_t>(1, 1, 2);
+  auto moved_image(std::move(image_to_move));
+  auto gray_channel = moved_image.get_channel(0);
+  EXPECT_TRUE(gray_channel.data() != nullptr);
 }
 
 

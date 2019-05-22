@@ -52,6 +52,21 @@ class Image {
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
 
+  bool is_equal(const Image<T>& other) const {
+    if (this != &other) {
+      if (this->get_number_of_channels() != other.get_number_of_channels()) {
+        return false;
+      }
+      for (auto i = decltype(get_number_of_channels()){0};
+           i < this->get_number_of_channels(); ++i) {
+        if (!(channels[i] == other.get_channel(i))) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
  public:
   Image(std::size_t width, std::size_t height, std::size_t bpp,
       std::size_t number_of_channels, ImageType type)
@@ -64,7 +79,6 @@ class Image {
 
 
   Image(const Image<T>& other) : type(other.type) {
-    std::cout << "Copied here" << std::endl;
     channels = other.channels;
   }
 
@@ -79,7 +93,7 @@ class Image {
 
   Image& operator=(Image&& other) {
     if (this != &other) {
-      channels.clear();
+      this->channels.clear();
       std::swap(channels, other.channels);
     }
     return *this;
@@ -178,9 +192,17 @@ class RGBImage : public Image<T> {
   }
 
 
-  RGBImage& operator=(RGBImage&& other) {
+  RGBImage(const RGBImage<T>& other) : Image<T>(other){};
+
+
+  RGBImage& operator=(RGBImage<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
+  }
+
+
+  inline bool operator==(const RGBImage<T>& other) const {
+    return this->is_equal(other);
   }
 
 
@@ -220,9 +242,17 @@ class BT601Image : public YCbCrImage<T> {
   }
 
 
-  BT601Image& operator=(BT601Image&& other) {
+  BT601Image(const BT601Image<T>& other) : Image<T>(other){};
+
+
+  BT601Image& operator=(BT601Image<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
+  }
+
+
+  inline bool operator==(const BT601Image<T>& other) const {
+    return this->is_equal(other);
   }
 
   ~BT601Image() = default;
@@ -238,9 +268,17 @@ class BT709Image : public YCbCrImage<T> {
   }
 
 
-  BT709Image& operator=(BT709Image&& other) {
+  BT709Image(const BT709Image<T>& other) : Image<T>(other){};
+
+
+  BT709Image& operator=(BT709Image<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
+  }
+
+
+  inline bool operator==(const BT709Image<T>& other) const {
+    return this->is_equal(other);
   }
 
   ~BT709Image() = default;
@@ -257,9 +295,17 @@ class BT2020Image : public YCbCrImage<T> {
   }
 
 
-  BT2020Image& operator=(BT2020Image&& other) {
+  BT2020Image(const BT2020Image<T>& other) : Image<T>(other){};
+
+
+  BT2020Image& operator=(BT2020Image<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
+  }
+
+
+  inline bool operator==(const BT2020Image<T>& other) const {
+    return this->is_equal(other);
   }
 
   ~BT2020Image() = default;
@@ -277,9 +323,17 @@ class GrayScaleImage : public Image<T> {
   }
 
 
-  GrayScaleImage& operator=(GrayScaleImage&& other) {
+  GrayScaleImage(const GrayScaleImage<T>& other) : Image<T>(other){};
+
+
+  GrayScaleImage& operator=(GrayScaleImage<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
+  }
+
+
+  inline bool operator==(const GrayScaleImage<T>& other) const {
+    return this->is_equal(other);
   }
 
 
