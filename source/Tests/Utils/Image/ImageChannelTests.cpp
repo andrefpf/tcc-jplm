@@ -55,6 +55,7 @@ struct ImageChannelTestUInt8T : testing::Test {
   }
 };
 
+
 TEST_F(ImageChannelTestUInt8T, FillWithZeroSetsAllPixelsToZero) {
   image_channel->fill_with(0);
   for (const auto& pixel : image_channel->as_raster_vector()) {
@@ -62,12 +63,14 @@ TEST_F(ImageChannelTestUInt8T, FillWithZeroSetsAllPixelsToZero) {
   }
 }
 
+
 TEST_F(ImageChannelTestUInt8T, FillWithOneSetsAllPixelsToOne) {
   image_channel->fill_with(1);
   for (const auto& pixel : image_channel->as_raster_vector()) {
     EXPECT_EQ(1, pixel);
   }
 }
+
 
 TEST_F(ImageChannelTestUInt8T, FillWithMaxValueSetsAllPixelsToMaxValue) {
   auto max_value = std::numeric_limits<uint8_t>::max();
