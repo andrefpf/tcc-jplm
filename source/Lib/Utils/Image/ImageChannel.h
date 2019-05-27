@@ -59,6 +59,7 @@ class ImageChannel {
   std::unique_ptr<T[]> pixels;
   std::vector<T*> pixels_2d;
 
+
   void alloc_resources() {
     // number_of_pixels = width * height;
     if (!pixels) {
@@ -74,15 +75,16 @@ class ImageChannel {
   }
 
 
-  bool is_value_valid(T value) {
+  inline bool is_value_valid(const T value) {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return (get_min_value() <= value && value <= get_max_value());
     }
     return value <= get_max_value();
   }
 
+
  public:
-  ImageChannel(std::size_t width, std::size_t height, std::size_t bpp)
+  ImageChannel(const std::size_t width, const std::size_t height, const std::size_t bpp)
       : width(width), height(height), bpp(bpp),
         number_of_pixels(width * height),
         pixels(std::make_unique<T[]>(number_of_pixels)) {
@@ -90,6 +92,7 @@ class ImageChannel {
       throw ImageChannelExceptions::InvalidSizeException();
     alloc_resources();
   }
+
 
   ImageChannel(const ImageChannel<T>& other) noexcept
       : width(other.width), height(other.height), bpp(other.bpp),
@@ -118,7 +121,7 @@ class ImageChannel {
   ~ImageChannel() = default;
 
 
-  void fill_with(T value) {
+  void fill_with(const T value) {
     if constexpr (std::is_same<T, uint8_t>::value) {
       std::memset(pixels.get(), value, number_of_pixels);
     } else {
@@ -129,24 +132,24 @@ class ImageChannel {
   }
 
 
-  bool is_index_valid(std::pair<std::size_t, std::size_t> index) const {
+  inline bool is_index_valid(const std::pair<std::size_t, std::size_t> index) const {
     auto [i, j] = index;
     return i < width && j < height;
   }
 
 
-  bool is_index_valid(std::size_t i, std::size_t j) const {
+  inline bool is_index_valid(const std::size_t i, std::size_t j) const {
     return is_index_valid({i, j});
   }
 
 
-  void set_value_at(T value, std::pair<std::size_t, std::size_t> coordinate) {
+  void set_value_at(const T value, const std::pair<std::size_t, std::size_t> coordinate) {
     const auto& [i, j] = coordinate;
     set_value_at(value, i, j);
   }
 
 
-  void set_value_at(T value, std::size_t i, std::size_t j) {
+  void set_value_at(const T value, const std::size_t i, const std::size_t j) {
     if (!is_index_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
@@ -157,13 +160,13 @@ class ImageChannel {
   }
 
 
-  T get_value_at(std::pair<std::size_t, std::size_t> coordinate) const {
+  T get_value_at(const std::pair<std::size_t, std::size_t> coordinate) const {
     const auto& [i, j] = coordinate;
     return get_value_at(i, j);
   }
 
 
-  T get_value_at(std::size_t i, std::size_t j) const {
+  T get_value_at(const std::size_t i, std::size_t j) const {
     if (!is_index_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexReadException();
     }
@@ -176,12 +179,12 @@ class ImageChannel {
   }
 
 
-  T* data() const {
+  inline T* data() const {
     return pixels.get();
   }
 
 
-  T get_max_value() const {
+  inline T get_max_value() const {
     auto positive_bpp = bpp;
     if constexpr (std::numeric_limits<T>::is_signed) {
       --positive_bpp;
@@ -190,7 +193,7 @@ class ImageChannel {
   }
 
 
-  T get_min_value() const {
+  inline T get_min_value() const {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return -std::pow(2.0, static_cast<double>(bpp - 1));
     }
@@ -204,18 +207,18 @@ class ImageChannel {
     ret_vector.reserve(number_of_pixels);
     for (auto i = decltype(number_of_pixels){0}; i < number_of_pixels; ++i) {
       ret_vector.emplace_back(*temp_ptr);
-      temp_ptr++;
+      ++temp_ptr;
     }
     return ret_vector;
   }
 
 
-  T* operator[](int i) {
+  inline T* operator[](const int i) {
     return pixels_2d[i];
   }
 
 
-  const T* operator[](int i) const {
+  inline const T* operator[](const int i) const {
     return pixels_2d[i];
   }
 
@@ -257,36 +260,36 @@ class ImageChannel {
     auto diff_ptr = difference_image.data();
     for (std::size_t i = 0; i < number_of_pixels; ++i) {
       *diff_ptr = static_cast<signed_type>(*this_ptr - *other_ptr);
-      diff_ptr++;
-      this_ptr++;
-      other_ptr++;
+      ++diff_ptr;
+      ++this_ptr;
+      ++other_ptr;
     }
 
     return difference_image;
   }
 
 
-  decltype(width) get_width() const noexcept {
+  inline decltype(width) get_width() const noexcept {
     return width;
   }
 
 
-  decltype(height) get_height() const noexcept {
+  inline decltype(height) get_height() const noexcept {
     return height;
   }
 
 
-  auto get_dimension() const noexcept {
+  inline auto get_dimension() const noexcept {
     return std::make_pair(width, height);
   }
 
 
-  decltype(bpp) get_bpp() const noexcept {
+  inline decltype(bpp) get_bpp() const noexcept {
     return bpp;
   }
 
 
-  decltype(number_of_pixels) get_number_of_pixels() const noexcept {
+  inline decltype(number_of_pixels) get_number_of_pixels() const noexcept {
     return number_of_pixels;
   }
 };

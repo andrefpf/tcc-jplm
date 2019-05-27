@@ -95,7 +95,7 @@ class BT2020Coefficients {
   static constexpr double kg = 1.0 - kb - kr;
 };
 
-template<typename T, uint8_t exp>
+template<typename T, std::size_t exp>
 constexpr std::enable_if_t<std::is_floating_point<T>::value, T> power_of_2() {
   T odd = static_cast<T>(1);
   if constexpr (exp % 2 == 1) {
@@ -108,14 +108,15 @@ constexpr std::enable_if_t<std::is_floating_point<T>::value, T> power_of_2() {
   return odd * half * half;
 }
 
-template<typename T, uint8_t exp>
+template<typename T, std::size_t exp>
 constexpr std::enable_if_t<std::is_integral<T>::value, T> power_of_2() {
-  static_assert(sizeof(T) * 8 > exp,
+  constexpr std::size_t bits_per_byte = 8;
+  static_assert((sizeof(T) * bits_per_byte) > exp,
       "Power of two result will be larger than the supported by the defined "
       "variable");
   if constexpr (exp == 0)
-    return 1;
-  return 1 << exp;
+    return static_cast<T>(1);
+  return static_cast<T>(1) << exp;
 }
 
 template<typename T, std::size_t bpp>
@@ -125,16 +126,17 @@ constexpr T get_max_value_for_bpp() {
   return static_cast<T>(max_plus_one);
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double normalize01(const T& value) {
   static_assert(std::is_unsigned<T>::value,
       "Only unsigned values are supported in this normalization");
-  if (value >= power_of_2<std::size_t, nbits>())
+  constexpr auto power_of_two = power_of_2<std::size_t, nbits>();
+  if (value >= power_of_two)
     return 1.0;
-  return value / static_cast<double>(power_of_2<uint32_t, nbits>() - 1);
+  return value / static_cast<double>(power_of_two - 1.0);
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 T inverse_normalize01(double value) {
   static_assert(std::is_unsigned<T>::value,
       "Only unsigned values are supported in this normalization");
@@ -143,12 +145,12 @@ T inverse_normalize01(double value) {
   if (value < 0.0)
     return 0;
   return static_cast<T>(std::round(
-      value * (static_cast<double>(power_of_2<uint32_t, nbits>()) - 1.0)));
+      value * (static_cast<double>(power_of_2<std::size_t, nbits>()) - 1.0)));
 }
 
 double clip01d(double value);
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral(double y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -160,7 +162,7 @@ T y_double_to_integral(double y) {
   return static_cast<T>(std::round(mult_term * y + sum_term));
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double(T y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -172,7 +174,7 @@ double y_integral_to_double(T y) {
   return (y - sum_term) / mult_term;
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral(double cbcr) {
   static_assert(nbits >= 8, "nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -184,7 +186,7 @@ T cbcr_double_to_integral(double cbcr) {
   return static_cast<T>(std::round(mult_term * cbcr + sum_term));
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double cbcr_integral_to_double(T cbcr) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -196,7 +198,7 @@ double cbcr_integral_to_double(T cbcr) {
   return (cbcr - sum_term) / mult_term;
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -207,7 +209,7 @@ double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
   return static_cast<double>(value) / mult_term;
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double_no_dynamic_range_reduction(T y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -218,7 +220,7 @@ double y_integral_to_double_no_dynamic_range_reduction(T y) {
   return static_cast<double>(y) / mult_term;
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral_no_dynamic_range_reduction(double y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -230,7 +232,7 @@ T y_double_to_integral_no_dynamic_range_reduction(double y) {
 }
 
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
@@ -242,16 +244,20 @@ double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
   return static_cast<double>(cbcr - sum_term) / mult_term;
 }
 
-template<typename T = uint8_t, uint32_t nbits = 8>
+template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral_no_dynamic_range_reduction(double cbcr) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto sum_term =
-      static_cast<double>(power_of_2<T, nbits - 1>());  //offset
-  constexpr auto mult_term = static_cast<double>(power_of_2<T, nbits>() - 1.0);
+  constexpr auto sum_term = power_of_2<double, nbits - 1>();  //offset
+  constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
-  return static_cast<T>(std::round(cbcr * mult_term + sum_term));
+  std::cout << "sum_term " << sum_term << std::endl;
+  std::cout << "mult_term " << mult_term << std::endl;
+  std::cout << "cbcr " << cbcr << std::endl;
+  std::cout << "std::round(cbcr * mult_term) " << std::round(cbcr * mult_term) << std::endl;
+
+  return static_cast<T>(std::round(cbcr * mult_term) + sum_term);
 }
 
 
@@ -276,7 +282,7 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
 }
 
 
-template<typename T = uint8_t, uint32_t nbits = 8,
+template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
 std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
   using namespace std;
@@ -320,7 +326,7 @@ std::tuple<double, double, double> ycbcr_to_rgb_base_double(
   return std::make_tuple(r, g, b);
 }
 
-template<typename T, uint32_t nbits, typename ConversionCoefficients,
+template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
   auto normalized_rgb = std::make_tuple(normalize01<T, nbits>(std::get<R>(rgb)),
@@ -347,7 +353,7 @@ std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
 }
 
 
-template<typename T, uint32_t nbits, typename ConversionCoefficients>
+template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
   const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
@@ -361,7 +367,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
 
-template<typename T, uint32_t nbits, typename ConversionCoefficients>
+template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
   const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
@@ -373,7 +379,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
 }
 
 
-template<typename T, uint32_t nbits, typename ConversionCoefficients,
+template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_ycbcr_to_rgb(const std::tuple<T, T, T>& ycbcr) {
   if constexpr (keep_dynamic_range) {
@@ -394,7 +400,7 @@ class GenericColorSpacesConverter {
 };
 
 
-template<typename T, uint32_t nbits, typename ConversionCoefficients,
+template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 class ColorSpacesConverter : public GenericColorSpacesConverter<T,
                                  ConversionCoefficients, keep_dynamic_range> {
@@ -418,7 +424,7 @@ class ConversorProvider {
   ConversorProvider() = default;
   ~ConversorProvider() = default;
   GenericColorSpacesConverter<T, ConversionCoefficients, keep_dynamic_range>*
-  getConverter(uint32_t nbits) {
+  getConverter(std::size_t nbits) {
     switch (nbits) {
       case 8:
         return new ColorSpacesConverter<T, 8, ConversionCoefficients,

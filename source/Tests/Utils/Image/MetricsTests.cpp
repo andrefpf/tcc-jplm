@@ -45,42 +45,42 @@
 TEST(Metrics_PSNR, ThreesVector) {
   std::vector<int> vector({3, 3, 3});
   auto max_value = 255;
-  EXPECT_EQ(10.0 * std::log10((max_value * max_value) / 9.0),
+  EXPECT_DOUBLE_EQ(10.0 * std::log10((max_value * max_value) / 9.0),
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, TwosVector) {
   std::vector<int> vector({2, 2});
   auto max_value = 255;
-  EXPECT_EQ(10.0 * std::log10((max_value * max_value) / 4.0),
+  EXPECT_DOUBLE_EQ(10.0 * std::log10((max_value * max_value) / 4.0),
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, OnesVector) {
   std::vector<int> vector({1, 1, 1});
   auto max_value = 255;
-  EXPECT_EQ(10.0 * std::log10(max_value * max_value),
+  EXPECT_DOUBLE_EQ(10.0 * std::log10(max_value * max_value),
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, MaxErrorPSNR) {
   std::vector<int> vector({255, 255});
-  EXPECT_EQ(0.0, Metrics::get_peak_signal_to_noise_ratio(vector, 255));
+  EXPECT_DOUBLE_EQ(0.0, Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 TEST(Metrics_PSNR, ZerosVectorMustResultInfinityRegardlessOfMax) {
   std::vector<int> vector({0, 0, 0, 0});
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+  EXPECT_DOUBLE_EQ(std::numeric_limits<double>::infinity(),
       Metrics::get_peak_signal_to_noise_ratio(vector, 127));
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+  EXPECT_DOUBLE_EQ(std::numeric_limits<double>::infinity(),
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
-  EXPECT_EQ(std::numeric_limits<double>::infinity(),
+  EXPECT_DOUBLE_EQ(std::numeric_limits<double>::infinity(),
       Metrics::get_peak_signal_to_noise_ratio(vector, 1023));
 }
 
 TEST(Metrics_PSNR, EmptyVector) {
   std::vector<int> vector;
-  EXPECT_EQ(0.0, Metrics::get_peak_signal_to_noise_ratio(vector, 255));
+  EXPECT_DOUBLE_EQ(0.0, Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
 

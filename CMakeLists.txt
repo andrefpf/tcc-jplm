@@ -18,6 +18,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 #configuring the compiler
 set(CMAKE_CXX_STANDARD 17)
 include(JPLMWarnings)
+include(JPLMCompilerOptimizations)
 
 #including external libraries by downloading them from git..
 include(ExternalOpenJPEG)
