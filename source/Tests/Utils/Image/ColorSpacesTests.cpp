@@ -40,6 +40,7 @@
 
 
 #include <iostream>
+#include <tuple>
 #include "ColorSpaces.h"
 #include "gtest/gtest.h"
 
@@ -268,7 +269,7 @@ struct TestTypesColorConversion {
 
 
 template<typename T>
-class RGBWhiteToYCbCrTypeAndBpp : public ::testing::Test {
+class RGBToYCbCrTypeAndBpp : public ::testing::Test {
  protected:
   typedef typename T::firstType var_type;
   std::tuple<var_type, var_type, var_type> white =
@@ -281,7 +282,7 @@ class RGBWhiteToYCbCrTypeAndBpp : public ::testing::Test {
 };
 
 template<typename T>
-class RGBWhiteToYCbCrTypeAndBppA : public ::testing::Test {
+class RGBToYCbCrTypeAndBppA : public ::testing::Test {
  protected:
   typedef typename T::firstType var_type;
   std::tuple<var_type, var_type, var_type> white =
@@ -294,7 +295,7 @@ class RGBWhiteToYCbCrTypeAndBppA : public ::testing::Test {
 };
 
 template<typename T>
-class RGBWhiteToYCbCrTypeAndBppB : public ::testing::Test {
+class RGBToYCbCrTypeAndBppB : public ::testing::Test {
  protected:
   typedef typename T::firstType var_type;
   std::tuple<var_type, var_type, var_type> white =
@@ -307,7 +308,7 @@ class RGBWhiteToYCbCrTypeAndBppB : public ::testing::Test {
 };
 
 template<typename T>
-class RGBWhiteToYCbCrTypeAndBppC : public ::testing::Test {
+class RGBToYCbCrTypeAndBppC : public ::testing::Test {
  protected:
   typedef typename T::firstType var_type;
   std::tuple<var_type, var_type, var_type> white =
@@ -323,12 +324,12 @@ class RGBWhiteToYCbCrTypeAndBppC : public ::testing::Test {
 using testing::Types;
 
 typedef Types<TestTypesColorConversion<uint16_t, 8>,
-    TestTypesColorConversion<uint16_t, 9>,
-    TestTypesColorConversion<uint16_t, 10>,
-    TestTypesColorConversion<uint16_t, 11>,
-    TestTypesColorConversion<uint16_t, 12>,
-    TestTypesColorConversion<uint16_t, 13>,
-    TestTypesColorConversion<uint16_t, 14>,
+    // TestTypesColorConversion<uint16_t, 9>,
+    // TestTypesColorConversion<uint16_t, 10>,
+    // TestTypesColorConversion<uint16_t, 11>,
+    // TestTypesColorConversion<uint16_t, 12>,
+    // TestTypesColorConversion<uint16_t, 13>,
+    // TestTypesColorConversion<uint16_t, 14>,
     TestTypesColorConversion<uint16_t, 15>>
     unsigned16_types_and_bpps_to_test;
 
@@ -403,10 +404,10 @@ TYPED_TEST_SUITE(RGBRedToYCbCrType, unsigned_types_to_test);
 TYPED_TEST_SUITE(RGBWhiteToYCbCrType, unsigned_types_to_test);
 
 
-TYPED_TEST_SUITE(RGBWhiteToYCbCrTypeAndBpp, unsigned16_types_and_bpps_to_test);
-TYPED_TEST_SUITE(RGBWhiteToYCbCrTypeAndBppA, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(RGBToYCbCrTypeAndBpp, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(RGBToYCbCrTypeAndBppA, unsigned32_types_and_bpps_to_test);
 TYPED_TEST_SUITE(
-    RGBWhiteToYCbCrTypeAndBppB, unsigned64_types_and_bpps_to_test_up_to32);
+    RGBToYCbCrTypeAndBppB, unsigned64_types_and_bpps_to_test_up_to32);
 
 
 TYPED_TEST(RGBRedToYCbCrType, RedMapsToMaxCr) {
@@ -430,8 +431,8 @@ TYPED_TEST(
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
@@ -443,8 +444,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
@@ -456,8 +457,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
@@ -482,8 +483,8 @@ TYPED_TEST(
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
@@ -495,8 +496,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
@@ -508,8 +509,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
@@ -534,8 +535,8 @@ TYPED_TEST(
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -548,8 +549,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -562,8 +563,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -581,7 +582,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
 // gcc 8 dows not warn if using [[maybe_unused]]
 //http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_active.html#2360
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -591,7 +592,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT2020) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -601,7 +602,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT2020) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -611,7 +612,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT2020) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -621,7 +622,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT601) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -631,7 +632,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT601) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -641,7 +642,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT601) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
@@ -651,7 +652,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, RedMapsToMaxCrBT709) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
@@ -661,7 +662,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, RedMapsToMaxCrBT709) {
   EXPECT_EQ(cr, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -672,7 +673,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, RedMapsToMaxCrBT709) {
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -682,7 +683,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT2020) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -692,7 +693,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT2020) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT2020) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT2020) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -702,7 +703,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT2020) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -712,7 +713,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT601) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -722,7 +723,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT601) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT601) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT601) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
@@ -732,7 +733,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT601) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
@@ -742,7 +743,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp, BlueMapsToMaxCbBT709) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
@@ -752,7 +753,7 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA, BlueMapsToMaxCbBT709) {
   EXPECT_EQ(cb, max);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT709) {
+TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT709) {
   [[maybe_unused]] const auto& [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -763,8 +764,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB, BlueMapsToMaxCbBT709) {
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
@@ -776,8 +777,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
@@ -789,8 +790,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, BlackMapsToZeroLuminanceAndHalfChrominancesBT601) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
@@ -803,8 +804,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
@@ -816,8 +817,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
@@ -829,8 +830,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, BlackMapsToZeroLuminanceAndHalfChrominancesBT709) {
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
@@ -843,8 +844,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
 }
 
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBpp, BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -857,8 +858,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBpp,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppA, BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -871,8 +872,8 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppA,
   EXPECT_EQ(cr, half);
 }
 
-TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
-    BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
+TYPED_TEST(
+    RGBToYCbCrTypeAndBppB, BlackMapsToZeroLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] =
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
@@ -884,6 +885,191 @@ TYPED_TEST(RGBWhiteToYCbCrTypeAndBppB,
   EXPECT_EQ(cb, half);
   EXPECT_EQ(cr, half);
 }
+
+
+template<typename A, std::size_t b, typename Coefs>
+struct TestTypesColorConversionFromYCbCrCoefs {
+  typedef A firstType;
+  static constexpr auto secondType = b;
+  typedef Coefs thirdType;
+};
+
+
+template<typename T, std::size_t bpp, typename ConversionCoefficients>
+std::tuple<T, T, T> get_ycbcr_black() {
+  auto rgb_black = get_rgb_black<T>();
+  return ColorSpaces::convert_rgb_to_ycbcr<T, bpp, ConversionCoefficients,
+      true>(rgb_black);
+}
+
+
+template<typename T, std::size_t bpp, typename ConversionCoefficients>
+std::tuple<T, T, T> get_ycbcr_white() {
+  auto rgb_white = get_rgb_white<T, bpp>();
+  return ColorSpaces::convert_rgb_to_ycbcr<T, bpp, ConversionCoefficients,
+      true>(rgb_white);
+}
+
+
+template<typename T, std::size_t bpp, typename ConversionCoefficients>
+std::tuple<T, T, T> get_ycbcr_red() {
+  auto rgb_red = get_rgb_red<T, bpp>();
+  return ColorSpaces::convert_rgb_to_ycbcr<T, bpp, ConversionCoefficients,
+      true>(rgb_red);
+}
+
+template<typename T, std::size_t bpp, typename ConversionCoefficients>
+std::tuple<T, T, T> get_ycbcr_blue() {
+  auto rgb_blue = get_rgb_blue<T, bpp>();
+  return ColorSpaces::convert_rgb_to_ycbcr<T, bpp, ConversionCoefficients,
+      true>(rgb_blue);
+}
+
+
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBpp : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBpp : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBpp : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+};
+
+// bool tuple_is_equal
+TYPED_TEST_SUITE(YCbCrBT601ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(YCbCrBT709ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(YCbCrBT2020ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
+
+TYPED_TEST(
+    YCbCrBT601ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
+        true>(this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+TYPED_TEST(
+    YCbCrBT601ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
+        true>(this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+TYPED_TEST(
+    YCbCrBT601ToRGBTypeAndBpp, RedConvertsBackToRed) {
+	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
+        true>(this->red);
+  EXPECT_EQ(rgb_red_reference, converted_red);
+}
+
+TYPED_TEST(
+    YCbCrBT601ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
+        true>(this->blue);
+  EXPECT_EQ(rgb_blue_reference, converted_blue);
+}
+
+TYPED_TEST(
+    YCbCrBT709ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
+        true>(this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+TYPED_TEST(
+    YCbCrBT709ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
+        true>(this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+TYPED_TEST(
+    YCbCrBT709ToRGBTypeAndBpp, RedConvertsBackToRed) {
+	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
+        true>(this->red);
+  EXPECT_EQ(rgb_red_reference, converted_red);
+}
+
+TYPED_TEST(
+    YCbCrBT709ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
+        true>(this->blue);
+  EXPECT_EQ(rgb_blue_reference, converted_blue);
+}
+
+TYPED_TEST(
+    YCbCrBT2020ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
+        true>(this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+TYPED_TEST(
+    YCbCrBT2020ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
+        true>(this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+TYPED_TEST(
+    YCbCrBT2020ToRGBTypeAndBpp, RedConvertsBackToRed) {
+	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
+        true>(this->red);
+  EXPECT_EQ(rgb_red_reference, converted_red);
+}
+
+TYPED_TEST(
+    YCbCrBT2020ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
+        true>(this->blue);
+  EXPECT_EQ(rgb_blue_reference, converted_blue);
+}
+
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);

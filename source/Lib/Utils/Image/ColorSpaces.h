@@ -284,6 +284,8 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
 
 template<typename T, std::size_t max_val>
 constexpr T clip_max(const T value) {
+  if (value < 0)
+    return static_cast<T>(0);
   if (value < max_val)
     return value;
   return max_val;
@@ -292,6 +294,7 @@ constexpr T clip_max(const T value) {
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
 std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
+  static_assert(std::is_integral<T>::value, "This conversion function expects an integral typename");
   using namespace std;
   constexpr double kb = ConversionCoefficients::kb;
   constexpr double kr = ConversionCoefficients::kr;
@@ -305,6 +308,9 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
   double cb = (b - y) / kcb;
   double cr = (r - y) / kcr;
 
+  std::cout << "r " << r << '\t' << "g " << g << '\t' << "b " << b << '\n';
+  std::cout << "y " << y << '\t' << "cb " << cb << '\t' << "cr " << cr << '\n';
+
   // constexpr auto max_val = static_cast<double>(power_of_2<T, nbits>());
   constexpr auto shift_val = static_cast<double>(power_of_2<T, nbits - 1>());
   constexpr auto max_luminance = static_cast<T>(get_max_value_for_bpp<T, nbits>());
@@ -315,6 +321,8 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
       clip_max<double, max_val_color>(std::round(cb)) + shift_val);
   auto integral_cr = static_cast<T>(
       clip_max<double, max_val_color>(std::round(cr)) + shift_val);
+
+  std::cout << "iy " << integral_y << '\t' << "cb " << integral_cb << '\t' << "cr " << integral_cr << '\n';
 
   return {integral_y, integral_cb, integral_cr};
 }
@@ -327,7 +335,6 @@ std::tuple<double, double, double> ycbcr_to_rgb_base_double(
 
   constexpr double kb = ConversionCoefficients::kb;
   constexpr double kr = ConversionCoefficients::kr;
-  // constexpr double kg = (1.0-kr-kb);
   constexpr double kg = ConversionCoefficients::kg;
 
   constexpr double kcb = 2.0 * (1.0 - ConversionCoefficients::kb);
@@ -340,16 +347,58 @@ std::tuple<double, double, double> ycbcr_to_rgb_base_double(
   return std::make_tuple(r, g, b);
 }
 
+template<typename T = uint8_t, std::size_t nbits = 8,
+    typename ConversionCoefficients>
+std::tuple<T, T, T> ycbcr_to_rgb_integral(
+    const std::tuple<T, T, T>& ycbcr) {
+  static_assert(std::is_integral<T>::value, "This conversion function expects an integral typename");
+  using namespace std;
+
+  constexpr double kb = ConversionCoefficients::kb;
+  constexpr double kr = ConversionCoefficients::kr;
+  // constexpr double kg = (1.0-kr-kb);
+  constexpr double kg = ConversionCoefficients::kg;
+
+  constexpr double kcb = 2.0 * (1.0 - ConversionCoefficients::kb);
+  constexpr double kcr = 2.0 * (1.0 - ConversionCoefficients::kr);
+
+  auto [y, cb, cr] = ycbcr;
+
+  constexpr auto shift_val = power_of_2<double, nbits - 1>();
+  double double_y = static_cast<double>(y);
+  double double_cb = static_cast<double>(cb)-shift_val;
+  double double_cr = static_cast<double>(cr)-shift_val;
+
+  std::cout << "y " << y << '\t' << "cb " << cb << '\t' << "cr " << cr << "\tshift_val " << shift_val << '\n' ;
+  std::cout << "dy " << double_y << '\t' << "dcb " << double_cb << '\t' << "dcr " << double_cr << '\n' ;
+  // cb-=shift_val;
+  // cr-=shift_val;
+
+  const double b = double_cb * kcb + double_y;  //
+  const double r = double_cr * kcr + double_y;
+  const double g = (double_y - kr * (r) -kb * (b)) / (kg);
+
+  constexpr auto max_component = static_cast<T>(get_max_value_for_bpp<T, nbits>());
+
+  const auto integral_r = static_cast<T>(clip_max<double,max_component>(std::round(r)));
+  const auto integral_g = static_cast<T>(clip_max<double,max_component>(std::round(g)));
+  const auto integral_b = static_cast<T>(clip_max<double,max_component>(std::round(b)));
+
+  return {integral_r, integral_g, integral_b};
+}
+
 template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
+  if constexpr (std::is_integral<T>::value && keep_dynamic_range) {
+    return rgb_to_ycbcr_integral<T, nbits, ConversionCoefficients>(rgb);
+  }
+
   auto normalized_rgb = std::make_tuple(normalize01<T, nbits>(std::get<R>(rgb)),
       normalize01<T, nbits>(std::get<G>(rgb)),
       normalize01<T, nbits>(std::get<B>(rgb)));
   auto ycbcr = rgb_to_ycbcr_base_double<ConversionCoefficients>(normalized_rgb);
-  if constexpr (std::is_integral<T>::value) {
-    return rgb_to_ycbcr_integral<T, nbits, ConversionCoefficients>(rgb);
-  }
+  
 
   if constexpr (keep_dynamic_range) {
     return std::make_tuple(
@@ -370,13 +419,16 @@ std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
-  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
+  if constexpr (std::is_integral<T>::value) {
+    return ycbcr_to_rgb_integral<T, nbits, ConversionCoefficients>(ycbcr);
+  }
+  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>({
       y_integral_to_double_no_dynamic_range_reduction<T, nbits>(
           std::get<Y>(ycbcr)),
       cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
           std::get<Cb>(ycbcr)),
       cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
-          std::get<Cr>(ycbcr)));
+          std::get<Cr>(ycbcr))});
   return std::make_tuple(inverse_normalize01<T, nbits>(r),
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
@@ -384,10 +436,10 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
-  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
+  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>({
       y_integral_to_double<T, nbits>(std::get<Y>(ycbcr)),
       cbcr_integral_to_double<T, nbits>(std::get<Cb>(ycbcr)),
-      cbcr_integral_to_double<T, nbits>(std::get<Cr>(ycbcr)));
+      cbcr_integral_to_double<T, nbits>(std::get<Cr>(ycbcr))});
   return std::make_tuple(inverse_normalize01<T, nbits>(r),
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
@@ -397,9 +449,9 @@ template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_ycbcr_to_rgb(const std::tuple<T, T, T>& ycbcr) {
   if constexpr (keep_dynamic_range) {
-    return convert_ycbcr_to_rgb_keeping_dynamic_range(ycbcr);
+    return convert_ycbcr_to_rgb_keeping_dynamic_range<T, nbits, ConversionCoefficients>(ycbcr);
   } else {
-    return convert_ycbcr_to_rgb_reducing_dynamic_range(ycbcr);
+    return convert_ycbcr_to_rgb_reducing_dynamic_range<T, nbits, ConversionCoefficients>(ycbcr);
   }
 }
 
