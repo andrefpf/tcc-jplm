@@ -47,6 +47,7 @@
  * Author: Ismael Seidel
  */
 
+#include <climits>  //for CHAR_BIT
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -110,7 +111,7 @@ constexpr std::enable_if_t<std::is_floating_point<T>::value, T> power_of_2() {
 
 template<typename T, std::size_t exp>
 constexpr std::enable_if_t<std::is_integral<T>::value, T> power_of_2() {
-  constexpr std::size_t bits_per_byte = 8;
+  constexpr std::size_t bits_per_byte = CHAR_BIT;  //number of bits in a byte
   static_assert((sizeof(T) * bits_per_byte) > exp,
       "Power of two result will be larger than the supported by the defined "
       "variable");
@@ -121,8 +122,7 @@ constexpr std::enable_if_t<std::is_integral<T>::value, T> power_of_2() {
 
 template<typename T, std::size_t bpp>
 constexpr T get_max_value_for_bpp() {
-  std::size_t max_plus_one = power_of_2<T, bpp>();
-  --max_plus_one;
+  constexpr std::size_t max_plus_one = power_of_2<T, bpp>() - 1;
   return static_cast<T>(max_plus_one);
 }
 
@@ -255,7 +255,8 @@ T cbcr_double_to_integral_no_dynamic_range_reduction(double cbcr) {
   std::cout << "sum_term " << sum_term << std::endl;
   std::cout << "mult_term " << mult_term << std::endl;
   std::cout << "cbcr " << cbcr << std::endl;
-  std::cout << "std::round(cbcr * mult_term) " << std::round(cbcr * mult_term) << std::endl;
+  std::cout << "std::round(cbcr * mult_term) " << std::round(cbcr * mult_term)
+            << std::endl;
 
   return static_cast<T>(std::round(cbcr * mult_term) + sum_term);
 }
@@ -281,6 +282,12 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
   return std::make_tuple(y, cb, cr);
 }
 
+template<typename T, std::size_t max_val>
+constexpr T clip_max(const T value) {
+  if (value < max_val)
+    return value;
+  return max_val;
+}
 
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
@@ -292,15 +299,22 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
   constexpr double kcb = 2.0 * (1.0 - ConversionCoefficients::kb);
   constexpr double kcr = 2.0 * (1.0 - ConversionCoefficients::kr);
 
-  double y = kr * get<R>(rgb) + kg * get<G>(rgb) + kb * get<B>(rgb);
-  double cb = (get<B>(rgb) - y) / kcb;
-  double cr = (get<R>(rgb) - y) / kcr;
+  const auto& [r, g, b] = rgb;
+
+  double y = kr * r + kg * g + kb * b;
+  double cb = (b - y) / kcb;
+  double cr = (r - y) / kcr;
 
   // constexpr auto max_val = static_cast<double>(power_of_2<T, nbits>());
   constexpr auto shift_val = static_cast<double>(power_of_2<T, nbits - 1>());
-  auto integral_y = static_cast<T>(std::round(y));  //should clip...
-  auto integral_cb = static_cast<T>(std::round(cb) + shift_val);
-  auto integral_cr = static_cast<T>(std::round(cr) + shift_val);
+  constexpr auto max_luminance = static_cast<T>(get_max_value_for_bpp<T, nbits>());
+  constexpr auto max_val_color = static_cast<T>(shift_val) - 1;
+  auto integral_y = static_cast<T>(
+      clip_max<double,max_luminance>(std::round(y)));
+  auto integral_cb = static_cast<T>(
+      clip_max<double, max_val_color>(std::round(cb)) + shift_val);
+  auto integral_cr = static_cast<T>(
+      clip_max<double, max_val_color>(std::round(cr)) + shift_val);
 
   return {integral_y, integral_cb, integral_cr};
 }
