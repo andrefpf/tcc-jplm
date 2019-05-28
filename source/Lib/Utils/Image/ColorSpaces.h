@@ -252,12 +252,6 @@ T cbcr_double_to_integral_no_dynamic_range_reduction(double cbcr) {
   constexpr auto sum_term = power_of_2<double, nbits - 1>();  //offset
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
-  std::cout << "sum_term " << sum_term << std::endl;
-  std::cout << "mult_term " << mult_term << std::endl;
-  std::cout << "cbcr " << cbcr << std::endl;
-  std::cout << "std::round(cbcr * mult_term) " << std::round(cbcr * mult_term)
-            << std::endl;
-
   return static_cast<T>(std::round(cbcr * mult_term) + sum_term);
 }
 
@@ -269,7 +263,6 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
 
   constexpr double kb = ConversionCoefficients::kb;
   constexpr double kr = ConversionCoefficients::kr;
-  // constexpr double kg = (1.0-kr-kb);
   constexpr double kg = ConversionCoefficients::kg;
 
   constexpr double kcb = 2.0 * (1.0 - ConversionCoefficients::kb);
@@ -284,11 +277,16 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
 
 template<typename T, std::size_t max_val>
 constexpr T clip_max(const T value) {
-  if (value < 0)
-    return static_cast<T>(0);
   if (value < max_val)
     return value;
   return max_val;
+}
+
+template<typename T, std::size_t max_val>
+constexpr T clip_min_max(const T value) {
+  if (value < 0)
+    return static_cast<T>(0);
+  return clip_max<T, max_val>(value);
 }
 
 template<typename T = uint8_t, std::size_t nbits = 8,
@@ -308,10 +306,6 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
   double cb = (b - y) / kcb;
   double cr = (r - y) / kcr;
 
-  std::cout << "r " << r << '\t' << "g " << g << '\t' << "b " << b << '\n';
-  std::cout << "y " << y << '\t' << "cb " << cb << '\t' << "cr " << cr << '\n';
-
-  // constexpr auto max_val = static_cast<double>(power_of_2<T, nbits>());
   constexpr auto shift_val = static_cast<double>(power_of_2<T, nbits - 1>());
   constexpr auto max_luminance = static_cast<T>(get_max_value_for_bpp<T, nbits>());
   constexpr auto max_val_color = static_cast<T>(shift_val) - 1;
@@ -321,8 +315,6 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
       clip_max<double, max_val_color>(std::round(cb)) + shift_val);
   auto integral_cr = static_cast<T>(
       clip_max<double, max_val_color>(std::round(cr)) + shift_val);
-
-  std::cout << "iy " << integral_y << '\t' << "cb " << integral_cb << '\t' << "cr " << integral_cr << '\n';
 
   return {integral_y, integral_cb, integral_cr};
 }
@@ -369,20 +361,15 @@ std::tuple<T, T, T> ycbcr_to_rgb_integral(
   double double_cb = static_cast<double>(cb)-shift_val;
   double double_cr = static_cast<double>(cr)-shift_val;
 
-  std::cout << "y " << y << '\t' << "cb " << cb << '\t' << "cr " << cr << "\tshift_val " << shift_val << '\n' ;
-  std::cout << "dy " << double_y << '\t' << "dcb " << double_cb << '\t' << "dcr " << double_cr << '\n' ;
-  // cb-=shift_val;
-  // cr-=shift_val;
-
   const double b = double_cb * kcb + double_y;  //
   const double r = double_cr * kcr + double_y;
   const double g = (double_y - kr * (r) -kb * (b)) / (kg);
 
   constexpr auto max_component = static_cast<T>(get_max_value_for_bpp<T, nbits>());
 
-  const auto integral_r = static_cast<T>(clip_max<double,max_component>(std::round(r)));
-  const auto integral_g = static_cast<T>(clip_max<double,max_component>(std::round(g)));
-  const auto integral_b = static_cast<T>(clip_max<double,max_component>(std::round(b)));
+  const auto integral_r = static_cast<T>(clip_min_max<double,max_component>(std::round(r)));
+  const auto integral_g = static_cast<T>(clip_min_max<double,max_component>(std::round(g)));
+  const auto integral_b = static_cast<T>(clip_min_max<double,max_component>(std::round(b)));
 
   return {integral_r, integral_g, integral_b};
 }

@@ -40,10 +40,11 @@
 
 
 #include <iostream>
+#include <random>
 #include <tuple>
 #include "ColorSpaces.h"
+#include "Metrics.h"
 #include "gtest/gtest.h"
-
 
 TEST(PowerOf2IntegralType, TwoAtZeroIsOne) {
   auto two_at_zero = ColorSpaces::power_of_2<std::size_t, 0>();
@@ -324,12 +325,12 @@ class RGBToYCbCrTypeAndBppC : public ::testing::Test {
 using testing::Types;
 
 typedef Types<TestTypesColorConversion<uint16_t, 8>,
-    // TestTypesColorConversion<uint16_t, 9>,
-    // TestTypesColorConversion<uint16_t, 10>,
-    // TestTypesColorConversion<uint16_t, 11>,
-    // TestTypesColorConversion<uint16_t, 12>,
-    // TestTypesColorConversion<uint16_t, 13>,
-    // TestTypesColorConversion<uint16_t, 14>,
+    TestTypesColorConversion<uint16_t, 9>,
+    TestTypesColorConversion<uint16_t, 10>,
+    TestTypesColorConversion<uint16_t, 11>,
+    TestTypesColorConversion<uint16_t, 12>,
+    TestTypesColorConversion<uint16_t, 13>,
+    TestTypesColorConversion<uint16_t, 14>,
     TestTypesColorConversion<uint16_t, 15>>
     unsigned16_types_and_bpps_to_test;
 
@@ -895,6 +896,21 @@ struct TestTypesColorConversionFromYCbCrCoefs {
 };
 
 
+template<typename T>
+double get_pixel_mse(
+    const std::tuple<T, T, T>& original, const std::tuple<T, T, T>& decoded) {
+  auto error_red = static_cast<int64_t>(std::get<0>(original)) -
+                   static_cast<int64_t>(std::get<0>(decoded));
+  auto error_green = static_cast<int64_t>(std::get<1>(original)) -
+                     static_cast<int64_t>(std::get<1>(decoded));
+  auto error_blue = static_cast<int64_t>(std::get<2>(original)) -
+                    static_cast<int64_t>(std::get<2>(decoded));
+
+  auto errors =
+      std::vector<decltype(error_red)>({error_red, error_green, error_blue});
+  return Metrics::get_mean_squared_error(errors);
+}
+
 template<typename T, std::size_t bpp, typename ConversionCoefficients>
 std::tuple<T, T, T> get_ycbcr_black() {
   auto rgb_black = get_rgb_black<T>();
@@ -962,8 +978,92 @@ class YCbCrBT2020ToRGBTypeAndBpp : public ::testing::Test {
       T::secondType, ColorSpaces::BT2020Coefficients>();
   std::tuple<var_type, var_type, var_type> red =
       get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue = get_ycbcr_blue<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBpp32T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
   std::tuple<var_type, var_type, var_type> blue =
-      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBpp32T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBpp32T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue = get_ycbcr_blue<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBpp64T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT601Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT601Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBpp64T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue =
+      get_ycbcr_blue<var_type, T::secondType, ColorSpaces::BT709Coefficients>();
+  std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
+      T::secondType, ColorSpaces::BT709Coefficients>();
+};
+
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBpp64T : public ::testing::Test {
+ protected:
+  typedef typename T::firstType var_type;
+  std::tuple<var_type, var_type, var_type> white = get_ycbcr_white<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> red =
+      get_ycbcr_red<var_type, T::secondType, ColorSpaces::BT2020Coefficients>();
+  std::tuple<var_type, var_type, var_type> blue = get_ycbcr_blue<var_type,
+      T::secondType, ColorSpaces::BT2020Coefficients>();
   std::tuple<var_type, var_type, var_type> black = get_ycbcr_black<var_type,
       T::secondType, ColorSpaces::BT2020Coefficients>();
 };
@@ -972,103 +1072,664 @@ class YCbCrBT2020ToRGBTypeAndBpp : public ::testing::Test {
 TYPED_TEST_SUITE(YCbCrBT601ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
 TYPED_TEST_SUITE(YCbCrBT709ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
 TYPED_TEST_SUITE(YCbCrBT2020ToRGBTypeAndBpp, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT601ToRGBTypeAndBpp32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT709ToRGBTypeAndBpp32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT2020ToRGBTypeAndBpp32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT601ToRGBTypeAndBpp64T, unsigned64_types_and_bpps_to_test_up_to32);
+TYPED_TEST_SUITE(
+    YCbCrBT709ToRGBTypeAndBpp64T, unsigned64_types_and_bpps_to_test_up_to32);
+TYPED_TEST_SUITE(
+    YCbCrBT2020ToRGBTypeAndBpp64T, unsigned64_types_and_bpps_to_test_up_to32);
 
-TYPED_TEST(
-    YCbCrBT601ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
-	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
-	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
-        true>(this->black);
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->black);
   EXPECT_EQ(rgb_black_reference, converted_black);
 }
 
-TYPED_TEST(
-    YCbCrBT601ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
-	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
-        true>(this->white);
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->white);
   EXPECT_EQ(rgb_white_reference, converted_white);
 }
 
-TYPED_TEST(
-    YCbCrBT601ToRGBTypeAndBpp, RedConvertsBackToRed) {
-	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
-        true>(this->red);
-  EXPECT_EQ(rgb_red_reference, converted_red);
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
 }
 
-TYPED_TEST(
-    YCbCrBT601ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
-	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT601Coefficients,
-        true>(this->blue);
-  EXPECT_EQ(rgb_blue_reference, converted_blue);
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
 }
 
-TYPED_TEST(
-    YCbCrBT709ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
-	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
-	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
-        true>(this->black);
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->black);
   EXPECT_EQ(rgb_black_reference, converted_black);
 }
 
-TYPED_TEST(
-    YCbCrBT709ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
-	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
-        true>(this->white);
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->white);
   EXPECT_EQ(rgb_white_reference, converted_white);
 }
 
-TYPED_TEST(
-    YCbCrBT709ToRGBTypeAndBpp, RedConvertsBackToRed) {
-	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
-        true>(this->red);
-  EXPECT_EQ(rgb_red_reference, converted_red);
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
 }
 
-TYPED_TEST(
-    YCbCrBT709ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
-	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT709Coefficients,
-        true>(this->blue);
-  EXPECT_EQ(rgb_blue_reference, converted_blue);
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
 }
 
-TYPED_TEST(
-    YCbCrBT2020ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
-	auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
-	auto converted_black = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
-        true>(this->black);
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->black);
   EXPECT_EQ(rgb_black_reference, converted_black);
 }
 
-TYPED_TEST(
-    YCbCrBT2020ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
-	auto rgb_white_reference = get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_white = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
-        true>(this->white);
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->white);
   EXPECT_EQ(rgb_white_reference, converted_white);
 }
 
-TYPED_TEST(
-    YCbCrBT2020ToRGBTypeAndBpp, RedConvertsBackToRed) {
-	auto rgb_red_reference = get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_red = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
-        true>(this->red);
-  EXPECT_EQ(rgb_red_reference, converted_red);
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
 }
 
-TYPED_TEST(
-    YCbCrBT2020ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
-	auto rgb_blue_reference = get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
-	auto converted_blue = ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType, TypeParam::secondType, ColorSpaces::BT2020Coefficients,
-        true>(this->blue);
-  EXPECT_EQ(rgb_blue_reference, converted_blue);
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
 }
 
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp32T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp32T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp32T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->red);
+  auto mse = get_pixel_mse(rgb_red_reference, converted_red);
+  EXPECT_TRUE(mse <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp32T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp32T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp32T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp32T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp32T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp32T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp32T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp32T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->red);
+  auto mse = get_pixel_mse(rgb_red_reference, converted_red);
+  EXPECT_TRUE(mse <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp32T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp64T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp64T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp64T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBpp64T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp64T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp64T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp64T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBpp64T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp64T, BlackConvertsBackToBlack) {
+  auto rgb_black_reference = get_rgb_black<typename TypeParam::firstType>();
+  auto converted_black =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->black);
+  EXPECT_EQ(rgb_black_reference, converted_black);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp64T, WhiteConvertsBackToWhite) {
+  auto rgb_white_reference =
+      get_rgb_white<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_white =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->white);
+  EXPECT_EQ(rgb_white_reference, converted_white);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp64T, RedConvertsBackToRed) {
+  auto rgb_red_reference =
+      get_rgb_red<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_red =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->red);
+  EXPECT_TRUE(get_pixel_mse(rgb_red_reference, converted_red) <= 1.0);
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBpp64T, BlueConvertsBackToBlue) {
+  auto rgb_blue_reference =
+      get_rgb_blue<typename TypeParam::firstType, TypeParam::secondType>();
+  auto converted_blue =
+      ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+          TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+          this->blue);
+  EXPECT_TRUE(get_pixel_mse(rgb_blue_reference, converted_blue) <= 1.0);
+}
+
+
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBppRandom16T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBppRandom32T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT2020ToRGBTypeAndBppRandom64T : public ::testing::Test {};
+TYPED_TEST_SUITE(
+    YCbCrBT2020ToRGBTypeAndBppRandom16T, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT2020ToRGBTypeAndBppRandom32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(YCbCrBT2020ToRGBTypeAndBppRandom64T,
+    unsigned64_types_and_bpps_to_test_up_to32);
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom16T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom32T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom64T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
+            ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBppRandom16T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBppRandom32T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT601ToRGBTypeAndBppRandom64T : public ::testing::Test {};
+TYPED_TEST_SUITE(
+    YCbCrBT601ToRGBTypeAndBppRandom16T, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT601ToRGBTypeAndBppRandom32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(YCbCrBT601ToRGBTypeAndBppRandom64T,
+    unsigned64_types_and_bpps_to_test_up_to32);
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom16T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom32T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom64T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBppRandom16T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBppRandom32T : public ::testing::Test {};
+template<typename T>
+class YCbCrBT709ToRGBTypeAndBppRandom64T : public ::testing::Test {};
+TYPED_TEST_SUITE(
+    YCbCrBT709ToRGBTypeAndBppRandom16T, unsigned16_types_and_bpps_to_test);
+TYPED_TEST_SUITE(
+    YCbCrBT709ToRGBTypeAndBppRandom32T, unsigned32_types_and_bpps_to_test);
+TYPED_TEST_SUITE(YCbCrBT709ToRGBTypeAndBppRandom64T,
+    unsigned64_types_and_bpps_to_test_up_to32);
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom16T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom32T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
+
+
+TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom64T,
+    OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
+  std::default_random_engine generator(42);
+  std::uniform_int_distribution<typename TypeParam::firstType> distribution(
+      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+             TypeParam::secondType>());
+
+  for (auto i = 0; i < 1000; ++i) {
+    auto r = distribution(generator);
+    auto g = distribution(generator);
+    auto b = distribution(generator);
+    auto ycbcr =
+        ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
+            {r, g, b});
+    auto converted_back_rgb =
+        ColorSpaces::convert_ycbcr_to_rgb<typename TypeParam::firstType,
+            TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(ycbcr);
+    auto mse = get_pixel_mse({r, g, b}, converted_back_rgb);
+    EXPECT_TRUE(mse <= 1.0);
+  }
+}
 
 
 int main(int argc, char* argv[]) {
