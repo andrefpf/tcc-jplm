@@ -483,36 +483,37 @@ class ConversorProvider {
  public:
   ConversorProvider() = default;
   ~ConversorProvider() = default;
-  std::unique_ptr<GenericColorSpacesConverter<T, ConversionCoefficients, keep_dynamic_range>>
+  std::unique_ptr<GenericColorSpacesConverter<T, ConversionCoefficients,
+      keep_dynamic_range>>
   getConverter(std::size_t nbits) {
     switch (nbits) {
       case 8:
-        return std::make_unique<ColorSpacesConverter<T, 8, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 8,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 9:
-        return std::make_unique<ColorSpacesConverter<T, 9, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 9,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 10:
-        return std::make_unique<ColorSpacesConverter<T, 10, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 10,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 11:
-        return std::make_unique<ColorSpacesConverter<T, 11, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 11,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 12:
-        return std::make_unique<ColorSpacesConverter<T, 12, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 12,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 13:
-        return std::make_unique<ColorSpacesConverter<T, 13, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 13,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 14:
-        return std::make_unique<ColorSpacesConverter<T, 14, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 14,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 15:
-        return std::make_unique<ColorSpacesConverter<T, 15, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 15,
+            ConversionCoefficients, keep_dynamic_range>>();
       case 16:
-        return std::make_unique<ColorSpacesConverter<T, 16, ConversionCoefficients,
-            keep_dynamic_range>>();
+        return std::make_unique<ColorSpacesConverter<T, 16,
+            ConversionCoefficients, keep_dynamic_range>>();
     }
     //this is the default
     std::cerr << "nbits=" << nbits

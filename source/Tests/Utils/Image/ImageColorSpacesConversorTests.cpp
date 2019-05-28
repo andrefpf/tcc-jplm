@@ -177,21 +177,24 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT2020ResultsInBT2020) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT2020ResultsInBT2020WithSameWidth) {
+TEST_F(SimpleImageTypeChecksFromBT2020,
+    BT2020ToBT2020ResultsInBT2020WithSameWidth) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_2020_image);
   EXPECT_EQ(converted_bt_2020_image.get_width(), bt_2020_image->get_width());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT2020ResultsInBT2020WithSameHeight) {
+TEST_F(SimpleImageTypeChecksFromBT2020,
+    BT2020ToBT2020ResultsInBT2020WithSameHeight) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_2020_image);
   EXPECT_EQ(converted_bt_2020_image.get_height(), bt_2020_image->get_height());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT2020ResultsInBT2020WithSameBpp) {
+TEST_F(
+    SimpleImageTypeChecksFromBT2020, BT2020ToBT2020ResultsInBT2020WithSameBpp) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_2020_image);
   EXPECT_EQ(converted_bt_2020_image.get_bpp(), bt_2020_image->get_bpp());
@@ -233,7 +236,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameWidth) {
   auto bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_2020_image);
   ASSERT_EQ(bt_601_image.get_type(), ImageType::BT601);
@@ -241,7 +245,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameWidth
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameHeight) {
+TEST_F(SimpleImageTypeChecksFromBT2020,
+    BT2020ToBT601ResultsInBT601WithSameHeight) {
   auto bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_2020_image);
   ASSERT_EQ(bt_601_image.get_type(), ImageType::BT601);
@@ -249,7 +254,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameHeigh
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameBpp) {
+TEST_F(
+    SimpleImageTypeChecksFromBT2020, BT2020ToBT601ResultsInBT601WithSameBpp) {
   auto bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_2020_image);
   ASSERT_EQ(bt_601_image.get_type(), ImageType::BT601);
@@ -264,7 +270,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameWidth) {
   auto bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_2020_image);
   ASSERT_EQ(bt_709_image.get_type(), ImageType::BT709);
@@ -272,7 +279,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameWidth
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameHeight) {
+TEST_F(SimpleImageTypeChecksFromBT2020,
+    BT2020ToBT709ResultsInBT709WithSameHeight) {
   auto bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_2020_image);
   ASSERT_EQ(bt_709_image.get_type(), ImageType::BT709);
@@ -280,7 +288,8 @@ TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameHeigh
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameBpp) {
+TEST_F(
+    SimpleImageTypeChecksFromBT2020, BT2020ToBT709ResultsInBT709WithSameBpp) {
   auto bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_2020_image);
   ASSERT_EQ(bt_709_image.get_type(), ImageType::BT709);
@@ -304,21 +313,24 @@ TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020WithSameWidth) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_601_image);
   EXPECT_EQ(converted_bt_2020_image.get_width(), bt_601_image->get_width());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020WithSameHeight) {
+TEST_F(SimpleImageTypeChecksFromBT601,
+    BT601ToBT2020ResultsInBT2020WithSameHeight) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_601_image);
   EXPECT_EQ(converted_bt_2020_image.get_height(), bt_601_image->get_height());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020WithSameBpp) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT2020ResultsInBT2020WithSameBpp) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_601_image);
   EXPECT_EQ(converted_bt_2020_image.get_bpp(), bt_601_image->get_bpp());
@@ -360,7 +372,8 @@ TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601WithSameWidth) {
   auto converted_bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_601_image);
   ASSERT_EQ(converted_bt_601_image.get_type(), ImageType::BT601);
@@ -368,7 +381,8 @@ TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601WithSameWidth) 
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601WithSameHeight) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT601ResultsInBT601WithSameHeight) {
   auto converted_bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_601_image);
   ASSERT_EQ(converted_bt_601_image.get_type(), ImageType::BT601);
@@ -391,7 +405,8 @@ TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709WithSameWidth) {
   auto bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_601_image);
   ASSERT_EQ(bt_709_image.get_type(), ImageType::BT709);
@@ -399,7 +414,8 @@ TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709WithSameWidth) 
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709WithSameHeight) {
+TEST_F(
+    SimpleImageTypeChecksFromBT601, BT601ToBT709ResultsInBT709WithSameHeight) {
   auto bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_601_image);
   ASSERT_EQ(bt_709_image.get_type(), ImageType::BT709);
@@ -431,21 +447,24 @@ TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020WithSameWidth) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_709_image);
   EXPECT_EQ(converted_bt_2020_image.get_width(), bt_709_image->get_width());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020WithSameHeight) {
+TEST_F(SimpleImageTypeChecksFromBT709,
+    BT709ToBT2020ResultsInBT2020WithSameHeight) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_709_image);
   EXPECT_EQ(converted_bt_2020_image.get_height(), bt_709_image->get_height());
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020WithSameBpp) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT2020ResultsInBT2020WithSameBpp) {
   auto converted_bt_2020_image =
       ImageColorSpaceConversion::convert::to<BT2020Image>(*bt_709_image);
   EXPECT_EQ(converted_bt_2020_image.get_bpp(), bt_709_image->get_bpp());
@@ -487,7 +506,8 @@ TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601WithSameWidth) {
   auto converted_bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_709_image);
   ASSERT_EQ(converted_bt_601_image.get_type(), ImageType::BT601);
@@ -495,7 +515,8 @@ TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601WithSameWidth) 
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601WithSameHeight) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT601ResultsInBT601WithSameHeight) {
   auto converted_bt_601_image =
       ImageColorSpaceConversion::convert::to<BT601Image>(*bt_709_image);
   ASSERT_EQ(converted_bt_601_image.get_type(), ImageType::BT601);
@@ -518,7 +539,8 @@ TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709) {
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709WithSameWidth) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709WithSameWidth) {
   auto converted_bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_709_image);
   ASSERT_EQ(converted_bt_709_image.get_type(), ImageType::BT709);
@@ -526,7 +548,8 @@ TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709WithSameWidth) 
 }
 
 
-TEST_F(SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709WithSameHeight) {
+TEST_F(
+    SimpleImageTypeChecksFromBT709, BT709ToBT709ResultsInBT709WithSameHeight) {
   auto converted_bt_709_image =
       ImageColorSpaceConversion::convert::to<BT709Image>(*bt_709_image);
   ASSERT_EQ(converted_bt_709_image.get_type(), ImageType::BT709);

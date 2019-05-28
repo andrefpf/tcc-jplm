@@ -308,7 +308,8 @@ class BT2020Image : public YCbCrImage<T> {
       : YCbCrImage<T>(width, height, bpp, ImageType::BT2020){};
 
 
-  BT2020Image(BT2020Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
+  BT2020Image(BT2020Image<T>&& other) noexcept
+      : YCbCrImage<T>(std::move(other)) {
   }
 
 

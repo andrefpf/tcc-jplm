@@ -142,7 +142,8 @@ ImageOut<T> ycbcr_conversion(const ImageIn<T>& source) {
   for (decltype(source.get_number_of_pixels_per_channel()) i = 0;
        i < source.get_number_of_pixels_per_channel(); ++i) {
     auto sourcel_pel = std::make_tuple(*a_data++, *b_data++, *c_data++);
-    std::tie(*d_data++, *e_data++, *f_data++) = conversion_function(convert.get(), sourcel_pel);
+    std::tie(*d_data++, *e_data++, *f_data++) =
+        conversion_function(convert.get(), sourcel_pel);
   }
 
   return converted_image;
@@ -193,8 +194,7 @@ ImageOut<T> to(const ImageIn<T>& source) {
       exit(2);
   }
 
-  return ImageOut<T>(
-      source.get_width(), source.get_height(), source.get_bpp());
+  return ImageOut<T>(source.get_width(), source.get_height(), source.get_bpp());
 }
 
 template<template<typename> class ImageOut, template<typename> class ImageIn,

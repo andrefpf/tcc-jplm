@@ -84,7 +84,8 @@ class ImageChannel {
 
 
  public:
-  ImageChannel(const std::size_t width, const std::size_t height, const std::size_t bpp)
+  ImageChannel(
+      const std::size_t width, const std::size_t height, const std::size_t bpp)
       : width(width), height(height), bpp(bpp),
         number_of_pixels(width * height),
         pixels(std::make_unique<T[]>(number_of_pixels)) {
@@ -132,7 +133,8 @@ class ImageChannel {
   }
 
 
-  inline bool is_index_valid(const std::pair<std::size_t, std::size_t> index) const {
+  inline bool is_index_valid(
+      const std::pair<std::size_t, std::size_t> index) const {
     auto [i, j] = index;
     return i < width && j < height;
   }
@@ -143,7 +145,8 @@ class ImageChannel {
   }
 
 
-  void set_value_at(const T value, const std::pair<std::size_t, std::size_t> coordinate) {
+  void set_value_at(
+      const T value, const std::pair<std::size_t, std::size_t> coordinate) {
     const auto& [i, j] = coordinate;
     set_value_at(value, i, j);
   }

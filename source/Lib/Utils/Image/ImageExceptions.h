@@ -61,12 +61,14 @@ class InvalidIndexReadException : public std::exception {
 };
 class InvalidBppException : public std::exception {
   const char* what() const noexcept override {
-    return "The image channel internal representation does not support a value with the required bpp.";
+    return "The image channel internal representation does not support a value "
+           "with the required bpp.";
   }
 };
 class InvalidValueException : public std::exception {
   const char* what() const noexcept override {
-    return "The image channel internal representation does not support the required value.";
+    return "The image channel internal representation does not support the "
+           "required value.";
   }
 };
 }  // namespace ImageChannelExceptions
