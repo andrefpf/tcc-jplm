@@ -223,6 +223,23 @@ class YCbCrImage : public Image<T> {
       : Image<T>(width, height, bpp, 3, type){};
 
 
+  YCbCrImage(YCbCrImage<T>&& other) noexcept : Image<T>(std::move(other)) {
+  }
+
+
+  YCbCrImage(const YCbCrImage<T>& other) : Image<T>(other){};
+
+
+  YCbCrImage& operator=(YCbCrImage<T>&& other) {
+    Image<T>::operator=(std::move(other));
+    return *this;
+  }
+
+
+  inline bool operator==(const YCbCrImage<T>& other) const {
+    return this->is_equal(other);
+  }
+
   ~YCbCrImage() = default;
 
 
@@ -238,15 +255,15 @@ class BT601Image : public YCbCrImage<T> {
   BT601Image(std::size_t width, std::size_t height, std::size_t bpp)
       : YCbCrImage<T>(width, height, bpp, ImageType::BT601){};
 
-  BT601Image(BT601Image<T>&& other) noexcept : Image<T>(std::move(other)) {
+  BT601Image(BT601Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
 
 
-  BT601Image(const BT601Image<T>& other) : Image<T>(other){};
+  BT601Image(const BT601Image<T>& other) : YCbCrImage<T>(other){};
 
 
   BT601Image& operator=(BT601Image<T>&& other) {
-    Image<T>::operator=(std::move(other));
+    YCbCrImage<T>::operator=(std::move(other));
     return *this;
   }
 
@@ -264,15 +281,15 @@ class BT709Image : public YCbCrImage<T> {
   BT709Image(std::size_t width, std::size_t height, std::size_t bpp)
       : YCbCrImage<T>(width, height, bpp, ImageType::BT709){};
 
-  BT709Image(BT709Image<T>&& other) noexcept : Image<T>(std::move(other)) {
+  BT709Image(BT709Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
 
 
-  BT709Image(const BT709Image<T>& other) : Image<T>(other){};
+  BT709Image(const BT709Image<T>& other) : YCbCrImage<T>(other){};
 
 
   BT709Image& operator=(BT709Image<T>&& other) {
-    Image<T>::operator=(std::move(other));
+    YCbCrImage<T>::operator=(std::move(other));
     return *this;
   }
 
@@ -291,15 +308,15 @@ class BT2020Image : public YCbCrImage<T> {
       : YCbCrImage<T>(width, height, bpp, ImageType::BT2020){};
 
 
-  BT2020Image(BT2020Image<T>&& other) noexcept : Image<T>(std::move(other)) {
+  BT2020Image(BT2020Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
 
 
-  BT2020Image(const BT2020Image<T>& other) : Image<T>(other){};
+  BT2020Image(const BT2020Image<T>& other) : YCbCrImage<T>(other){};
 
 
   BT2020Image& operator=(BT2020Image<T>&& other) {
-    Image<T>::operator=(std::move(other));
+    YCbCrImage<T>::operator=(std::move(other));
     return *this;
   }
 

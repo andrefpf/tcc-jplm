@@ -191,9 +191,8 @@ double cbcr_integral_to_double(T cbcr) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 1>());
-  constexpr auto mult_term =
-      static_cast<double>(power_of_2<T, nbits - 8>()) * 224.0;
+  constexpr auto sum_term = power_of_2<double, nbits - 1>();
+  constexpr auto mult_term = power_of_2<double, nbits - 8>() * 224.0;
 
   return (cbcr - sum_term) / mult_term;
 }
@@ -203,7 +202,7 @@ double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto mult_term = static_cast<double>(power_of_2<T, nbits>() - 1.0);
+  constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
 
   return static_cast<double>(value) / mult_term;
@@ -214,7 +213,7 @@ double y_integral_to_double_no_dynamic_range_reduction(T y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto mult_term = static_cast<double>(power_of_2<T, nbits>() - 1.0);
+  constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
 
   return static_cast<double>(y) / mult_term;
@@ -225,7 +224,7 @@ T y_double_to_integral_no_dynamic_range_reduction(double y) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto mult_term = static_cast<double>(power_of_2<T, nbits>() - 1.0);
+  constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
 
   return static_cast<T>(std::round(y * mult_term));
@@ -237,9 +236,8 @@ double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 
-  constexpr auto sum_term =
-      static_cast<double>(power_of_2<T, nbits - 1>());  //offset
-  constexpr auto mult_term = static_cast<double>(power_of_2<T, nbits>() - 1.0);
+  constexpr auto sum_term = power_of_2<double, nbits - 1>();  //offset
+  constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
   return static_cast<double>(cbcr - sum_term) / mult_term;
 }
@@ -292,7 +290,8 @@ constexpr T clip_min_max(const T value) {
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
 std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
-  static_assert(std::is_integral<T>::value, "This conversion function expects an integral typename");
+  static_assert(std::is_integral<T>::value,
+      "This conversion function expects an integral typename");
   using namespace std;
   constexpr double kb = ConversionCoefficients::kb;
   constexpr double kr = ConversionCoefficients::kr;
@@ -307,10 +306,11 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
   double cr = (r - y) / kcr;
 
   constexpr auto shift_val = static_cast<double>(power_of_2<T, nbits - 1>());
-  constexpr auto max_luminance = static_cast<T>(get_max_value_for_bpp<T, nbits>());
+  constexpr auto max_luminance =
+      static_cast<T>(get_max_value_for_bpp<T, nbits>());
   constexpr auto max_val_color = static_cast<T>(shift_val) - 1;
-  auto integral_y = static_cast<T>(
-      clip_max<double,max_luminance>(std::round(y)));
+  auto integral_y =
+      static_cast<T>(clip_max<double, max_luminance>(std::round(y)));
   auto integral_cb = static_cast<T>(
       clip_max<double, max_val_color>(std::round(cb)) + shift_val);
   auto integral_cr = static_cast<T>(
@@ -341,9 +341,9 @@ std::tuple<double, double, double> ycbcr_to_rgb_base_double(
 
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
-std::tuple<T, T, T> ycbcr_to_rgb_integral(
-    const std::tuple<T, T, T>& ycbcr) {
-  static_assert(std::is_integral<T>::value, "This conversion function expects an integral typename");
+std::tuple<T, T, T> ycbcr_to_rgb_integral(const std::tuple<T, T, T>& ycbcr) {
+  static_assert(std::is_integral<T>::value,
+      "This conversion function expects an integral typename");
   using namespace std;
 
   constexpr double kb = ConversionCoefficients::kb;
@@ -358,18 +358,22 @@ std::tuple<T, T, T> ycbcr_to_rgb_integral(
 
   constexpr auto shift_val = power_of_2<double, nbits - 1>();
   double double_y = static_cast<double>(y);
-  double double_cb = static_cast<double>(cb)-shift_val;
-  double double_cr = static_cast<double>(cr)-shift_val;
+  double double_cb = static_cast<double>(cb) - shift_val;
+  double double_cr = static_cast<double>(cr) - shift_val;
 
   const double b = double_cb * kcb + double_y;  //
   const double r = double_cr * kcr + double_y;
   const double g = (double_y - kr * (r) -kb * (b)) / (kg);
 
-  constexpr auto max_component = static_cast<T>(get_max_value_for_bpp<T, nbits>());
+  constexpr auto max_component =
+      static_cast<T>(get_max_value_for_bpp<T, nbits>());
 
-  const auto integral_r = static_cast<T>(clip_min_max<double,max_component>(std::round(r)));
-  const auto integral_g = static_cast<T>(clip_min_max<double,max_component>(std::round(g)));
-  const auto integral_b = static_cast<T>(clip_min_max<double,max_component>(std::round(b)));
+  const auto integral_r =
+      static_cast<T>(clip_min_max<double, max_component>(std::round(r)));
+  const auto integral_g =
+      static_cast<T>(clip_min_max<double, max_component>(std::round(g)));
+  const auto integral_b =
+      static_cast<T>(clip_min_max<double, max_component>(std::round(b)));
 
   return {integral_r, integral_g, integral_b};
 }
@@ -377,7 +381,8 @@ std::tuple<T, T, T> ycbcr_to_rgb_integral(
 template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
-  if constexpr (std::is_integral<T>::value && keep_dynamic_range) {
+  if constexpr (std::is_integral<T>::value && keep_dynamic_range &&
+                (sizeof(T) * 8 > nbits)) {
     return rgb_to_ycbcr_integral<T, nbits, ConversionCoefficients>(rgb);
   }
 
@@ -385,7 +390,7 @@ std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
       normalize01<T, nbits>(std::get<G>(rgb)),
       normalize01<T, nbits>(std::get<B>(rgb)));
   auto ycbcr = rgb_to_ycbcr_base_double<ConversionCoefficients>(normalized_rgb);
-  
+
 
   if constexpr (keep_dynamic_range) {
     return std::make_tuple(
@@ -406,16 +411,16 @@ std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
-  if constexpr (std::is_integral<T>::value) {
+  if constexpr ((std::is_integral<T>::value) && (sizeof(T) * 8 > nbits)) {
     return ycbcr_to_rgb_integral<T, nbits, ConversionCoefficients>(ycbcr);
   }
-  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>({
-      y_integral_to_double_no_dynamic_range_reduction<T, nbits>(
-          std::get<Y>(ycbcr)),
-      cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
-          std::get<Cb>(ycbcr)),
-      cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
-          std::get<Cr>(ycbcr))});
+  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
+      {y_integral_to_double_no_dynamic_range_reduction<T, nbits>(
+           std::get<Y>(ycbcr)),
+          cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
+              std::get<Cb>(ycbcr)),
+          cbcr_integral_to_double_no_dynamic_range_reduction<T, nbits>(
+              std::get<Cr>(ycbcr))});
   return std::make_tuple(inverse_normalize01<T, nbits>(r),
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
@@ -423,10 +428,10 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
-  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>({
-      y_integral_to_double<T, nbits>(std::get<Y>(ycbcr)),
-      cbcr_integral_to_double<T, nbits>(std::get<Cb>(ycbcr)),
-      cbcr_integral_to_double<T, nbits>(std::get<Cr>(ycbcr))});
+  const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
+      {y_integral_to_double<T, nbits>(std::get<Y>(ycbcr)),
+          cbcr_integral_to_double<T, nbits>(std::get<Cb>(ycbcr)),
+          cbcr_integral_to_double<T, nbits>(std::get<Cr>(ycbcr))});
   return std::make_tuple(inverse_normalize01<T, nbits>(r),
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
@@ -436,9 +441,11 @@ template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
 std::tuple<T, T, T> convert_ycbcr_to_rgb(const std::tuple<T, T, T>& ycbcr) {
   if constexpr (keep_dynamic_range) {
-    return convert_ycbcr_to_rgb_keeping_dynamic_range<T, nbits, ConversionCoefficients>(ycbcr);
+    return convert_ycbcr_to_rgb_keeping_dynamic_range<T, nbits,
+        ConversionCoefficients>(ycbcr);
   } else {
-    return convert_ycbcr_to_rgb_reducing_dynamic_range<T, nbits, ConversionCoefficients>(ycbcr);
+    return convert_ycbcr_to_rgb_reducing_dynamic_range<T, nbits,
+        ConversionCoefficients>(ycbcr);
   }
 }
 
@@ -476,45 +483,45 @@ class ConversorProvider {
  public:
   ConversorProvider() = default;
   ~ConversorProvider() = default;
-  GenericColorSpacesConverter<T, ConversionCoefficients, keep_dynamic_range>*
+  std::unique_ptr<GenericColorSpacesConverter<T, ConversionCoefficients, keep_dynamic_range>>
   getConverter(std::size_t nbits) {
     switch (nbits) {
       case 8:
-        return new ColorSpacesConverter<T, 8, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 8, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 9:
-        return new ColorSpacesConverter<T, 9, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 9, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 10:
-        return new ColorSpacesConverter<T, 10, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 10, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 11:
-        return new ColorSpacesConverter<T, 11, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 11, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 12:
-        return new ColorSpacesConverter<T, 12, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 12, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 13:
-        return new ColorSpacesConverter<T, 13, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 13, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 14:
-        return new ColorSpacesConverter<T, 14, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 14, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 15:
-        return new ColorSpacesConverter<T, 15, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 15, ConversionCoefficients,
+            keep_dynamic_range>>();
       case 16:
-        return new ColorSpacesConverter<T, 16, ConversionCoefficients,
-            keep_dynamic_range>();
+        return std::make_unique<ColorSpacesConverter<T, 16, ConversionCoefficients,
+            keep_dynamic_range>>();
     }
     //this is the default
     std::cerr << "nbits=" << nbits
               << " is not supported (the supported ones are 8, 9, 10, 11, 12, "
-                 "13, 14, 15 and 16)."
+                 "13, 14 and 15)."
               << std::endl;
-    std::cerr << "Assuming 16 bits" << std::endl;
-    return new ColorSpacesConverter<T, 16, ConversionCoefficients,
-        keep_dynamic_range>();
+    std::cerr << "Assuming 15 bits" << std::endl;
+    return std::make_unique<ColorSpacesConverter<T, 15, ConversionCoefficients,
+        keep_dynamic_range>>();
   }
 };
 
