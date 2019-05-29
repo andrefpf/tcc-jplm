@@ -49,28 +49,139 @@ class InvalidSizeException : public std::exception {
     return "A image channel size (width, height, bpp) cannot be zero";
   }
 };
+
+
 class InvalidIndexWriteException : public std::exception {
   const char* what() const noexcept override {
     return "Trying to write in invalid index of image channel";
   }
 };
+
+
 class InvalidIndexReadException : public std::exception {
   const char* what() const noexcept override {
     return "Trying to read from invalid index of image channel";
   }
 };
+
+
 class InvalidBppException : public std::exception {
   const char* what() const noexcept override {
     return "The image channel internal representation does not support a value "
            "with the required bpp.";
   }
 };
+
+
 class InvalidValueException : public std::exception {
   const char* what() const noexcept override {
     return "The image channel internal representation does not support the "
            "required value.";
   }
 };
+
 }  // namespace ImageChannelExceptions
+
+namespace ImageIOExceptions {
+class InexistentPathException : public std::exception {
+  const char* what() const noexcept override {
+    return "Inexistent path.";
+  }
+};
+
+
+class InexistentFileException : public std::exception {
+  const char* what() const noexcept override {
+    return "Inexistent file.";
+  }
+};
+
+
+class NotARegularFileException : public std::exception {
+  const char* what() const noexcept override {
+    return "Not a regular file.";
+  }
+};
+
+
+class UnknownImageTypeException : public std::exception {
+  const char* what() const noexcept override {
+    return "Unknown image type";
+  }
+};
+
+
+class PermisionToReadDeniedException : public std::exception {
+  const char* what() const noexcept override {
+    return "Permission to read from file was denied.";
+  }
+};
+
+class UnableToOpenFileException : public std::exception {
+  const char* what() const noexcept override {
+    return "Unable to open file.";
+  }
+};
+}  // namespace ImageIOExceptions
+
+
+namespace PixelMapFileIOExceptions {
+class InvalidPixelMapIndexException : public std::exception {
+  const char* what() const noexcept override {
+    return "Permission to read from file was denied.";
+  }
+};
+
+
+// class PixelMapFileNotSupportedException : public std::exception {
+//   const char* what() const noexcept override {
+//     return "This type of pixel map file is not yet suported";
+//   }
+// };
+
+
+class IncompletePixelMapFileException : public std::exception {
+  const char* what() const noexcept override {
+    return "Permission to read from file was denied.";
+  }
+};
+
+
+class NoImplementedYetPixelMapFileException : public std::exception {
+  const char* what() const noexcept override {
+    return "Permission to read from file was denied.";
+  }
+};
+
+
+class BppMustBeLargerThanZeroException : public std::exception {
+  const char* what() const noexcept override {
+    return "Pix Map file (PPM, PGM or PNM) bpp must be larger than zero.";
+  }
+};
+
+
+class BppMustBeSmallerOrEqualToSixteenException : public std::exception {
+  const char* what() const noexcept override {
+    return "Pix Map file (PPM, PGM or PNM) bpp must be <= 16.";
+  }
+};
+
+
+class WidthMustBeLargerThanZeroException : public std::exception {
+  const char* what() const noexcept override {
+    return "Pix Map file (PPM, PGM or PNM) width must be larger than zero.";
+  }
+};
+
+
+class HeightMustBeLargerThanZeroException : public std::exception {
+  const char* what() const noexcept override {
+    return "Pix Map file (PPM, PGM or PNM) height must be larger than zero.";
+  }
+};
+
+
+}  // namespace PixelMapFileIOExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

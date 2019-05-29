@@ -24,6 +24,8 @@ include(JPLMCompilerOptimizations)
 include(ExternalOpenJPEG)
 include(ExternalGoogleTest)
 
+link_libraries(stdc++fs)
+
 # directories here header files may be found
 include_directories(.)
 include_directories(cfg)

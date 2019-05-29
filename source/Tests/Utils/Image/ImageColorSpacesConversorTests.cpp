@@ -50,6 +50,7 @@ struct SimpleImageTypeChecksFromRGB : testing::Test {
   }
 };
 
+
 TEST_F(SimpleImageTypeChecksFromRGB, RGBToRGBResultsInRGB) {
   auto rgb_image_2 =
       ImageColorSpaceConversion::convert::to<RGBImage>(*rgb_image);
@@ -132,6 +133,7 @@ TEST_F(SimpleImageTypeChecksFromRGB, RGBToBT709ResultsInBT709WithSameBpp) {
       ImageColorSpaceConversion::convert::to<BT709Image>(*rgb_image);
   EXPECT_EQ(bt_709_image.get_bpp(), rgb_image->get_bpp());
 }
+
 
 TEST_F(SimpleImageTypeChecksFromRGB, RGBToBT2020ResultsInBT2020) {
   auto bt_2020_image =
