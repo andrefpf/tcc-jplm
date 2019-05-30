@@ -13,3 +13,4 @@ add_image_lib_test(ImageColorSpacesConversor image_color_spaces_conversor_tests 
 add_image_lib_test(PixelMapFileIO pixelmap_file_io_tests PixelMapFileIOTests.cpp)
 add_image_lib_test(PPMBinaryFile ppm_binary_file_tests PPMBinaryFileTests.cpp)
 add_image_lib_test(PPMBinaryFileImage ppm_binary_file_image_tests PPMBinaryFileImageTests.cpp)
+add_image_lib_test(ImageMetric image_metrics_tests ImageMetricTests.cpp)

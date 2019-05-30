@@ -192,28 +192,91 @@ class Image {
   virtual std::vector<std::string> get_channel_names() const = 0;
 };
 
+
 template<typename T>
-class RGBImage : public Image<T> {
+class ThreeChannelImage : public Image<T> {
  public:
-  RGBImage(std::size_t width, std::size_t height, std::size_t bpp)
-      : Image<T>(width, height, bpp, 3, ImageType::RGB){};
+  ThreeChannelImage(
+      std::size_t width, std::size_t height, std::size_t bpp, ImageType type)
+      : Image<T>(width, height, bpp, 3, type){};
 
 
-  RGBImage(RGBImage<T>&& other) noexcept : Image<T>(std::move(other)) {
+  ThreeChannelImage(ThreeChannelImage<T>&& other) noexcept
+      : Image<T>(std::move(other)) {
   }
 
 
-  RGBImage(const RGBImage<T>& other) : Image<T>(other){};
+  ThreeChannelImage(const ThreeChannelImage<T>& other) : Image<T>(other){};
+
+
+  ThreeChannelImage& operator=(ThreeChannelImage<T>&& other) {
+    Image<T>::operator=(std::move(other));
+    return *this;
+  }
+
+
+  inline bool operator==(const ThreeChannelImage<T>& other) const {
+    return this->is_equal(other);
+  }
+
+  inline bool operator!=(const ThreeChannelImage<T>& other) const {
+    return !this->is_equal(other);
+  }
+
+  std::tuple<T, T, T> get_pixel_at(std::size_t i, std::size_t j) const {
+    return std::make_tuple(this->channels[0].get_pixel_at(i, j),
+        this->channels[1].get_pixel_at(i, j),
+        this->channels[2].get_pixel_at(i, j));
+  }
+
+  std::tuple<T, T, T> get_pixel_at(
+      std::pair<std::size_t, std::size_t> coordinate) const {
+    return get_pixel_at(std::get<0>(coordinate), std::get<1>(coordinate));
+  }
+
+  void set_pixel_at(
+      const std::tuple<T, T, T>& pixel, std::size_t i, std::size_t j) {
+    this->channels[0].set_value_at(std::get<0>(pixel), i, j);
+    this->channels[1].set_value_at(std::get<1>(pixel), i, j);
+    this->channels[2].set_value_at(std::get<2>(pixel), i, j);
+  }
+
+  void set_pixel_at(const std::tuple<T, T, T>& pixel,
+      std::pair<std::size_t, std::size_t> coordinate) {
+    set_value_at(pixel, std::get<0>(coordinate), std::get<1>(coordinate));
+  }
+
+  virtual ~ThreeChannelImage() = default;
+};
+
+
+template<typename T>
+class RGBImage : public ThreeChannelImage<T> {
+ public:
+  RGBImage(std::size_t width, std::size_t height, std::size_t bpp)
+      : ThreeChannelImage<T>(width, height, bpp, ImageType::RGB){};
+
+
+  RGBImage(RGBImage<T>&& other) noexcept
+      : ThreeChannelImage<T>(std::move(other)) {
+  }
+
+
+  RGBImage(const RGBImage<T>& other) : ThreeChannelImage<T>(other){};
 
 
   RGBImage& operator=(RGBImage<T>&& other) {
-    Image<T>::operator=(std::move(other));
+    ThreeChannelImage<T>::operator=(std::move(other));
     return *this;
   }
 
 
   inline bool operator==(const RGBImage<T>& other) const {
     return this->is_equal(other);
+  }
+
+  inline bool operator!=(const RGBImage<T>& other) const {
+    return !this->is_equal(other);
   }
 
 
@@ -227,22 +290,23 @@ class RGBImage : public Image<T> {
 
 
 template<typename T>
-class YCbCrImage : public Image<T> {
+class YCbCrImage : public ThreeChannelImage<T> {
  public:
   YCbCrImage(
       std::size_t width, std::size_t height, std::size_t bpp, ImageType type)
-      : Image<T>(width, height, bpp, 3, type){};
+      : ThreeChannelImage<T>(width, height, bpp, type){};
 
 
-  YCbCrImage(YCbCrImage<T>&& other) noexcept : Image<T>(std::move(other)) {
+  YCbCrImage(YCbCrImage<T>&& other) noexcept
+      : ThreeChannelImage<T>(std::move(other)) {
   }
 
 
-  YCbCrImage(const YCbCrImage<T>& other) : Image<T>(other){};
+  YCbCrImage(const YCbCrImage<T>& other) : ThreeChannelImage<T>(other){};
 
 
   YCbCrImage& operator=(YCbCrImage<T>&& other) {
-    Image<T>::operator=(std::move(other));
+    ThreeChannelImage<T>::operator=(std::move(other));
     return *this;
   }
 
@@ -363,6 +427,10 @@ class GrayScaleImage : public Image<T> {
 
   inline bool operator==(const GrayScaleImage<T>& other) const {
     return this->is_equal(other);
+  }
+
+  inline bool operator!=(const GrayScaleImage<T>& other) const {
+    return !this->is_equal(other);
   }
 
 
