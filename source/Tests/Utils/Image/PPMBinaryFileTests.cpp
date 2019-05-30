@@ -39,17 +39,42 @@
  */
 
 #include <iostream>
+#include "PixelMapFileIO.h"
 #include "PPMBinaryFile.h"
 #include "gtest/gtest.h"
 
+std::string resources_path = "../resources";
 
-TEST(InitialTest, testing) {
-	// auto file_original = PixelMapFileIO::open(std::string{"/home/iseidel/RAW/TAU/Greek/000_000.ppm"});
-	EXPECT_EQ(0,0);
+
+TEST(InitialTest, IsTypeP6) {
+	auto file_original = PixelMapFileIO::open({resources_path + "/rgb_pattern/pattern.ppm"});
+	EXPECT_EQ(PixelMapType::P6,file_original->get_type());
+}
+
+
+TEST(InitialTest, HasExpectedWidth) {
+	auto file_original = PixelMapFileIO::open({resources_path + "/rgb_pattern/pattern.ppm"});
+	EXPECT_EQ(13,file_original->get_width());
+}
+
+
+TEST(InitialTest, HasExpectedHeight) {
+	auto file_original = PixelMapFileIO::open({resources_path + "/rgb_pattern/pattern.ppm"});
+	EXPECT_EQ(13,file_original->get_height());
+}
+
+
+TEST(InitialTest, HasExpectedBpp) {
+	auto file_original = PixelMapFileIO::open({resources_path + "/rgb_pattern/pattern.ppm"});
+	EXPECT_EQ(10,file_original->get_number_of_bits_per_pixel());
 }
 
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
+  //this is to enable ctest to run the test passing the path to the resources
+  if (argc > 1) {
+    resources_path = std::string(argv[1]);
+  }
   return RUN_ALL_TESTS();
 }

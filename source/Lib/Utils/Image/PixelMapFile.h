@@ -108,6 +108,16 @@ class PixelMapFile : public ImageFile {
   }
 
 
+  decltype(width) get_width() const noexcept {
+    return width;
+  }
+
+
+  decltype(height) get_height() const noexcept {
+    return height;
+  }
+
+
   bool has_properties(PixelMapType type, std::size_t width, std::size_t height,
       std::size_t max_value) const noexcept {
     if (this->width != width)

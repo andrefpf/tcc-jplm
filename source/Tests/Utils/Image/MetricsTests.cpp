@@ -49,12 +49,14 @@ TEST(Metrics_PSNR, ThreesVector) {
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
+
 TEST(Metrics_PSNR, TwosVector) {
   std::vector<int> vector({2, 2});
   auto max_value = 255;
   EXPECT_DOUBLE_EQ(10.0 * std::log10((max_value * max_value) / 4.0),
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
+
 
 TEST(Metrics_PSNR, OnesVector) {
   std::vector<int> vector({1, 1, 1});
@@ -63,10 +65,12 @@ TEST(Metrics_PSNR, OnesVector) {
       Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
 
+
 TEST(Metrics_PSNR, MaxErrorPSNR) {
   std::vector<int> vector({255, 255});
   EXPECT_DOUBLE_EQ(0.0, Metrics::get_peak_signal_to_noise_ratio(vector, 255));
 }
+
 
 TEST(Metrics_PSNR, ZerosVectorMustResultInfinityRegardlessOfMax) {
   std::vector<int> vector({0, 0, 0, 0});
@@ -77,6 +81,7 @@ TEST(Metrics_PSNR, ZerosVectorMustResultInfinityRegardlessOfMax) {
   EXPECT_DOUBLE_EQ(std::numeric_limits<double>::infinity(),
       Metrics::get_peak_signal_to_noise_ratio(vector, 1023));
 }
+
 
 TEST(Metrics_PSNR, EmptyVector) {
   std::vector<int> vector;
@@ -89,20 +94,24 @@ TEST(Metrics_MSE, ThreesVector) {
   EXPECT_EQ(9, Metrics::get_mean_squared_error(vector));
 }
 
+
 TEST(Metrics_MSE, TwosVector) {
   std::vector<int> vector({2, 2});
   EXPECT_EQ(4, Metrics::get_mean_squared_error(vector));
 }
+
 
 TEST(Metrics_MSE, OnesVector) {
   std::vector<int> vector({1, 1, 1, 1});
   EXPECT_EQ(1, Metrics::get_mean_squared_error(vector));
 }
 
+
 TEST(Metrics_MSE, ZerosVector) {
   std::vector<int> vector({0, 0, 0, 0});
   EXPECT_EQ(0, Metrics::get_mean_squared_error(vector));
 }
+
 
 TEST(Metrics_MSE, EmptyVector) {
   std::vector<int> vector;
@@ -116,12 +125,14 @@ TEST(Metrics_SSE, ZerosVector) {
   EXPECT_EQ(0, Metrics::get_sum_of_squared_errors(vector));
 }
 
+
 TEST(Metrics_SSE, ThreesVector) {
   std::vector<int> vector({3, 3, 3});
   auto three_squared = 3 * 3;
   EXPECT_EQ(three_squared * vector.size(),
       Metrics::get_sum_of_squared_errors(vector));
 }
+
 
 TEST(Metrics_SSE, TwosVector) {
   std::vector<int> vector({2, 2});
@@ -130,15 +141,18 @@ TEST(Metrics_SSE, TwosVector) {
       two_squared * vector.size(), Metrics::get_sum_of_squared_errors(vector));
 }
 
+
 TEST(Metrics_SSE, OnesVector) {
   std::vector<int> vector({1, 1, 1, 1});
   EXPECT_EQ(vector.size(), Metrics::get_sum_of_squared_errors(vector));
 }
 
+
 TEST(Metrics_SSE, EmptyVector) {
   std::vector<int> vector;
   EXPECT_EQ(0, Metrics::get_sum_of_squared_errors(vector));
 }
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -44,7 +44,7 @@
 #include "gtest/gtest.h"
 
 
-std::string resources_path = std::string("../resources");
+std::string resources_path = "../resources";
 
 
 TEST(InitialTest, OppeningValidPathReturnsANonNullUniquePtr) {
