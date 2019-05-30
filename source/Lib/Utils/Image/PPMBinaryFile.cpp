@@ -120,14 +120,13 @@ std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_full_rgb_image() {
   if (file.is_open()) {
     auto image = std::make_unique<RGBImage<T>>(
         width, height, this->get_number_of_bits_per_pixel());
-    std::vector<std::tuple<T, T, T>> rgb_vector(image->get_number_of_pixels());
+    std::vector<std::tuple<T, T, T>> rgb_vector(image->get_number_of_pixels_per_channel());
     file.seekg(raster_begin);
     file.read(reinterpret_cast<char*>(rgb_vector.data()),
         rgb_vector.capacity() * sizeof(std::tuple<T, T, T>));
     if (!file) {
       std::cerr << "Expecting "
-                << image->get_number_of_pixels() *
-                       image->get_number_of_channels()
+                << image->get_number_of_pixels()
                 << " pixels." << std::endl;
       std::cerr << "Readed only " << file.gcount() << std::endl;
     }
