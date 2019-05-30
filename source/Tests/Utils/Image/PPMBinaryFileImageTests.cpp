@@ -46,6 +46,92 @@
 
 std::string resources_path = "../resources";
 
+
+struct EXPECT_EQ_VISITOR {
+  template<template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+  void operator()(const std::unique_ptr<ImageT0<T0>>& image_a,
+      const std::unique_ptr<ImageT1<T1>>& image_b) {
+    static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
+        "Fist param must be an image!");
+    static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
+        "Second param must be an image!");
+    if constexpr (std::is_same<T0, T1>::value) {
+      EXPECT_EQ(*(image_a.get()), *(image_b.get()));
+    }
+  }
+};
+
+struct EXPECT_NE_VISITOR {
+  template<template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+  void operator()(const std::unique_ptr<ImageT0<T0>>& image_a,
+      const std::unique_ptr<ImageT1<T1>>& image_b) {
+    static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
+        "Fist param must be an image!");
+    static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
+        "Second param must be an image!");
+    if constexpr (std::is_same<T0, T1>::value) {
+      EXPECT_NE(*(image_a.get()), *(image_b.get()));
+    }
+  }
+};
+
+struct PatternImageComparisons : testing::Test {
+ protected:
+  std::unique_ptr<PixelMapFile> file_pattern;
+  std::unique_ptr<PixelMapFile> file_copy;
+  std::unique_ptr<PixelMapFile> file_yellow_center;
+  PatternImageComparisons() {
+    file_pattern =
+        PixelMapFileIO::open({resources_path + "/rgb_pattern/pattern.ppm"});
+    file_copy = PixelMapFileIO::open(
+        {resources_path + "/rgb_pattern/pattern_copy.ppm"});
+    file_yellow_center = PixelMapFileIO::open(
+        {resources_path + "/rgb_pattern/pattern_yellow_center.ppm"});
+  }
+  ~PatternImageComparisons() = default;
+};
+
+
+TEST_F(PatternImageComparisons, EqualImagesMustBeEqual) {
+  auto image_pattern = file_pattern->read_full_image();
+  auto image_pattern_copy = file_copy->read_full_image();
+  std::visit(EXPECT_EQ_VISITOR(), image_pattern, image_pattern_copy);
+}
+
+
+TEST_F(PatternImageComparisons, OneDifferentPelMakesImagesToBeDifferent) {
+  auto image_pattern = file_pattern->read_full_image();
+  auto image_pattern_yellow = file_yellow_center->read_full_image();
+  std::visit(EXPECT_NE_VISITOR(), image_pattern, image_pattern_yellow);
+}
+
+
+TEST_F(
+    PatternImageComparisons, TwoImagesReadedFromTheSameFileImagesMustBeEqualA) {
+  auto image_pattern = file_pattern->read_full_image();
+  auto image_pattern_2 = file_pattern->read_full_image();
+  std::visit(EXPECT_EQ_VISITOR(), image_pattern, image_pattern_2);
+}
+
+
+TEST_F(
+    PatternImageComparisons, TwoImagesReadedFromTheSameFileImagesMustBeEqualB) {
+  auto image_pattern = file_yellow_center->read_full_image();
+  auto image_pattern_2 = file_yellow_center->read_full_image();
+  std::visit(EXPECT_EQ_VISITOR(), image_pattern, image_pattern_2);
+}
+
+
+TEST_F(
+    PatternImageComparisons, TwoImagesReadedFromTheSameFileImagesMustBeEqualC) {
+  auto image_pattern = file_copy->read_full_image();
+  auto image_pattern_2 = file_copy->read_full_image();
+  std::visit(EXPECT_EQ_VISITOR(), image_pattern, image_pattern_2);
+}
+
+
 struct PatternImageRead : testing::Test {
  protected:
   std::unique_ptr<PixelMapFile> file;
@@ -68,6 +154,7 @@ TEST_F(PatternImageRead, Width) {
   std::visit(
       [](auto& image) { EXPECT_EQ(image->get_width(), 13); }, image_readed);
 }
+
 
 TEST_F(PatternImageRead, Height) {
   auto image_readed = file->read_full_image();
@@ -237,6 +324,7 @@ TEST_F(PatternImageRead, CountBlues) {
       },
       image_readed);
 }
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);

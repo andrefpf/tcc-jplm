@@ -99,11 +99,22 @@ class Image {
     return *this;
   }
 
+
   Image& operator=(const Image& other) {
     if (this != &other) {
       this->channels = other.channels;
     }
     return *this;
+  }
+
+
+  bool operator==(const Image<T>& other) const {
+    return this->is_equal(other);
+  }
+
+
+  bool operator!=(const Image<T>& other) const {
+    return !(*this == other);
   }
 
 
