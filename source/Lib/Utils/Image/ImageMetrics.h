@@ -7,7 +7,7 @@
 #include "Metrics.h"
 
 namespace ImageMetrics {
-enum class Available { PSNR, MSE };
+enum class Available { PSNR, MSE, SSE };
 
 template<typename T>
 std::vector<double> get_peak_signal_to_noise_ratio(
@@ -185,7 +185,7 @@ struct SSEPrinter {
 
 struct SSEGetter {
   template<typename T1, typename T2>
-  void operator()(const std::unique_ptr<Image<T1>>& original,
+  std::vector<double> operator()(const std::unique_ptr<Image<T1>>& original,
       const std::unique_ptr<Image<T2>>& encoded) {
     if constexpr (std::is_same<T1, T2>::value) {
       return get_sum_of_squared_errors(*(original.get()), *(encoded.get()));

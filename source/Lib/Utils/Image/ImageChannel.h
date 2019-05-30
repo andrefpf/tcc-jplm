@@ -46,6 +46,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <algorithm>
+#include <functional>
 #include "ImageExceptions.h"
 #include "Metrics.h"
 
@@ -295,6 +297,39 @@ class ImageChannel {
   inline decltype(number_of_pixels) get_number_of_pixels() const noexcept {
     return number_of_pixels;
   }
+
+
+  void shift_pixels_by(int8_t shift) {
+    if(shift == 0)
+        return;
+
+    std::function<T(T)> used_shift;
+    if (shift < 0) { //i.e, negative
+        shift*=-1;
+        used_shift = [this, shift](T value) -> T { 
+          if constexpr (std::is_integral<T>::value) {
+            return value >> shift;  
+          }
+          return value; //FIXME
+          };
+    } else {
+        used_shift = [this, shift](T value) -> T { 
+          if constexpr (std::is_integral<T>::value) {
+            auto shifted = value << shift;
+            auto max = this->get_max_value();
+            if((shifted > max) || (shifted < value)) //overflow
+              return max;
+            return shifted;
+          }
+          return value; //FIXME
+        };
+    }
+
+    auto data_ptr = pixels.get();
+    std::transform(data_ptr, data_ptr+this->get_number_of_pixels(), data_ptr, used_shift);
+  }
+
+
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__ */

@@ -80,6 +80,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
     if (!file.is_open()) {
       std::cout << "File is not open.." << std::endl;
       if (!std::filesystem::exists(filename)) {
+        std::cout << "creating file " << filename << "  does not exists..." << std::endl;
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
         std::cout << "File created because it does not exists..." << std::endl;
         // std::fstream file(filename, std::ios::out);
@@ -91,8 +92,9 @@ class PPMBinaryFile : public PixelMapFileBinary {
           // std::cout << "I wrote" << std::endl;
         }
       } else {
+        std::cout << "File already exists, oppening again" << std::endl;
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        // std::cout << "now i oppened here" << std::endl;
+        std::cout << "now i oppened here" << std::endl;
       }
     }
     // std::cout << "This is the image type: " << image.get_type() << std::endl;
@@ -100,7 +102,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
     if (file.is_open()) {
       if (image.get_type() == ImageType::RGB) {
         std::vector<std::tuple<T, T, T>> rgb_vector(
-            image.get_number_of_pixels());
+            image.get_number_of_pixels_per_channel());
         const T* r_ptr = image[0].data();
         const T* g_ptr = image[1].data();
         const T* b_ptr = image[2].data();

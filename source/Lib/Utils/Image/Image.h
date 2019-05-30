@@ -188,6 +188,12 @@ class Image {
     return channels[i];
   }
 
+  void shift_pixels_by(int8_t shift) {
+    for(auto& channel: channels) {
+      channel.shift_pixels_by(shift);
+    }
+  }
+
 
   virtual std::vector<std::string> get_channel_names() const = 0;
 };

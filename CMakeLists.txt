@@ -55,6 +55,8 @@ add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
 
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
 
 
