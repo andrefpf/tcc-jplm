@@ -48,9 +48,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include "Generic2DStructure.h"
 #include "ImageExceptions.h"
 #include "Metrics.h"
-#include "Generic2DStructure.h"
 
 
 template<typename T>
@@ -101,6 +101,11 @@ class ImageChannel : public Generic2DStructure<T> {
 
 
   ~ImageChannel() = default;
+
+
+  virtual ImageChannel* generate_ptr_to_clone() const override {
+    return new ImageChannel(*this);
+  };
 
 
   void fill_with(const T value) {
@@ -198,8 +203,7 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
-  void set_value_at(
-      const T& value, const std::size_t i, const std::size_t j) {
+  void set_value_at(const T& value, const std::size_t i, const std::size_t j) {
     if (!is_value_valid(value)) {
       throw ImageChannelExceptions::InvalidValueException();
     }
@@ -207,8 +211,8 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
-  void set_value_at(const T& value,
-      const std::pair<std::size_t, std::size_t>& coordinate) {
+  void set_value_at(
+      const T& value, const std::pair<std::size_t, std::size_t>& coordinate) {
     if (!is_value_valid(value)) {
       throw ImageChannelExceptions::InvalidValueException();
     }

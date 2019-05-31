@@ -48,6 +48,7 @@ enum ImageType { Invalid, GrayScale, RGB, YCoCg, BT601, BT709, BT2020 };
 
 template<typename T>
 class Image {
+
  protected:
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
@@ -87,8 +88,15 @@ class Image {
     *this = std::move(other);
   }
 
+  auto clone() const {
+    return std::unique_ptr<Image<T>>(generate_ptr_to_clone()) ;
+  }
+
 
   virtual ~Image() = default;
+
+
+  virtual Image* generate_ptr_to_clone() const = 0;
 
 
   Image& operator=(Image&& other) {
@@ -189,7 +197,7 @@ class Image {
   }
 
   void shift_pixels_by(int8_t shift) {
-    for(auto& channel: channels) {
+    for (auto& channel : channels) {
       channel.shift_pixels_by(shift);
     }
   }
@@ -281,8 +289,14 @@ class RGBImage : public ThreeChannelImage<T> {
     return this->is_equal(other);
   }
 
+
   inline bool operator!=(const RGBImage<T>& other) const {
     return !this->is_equal(other);
+  }
+
+
+  virtual RGBImage* generate_ptr_to_clone() const override {
+    return new RGBImage<T>(*this);
   }
 
 
@@ -353,7 +367,13 @@ class BT601Image : public YCbCrImage<T> {
     return this->is_equal(other);
   }
 
+
   ~BT601Image() = default;
+
+
+  virtual BT601Image* generate_ptr_to_clone() const override {
+    return new BT601Image<T>(*this);
+  }
 };
 
 template<typename T>
@@ -379,7 +399,13 @@ class BT709Image : public YCbCrImage<T> {
     return this->is_equal(other);
   }
 
+
   ~BT709Image() = default;
+
+
+  virtual BT709Image* generate_ptr_to_clone() const override {
+    return new BT709Image<T>(*this);
+  }
 };
 
 template<typename T>
@@ -408,6 +434,11 @@ class BT2020Image : public YCbCrImage<T> {
   }
 
   ~BT2020Image() = default;
+
+
+  virtual BT2020Image* generate_ptr_to_clone() const override {
+    return new BT2020Image<T>(*this);
+  }
 };
 
 template<typename T>
@@ -445,6 +476,10 @@ class GrayScaleImage : public Image<T> {
 
   std::vector<std::string> get_channel_names() const final {
     return {"Gray"};
+  }
+
+  virtual GrayScaleImage* generate_ptr_to_clone() const override {
+    return new GrayScaleImage<T>(*this);
   }
 };
 

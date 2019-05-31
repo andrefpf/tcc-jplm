@@ -52,30 +52,68 @@ class View {
  public:
   static_assert(std::is_integral<T>::value, "The view type must be integral");
   View(std::unique_ptr<Image<T>> image) : image(std::move(image)){};
-  View() = default; //for now this is needed in the lightfield constructor
+  View() {
+  	std::cout << "This is the view default constructor..." << std::endl;
+  }
+   //for now this is needed in the lightfield constructor
 
-  View(const View<T>& other) : image(std::make_unique<Image<T>>(other.image)) {
+  View(const View<T>& other) : image(other.image->clone()) {
+  }
+
+  View(View<T>&& other) noexcept {
+  	std::cout << "Im in the view move constructor" << std::endl;
+    *this = std::move(other);
+  }
+
+
+  View<T>& operator=(View<T>&& other) noexcept {
+    if (this != &other) {
+      // std::cout << "Im in the view move assign" << std::endl;
+      // std::swap(this->image, other.image);
+      // other.image.release();
+      this->image = std::move(other.image);
+    }
+    return *this;
   }
 
   void operator=(const View<T>& other) {
-  	*(this->image.get()) = *(other.image.get());
+  	std::cout << "Im in copy assign" << std::endl;
+  	this->image = other.image->clone();
+  	// if (!this->image) {
+  	// } else {
+  	// 	this->image.reset();
+
+  	// 	// (other.image->clone());
+  	// }
   }
 
   ~View() = default;
 
   decltype(image->get_width()) get_width() const noexcept {
+  	if(!image) {
+  		return 0;	
+  	}
     return image->get_width();
   }
 
   decltype(image->get_height()) get_height() const noexcept {
+  	if(!image) {
+  		return 0;	
+  	}
     return image->get_height();
   }
 
   decltype(image->get_bpp()) get_bpp() const noexcept {
+  	if(!image) {
+  		return 0;	
+  	}
     return image->get_bpp();
   }
 
   ImageType get_image_type() const noexcept {
+  	if(!image) {
+  		return ImageType::Invalid;	
+  	}
     return image->get_type();
   }
 };

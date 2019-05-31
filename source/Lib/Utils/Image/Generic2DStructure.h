@@ -37,20 +37,22 @@
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-31
  */
- 
- #ifndef JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__
- #define JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__
- 
-#include <utility> //std::pair
-#include <vector>
-#include <memory> //unique_ptr
+
+#ifndef JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__
+#define JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__
+
 #include <iostream>
-#include "ImageExceptions.h" //FIXME: change the exceptions to be in namespace Generic2DStructure
+#include <memory>  //unique_ptr
+#include <utility>  //std::pair
+#include <vector>
+#include "ImageExceptions.h"  //FIXME: change the exceptions to be in namespace Generic2DStructure
 
 template<typename T>
 class Generic2DStructure {
-  // private:
-
+ private:
+  auto clone() const {
+    return std::unique_ptr<Generic2DStructure>(generate_ptr_to_clone());
+  }
 
  protected:
   const std::size_t width;
@@ -63,11 +65,20 @@ class Generic2DStructure {
   Generic2DStructure(const std::size_t width, const std::size_t height)
       : width(width), height(height), number_of_elements(width * height),
         elements(std::make_unique<T[]>(number_of_elements)) {
+    std::cout << "number of elements " << number_of_elements << std::endl;
     if (number_of_elements == 0)
       throw ImageChannelExceptions::InvalidSizeException();
   }
 
+
+  Generic2DStructure(const Generic2DStructure& other) : width(other.width), height(other.height), number_of_elements(other.number_of_elements) {
+  	//FIXME
+
+  }
+
   virtual ~Generic2DStructure() = default;
+
+  virtual Generic2DStructure* generate_ptr_to_clone() const = 0;
 
   void alloc_resources() {
     elements_for_2d_access.resize(height);
@@ -99,14 +110,42 @@ class Generic2DStructure {
 
 
   virtual void set_element_at(
+      const T&& element, const std::size_t i, const std::size_t j) {
+    if (!is_coordinate_valid(i, j)) {
+      throw ImageChannelExceptions::InvalidIndexWriteException();
+    }
+    std::cout << "Im 106" << std::endl;
+    std::cout << i * this->width + j << std::endl;
+    auto data_ptr = elements.get();
+
+    // printf("%p\n", data_ptr);
+    std::cout << "passei " << std::endl;
+    if constexpr (!std::is_integral<T>::value)
+      std::cout << data_ptr[i * this->width + j].get_width();
+    data_ptr[i * this->width + j] = element;  //std::move(element);
+  }
+
+
+  virtual void set_element_at(
       const T& element, const std::pair<std::size_t, std::size_t>& coordinate) {
     const auto& [i, j] = coordinate;
+    std::cout << "Im 115" << std::endl;
     set_element_at(element, i, j);
   }
 
 
-  T get_element_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+  virtual void set_element_at(const T&& element,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
     const auto& [i, j] = coordinate;
+    std::cout << "Im 122" << std::endl;
+    set_element_at(std::move(element), i, j);
+  }
+
+
+  T get_element_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
+    const auto& [i, j] = coordinate;
+    std::cout << "Im 130" << std::endl;
     return get_element_at(i, j);
   }
 
@@ -120,7 +159,7 @@ class Generic2DStructure {
     } else {
       //FIXME
       std::cerr << "ptr not set.. " << std::endl;
-      return 0;
+      exit(2);
     }
   }
 
@@ -150,4 +189,4 @@ class Generic2DStructure {
   }
 };
 
- #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_GENERIC2DSTRUCTURE_H__ */

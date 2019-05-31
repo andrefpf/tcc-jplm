@@ -46,12 +46,36 @@
 
 
 template<typename T>
-class Lightfield : public Generic2DStructure<View<T>>
-{
-public:
-	Lightfield(std::size_t width, std::size_t height) : Generic2DStructure<View<T>>(width, height) {};
-	~Lightfield() = default;
-	
+class Lightfield : public Generic2DStructure<View<T>> {
+ public:
+  Lightfield(std::size_t width, std::size_t height)
+      : Generic2DStructure<View<T>>(width, height){};
+
+  Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
+  	//FIXME
+  }
+
+  ~Lightfield() = default;
+
+  View<T> get_view_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
+    return this->get_element_at(coordinate);
+  }
+
+  void set_view_at(const View<T>& view,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    this->set_element_at(view, coordinate);
+  }
+
+  void set_view_at(const View<T>&& view,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    std::cout << "Estou nesse aqui" << std::endl;
+    this->set_element_at(std::move(view), coordinate);
+  }
+
+  virtual Lightfield* generate_ptr_to_clone() const override {
+    return new Lightfield(*this);
+  };
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__ */
