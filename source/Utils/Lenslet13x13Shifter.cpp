@@ -35,7 +35,7 @@
  *  \brief    Test of PPM Binary File reader/writer.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-31
+ *  \date     2019-05-30
  */
 
 #include <filesystem>

@@ -62,6 +62,121 @@ struct SmallRGBImage : testing::Test {
 };
 
 
+TEST_F(SmallRGBImage, MSEThrowsExceptionForDifferentWidthImages) {
+  auto rgb_different_width = RGBImage<uint16_t>(4, 2, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(rgb_image_a, rgb_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallRGBImage, MSEThrowsExceptionForDifferentHeightImages) {
+  auto rgb_different_height = RGBImage<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(rgb_image_a, rgb_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallRGBImage, MSEThrowsExceptionForDifferentSizeImages) {
+  auto rgb_different_size = RGBImage<uint16_t>(3, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(rgb_image_a, rgb_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallRGBImage, MSEThrowsExceptionForDifferentBppImages) {
+  auto rgb_different_bpp = RGBImage<uint16_t>(2, 2, 9);
+  EXPECT_THROW(ImageMetrics::get_mse(rgb_image_a, rgb_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallRGBImage, MSEThrowsExceptionForDifferentColorSpaces) {
+  auto bt_601_image = BT601Image<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, bt_601_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
+
+TEST_F(SmallRGBImage, SSEThrowsExceptionForDifferentWidthImages) {
+  auto rgb_different_width = RGBImage<uint16_t>(4, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, rgb_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallRGBImage, SSEThrowsExceptionForDifferentHeightImages) {
+  auto rgb_different_height = RGBImage<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_sum_of_squared_errors(
+                   rgb_image_a, rgb_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallRGBImage, SSEThrowsExceptionForDifferentSizeImages) {
+  auto rgb_different_size = RGBImage<uint16_t>(3, 3, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, rgb_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallRGBImage, SSEThrowsExceptionForDifferentBppImages) {
+  auto rgb_different_bpp = RGBImage<uint16_t>(2, 2, 9);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, rgb_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallRGBImage, SSEThrowsExceptionForDifferentColorSpaces) {
+  auto bt_601_image = BT601Image<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, bt_601_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
+
+
+TEST_F(SmallRGBImage, PSNRThrowsExceptionForDifferentWidthImages) {
+  auto rgb_different_width = RGBImage<uint16_t>(4, 2, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   rgb_image_a, rgb_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallRGBImage, PSNRThrowsExceptionForDifferentHeightImages) {
+  auto rgb_different_height = RGBImage<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   rgb_image_a, rgb_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallRGBImage, PSNRThrowsExceptionForDifferentSizeImages) {
+  auto rgb_different_size = RGBImage<uint16_t>(3, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   rgb_image_a, rgb_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallRGBImage, PSNRThrowsExceptionForDifferentBppImages) {
+  auto rgb_different_bpp = RGBImage<uint16_t>(2, 2, 9);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   rgb_image_a, rgb_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallRGBImage, PSNRThrowsExceptionForDifferentColorSpaces) {
+  auto bt_601_image = BT601Image<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(rgb_image_a, bt_601_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
+
+
 TEST_F(SmallRGBImage, RGBSameImageEqualSSEZero) {
   for (const auto& sse :
       ImageMetrics::get_sum_of_squared_errors(rgb_image_a, rgb_image_a)) {
@@ -299,6 +414,122 @@ struct SmallBT601Image : testing::Test {
     bt601_image_a.set_pixel_at(color, 1, 1);
   }
 };
+
+
+TEST_F(SmallBT601Image, MSEThrowsExceptionForDifferentWidthImages) {
+  auto bt601_different_width = BT601Image<uint16_t>(4, 2, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(bt601_image_a, bt601_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallBT601Image, MSEThrowsExceptionForDifferentHeightImages) {
+  auto bt601_different_height = BT601Image<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(bt601_image_a, bt601_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallBT601Image, MSEThrowsExceptionForDifferentSizeImages) {
+  auto bt601_different_size = BT601Image<uint16_t>(3, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_mse(bt601_image_a, bt601_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallBT601Image, MSEThrowsExceptionForDifferentBppImages) {
+  auto bt601_different_bpp = BT601Image<uint16_t>(2, 2, 9);
+  EXPECT_THROW(ImageMetrics::get_mse(bt601_image_a, bt601_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallBT601Image, MSEThrowsExceptionForDifferentColorSpaces) {
+  auto rgb_image = RGBImage<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(bt601_image_a, rgb_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
+
+
+TEST_F(SmallBT601Image, SSEThrowsExceptionForDifferentWidthImages) {
+  auto bt601_different_width = BT601Image<uint16_t>(4, 2, 10);
+  EXPECT_THROW(ImageMetrics::get_sum_of_squared_errors(
+                   bt601_image_a, bt601_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallBT601Image, SSEThrowsExceptionForDifferentHeightImages) {
+  auto bt601_different_height = BT601Image<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_sum_of_squared_errors(
+                   bt601_image_a, bt601_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallBT601Image, SSEThrowsExceptionForDifferentSizeImages) {
+  auto bt601_different_size = BT601Image<uint16_t>(3, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_sum_of_squared_errors(
+                   bt601_image_a, bt601_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallBT601Image, SSEThrowsExceptionForDifferentBppImages) {
+  auto bt601_different_bpp = BT601Image<uint16_t>(2, 2, 9);
+  EXPECT_THROW(ImageMetrics::get_sum_of_squared_errors(
+                   bt601_image_a, bt601_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallBT601Image, SSEThrowsExceptionForDifferentColorSpaces) {
+  auto rgb_image = RGBImage<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(bt601_image_a, rgb_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
+
+
+TEST_F(SmallBT601Image, PSNRThrowsExceptionForDifferentWidthImages) {
+  auto bt601_different_width = BT601Image<uint16_t>(4, 2, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   bt601_image_a, bt601_different_width),
+      MetricsExceptions::DifferentWidthImagesException);
+}
+
+
+TEST_F(SmallBT601Image, PSNRThrowsExceptionForDifferentHeightImages) {
+  auto bt601_different_height = BT601Image<uint16_t>(2, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   bt601_image_a, bt601_different_height),
+      MetricsExceptions::DifferentHeightImagesException);
+}
+
+
+TEST_F(SmallBT601Image, PSNRThrowsExceptionForDifferentSizeImages) {
+  auto bt601_different_size = BT601Image<uint16_t>(3, 3, 10);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   bt601_image_a, bt601_different_size),
+      MetricsExceptions::DifferentSizeImagesException);
+}
+
+
+TEST_F(SmallBT601Image, PSNRThrowsExceptionForDifferentBppImages) {
+  auto bt601_different_bpp = BT601Image<uint16_t>(2, 2, 9);
+  EXPECT_THROW(ImageMetrics::get_peak_signal_to_noise_ratio(
+                   bt601_image_a, bt601_different_bpp),
+      MetricsExceptions::DifferentBppImagesException);
+}
+
+
+TEST_F(SmallBT601Image, PSNRThrowsExceptionForDifferentColorSpaces) {
+  auto rgb_image = RGBImage<uint16_t>(2, 2, 10);
+  EXPECT_THROW(
+      ImageMetrics::get_sum_of_squared_errors(bt601_image_a, rgb_image),
+      MetricsExceptions::DifferentColorSpaceImagesException);
+}
 
 
 TEST_F(SmallBT601Image, RGBSameImageEqualSSEZero) {

@@ -50,8 +50,38 @@ namespace ImageMetrics {
 enum class Available { PSNR, MSE, SSE };
 
 template<typename T>
+void check_image_properties(
+    const Image<T>& original_image, const Image<T>& encoded_image) {
+  if (original_image.get_type() != encoded_image.get_type()) {
+    throw MetricsExceptions::DifferentColorSpaceImagesException();
+  }
+  auto same_width = true;
+  auto same_height = true;
+  if (original_image.get_width() != encoded_image.get_width()) {
+    same_width = false;
+  }
+  if (original_image.get_height() != encoded_image.get_height()) {
+    same_height = false;
+  }
+  if (!same_width && !same_height) {
+    throw MetricsExceptions::DifferentSizeImagesException();
+  }
+  if (!same_width) {
+    throw MetricsExceptions::DifferentWidthImagesException();
+  }
+  if (!same_height) {
+    throw MetricsExceptions::DifferentHeightImagesException();
+  }
+  if (original_image.get_bpp() != encoded_image.get_bpp()) {
+    throw MetricsExceptions::DifferentBppImagesException();
+  }
+}
+
+
+template<typename T>
 std::vector<double> get_peak_signal_to_noise_ratio(
     const Image<T>& original_image, const Image<T>& encoded_image) {
+  check_image_properties(original_image, encoded_image);
   auto number_of_channels = original_image.get_number_of_channels();
   auto rect_vector = std::vector<double>();
   rect_vector.reserve(number_of_channels);
@@ -68,6 +98,7 @@ std::vector<double> get_peak_signal_to_noise_ratio(
 template<typename T>
 std::vector<double> get_mse(
     const Image<T>& original_image, const Image<T>& encoded_image) {
+  check_image_properties(original_image, encoded_image);
   auto number_of_channels = original_image.get_number_of_channels();
   auto rect_vector = std::vector<double>();
   rect_vector.reserve(number_of_channels);
@@ -84,6 +115,7 @@ std::vector<double> get_mse(
 template<typename T>
 std::vector<double> get_sum_of_squared_errors(
     const Image<T>& original_image, const Image<T>& encoded_image) {
+  check_image_properties(original_image, encoded_image);
   auto number_of_channels = original_image.get_number_of_channels();
   auto rect_vector = std::vector<double>();
   rect_vector.reserve(number_of_channels);

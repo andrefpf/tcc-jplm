@@ -191,4 +191,45 @@ class HeightMustBeLargerThanZeroException : public std::exception {
 
 }  // namespace PixelMapFileIOExceptions
 
+
+namespace MetricsExceptions {
+
+class DifferentBppImagesException : public std::exception {
+  const char* what() const noexcept override {
+    return "Both images must have the same bpp for computing the metric.";
+  }
+};
+
+
+class DifferentHeightImagesException : public std::exception {
+  const char* what() const noexcept override {
+    return "Both images must have the same height for computing the metric.";
+  }
+};
+
+
+class DifferentWidthImagesException : public std::exception {
+  const char* what() const noexcept override {
+    return "Both images must have the same width for computing the metric.";
+  }
+};
+
+
+class DifferentSizeImagesException : public std::exception {
+  const char* what() const noexcept override {
+    return "Both images must have the same size for computing the metric.";
+  }
+};
+
+
+class DifferentColorSpaceImagesException : public std::exception {
+  const char* what() const noexcept override {
+    return "Both images must be at the same color space to enable computing "
+           "the metric.";
+  }
+};
+
+
+}  // namespace MetricsExceptions
+
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */
