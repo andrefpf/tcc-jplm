@@ -90,6 +90,13 @@ class InexistentPathException : public std::exception {
 };
 
 
+class FileAlreadyExistsException : public std::exception {
+  const char* what() const noexcept override {
+    return "File already exists and I will not overwrite it.";
+  }
+};
+
+
 class InexistentFileException : public std::exception {
   const char* what() const noexcept override {
     return "Inexistent file.";
