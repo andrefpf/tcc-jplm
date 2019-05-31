@@ -70,13 +70,6 @@ class Generic2DStructure {
   virtual ~Generic2DStructure() = default;
 
   void alloc_resources() {
-    // number_of_pixels = width * height;
-    if (!elements) {
-      elements = std::make_unique<T[]>(number_of_elements);
-    }
-    if (elements_for_2d_access.size() != 0)
-      elements_for_2d_access.clear();
-
     elements_for_2d_access.resize(height);
     for (auto i = decltype(height){0}; i < height; ++i) {
       elements_for_2d_access[i] = &elements[i * width];

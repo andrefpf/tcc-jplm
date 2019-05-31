@@ -31,27 +31,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Lightfield.h
- *  \brief    
+/** \file     LightfieldTests.cpp
+ *  \brief    Test of lightfield.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-31
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
-#define JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
-
-#include "Generic2DStructure.h"
-#include "View.h"
+#include <iostream>
+#include "Lib/Part2/Common/Lightfield.h"
+#include "gtest/gtest.h"
 
 
-template<typename T>
-class Lightfield : public Generic2DStructure<View<T>>
-{
-public:
-	Lightfield(std::size_t width, std::size_t height) : Generic2DStructure<View<T>>(width, height) {};
-	~Lightfield() = default;
-	
-};
+TEST(InitialLightfieldTests, LightfieldHoldsGivenWidth) {
+	Lightfield<uint16_t> lightfield(2,3);
+	EXPECT_EQ(lightfield.get_width(), 2);
+}
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__ */
+
+TEST(InitialLightfieldTests, LightfieldHoldsGivenHeight) {
+	Lightfield<uint16_t> lightfield(2,3);
+	EXPECT_EQ(lightfield.get_height(), 3);
+}
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
