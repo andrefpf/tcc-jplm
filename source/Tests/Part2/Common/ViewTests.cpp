@@ -43,6 +43,36 @@
 #include "gtest/gtest.h"
 
 
+TEST(InitialViewTests, ViewHasSameWidthAsItsInitializerImage) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image_width = image->get_width();
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_EQ(view.get_width(), image_width);
+}
+
+
+TEST(InitialViewTests, ViewHasSameHeightAsItsInitializerImage) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image_height = image->get_height();
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_EQ(view.get_height(), image_height);
+}
+
+
+TEST(InitialViewTests, ViewHasSameBppAsItsInitializerImage) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image_bpp = image->get_bpp();
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_EQ(view.get_bpp(), image_bpp);
+}
+
+
+TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image_type = image->get_type();
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_EQ(view.get_image_type(), image_type);
+}
 
 
 int main(int argc, char *argv[]) {

@@ -41,12 +41,34 @@
 #ifndef JPLM_LIB_PART2_COMMON_VIEW_H__
 #define JPLM_LIB_PART2_COMMON_VIEW_H__
 
+#include <type_traits> //is_integral
+#include <Image.h>
+
+template <typename T>
 class View
 {
+private:
+	std::unique_ptr<Image<T>> image;
 public:
-	View() = default;
+	static_assert(std::is_integral<T>::value, "The view type must be integral");
+	View(std::unique_ptr<Image<T>> image): image(std::move(image)) {};
 	~View() = default;
-	
+
+	decltype(image->get_width()) get_width() const noexcept {
+		return image->get_width();
+	}
+
+	decltype(image->get_height()) get_height() const noexcept {
+		return image->get_height();
+	}
+
+	decltype(image->get_bpp()) get_bpp() const noexcept {
+		return image->get_bpp();
+	}
+
+	ImageType get_image_type() const noexcept {
+		return image->get_type();
+	}
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEW_H__ */
