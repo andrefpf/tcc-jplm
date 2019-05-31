@@ -187,8 +187,8 @@ TEST_F(ImageChannelTestUInt16T, ImageChannelGetNumberOfPixels) {
 TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOuNot) {
   for (auto i = 0; i < width + 100; ++i) {
     for (auto j = 0; j < height + 100; ++j) {
-      EXPECT_EQ(image_channel->is_index_valid({i, j}),
-          image_channel->is_index_valid(i, j));
+      EXPECT_EQ(image_channel->is_coordinate_valid({i, j}),
+          image_channel->is_coordinate_valid(i, j));
     }
   }
 }
@@ -197,21 +197,22 @@ TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOuNot) {
 TEST_F(ImageChannelTestUInt16T, ValidIndexMustBeValidated) {
   for (auto i = 0; i < width; ++i) {
     for (auto j = 0; j < height; ++j) {
-      EXPECT_TRUE(image_channel->is_index_valid(i, j));
+      EXPECT_TRUE(image_channel->is_coordinate_valid(i, j));
     }
   }
 }
 
 
 TEST_F(ImageChannelTestUInt16T, InvalidIndexMustBeNotValidated) {
-  EXPECT_FALSE(image_channel->is_index_valid(width - 1, height));
-  EXPECT_FALSE(image_channel->is_index_valid(width, height - 1));
-  EXPECT_FALSE(image_channel->is_index_valid(width, height));
+  EXPECT_FALSE(image_channel->is_coordinate_valid(width - 1, height));
+  EXPECT_FALSE(image_channel->is_coordinate_valid(width, height - 1));
+  EXPECT_FALSE(image_channel->is_coordinate_valid(width, height));
 }
 
 
 TEST_F(ImageChannelTestUInt16T, SetInInvalidIndexMustThrow) {
   auto value = 42;
+  std::cout << value << std::endl;
   EXPECT_THROW(image_channel->set_value_at(value, width - 1, height),
       ImageChannelExceptions::InvalidIndexWriteException);
   EXPECT_THROW(image_channel->set_value_at(value, width, height - 1),

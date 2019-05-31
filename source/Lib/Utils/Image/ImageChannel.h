@@ -42,41 +42,23 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__
 
 #include <inttypes.h>
+#include <algorithm>
 #include <cstring>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <algorithm>
-#include <functional>
 #include "ImageExceptions.h"
 #include "Metrics.h"
+#include "Generic2DStructure.h"
+
 
 template<typename T>
-class ImageChannel {
+class ImageChannel : public Generic2DStructure<T> {
  private:
-  const std::size_t width;
-  const std::size_t height;
   const std::size_t bpp;
-  const std::size_t number_of_pixels = 0;
-  std::unique_ptr<T[]> pixels;
-  std::vector<T*> pixels_2d;
 
-
-  void alloc_resources() {
-    // number_of_pixels = width * height;
-    if (!pixels) {
-      pixels = std::make_unique<T[]>(number_of_pixels);
-    }
-    if (pixels_2d.size() != 0)
-      pixels_2d.clear();
-
-    pixels_2d.resize(height);
-    for (auto i = decltype(height){0}; i < height; ++i) {
-      pixels_2d[i] = &pixels[i * width];
-    }
-  }
-
-
+ protected:
   inline bool is_value_valid(const T value) {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return (get_min_value() <= value && value <= get_max_value());
@@ -88,34 +70,31 @@ class ImageChannel {
  public:
   ImageChannel(
       const std::size_t width, const std::size_t height, const std::size_t bpp)
-      : width(width), height(height), bpp(bpp),
-        number_of_pixels(width * height),
-        pixels(std::make_unique<T[]>(number_of_pixels)) {
-    if (number_of_pixels == 0 || bpp == 0)
+      : Generic2DStructure<T>(width, height), bpp(bpp) {
+    if (bpp == 0)
       throw ImageChannelExceptions::InvalidSizeException();
-    alloc_resources();
+    this->alloc_resources();
   }
 
 
   ImageChannel(const ImageChannel<T>& other) noexcept
-      : width(other.width), height(other.height), bpp(other.bpp),
-        number_of_pixels(other.number_of_pixels) {
-    alloc_resources();
-    std::memcpy(pixels.get(), other.pixels.get(), number_of_pixels * sizeof(T));
+      : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
+    this->alloc_resources();
+    std::memcpy(this->elements.get(), other.elements.get(),
+        this->number_of_elements * sizeof(T));
   }
 
 
   ImageChannel(ImageChannel<T>&& other) noexcept
-      : width(other.width), height(other.height), bpp(other.bpp),
-        number_of_pixels(other.number_of_pixels) {
+      : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
     *this = std::move(other);
   }
 
 
   ImageChannel<T>& operator=(ImageChannel<T>&& other) noexcept {
     if (this != &other) {
-      pixels = std::move(other.pixels);
-      std::swap(pixels_2d, other.pixels_2d);
+      this->elements = std::move(other.elements);
+      std::swap(this->elements_for_2d_access, other.elements_for_2d_access);
     }
     return *this;
   }
@@ -126,66 +105,13 @@ class ImageChannel {
 
   void fill_with(const T value) {
     if constexpr (std::is_same<T, uint8_t>::value) {
-      std::memset(pixels.get(), value, number_of_pixels);
+      std::memset(this->elements.get(), value, this->number_of_elements);
     } else {
-      for (auto i = decltype(number_of_pixels){0}; i < number_of_pixels; ++i) {
-        pixels[i] = value;
+      for (auto i = decltype(this->number_of_elements){0};
+           i < this->number_of_elements; ++i) {
+        this->elements[i] = value;
       }
     }
-  }
-
-
-  inline bool is_index_valid(
-      const std::pair<std::size_t, std::size_t> index) const {
-    auto [i, j] = index;
-    return i < width && j < height;
-  }
-
-
-  inline bool is_index_valid(const std::size_t i, std::size_t j) const {
-    return is_index_valid({i, j});
-  }
-
-
-  void set_value_at(
-      const T value, const std::pair<std::size_t, std::size_t> coordinate) {
-    const auto& [i, j] = coordinate;
-    set_value_at(value, i, j);
-  }
-
-
-  void set_value_at(const T value, const std::size_t i, const std::size_t j) {
-    if (!is_index_valid(i, j)) {
-      throw ImageChannelExceptions::InvalidIndexWriteException();
-    }
-    if (!is_value_valid(value)) {
-      throw ImageChannelExceptions::InvalidValueException();
-    }
-    pixels[i * width + j] = value;
-  }
-
-
-  T get_value_at(const std::pair<std::size_t, std::size_t> coordinate) const {
-    const auto& [i, j] = coordinate;
-    return get_value_at(i, j);
-  }
-
-
-  T get_value_at(const std::size_t i, std::size_t j) const {
-    if (!is_index_valid(i, j)) {
-      throw ImageChannelExceptions::InvalidIndexReadException();
-    }
-    if (this->pixels != nullptr) {
-      return pixels[i * width + j];
-    } else {
-      std::cerr << "ptr not set.. " << std::endl;
-      return 0;
-    }
-  }
-
-
-  inline T* data() const {
-    return pixels.get();
   }
 
 
@@ -207,10 +133,11 @@ class ImageChannel {
 
 
   std::vector<T> as_raster_vector() {
-    auto temp_ptr = pixels.get();
+    auto temp_ptr = this->elements.get();
     auto ret_vector = std::vector<T>();
-    ret_vector.reserve(number_of_pixels);
-    for (auto i = decltype(number_of_pixels){0}; i < number_of_pixels; ++i) {
+    ret_vector.reserve(this->number_of_elements);
+    for (auto i = decltype(this->number_of_elements){0};
+         i < this->number_of_elements; ++i) {
       ret_vector.emplace_back(*temp_ptr);
       ++temp_ptr;
     }
@@ -219,25 +146,21 @@ class ImageChannel {
 
 
   inline T* operator[](const int i) {
-    return pixels_2d[i];
+    return this->elements_for_2d_access[i];
   }
 
 
   inline const T* operator[](const int i) const {
-    return pixels_2d[i];
-  }
-
-
-  bool has_equal_size(const ImageChannel<T>& other) const noexcept {
-    return (other.width == width) && (other.height == height);
+    return this->elements_for_2d_access[i];
   }
 
 
   bool operator==(const ImageChannel<T>& other) const {
-    if (!has_equal_size(other))
+    if (!this->has_equal_size(other))
       return false;
-    for (auto i = decltype(number_of_pixels){0}; i < number_of_pixels; ++i) {
-      if (pixels[i] != other.data()[i])
+    for (auto i = decltype(this->number_of_elements){0};
+         i < this->number_of_elements; ++i) {
+      if (this->elements[i] != other.data()[i])
         return false;
     }
     return true;
@@ -245,10 +168,11 @@ class ImageChannel {
 
 
   void operator=(const ImageChannel<T>& other) {
-    if (!has_equal_size(other)) {  //needs to realloc
-      alloc_resources();
+    if (!this->has_equal_size(other)) {  //needs to realloc
+      this->alloc_resources();
     }
-    std::memcpy(pixels.get(), other.pixels.get(), number_of_pixels * sizeof(T));
+    std::memcpy(this->elements.get(), other.elements.get(),
+        this->number_of_elements * sizeof(T));
   }
 
 
@@ -257,13 +181,13 @@ class ImageChannel {
 
   ImageChannel<signed_type> operator-(const ImageChannel<T>& other) const {
     auto max_bpp = std::max(bpp, other.bpp);
-    auto difference_image = ImageChannel<signed_type>(
-        width, height, max_bpp + 1);  //needs one bit more than the inputs
+    auto difference_image = ImageChannel<signed_type>(this->width, this->height,
+        max_bpp + 1);  //needs one bit more than the inputs
 
-    auto this_ptr = pixels.get();
+    auto this_ptr = this->elements.get();
     auto other_ptr = other.data();
     auto diff_ptr = difference_image.data();
-    for (std::size_t i = 0; i < number_of_pixels; ++i) {
+    for (std::size_t i = 0; i < this->number_of_elements; ++i) {
       *diff_ptr = static_cast<signed_type>(*this_ptr - *other_ptr);
       ++diff_ptr;
       ++this_ptr;
@@ -274,62 +198,72 @@ class ImageChannel {
   }
 
 
-  inline decltype(width) get_width() const noexcept {
-    return width;
+  void set_value_at(
+      const T& value, const std::size_t i, const std::size_t j) {
+    if (!is_value_valid(value)) {
+      throw ImageChannelExceptions::InvalidValueException();
+    }
+    Generic2DStructure<T>::set_element_at(value, i, j);
   }
 
 
-  inline decltype(height) get_height() const noexcept {
-    return height;
+  void set_value_at(const T& value,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    if (!is_value_valid(value)) {
+      throw ImageChannelExceptions::InvalidValueException();
+    }
+    Generic2DStructure<T>::set_element_at(
+        value, std::get<0>(coordinate), std::get<1>(coordinate));
   }
 
-
-  inline auto get_dimension() const noexcept {
-    return std::make_pair(width, height);
+  T get_value_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+    return this->get_element_at(coordinate);
   }
 
+  T get_value_at(const std::size_t i, const std::size_t j) const {
+    return this->get_element_at(i, j);
+  }
 
   inline decltype(bpp) get_bpp() const noexcept {
     return bpp;
   }
 
 
-  inline decltype(number_of_pixels) get_number_of_pixels() const noexcept {
-    return number_of_pixels;
+  inline auto get_number_of_pixels() const noexcept {
+    return this->number_of_elements;
   }
 
 
   void shift_pixels_by(int8_t shift) {
-    if(shift == 0)
-        return;
+    if (shift == 0)
+      return;
 
     std::function<T(T)> used_shift;
-    if (shift < 0) { //i.e, negative
-        shift*=-1;
-        used_shift = [this, shift](T value) -> T { 
-          if constexpr (std::is_integral<T>::value) {
-            return value >> shift;  
-          }
-          return value; //FIXME
-          };
+    if (shift < 0) {  //i.e, negative
+      shift *= -1;
+      used_shift = [this, shift](T value) -> T {
+        if constexpr (std::is_integral<T>::value) {
+          return value >> shift;
+        }
+        return value;  //FIXME
+      };
     } else {
-        used_shift = [this, shift](T value) -> T { 
-          if constexpr (std::is_integral<T>::value) {
-            auto shifted = value << shift;
-            auto max = this->get_max_value();
-            if((shifted > max) || (shifted < value)) //overflow
-              return max;
-            return shifted;
-          }
-          return value; //FIXME
-        };
+      used_shift = [this, shift](T value) -> T {
+        if constexpr (std::is_integral<T>::value) {
+          auto shifted = value << shift;
+          auto max = this->get_max_value();
+          if ((shifted > max) || (shifted < value))  //overflow
+            return max;
+          return shifted;
+        }
+        return value;  //FIXME
+      };
     }
 
-    auto data_ptr = pixels.get();
-    std::transform(data_ptr, data_ptr+this->get_number_of_pixels(), data_ptr, used_shift);
+    auto data_ptr = this->elements.get();
+    std::transform(data_ptr, data_ptr + this->get_number_of_pixels(), data_ptr,
+        used_shift);
   }
-
-
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGECHANNEL_H__ */
