@@ -134,7 +134,7 @@ struct PPMBinaryWriteTests : public testing::Test {
   }
 
   ~PPMBinaryWriteTests() {
-  	namespace fs = std::filesystem;
+    namespace fs = std::filesystem;
     if (fs::exists(output_filename)) {
       fs::remove(output_filename);
     }
@@ -178,7 +178,8 @@ TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFileThatCanBeOppened) {
 }
 
 
-TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFileThatContatinsSameDataAsTheWrittenImage) {
+TEST_F(PPMBinaryWriteTests,
+    ImageWriteCreatesAFileThatContatinsSameDataAsTheWrittenImage) {
   namespace fs = std::filesystem;
   if (fs::exists(output_filename)) {
     fs::remove(output_filename);

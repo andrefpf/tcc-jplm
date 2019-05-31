@@ -38,8 +38,8 @@
  *  \date     2019-05-07
  */
 
-#ifndef PIXELMAPFILEIO_H__
-#define PIXELMAPFILEIO_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
+#define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
 
 // #include <inttypes.h>
 // #include <cmath>
@@ -67,4 +67,4 @@ std::unique_ptr<PixelMapFile> open(const std::string& filename,
 }  // namespace PixelMapFileIO
 
 
-#endif /* end of include guard: PIXELMAPFILEIO_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__ */

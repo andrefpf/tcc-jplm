@@ -38,8 +38,8 @@
  *  \date     2019-05-28
  */
 
-#ifndef PIXELMAPFILE_H__
-#define PIXELMAPFILE_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
+#define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
 
 #include "ImageFile.h"
 
@@ -154,4 +154,4 @@ class PixelMapFile : public ImageFile {
       std::pair<std::size_t, std::size_t> lenght) = 0;
 };
 
-#endif /* end of include guard: PIXELMAPFILE_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-05-28
  */
 
-#ifndef PIXELMAPFILEBINARY_H__
-#define PIXELMAPFILEBINARY_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__
+#define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__
 
 #include "PixelMapFile.h"
 
@@ -71,4 +71,4 @@ class PixelMapFileBinary : public PixelMapFile {
   read_full_image() = 0;
 };
 
-#endif /* end of include guard: PIXELMAPFILEBINARY_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__ */

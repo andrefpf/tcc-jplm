@@ -38,8 +38,8 @@
  *  \date     2019-05-28
  */
 
-#ifndef PPMBINARYFILE_H__
-#define PPMBINARYFILE_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_PPMBINARYFILE_H__
+#define JPLM_LIB_UTILS_IMAGE_PPMBINARYFILE_H__
 
 #include "ImageColorSpacesConversor.h"
 #include "PixelMapFileBinary.h"
@@ -218,4 +218,4 @@ class PPMBinaryFile : public PixelMapFileBinary {
   }
 };
 
-#endif /* end of include guard: PPMBINARYFILE_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PPMBINARYFILE_H__ */

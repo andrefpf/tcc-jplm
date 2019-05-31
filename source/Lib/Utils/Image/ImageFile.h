@@ -38,8 +38,8 @@
  *  \date     2019-05-08
  */
 
-#ifndef IMAGEFILE_H__
-#define IMAGEFILE_H__
+#ifndef JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__
+#define JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__
 
 #include <inttypes.h>
 #include <cmath>
@@ -62,4 +62,4 @@ class ImageFile {
   }
 };
 
-#endif /* end of include guard: IMAGEFILE_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__ */
