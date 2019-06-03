@@ -66,6 +66,17 @@ TEST(InitialLightfieldTests, MoveView) {
 }
 
 
+TEST(InitialLightfieldTests, CopyView) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto view = View<uint16_t>(std::move(image));
+  auto lightfield = Lightfield<uint16_t>(2,3);
+  std::cout << "Created lightfield" << std::endl;
+  lightfield.set_view_at(view, {0,0});
+  std::cout << "set view at lightfield" << std::endl;
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), 2);
+}
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

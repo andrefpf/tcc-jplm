@@ -65,15 +65,15 @@ class Generic2DStructure {
   Generic2DStructure(const std::size_t width, const std::size_t height)
       : width(width), height(height), number_of_elements(width * height),
         elements(std::make_unique<T[]>(number_of_elements)) {
-    std::cout << "number of elements " << number_of_elements << std::endl;
     if (number_of_elements == 0)
       throw ImageChannelExceptions::InvalidSizeException();
   }
 
 
-  Generic2DStructure(const Generic2DStructure& other) : width(other.width), height(other.height), number_of_elements(other.number_of_elements) {
-  	//FIXME
-
+  Generic2DStructure(const Generic2DStructure& other)
+      : width(other.width), height(other.height),
+        number_of_elements(other.number_of_elements) {
+    //FIXME
   }
 
   virtual ~Generic2DStructure() = default;
@@ -110,57 +110,60 @@ class Generic2DStructure {
 
 
   virtual void set_element_at(
-      const T&& element, const std::size_t i, const std::size_t j) {
+      T&& element, const std::size_t i, const std::size_t j) {
     if (!is_coordinate_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
-    std::cout << "Im 106" << std::endl;
-    std::cout << i * this->width + j << std::endl;
     auto data_ptr = elements.get();
-
-    // printf("%p\n", data_ptr);
-    std::cout << "passei " << std::endl;
     if constexpr (!std::is_integral<T>::value)
-      std::cout << data_ptr[i * this->width + j].get_width();
-    data_ptr[i * this->width + j] = element;  //std::move(element);
+      std::cout << data_ptr[i * this->width + j].get_width() << std::endl;
+    data_ptr[i * this->width + j] = std::move(element);
   }
 
 
   virtual void set_element_at(
       const T& element, const std::pair<std::size_t, std::size_t>& coordinate) {
     const auto& [i, j] = coordinate;
-    std::cout << "Im 115" << std::endl;
     set_element_at(element, i, j);
   }
 
 
-  virtual void set_element_at(const T&& element,
-      const std::pair<std::size_t, std::size_t>& coordinate) {
+  virtual void set_element_at(
+      T&& element, const std::pair<std::size_t, std::size_t>& coordinate) {
     const auto& [i, j] = coordinate;
-    std::cout << "Im 122" << std::endl;
     set_element_at(std::move(element), i, j);
   }
 
 
-  T get_element_at(
+  T& get_element_reference_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
     const auto& [i, j] = coordinate;
-    std::cout << "Im 130" << std::endl;
-    return get_element_at(i, j);
+    return get_element_reference_at(i, j);
   }
 
 
-  T get_element_at(const std::size_t i, const std::size_t j) const {
-    if (!is_coordinate_valid(i, j)) {
-      throw ImageChannelExceptions::InvalidIndexReadException();
-    }
-    if (this->elements != nullptr) {
-      return this->elements[i * this->width + j];
-    } else {
+  T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
+    if (!elements) {
       //FIXME
       std::cerr << "ptr not set.. " << std::endl;
       exit(2);
     }
+    if (!is_coordinate_valid(i, j)) {
+      throw ImageChannelExceptions::InvalidIndexReadException();
+    }
+
+    return this->elements[i * this->width + j];
+  }
+
+
+  T get_element_value_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
+    return get_element_reference_at(coordinate);
+  }
+
+
+  T get_element_value_at(const std::size_t i, const std::size_t j) const {
+    return get_element_reference_at(i, j);
   }
 
 

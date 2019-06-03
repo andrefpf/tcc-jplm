@@ -220,13 +220,16 @@ class ImageChannel : public Generic2DStructure<T> {
         value, std::get<0>(coordinate), std::get<1>(coordinate));
   }
 
+
   T get_value_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
-    return this->get_element_at(coordinate);
+    return this->get_element_value_at(coordinate);
   }
 
+
   T get_value_at(const std::size_t i, const std::size_t j) const {
-    return this->get_element_at(i, j);
+    return this->get_element_value_at(i, j);
   }
+
 
   inline decltype(bpp) get_bpp() const noexcept {
     return bpp;
