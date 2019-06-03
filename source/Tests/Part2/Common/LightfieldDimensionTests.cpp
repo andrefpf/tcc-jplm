@@ -42,78 +42,129 @@
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "gtest/gtest.h"
 
-struct SimpleLFDimensionTest: public testing::Test
-{
-	protected:
-		std::size_t t=2;
-		std::size_t s=4;
-		std::size_t v=6;
-		std::size_t u=8;
-		std::unique_ptr<LightfieldDimension<std::size_t>> dimension;
+struct SimpleLFDimensionTest : public testing::Test {
+ protected:
+  std::size_t t = 2;
+  std::size_t s = 4;
+  std::size_t v = 6;
+  std::size_t u = 8;
+  std::unique_ptr<LightfieldDimension<std::size_t>> dimension;
 
-	SimpleLFDimensionTest() : dimension(std::make_unique<LightfieldDimension<std::size_t>>(t, s, v, u)) {};
+  SimpleLFDimensionTest()
+      : dimension(
+            std::make_unique<LightfieldDimension<std::size_t>>(t, s, v, u)){};
 };
 
 
 TEST_F(SimpleLFDimensionTest, GetTMustGetInitialValues) {
-	const auto [ret_t, ret_s, ret_v, ret_u] = dimension->get();
-	EXPECT_EQ(ret_t, t);
-	EXPECT_EQ(ret_s, s);
-	EXPECT_EQ(ret_v, v);
-	EXPECT_EQ(ret_u, u);
+  const auto [ret_t, ret_s, ret_v, ret_u] = dimension->get();
+  EXPECT_EQ(ret_t, t);
+  EXPECT_EQ(ret_s, s);
+  EXPECT_EQ(ret_v, v);
+  EXPECT_EQ(ret_u, u);
 }
 
+TEST_F(
+    SimpleLFDimensionTest, DimensionMustGetInitialValuesForStructuredBinding) {
+  const auto [ret_t, ret_s, ret_v, ret_u] =
+      *(dimension.get());  //the current get is from the unique_ptr
+  EXPECT_EQ(ret_t, t);
+  EXPECT_EQ(ret_s, s);
+  EXPECT_EQ(ret_v, v);
+  EXPECT_EQ(ret_u, u);
+}
 
 TEST_F(SimpleLFDimensionTest, GetTMustGetInitialT) {
-	EXPECT_EQ(dimension->get_t(), t);
+  EXPECT_EQ(dimension->get_t(), t);
 }
 
 
 TEST_F(SimpleLFDimensionTest, GetSMustGetInitialS) {
-	EXPECT_EQ(dimension->get_s(), s);
+  EXPECT_EQ(dimension->get_s(), s);
 }
 
 
 TEST_F(SimpleLFDimensionTest, GetVMustGetInitialV) {
-	EXPECT_EQ(dimension->get_v(), v);
+  EXPECT_EQ(dimension->get_v(), v);
 }
 
 
 TEST_F(SimpleLFDimensionTest, GetUMustGetInitialU) {
-	EXPECT_EQ(dimension->get_u(), u);
+  EXPECT_EQ(dimension->get_u(), u);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex0TMustGetInitialT) {
+  EXPECT_EQ(dimension->get<0>(), t);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex1SMustGetInitialS) {
+  EXPECT_EQ(dimension->get<1>(), s);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex2VMustGetInitialV) {
+  EXPECT_EQ(dimension->get<2>(), v);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex3UMustGetInitialU) {
+  EXPECT_EQ(dimension->get<3>(), u);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex0TMustGetSameAsGetT) {
+  EXPECT_EQ(dimension->get<0>(), dimension->get_t());
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex1SMustGetSameAsGetS) {
+  EXPECT_EQ(dimension->get<1>(), dimension->get_s());
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex2VMustGetSameAsGetV) {
+  EXPECT_EQ(dimension->get<2>(), dimension->get_v());
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetUsingIndex3UMustGetSameAsGetU) {
+  EXPECT_EQ(dimension->get<3>(), dimension->get_u());
 }
 
 
 TEST_F(SimpleLFDimensionTest, SetMustChangeDimensionsInTheNextGet) {
-	dimension->set({1,2,3,4});
-	const auto [ret_t, ret_s, ret_v, ret_u] = dimension->get();
-	EXPECT_EQ(ret_t, 1);
-	EXPECT_EQ(ret_s, 2);
-	EXPECT_EQ(ret_v, 3);
-	EXPECT_EQ(ret_u, 4);
+  dimension->set({1, 2, 3, 4});
+  const auto [ret_t, ret_s, ret_v, ret_u] = dimension->get();
+  EXPECT_EQ(ret_t, 1);
+  EXPECT_EQ(ret_s, 2);
+  EXPECT_EQ(ret_v, 3);
+  EXPECT_EQ(ret_u, 4);
 }
 
+
 TEST_F(SimpleLFDimensionTest, SetTMustChangeTInTheNextGet) {
-	dimension->set_t(dimension->get_t()+5);
-	EXPECT_EQ(dimension->get_t(), t+5);
+  dimension->set_t(dimension->get_t() + 5);
+  EXPECT_EQ(dimension->get_t(), t + 5);
 }
 
 
 TEST_F(SimpleLFDimensionTest, SetSMustChangeSInTheNextGet) {
-	dimension->set_s(dimension->get_s()+5);
-	EXPECT_EQ(dimension->get_s(), s+5);
+  dimension->set_s(dimension->get_s() + 5);
+  EXPECT_EQ(dimension->get_s(), s + 5);
 }
 
 
 TEST_F(SimpleLFDimensionTest, SetVMustChangeVInTheNextGet) {
-	dimension->set_v(dimension->get_v()+5);
-	EXPECT_EQ(dimension->get_v(), v+5);
+  dimension->set_v(dimension->get_v() + 5);
+  EXPECT_EQ(dimension->get_v(), v + 5);
 }
 
 
 TEST_F(SimpleLFDimensionTest, SetUMustChangeUInTheNextGet) {
-	dimension->set_u(dimension->get_u()+5);
-	EXPECT_EQ(dimension->get_u(), u+5);
+  dimension->set_u(dimension->get_u() + 5);
+  EXPECT_EQ(dimension->get_u(), u + 5);
 }
 
 
