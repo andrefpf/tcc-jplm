@@ -43,38 +43,64 @@
 #include "gtest/gtest.h"
 
 
-// TEST(InitialLightfieldTests, LightfieldHoldsGivenWidth) {
-// 	Lightfield<uint16_t> lightfield(2,3);
-// 	EXPECT_EQ(lightfield.get_width(), 2);
-// }
+TEST(InitialLightfieldTests, LightfieldHoldsGivenWidth) {
+	Lightfield<uint16_t> lightfield(2,3);
+	EXPECT_EQ(lightfield.get_width(), 2);
+}
 
 
-// TEST(InitialLightfieldTests, LightfieldHoldsGivenHeight) {
-// 	Lightfield<uint16_t> lightfield(2,3);
-// 	EXPECT_EQ(lightfield.get_height(), 3);
-// }
+TEST(InitialLightfieldTests, LightfieldHoldsGivenHeight) {
+	Lightfield<uint16_t> lightfield(2,3);
+	EXPECT_EQ(lightfield.get_height(), 3);
+}
 
-TEST(InitialLightfieldTests, MoveView) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
-  auto view = View<uint16_t>(std::move(image));
-  auto lightfield = Lightfield<uint16_t>(2,3);
-  std::cout << "Created lightfield" << std::endl;
+
+struct LightfieldViewTests: public testing::Test 
+{
+ protected:
+  Lightfield<uint16_t> lightfield; // = Lightfield<uint16_t>(2,3);
+  std::unique_ptr<RGBImage<uint16_t>> image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  View<uint16_t> view;
+  LightfieldViewTests() : lightfield(2,3) {
+    view = View<uint16_t>(std::move(image));
+  }
+
+};
+
+
+TEST_F(LightfieldViewTests, MoveViewKeepsViewWidth) {
   lightfield.set_view_at(std::move(view), {0,0});
-  std::cout << "set view at lightfield" << std::endl;
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
+}
+
+
+TEST_F(LightfieldViewTests, MoveViewKeepsViewHeight) {
+  lightfield.set_view_at(std::move(view), {0,0});
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), 2);
 }
 
 
-TEST(InitialLightfieldTests, CopyView) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
-  auto view = View<uint16_t>(std::move(image));
-  auto lightfield = Lightfield<uint16_t>(2,3);
-  std::cout << "Created lightfield" << std::endl;
+TEST_F(LightfieldViewTests, MoveViewKeepsViewBpp) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
+}
+
+
+TEST_F(LightfieldViewTests, CopyViewKeepsWidth) {
   lightfield.set_view_at(view, {0,0});
-  std::cout << "set view at lightfield" << std::endl;
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
+}
+
+
+TEST_F(LightfieldViewTests, CopyViewKeepsHeight) {
+  lightfield.set_view_at(view, {0,0});
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), 2);
+}
+
+
+TEST_F(LightfieldViewTests, CopyViewKeepsViewBpp) {
+  lightfield.set_view_at(view, {0,0});
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
 }
 
 

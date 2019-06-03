@@ -47,77 +47,79 @@
 template<typename T>
 class View {
  private:
-  std::unique_ptr<Image<T>> image;
+  std::unique_ptr<Image<T>> image_;
 
  public:
   static_assert(std::is_integral<T>::value, "The view type must be integral");
 
-  
-  View(std::unique_ptr<Image<T>> image) : image(std::move(image)){};
+
+  View(std::unique_ptr<Image<T>> image) : image_(std::move(image)){
+    // std::cout <<"a\n";
+  };
 
 
   View() {
-    std::cout << "This is the view default constructor..." << std::endl;
+    // std::cout << "This is the view default constructor..." << std::endl;
   }
   //for now this is needed in the lightfield constructor
 
 
-  View(const View<T>& other) : image(other.image->clone()) {
+  View(const View<T>& other) : image_(other.image_->clone()) {
   }
 
 
   View(View<T>&& other) noexcept {
-    std::cout << "Im in the view move constructor" << std::endl;
+    // std::cout << "Im in the view move constructor" << std::endl;
     *this = std::move(other);
   }
 
 
   void operator=(View<T>&& other) noexcept {
-    std::cout << "Im in the view move assign" << std::endl;
+    // std::cout << "Im in the view move assign" << std::endl;
     if (this != &other) {
-      std::swap(this->image, other.image);
+      std::swap(this->image_, other.image_);
     }
   }
 
 
   void operator=(const View<T>& other) {
-    std::cout << "Im in view copy assign" << std::endl;
-    this->image = other.image->clone();
+    // std::cout << "Im in view copy assign" << std::endl;
+    this->image_ = other.image_->clone();
   }
 
 
   ~View() = default;
 
 
-  decltype(image->get_width()) get_width() const noexcept {
-    if (!image) {
+  decltype(image_->get_width()) get_width() const noexcept {
+    if (!image_) {
       return 0;
     }
-    return image->get_width();
+    return image_->get_width();
   }
 
 
-  decltype(image->get_height()) get_height() const noexcept {
-    if (!image) {
+  decltype(image_->get_height()) get_height() const noexcept {
+    if (!image_) {
       return 0;
     }
-    return image->get_height();
+    return image_->get_height();
   }
 
 
-  decltype(image->get_bpp()) get_bpp() const noexcept {
-    if (!image) {
+  decltype(image_->get_bpp()) get_bpp() const noexcept {
+    if (!image_) {
       return 0;
     }
-    return image->get_bpp();
+    return image_->get_bpp();
   }
 
 
   ImageType get_image_type() const noexcept {
-    if (!image) {
+    if (!image_) {
       return ImageType::Invalid;
     }
-    return image->get_type();
+    return image_->get_type();
   }
 
 

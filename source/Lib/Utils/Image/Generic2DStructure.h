@@ -115,8 +115,6 @@ class Generic2DStructure {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
     auto data_ptr = elements.get();
-    if constexpr (!std::is_integral<T>::value)
-      std::cout << data_ptr[i * this->width + j].get_width() << std::endl;
     data_ptr[i * this->width + j] = std::move(element);
   }
 
