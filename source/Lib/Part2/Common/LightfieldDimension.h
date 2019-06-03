@@ -31,109 +31,114 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     View.h
+/** \file     LightfieldDimension.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-31
+ *  \date     2019-06-03
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_VIEW_H__
-#define JPLM_LIB_PART2_COMMON_VIEW_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__
 
-#include <Image.h>
-#include <type_traits>  //is_integral
+#include <tuple>
 
 template<typename T>
-class View {
- private:
-  std::unique_ptr<Image<T>> image_;
+class LightfieldDimension {
+ protected:
+  std::tuple<T, T, T, T> dimensions;
 
  public:
-  static_assert(std::is_integral<T>::value, "The view type must be integral");
+  static_assert(std::is_integral<T>::value,
+      "The type of the dimensions must be integral.");
+  static_assert(std::is_unsigned<T>::value,
+      "The dimensions must be defined using an unsigned type");
 
 
-  View(std::unique_ptr<Image<T>> image) : image_(std::move(image)){
-    // std::cout <<"a\n";
-  };
+  LightfieldDimension(const T t, const T s, const T v, const T u)
+      : dimensions({t, s, v, u}){};
 
 
-  View() {
-    // std::cout << "This is the view default constructor..." << std::endl;
-  }
-  //for now this is needed in the lightfield constructor
+  LightfieldDimension(const std::tuple<T, T, T, T>& dimensions)
+      : dimensions(dimensions){};
 
 
-  View(const View<T>& other) : image_(other.image_->clone()) {
-  }
+  ~LightfieldDimension() = default;
 
 
-  View(View<T>&& other) noexcept {
-    // std::cout << "Im in the view move constructor" << std::endl;
-    *this = std::move(other);
+  T get_t() const noexcept {
+    return std::get<0>(dimensions);
   }
 
 
-  void operator=(View<T>&& other) noexcept {
-    // std::cout << "Im in the view move assign" << std::endl;
-    if (this != &other) {
-      std::swap(this->image_, other.image_);
-    }
+  T get_s() const noexcept {
+    return std::get<1>(dimensions);
   }
 
 
-  void operator=(const View<T>& other) {
-    // std::cout << "Im in view copy assign" << std::endl;
-    this->image_ = other.image_->clone();
+  T get_v() const noexcept {
+    return std::get<2>(dimensions);
   }
 
 
-  ~View() = default;
-
-
-  decltype(image_->get_width()) get_width() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_width();
+  T get_u() const noexcept {
+    return std::get<3>(dimensions);
   }
 
 
-  decltype(image_->get_height()) get_height() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_height();
+  auto get() const noexcept {
+    return dimensions;
   }
 
 
-  decltype(image_->get_bpp()) get_bpp() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_bpp();
+  template<std::size_t N>
+  auto get() const {  //for std::get<N>(dimension) access
+    if constexpr (N == 0)
+      return get_t();
+    else if constexpr (N == 1)
+      return get_s();
+    else if constexpr (N == 2)
+      return get_v();
+    else if constexpr (N == 3)
+      return get_u();
   }
 
 
-  ImageType get_image_type() const noexcept {
-    if (!image_) {
-      return ImageType::Invalid;
-    }
-    return image_->get_type();
+  void set_t(const T t) noexcept {
+    std::get<0>(dimensions) = t;
   }
 
 
-  inline ImageChannel<T>& operator[](const int i) {
-    return image_[i];
+  void set_s(const T s) noexcept {
+    std::get<1>(dimensions) = s;
   }
 
 
-  inline const ImageChannel<T>& operator[](const int i) const {
-    return image_[i];
+  void set_v(const T v) noexcept {
+    std::get<2>(dimensions) = v;
   }
 
 
+  void set_u(const T u) noexcept {
+    std::get<3>(dimensions) = u;
+  }
 
+
+  void set(const std::tuple<T, T, T, T>& other) {
+    this->dimensions = other;
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEW_H__ */
+
+namespace std {
+template<typename T>
+struct tuple_size<LightfieldDimension<T>>
+    : std::integral_constant<std::size_t, 4> {};
+
+template<std::size_t I, typename T>
+struct tuple_element<I, LightfieldDimension<T>> {
+  using type = T;
+};
+}  // namespace std
+
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__ */

@@ -43,6 +43,7 @@
 
 #include "Generic2DStructure.h"
 #include "View.h"
+#include "LightfieldDimension.h"
 
 
 template<typename T>
@@ -53,7 +54,7 @@ class Lightfield : public Generic2DStructure<View<T>> {
 
 
   Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
-  	//FIXME
+    //FIXME
   }
 
 
@@ -78,9 +79,48 @@ class Lightfield : public Generic2DStructure<View<T>> {
   }
 
 
-  void set_view_at(View<T>&& view,
-      const std::pair<std::size_t, std::size_t>& coordinate) {
+  void set_view_at(
+      View<T>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
     this->set_element_at(std::move(view), coordinate);
+  }
+
+
+  auto get_views_width() const {
+    if (!this->elements) {
+      //Throws
+    }
+    return this->elements[0].get_width();
+  }
+
+
+  auto get_views_height() const {
+    if (!this->elements) {
+      //Throws
+    }
+    return this->elements[0].get_height();
+  }
+
+
+  auto get_views_bpp() const {
+    if (!this->elements) {
+      //Throws
+    }
+    return this->elements[0].get_bpp();
+  }
+
+
+  auto get_dimensions() const {
+    return LightfieldDimension(this->get_width(), this->get_height(), this->get_views_width(), this->get_views_height());
+  }
+
+
+  inline View<T>* operator[](const int i) {
+    return this->elements_for_2d_access[i];
+  }
+
+
+  inline const View<T>* operator[](const int i) const {
+    return this->elements_for_2d_access[i];
   }
 
 

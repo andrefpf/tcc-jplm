@@ -68,6 +68,18 @@ struct LightfieldViewTests: public testing::Test
 };
 
 
+TEST_F(LightfieldViewTests, MoveViewKeepsLightfieldWidth) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_width(), 2);
+}
+
+
+TEST_F(LightfieldViewTests, MoveViewKeepsLightfieldHeight) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_height(), 3);
+}
+
+
 TEST_F(LightfieldViewTests, MoveViewKeepsViewWidth) {
   lightfield.set_view_at(std::move(view), {0,0});
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
@@ -83,6 +95,18 @@ TEST_F(LightfieldViewTests, MoveViewKeepsViewHeight) {
 TEST_F(LightfieldViewTests, MoveViewKeepsViewBpp) {
   lightfield.set_view_at(std::move(view), {0,0});
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
+}
+
+
+TEST_F(LightfieldViewTests, CopyViewKeepsLightfieldWidth) {
+  lightfield.set_view_at(view, {0,0});
+  EXPECT_EQ(lightfield.get_width(), 2);
+}
+
+
+TEST_F(LightfieldViewTests, CopyViewKeepsLightfieldHeight) {
+  lightfield.set_view_at(view, {0,0});
+  EXPECT_EQ(lightfield.get_height(), 3);
 }
 
 
@@ -103,6 +127,34 @@ TEST_F(LightfieldViewTests, CopyViewKeepsViewBpp) {
   EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
 }
 
+
+TEST_F(LightfieldViewTests, LighfieldGetsViewsWidth) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), lightfield.get_views_width());
+}
+
+
+TEST_F(LightfieldViewTests, LighfieldGetsViewsHeight) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), lightfield.get_views_height());
+}
+
+
+TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), lightfield.get_views_bpp());
+}
+
+
+TEST_F(LightfieldViewTests, LighfieldGetsDimension) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  // const auto [t, s, v, u] = lightfield.get_dimensions().get();
+  const auto [t, s, v, u] = lightfield.get_dimensions();
+  EXPECT_EQ(t, 2);
+  EXPECT_EQ(s, 3);
+  EXPECT_EQ(v, 1);
+  EXPECT_EQ(u, 2);
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -7,4 +7,5 @@ function(add_jplm_part2_common_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 endfunction()
 
 add_jplm_part2_common_lib_test(ViewTests view_tests ViewTests.cpp)
+add_jplm_part2_common_lib_test(LightfieldDimensionTests lightfield_dimension_tests LightfieldDimensionTests.cpp)
 add_jplm_part2_common_lib_test(LightfieldTests lightfield_tests LightfieldTests.cpp)
