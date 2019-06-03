@@ -54,7 +54,6 @@ class View {
 
 
   View(std::unique_ptr<Image<T>> image) : image_(std::move(image)){
-    // std::cout <<"a\n";
   };
 
 
@@ -79,6 +78,12 @@ class View {
     if (this != &other) {
       std::swap(this->image_, other.image_);
     }
+  }
+
+
+  void operator=(Image<T>&& source_image) noexcept {
+    std::cout << "using this weird operator" << std::endl;
+      std::swap(this->image_, source_image);
   }
 
 
@@ -124,15 +129,23 @@ class View {
 
 
   inline ImageChannel<T>& operator[](const int i) {
-    return image_[i];
+    // auto& ret_val = (*(image_.get()))[i];
+    return (*(image_.get()))[i];
   }
 
 
   inline const ImageChannel<T>& operator[](const int i) const {
-    return image_[i];
+    return (*(image_.get()))[i];
   }
 
 
+  std::tuple<T, T, T> get_pixel_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+    if (image_->get_number_of_channels() != 3) {
+      //THROW
+    }
+    auto image_with_three_channels = static_cast<ThreeChannelImage<T>*>(image_.get());
+    return image_with_three_channels->get_pixel_at(coordinate);
+  }
 
 };
 

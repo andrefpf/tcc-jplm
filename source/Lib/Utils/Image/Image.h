@@ -126,32 +126,32 @@ class Image {
   }
 
 
-  decltype(channels.size()) get_number_of_channels() const {
+  auto get_number_of_channels() const {
     return channels.size();
   }
 
 
-  std::size_t get_width() const {
+  auto get_width() const {
     return channels[0].get_width();
   }
 
 
-  std::size_t get_height() const {
+  auto get_height() const {
     return channels[0].get_height();
   }
 
 
-  std::size_t get_bpp() const {
+  auto get_bpp() const {
     return channels[0].get_bpp();
   }
 
 
-  std::size_t get_number_of_pixels_per_channel() const {
+  auto get_number_of_pixels_per_channel() const {
     return channels[0].get_number_of_pixels();
   }
 
 
-  std::size_t get_number_of_pixels() const {
+  auto get_number_of_pixels() const {
     return (this->get_number_of_channels()) *
            (this->get_number_of_pixels_per_channel());
   }
@@ -172,17 +172,17 @@ class Image {
   }
 
 
-  ImageChannel<T>& operator[](int i) {
+  inline ImageChannel<T>& operator[](const int i) {
     return channels[i];
   }
 
 
-  const ImageChannel<T>& operator[](int i) const {
+  inline const ImageChannel<T>& operator[](const int i) const {
     return channels[i];
   }
 
 
-  ImageChannel<T>& get_channel(int i) {
+  ImageChannel<T>& get_channel(const int i) {
     return channels[i];
   }
 
@@ -192,7 +192,7 @@ class Image {
   }
 
 
-  const ImageChannel<T>& get_channel(int i) const {
+  const ImageChannel<T>& get_channel(const int i) const {
     return channels[i];
   }
 
@@ -211,7 +211,7 @@ template<typename T>
 class ThreeChannelImage : public Image<T> {
  public:
   ThreeChannelImage(
-      std::size_t width, std::size_t height, std::size_t bpp, ImageType type)
+      const std::size_t width, const std::size_t height, const std::size_t bpp, const ImageType type)
       : Image<T>(width, height, bpp, 3, type){};
 
 
@@ -233,20 +233,24 @@ class ThreeChannelImage : public Image<T> {
     return this->is_equal(other);
   }
 
+
   inline bool operator!=(const ThreeChannelImage<T>& other) const {
     return !this->is_equal(other);
   }
 
-  std::tuple<T, T, T> get_pixel_at(std::size_t i, std::size_t j) const {
-    return std::make_tuple(this->channels[0].get_pixel_at(i, j),
-        this->channels[1].get_pixel_at(i, j),
-        this->channels[2].get_pixel_at(i, j));
+
+  std::tuple<T, T, T> get_pixel_at(const std::size_t i, const std::size_t j) const {
+    return std::make_tuple(this->channels[0].get_value_at(i, j),
+        this->channels[1].get_value_at(i, j),
+        this->channels[2].get_value_at(i, j));
   }
 
+
   std::tuple<T, T, T> get_pixel_at(
-      std::pair<std::size_t, std::size_t> coordinate) const {
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     return get_pixel_at(std::get<0>(coordinate), std::get<1>(coordinate));
   }
+
 
   void set_pixel_at(
       const std::tuple<T, T, T>& pixel, std::size_t i, std::size_t j) {
@@ -255,12 +259,16 @@ class ThreeChannelImage : public Image<T> {
     this->channels[2].set_value_at(std::get<2>(pixel), i, j);
   }
 
+
   void set_pixel_at(const std::tuple<T, T, T>& pixel,
       std::pair<std::size_t, std::size_t> coordinate) {
     set_value_at(pixel, std::get<0>(coordinate), std::get<1>(coordinate));
   }
 
+
   virtual ~ThreeChannelImage() = default;
+
+
 };
 
 
@@ -306,6 +314,8 @@ class RGBImage : public ThreeChannelImage<T> {
   std::vector<std::string> get_channel_names() const final {
     return {"Red", "Green", "Blue"};
   }
+
+
 };
 
 
@@ -335,12 +345,15 @@ class YCbCrImage : public ThreeChannelImage<T> {
     return this->is_equal(other);
   }
 
+
   ~YCbCrImage() = default;
 
 
   std::vector<std::string> get_channel_names() const final {
     return {"Y", "Cb", "Cr"};
   }
+
+
 };
 
 
@@ -349,6 +362,7 @@ class BT601Image : public YCbCrImage<T> {
  public:
   BT601Image(std::size_t width, std::size_t height, std::size_t bpp)
       : YCbCrImage<T>(width, height, bpp, ImageType::BT601){};
+
 
   BT601Image(BT601Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
@@ -374,6 +388,8 @@ class BT601Image : public YCbCrImage<T> {
   virtual BT601Image* generate_ptr_to_clone() const override {
     return new BT601Image<T>(*this);
   }
+
+
 };
 
 template<typename T>
@@ -381,6 +397,7 @@ class BT709Image : public YCbCrImage<T> {
  public:
   BT709Image(std::size_t width, std::size_t height, std::size_t bpp)
       : YCbCrImage<T>(width, height, bpp, ImageType::BT709){};
+
 
   BT709Image(BT709Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
@@ -406,6 +423,8 @@ class BT709Image : public YCbCrImage<T> {
   virtual BT709Image* generate_ptr_to_clone() const override {
     return new BT709Image<T>(*this);
   }
+
+
 };
 
 template<typename T>
@@ -439,6 +458,8 @@ class BT2020Image : public YCbCrImage<T> {
   virtual BT2020Image* generate_ptr_to_clone() const override {
     return new BT2020Image<T>(*this);
   }
+
+
 };
 
 template<typename T>
@@ -466,6 +487,7 @@ class GrayScaleImage : public Image<T> {
     return this->is_equal(other);
   }
 
+
   inline bool operator!=(const GrayScaleImage<T>& other) const {
     return !this->is_equal(other);
   }
@@ -478,9 +500,12 @@ class GrayScaleImage : public Image<T> {
     return {"Gray"};
   }
 
+
   virtual GrayScaleImage* generate_ptr_to_clone() const override {
     return new GrayScaleImage<T>(*this);
   }
+
+  
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGE_H__ */

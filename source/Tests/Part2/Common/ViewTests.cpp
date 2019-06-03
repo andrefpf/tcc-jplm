@@ -75,6 +75,50 @@ TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
 }
 
 
+struct ImageInViewTests : public testing::Test {
+protected:
+  View<uint16_t> view;
+  ImageInViewTests(){
+    std::unique_ptr<Image<uint16_t>> image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+    auto as_three_channel = static_cast<ThreeChannelImage<uint16_t>*>(image.get());
+    as_three_channel->set_pixel_at({1023,1023,1023}, 0,0);
+    as_three_channel->set_pixel_at({1023,0,0}, 0,1);
+    view = std::move(image);
+  }
+};
+
+
+TEST_F(ImageInViewTests, ViewAssigmentFromImageWidth) {
+  EXPECT_EQ(view.get_width(), 1);
+}
+
+
+TEST_F(ImageInViewTests, ViewAssigmentFromImageHeight) {
+  EXPECT_EQ(view.get_height(), 2);
+}
+
+
+TEST_F(ImageInViewTests, ViewAssigmentFromImageBpp) {
+  EXPECT_EQ(view.get_bpp(), 10);
+}
+
+
+TEST_F(ImageInViewTests, CanGetWhitePixelFromView) {
+  const auto& [r, g, b] = view.get_pixel_at({0,0});
+  EXPECT_EQ(r, 1023);
+  EXPECT_EQ(g, 1023);
+  EXPECT_EQ(b, 1023);
+}
+
+
+TEST_F(ImageInViewTests, CanGetRedPixelFromView) {
+  const auto& [r, g, b] = view.get_pixel_at({0,1});
+  EXPECT_EQ(r, 1023);
+  EXPECT_EQ(g, 0);
+  EXPECT_EQ(b, 0);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

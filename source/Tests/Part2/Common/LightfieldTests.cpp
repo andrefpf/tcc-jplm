@@ -148,13 +148,57 @@ TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
 
 TEST_F(LightfieldViewTests, LighfieldGetsDimension) {
   lightfield.set_view_at(std::move(view), {0,0});
-  // const auto [t, s, v, u] = lightfield.get_dimensions().get();
+  const auto [t, s, v, u] = lightfield.get_dimensions().get();
+  EXPECT_EQ(t, 2);
+  EXPECT_EQ(s, 3);
+  EXPECT_EQ(v, 1);
+  EXPECT_EQ(u, 2);
+}
+
+
+TEST_F(LightfieldViewTests, LighfieldGetsDimensionThroughStructuredBinding) {
+  lightfield.set_view_at(std::move(view), {0,0});
   const auto [t, s, v, u] = lightfield.get_dimensions();
   EXPECT_EQ(t, 2);
   EXPECT_EQ(s, 3);
   EXPECT_EQ(v, 1);
   EXPECT_EQ(u, 2);
 }
+
+
+TEST_F(LightfieldViewTests, AViewCanBeAcessedByBracketOperator) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  auto my_view = lightfield[0][0];
+  EXPECT_EQ(my_view.get_width(), lightfield.get_views_width());
+  EXPECT_EQ(my_view.get_height(), lightfield.get_views_height());
+  EXPECT_EQ(my_view.get_bpp(), lightfield.get_views_bpp());
+}
+
+
+TEST_F(LightfieldViewTests, AChannelCanBeAcessedByBracketOperator) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  auto my_channel = lightfield[0][0][0];
+  EXPECT_EQ(my_channel.get_width(), lightfield.get_views_width());
+  EXPECT_EQ(my_channel.get_height(), lightfield.get_views_height());
+  EXPECT_EQ(my_channel.get_bpp(), lightfield.get_views_bpp());
+}
+
+
+TEST_F(LightfieldViewTests, APixelCanBeAcessedByBracketOperator) {
+  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield[0][0][0][0][0] = 25;
+  lightfield[0][0][0][0][1] = 12;
+  auto my_pixel = lightfield[0][0][0][0][0];
+  auto my_pixel_2 = lightfield[0][0][0][0][1];
+  EXPECT_EQ(my_pixel, 25);
+  EXPECT_EQ(my_pixel_2, 12);
+}
+
+
+// TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
+//   lightfield.set_view_at(std::move(view), {0,0});
+//   EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), lightfield.get_views_bpp());
+// }
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

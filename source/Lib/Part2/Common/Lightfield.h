@@ -50,7 +50,9 @@ template<typename T>
 class Lightfield : public Generic2DStructure<View<T>> {
  public:
   Lightfield(std::size_t width, std::size_t height)
-      : Generic2DStructure<View<T>>(width, height){};
+      : Generic2DStructure<View<T>>(width, height){
+        this->alloc_resources();
+      };
 
 
   Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
@@ -107,6 +109,9 @@ class Lightfield : public Generic2DStructure<View<T>> {
     }
     return this->elements[0].get_bpp();
   }
+
+
+  
 
 
   auto get_dimensions() const {
