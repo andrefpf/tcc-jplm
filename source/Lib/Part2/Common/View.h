@@ -46,16 +46,24 @@
 
 template<typename T>
 class View {
- private:
+ protected:
   std::unique_ptr<Image<T>> image_;
+  std::pair<std::size_t, std::size_t> view_size;
+  std::size_t bpp;
 
  public:
   static_assert(std::is_integral<T>::value, "The view type must be integral");
 
 
-  View(std::unique_ptr<Image<T>> image) : image_(std::move(image)){
-  };
+  View(std::unique_ptr<Image<T>> image)
+      : image_(std::move(image)),
+        view_size(image_->get_width(), image_->get_height()),
+        bpp(image_->get_bpp()){};
 
+  View(const std::pair<std::size_t, std::size_t>& view_size,
+      const std::size_t bpp)
+      : image_(nullptr), view_size(view_size), bpp(bpp) {
+  }
 
   View() {
     // std::cout << "This is the view default constructor..." << std::endl;
@@ -63,7 +71,17 @@ class View {
   //for now this is needed in the lightfield constructor
 
 
-  View(const View<T>& other) : image_(other.image_->clone()) {
+  View(const View<T>& other)
+      : image_(other.get_image_clone()), view_size(other.view_size),
+        bpp(other.bpp) {
+  }
+
+
+  std::unique_ptr<Image<T>> get_image_clone() const noexcept {
+    if (!image_) {
+      return nullptr;
+    }
+    return image_->clone();
   }
 
 
@@ -77,13 +95,15 @@ class View {
     // std::cout << "Im in the view move assign" << std::endl;
     if (this != &other) {
       std::swap(this->image_, other.image_);
+      std::swap(this->view_size, other.view_size);
+      std::swap(this->bpp, other.bpp);
     }
   }
 
 
   void operator=(Image<T>&& source_image) noexcept {
     std::cout << "using this weird operator" << std::endl;
-      std::swap(this->image_, source_image);
+    std::swap(this->image_, source_image);
   }
 
 
@@ -139,14 +159,15 @@ class View {
   }
 
 
-  std::tuple<T, T, T> get_pixel_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+  std::tuple<T, T, T> get_pixel_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     if (image_->get_number_of_channels() != 3) {
       //THROW
     }
-    auto image_with_three_channels = static_cast<ThreeChannelImage<T>*>(image_.get());
+    auto image_with_three_channels =
+        static_cast<ThreeChannelImage<T>*>(image_.get());
     return image_with_three_channels->get_pixel_at(coordinate);
   }
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEW_H__ */

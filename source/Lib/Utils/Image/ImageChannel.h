@@ -231,7 +231,7 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
-  inline decltype(bpp) get_bpp() const noexcept {
+  inline auto get_bpp() const noexcept {
     return bpp;
   }
 

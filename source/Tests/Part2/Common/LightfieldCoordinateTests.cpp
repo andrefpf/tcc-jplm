@@ -42,6 +42,7 @@
 #include "Lib/Part2/Common/LightfieldCoordinate.h"
 #include "gtest/gtest.h"
 
+
 struct SimpleLFCoordinateTest : public testing::Test {
  protected:
   std::size_t t = 2;
@@ -64,6 +65,7 @@ TEST_F(SimpleLFCoordinateTest, GetTMustGetInitialValues) {
   EXPECT_EQ(ret_u, u);
 }
 
+
 TEST_F(
     SimpleLFCoordinateTest, CoordinateMustGetInitialValuesForStructuredBinding) {
   const auto [ret_t, ret_s, ret_v, ret_u] =
@@ -73,6 +75,7 @@ TEST_F(
   EXPECT_EQ(ret_v, v);
   EXPECT_EQ(ret_u, u);
 }
+
 
 TEST_F(SimpleLFCoordinateTest, GetTMustGetInitialT) {
   EXPECT_EQ(coordinate->get_t(), t);
