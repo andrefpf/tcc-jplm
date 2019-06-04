@@ -1,0 +1,78 @@
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDIOCONFIGURATION_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDIOCONFIGURATION_H__
+
+#include <tuple>
+#include <vector>
+#include "LightfieldDimension.h"
+
+class LightfieldIOConfiguration {
+ protected:
+  LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
+  LightfieldDimension<std::size_t> lightfield_size;
+
+ public:
+  LightfieldIOConfiguration(
+      const LightfieldCoordinate<std::size_t>& initial_coordinate,
+      const LightfieldCoordinate<std::size_t>& final_coordinate)
+      : lightfield_initial_coordinate(initial_coordinate),
+        lightfield_size(final_coordinate - initial_coordinate){};
+
+        
+   LightfieldIOConfiguration(
+      const LightfieldCoordinate<std::size_t>& initial_coordinate,
+      const LightfieldDimension<std::size_t>& lightfield_size)
+      : lightfield_initial_coordinate(initial_coordinate),
+        lightfield_size(lightfield_size){};
+         
+
+  ~LightfieldIOConfiguration() = default;
+
+
+  LightfieldCoordinate<std::size_t> get_initial_coordinate() const noexcept {
+    return lightfield_initial_coordinate;
+  }
+
+
+  LightfieldDimension<std::size_t> get_size() const noexcept {
+    return lightfield_size;
+  }
+
+
+  std::size_t get_number_of_pixels_per_view() const noexcept {
+  	return lightfield_size.get_number_of_pixels_per_view();
+  }
+
+
+  std::size_t get_number_of_pixels_per_lightfield() const noexcept {
+  	return lightfield_size.get_number_of_views_per_lightfield();
+  }
+
+
+  std::size_t get_number_of_views_per_lightfield() const noexcept {
+  	return lightfield_size.get_number_of_views_per_lightfield();
+  }
+
+
+
+  std::vector<std::pair<std::size_t, std::size_t>> get_raster_view_coordinates()
+      const noexcept {
+    auto initial_t = lightfield_initial_coordinate.get_t();
+    auto initial_s = lightfield_initial_coordinate.get_s();
+    auto final_t = initial_t + lightfield_size.get_t();
+    auto final_s = initial_s + lightfield_size.get_s();
+    auto number_of_views = get_number_of_views_per_lightfield();
+
+    std::vector<std::pair<std::size_t, std::size_t>> ret_val(number_of_views);
+    for (auto t = initial_t; t < final_t; ++t) {
+      for (auto s = initial_s; s < final_s; ++s) {
+        ret_val.emplace_back(std::make_pair(t, s));
+      }
+    }
+    return ret_val;
+  }
+
+
+};
+
+
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDIOCONFIGURATION_H__ */
