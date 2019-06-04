@@ -42,12 +42,25 @@
 #ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__
 
+#include <filesystem>
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/View.h"
+#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
 
 namespace LightfieldIO {
-	template <typename T>
-	Lightfield<View<T>> open(const std::string& path);
+	// template <typename T>
+	// Lightfield<View<T>> open(const std::string& path, std::size_t t, std::size_t s) {
+	// 	namespace fs = std::filesystem;
+	// 	if(!fs::exists(path)) {
+	// 		//throws
+	// 	}
+	// 	if (!fs::is_directory(path)) {
+	// 		//throws
+	// 	}
+	// 	//how is to be the naming convention?
+	// 	auto view_to_filename = PPM3CharViewToFilename();
+	// 	for
+	// }
 }
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__ */

@@ -94,6 +94,21 @@ TEST_F(SimpleLFDimensionTest, GetUMustGetInitialU) {
 }
 
 
+TEST_F(SimpleLFDimensionTest, GetNumberOfViewsIsTxS) {
+  EXPECT_EQ(dimension->get_number_of_views_per_lightfield(), t*s);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetNumberOfPixelsInAviewIsVxU) {
+  EXPECT_EQ(dimension->get_number_of_pixels_per_view(), v*u);
+}
+
+
+TEST_F(SimpleLFDimensionTest, GetNumberOfPixelsInTheLightfieldIsTxSxVxU) {
+  EXPECT_EQ(dimension->get_number_of_pixels_per_lightfield(), t*s*v*u);
+}
+
+
 TEST_F(SimpleLFDimensionTest, GetUsingIndex0TMustGetInitialT) {
   EXPECT_EQ(dimension->get<0>(), t);
 }
@@ -165,6 +180,36 @@ TEST_F(SimpleLFDimensionTest, SetVMustChangeVInTheNextGet) {
 TEST_F(SimpleLFDimensionTest, SetUMustChangeUInTheNextGet) {
   dimension->set_u(dimension->get_u() + 5);
   EXPECT_EQ(dimension->get_u(), u + 5);
+}
+
+
+TEST_F(SimpleLFDimensionTest, TwoDimentionsEquallyInitializedAreEqual) {
+	auto other_dimension = LightfieldDimension<std::size_t>(t, s, v, u);
+  EXPECT_EQ(*(dimension.get()), other_dimension);
+}
+
+
+TEST_F(SimpleLFDimensionTest, TwoDimentionsInitializedDifferentlyInTAreNotEqual) {
+	auto other_dimension = LightfieldDimension<std::size_t>(t+1, s, v, u);
+  EXPECT_NE(*(dimension.get()), other_dimension);
+}
+
+
+TEST_F(SimpleLFDimensionTest, TwoDimentionsInitializedDifferentlyInSAreNotEqual) {
+	auto other_dimension = LightfieldDimension<std::size_t>(t, s+1, v, u);
+  EXPECT_NE(*(dimension.get()), other_dimension);
+}
+
+
+TEST_F(SimpleLFDimensionTest, TwoDimentionsInitializedDifferentlyInVAreNotEqual) {
+	auto other_dimension = LightfieldDimension<std::size_t>(t, s, v+1, u);
+  EXPECT_NE(*(dimension.get()), other_dimension);
+}
+
+
+TEST_F(SimpleLFDimensionTest, TwoDimentionsInitializedDifferentlyInUAreNotEqual) {
+	auto other_dimension = LightfieldDimension<std::size_t>(t, s, v, u+1);
+  EXPECT_NE(*(dimension.get()), other_dimension);
 }
 
 

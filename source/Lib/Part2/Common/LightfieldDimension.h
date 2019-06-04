@@ -42,90 +42,65 @@
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__
 
 #include <tuple>
+#include "LightfieldCoordinate.h"
 
 template<typename T>
-class LightfieldDimension {
+class LightfieldDimension : public LightfieldCoordinate<T> {
  protected:
-  std::tuple<T, T, T, T> dimensions;
+  void check_for_zero_dimension(
+      const std::tuple<T, T, T, T>& dimensions) const {
+    const auto& [t, s, v, u] = dimensions;
+    if ((t == 0) || (s == 0) || (v == 0) || (u == 0)) {
+      throw LightfieldDimensionExceptions::InvalidZeroDimensionException();
+    }
+  }
 
  public:
-  static_assert(std::is_integral<T>::value,
-      "The type of the dimensions must be integral.");
   static_assert(std::is_unsigned<T>::value,
       "The dimensions must be defined using an unsigned type");
 
 
   LightfieldDimension(const T t, const T s, const T v, const T u)
-      : dimensions({t, s, v, u}){};
+      : LightfieldCoordinate<T>(t, s, v, u) {
+    check_for_zero_dimension(this->dimensions);
+  };
 
 
   LightfieldDimension(const std::tuple<T, T, T, T>& dimensions)
-      : dimensions(dimensions){};
+      : LightfieldCoordinate<T>(dimensions) {
+    check_for_zero_dimension(dimensions);
+  };
 
 
-  ~LightfieldDimension() = default;
-
-
-  T get_t() const noexcept {
-    return std::get<0>(dimensions);
+  LightfieldDimension(const LightfieldCoordinate<T>& other)
+      : LightfieldCoordinate<T>(other) {
+    check_for_zero_dimension(other.get());
   }
 
 
-  T get_s() const noexcept {
-    return std::get<1>(dimensions);
+  bool operator==(const LightfieldDimension<T>& other) const {
+    return this->dimensions == other.dimensions;
   }
 
 
-  T get_v() const noexcept {
-    return std::get<2>(dimensions);
+  bool operator!=(const LightfieldDimension<T>& other) const {
+    return this->dimensions != other.dimensions;
   }
 
 
-  T get_u() const noexcept {
-    return std::get<3>(dimensions);
+  std::size_t get_number_of_views_per_lightfield() const noexcept {
+    return this->get_t() * this->get_s();
   }
 
 
-  auto get() const noexcept {
-    return dimensions;
+  std::size_t get_number_of_pixels_per_view() const noexcept {
+    return this->get_v() * this->get_u();
   }
 
 
-  template<std::size_t N>
-  auto get() const {  //for std::get<N>(dimension) access
-    if constexpr (N == 0)
-      return get_t();
-    else if constexpr (N == 1)
-      return get_s();
-    else if constexpr (N == 2)
-      return get_v();
-    else if constexpr (N == 3)
-      return get_u();
-  }
-
-
-  void set_t(const T t) noexcept {
-    std::get<0>(dimensions) = t;
-  }
-
-
-  void set_s(const T s) noexcept {
-    std::get<1>(dimensions) = s;
-  }
-
-
-  void set_v(const T v) noexcept {
-    std::get<2>(dimensions) = v;
-  }
-
-
-  void set_u(const T u) noexcept {
-    std::get<3>(dimensions) = u;
-  }
-
-
-  void set(const std::tuple<T, T, T, T>& other) {
-    this->dimensions = other;
+  std::size_t get_number_of_pixels_per_lightfield() const noexcept {
+    return get_number_of_pixels_per_view() *
+           get_number_of_views_per_lightfield();
   }
 };
 
@@ -139,6 +114,8 @@ template<std::size_t I, typename T>
 struct tuple_element<I, LightfieldDimension<T>> {
   using type = T;
 };
+
+
 }  // namespace std
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__ */

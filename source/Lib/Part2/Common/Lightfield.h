@@ -42,17 +42,17 @@
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
 
 #include "Generic2DStructure.h"
-#include "View.h"
 #include "LightfieldDimension.h"
+#include "View.h"
 
 
 template<typename T>
 class Lightfield : public Generic2DStructure<View<T>> {
  public:
   Lightfield(std::size_t width, std::size_t height)
-      : Generic2DStructure<View<T>>(width, height){
-        this->alloc_resources();
-      };
+      : Generic2DStructure<View<T>>(width, height) {
+    this->alloc_resources();
+  };
 
 
   Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
@@ -111,11 +111,9 @@ class Lightfield : public Generic2DStructure<View<T>> {
   }
 
 
-  
-
-
   auto get_dimensions() const {
-    return LightfieldDimension(this->get_width(), this->get_height(), this->get_views_width(), this->get_views_height());
+    return LightfieldDimension(this->get_width(), this->get_height(),
+        this->get_views_width(), this->get_views_height());
   }
 
 
