@@ -52,7 +52,6 @@
 #include "ImageExceptions.h"
 #include "Metrics.h"
 
-
 template<typename T>
 class ImageChannel : public Generic2DStructure<T> {
  private:
@@ -267,9 +266,7 @@ class ImageChannel : public Generic2DStructure<T> {
       };
     }
 
-    auto data_ptr = this->elements.get();
-    std::transform(data_ptr, data_ptr + this->get_number_of_pixels(), data_ptr,
-        used_shift);
+    std::transform(this->begin(), this->end(), this->begin(), used_shift);
   }
 };
 

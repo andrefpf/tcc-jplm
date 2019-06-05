@@ -54,6 +54,7 @@
 // #include <variant>
 // #include <vector>
 #include "ImageExceptions.h"
+#include "Lib/Utils/Image/ImageUtils.h"
 #include "PPMBinaryFile.h"
 // #include "PGMBinaryFile.h"
 
@@ -63,6 +64,32 @@ std::unique_ptr<PixelMapFile> open(const std::string& filename);
 std::unique_ptr<PixelMapFile> open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value);
+
+
+// struct VariantImageExtractorToUint16T {
+//   template<template<typename> class ImageT0, template<typename> class ImageT1,
+//       typename T0, typename T1>
+//   std::unique_ptr<RGBImage<uint16_t>> operator()(
+//       std::variant<std::unique_ptr<Image<uint8_t>>,
+//           std::unique_ptr<Image<uint16_t>>>& input) {
+//     if (input.index() == 1) {
+//       // return std::move(std::get<1>(input));
+//     }
+//     //needs conversion. how to do it?
+//   }
+// };
+
+
+// template<template<typename> class ImageTout, typename Tout>
+// std::unique_ptr<ImageTout<Tout>> extract_image_with_type_from_variant(
+//     std::variant<std::unique_ptr<Image<uint8_t>>,
+//         std::unique_ptr<Image<uint16_t>>>& input) {
+//   auto image_uint16_t = std::visit(VariantImageExtractorToUint16T(), input);
+//   return ImageUtils::get_image_with_new_container_type<ImageTout, RGBImage,
+//       Tout, uint16_t>(std::move(image_uint16_t));
+
+//   //uint16_t
+// }
 
 }  // namespace PixelMapFileIO
 

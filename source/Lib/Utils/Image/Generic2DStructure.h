@@ -46,6 +46,7 @@
 #include <utility>  //std::pair
 #include <vector>
 #include "ImageExceptions.h"  //FIXME: change the exceptions to be in namespace Generic2DStructure
+#include "Lib/Utils/Image/Raster2DIterator.h"
 
 template<typename T>
 class Generic2DStructure {
@@ -187,6 +188,27 @@ class Generic2DStructure {
 
   bool has_equal_size(const Generic2DStructure<T>& other) const noexcept {
     return (other.width == this->width) && (other.height == this->height);
+  }
+
+
+  auto begin() {
+    return Raster2DIterator<T>(this->elements.get());
+  }
+
+
+  auto end() {
+    return Raster2DIterator<T>(this->elements.get() + this->number_of_elements);
+  }
+
+
+  auto cbegin() {
+    return Raster2DIterator<const T>(this->elements.get());
+  }
+
+
+  auto cend() {
+    return Raster2DIterator<const T>(
+        this->elements.get() + this->number_of_elements);
   }
 };
 

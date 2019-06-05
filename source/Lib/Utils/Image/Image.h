@@ -48,7 +48,6 @@ enum ImageType { Invalid, GrayScale, RGB, YCoCg, BT601, BT709, BT2020 };
 
 template<typename T>
 class Image {
-
  protected:
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
@@ -89,7 +88,7 @@ class Image {
   }
 
   auto clone() const {
-    return std::unique_ptr<Image<T>>(generate_ptr_to_clone()) ;
+    return std::unique_ptr<Image<T>>(generate_ptr_to_clone());
   }
 
 
@@ -162,29 +161,34 @@ class Image {
   }
 
 
-  void set_pixel_at(T value, const std::size_t channel, const std::size_t i, const std::size_t j) {
+  void set_pixel_at(T value, const std::size_t channel, const std::size_t i,
+      const std::size_t j) {
     channels.at(channel).set_value_at(i, j, value);
   }
 
 
-  T get_pixel_at(const std::size_t channel, const std::size_t i, const std::size_t j) const {
+  T get_pixel_at(const std::size_t channel, const std::size_t i,
+      const std::size_t j) const {
     return this->get_value_at(channel, i, j);
   }
 
 
-  T get_pixel_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+  T get_pixel_at(const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     return this->get_value_at(channel, coordinate);
   }
 
 
-  T get_value_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+  T get_value_at(const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     return channels.at(channel).get_value_at(coordinate);
   }
 
 
-  T get_value_at(const std::size_t channel, const std::size_t i, const std::size_t j) const {
+  T get_value_at(const std::size_t channel, const std::size_t i,
+      const std::size_t j) const {
     return channels.at(channel).get_value_at(i, j);
-  }    
+  }
 
 
   inline ImageChannel<T>& operator[](const int i) {
@@ -218,6 +222,26 @@ class Image {
   }
 
 
+  auto begin() {
+    return channels.begin();
+  }
+
+
+  auto end() {
+    return channels.end();
+  }
+
+
+  auto cbegin() {
+    return channels.cbegin();
+  }
+
+
+  auto cend() {
+    return channels.cend();
+  }
+
+
   virtual std::vector<std::string> get_channel_names() const = 0;
 };
 
@@ -225,8 +249,8 @@ class Image {
 template<typename T>
 class ThreeChannelImage : public Image<T> {
  public:
-  ThreeChannelImage(
-      const std::size_t width, const std::size_t height, const std::size_t bpp, const ImageType type)
+  ThreeChannelImage(const std::size_t width, const std::size_t height,
+      const std::size_t bpp, const ImageType type)
       : Image<T>(width, height, bpp, 3, type){};
 
 
@@ -254,7 +278,8 @@ class ThreeChannelImage : public Image<T> {
   }
 
 
-  std::tuple<T, T, T> get_pixel_at(const std::size_t i, const std::size_t j) const {
+  std::tuple<T, T, T> get_pixel_at(
+      const std::size_t i, const std::size_t j) const {
     return std::make_tuple(this->channels[0].get_value_at(i, j),
         this->channels[1].get_value_at(i, j),
         this->channels[2].get_value_at(i, j));
@@ -282,8 +307,6 @@ class ThreeChannelImage : public Image<T> {
 
 
   virtual ~ThreeChannelImage() = default;
-
-
 };
 
 
@@ -329,8 +352,6 @@ class RGBImage : public ThreeChannelImage<T> {
   std::vector<std::string> get_channel_names() const final {
     return {"Red", "Green", "Blue"};
   }
-
-
 };
 
 
@@ -367,8 +388,6 @@ class YCbCrImage : public ThreeChannelImage<T> {
   std::vector<std::string> get_channel_names() const final {
     return {"Y", "Cb", "Cr"};
   }
-
-
 };
 
 
@@ -403,8 +422,6 @@ class BT601Image : public YCbCrImage<T> {
   virtual BT601Image* generate_ptr_to_clone() const override {
     return new BT601Image<T>(*this);
   }
-
-
 };
 
 template<typename T>
@@ -438,8 +455,6 @@ class BT709Image : public YCbCrImage<T> {
   virtual BT709Image* generate_ptr_to_clone() const override {
     return new BT709Image<T>(*this);
   }
-
-
 };
 
 template<typename T>
@@ -473,8 +488,6 @@ class BT2020Image : public YCbCrImage<T> {
   virtual BT2020Image* generate_ptr_to_clone() const override {
     return new BT2020Image<T>(*this);
   }
-
-
 };
 
 template<typename T>
@@ -519,8 +532,6 @@ class GrayScaleImage : public Image<T> {
   virtual GrayScaleImage* generate_ptr_to_clone() const override {
     return new GrayScaleImage<T>(*this);
   }
-
-  
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGE_H__ */
