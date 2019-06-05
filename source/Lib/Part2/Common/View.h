@@ -41,8 +41,9 @@
 #ifndef JPLM_LIB_PART2_COMMON_VIEW_H__
 #define JPLM_LIB_PART2_COMMON_VIEW_H__
 
-#include <Image.h>
 #include <type_traits>  //is_integral
+#include "Lib/Part2/Common/CommonExceptions.h"
+#include "Lib/Utils/Image/Image.h"
 
 template<typename T>
 class View {
@@ -63,7 +64,17 @@ class View {
   View(const std::pair<std::size_t, std::size_t>& view_size,
       const std::size_t bpp)
       : image_(nullptr), view_size(view_size), bpp(bpp) {
+    if (bpp == 0) {
+      throw ViewExceptions::InvalidZeroBppException();
+    }
+    if (this->get_width() == 0) {
+      throw ViewExceptions::InvalidZeroWidthException();
+    }
+    if (this->get_height() == 0) {
+      throw ViewExceptions::InvalidZeroHeightException();
+    }
   }
+
 
   View() {
     // std::cout << "This is the view default constructor..." << std::endl;
@@ -73,7 +84,8 @@ class View {
 
   View(const View<T>& other)
       : image_(other.get_image_clone()), view_size(other.view_size),
-        bpp(other.bpp) {}
+        bpp(other.bpp) {
+  }
 
 
   std::unique_ptr<Image<T>> get_image_clone() const noexcept {
@@ -102,6 +114,9 @@ class View {
     std::swap(this->image_, source_image);
     this->view_size = std::make_pair(image_->get_width(), image_->get_height()),
     this->bpp = image_->get_bpp();
+    if (this->bpp == 0) {
+      throw ViewExceptions::InvalidZeroBppException();
+    }
   }
 
 
@@ -138,28 +153,47 @@ class View {
   }
 
 
-  inline ImageChannel<T>& operator[](const int i) {
-    // auto& ret_val = (*(image_.get()))[i];
+  auto get_number_of_channels() const {
+    if (!image_) {
+      throw ViewExceptions::ImageWasNotInitialyzedException();
+    }
+    return image_->get_number_of_channels();
+  }
+
+
+  //these are unsafe
+  inline virtual ImageChannel<T>& operator[](const int i) noexcept {
     return (*(image_.get()))[i];
   }
 
 
-  inline const ImageChannel<T>& operator[](const int i) const {
+  inline virtual const ImageChannel<T>& operator[](const int i) const noexcept {
     return (*(image_.get()))[i];
   }
 
 
-  std::tuple<T, T, T> get_pixel_at(
+  virtual std::tuple<T, T, T> get_pixel_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
-    if(!image_) {
-      //throw
+    if (!image_) {
+      throw ViewExceptions::ImageWasNotInitialyzedException();
     }
     if (image_->get_number_of_channels() != 3) {
-      //throw
+      throw ViewExceptions::InvalidNumberOfChannelsException();
     }
     auto image_with_three_channels =
         static_cast<ThreeChannelImage<T>*>(image_.get());
     return image_with_three_channels->get_pixel_at(coordinate);
+  }
+
+
+  virtual T get_value_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+    if (!image_) {
+      throw ViewExceptions::ImageWasNotInitialyzedException();
+    }
+    if (channel >= image_->get_number_of_channels()) {
+      throw ViewExceptions::InvalidNumberOfChannelsException();
+    }
+    return image_->get_pixel_at(channel, coordinate);
   }
 };
 

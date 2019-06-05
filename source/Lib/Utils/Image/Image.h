@@ -162,14 +162,29 @@ class Image {
   }
 
 
-  void set_pixel_at(T value, std::size_t channel, size_t i, size_t j) {
+  void set_pixel_at(T value, const std::size_t channel, const std::size_t i, const std::size_t j) {
     channels.at(channel).set_value_at(i, j, value);
   }
 
 
-  T get_pixel_at(std::size_t channel, size_t i, size_t j) const {
-    return channels.at(channel).get_value_at(i, j);
+  T get_pixel_at(const std::size_t channel, const std::size_t i, const std::size_t j) const {
+    return this->get_value_at(channel, i, j);
   }
+
+
+  T get_pixel_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+    return this->get_value_at(channel, coordinate);
+  }
+
+
+  T get_value_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+    return channels.at(channel).get_value_at(coordinate);
+  }
+
+
+  T get_value_at(const std::size_t channel, const std::size_t i, const std::size_t j) const {
+    return channels.at(channel).get_value_at(i, j);
+  }    
 
 
   inline ImageChannel<T>& operator[](const int i) {

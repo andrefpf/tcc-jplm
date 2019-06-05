@@ -43,8 +43,82 @@
 #include "gtest/gtest.h"
 
 
+TEST(ViewConstructionWithouImage, ViewInitiallyzedWithWithZeroThrows) {
+  EXPECT_THROW(
+      View<uint16_t>({0, 2}, 10), ViewExceptions::InvalidZeroWidthException);
+}
+
+
+TEST(ViewConstructionWithouImage, ViewInitiallyzedHeightWithZeroThrows) {
+  EXPECT_THROW(
+      View<uint16_t>({2, 0}, 10), ViewExceptions::InvalidZeroHeightException);
+}
+
+
+TEST(ViewConstructionWithouImage, ViewInitiallyzedBppWithZeroThrows) {
+  EXPECT_THROW(
+      View<uint16_t>({2, 2}, 0), ViewExceptions::InvalidZeroBppException);
+}
+
+
+TEST(ViewConstructionWithouImage,
+    TryingToGetNumberOfChannelsFromNotInitiallyzedImageThrows) {
+  EXPECT_THROW(View<uint16_t>({2, 2}, 10).get_number_of_channels(),
+      ViewExceptions::ImageWasNotInitialyzedException);
+}
+
+
+TEST(ViewConstructionWithouImage,
+    TryingToGetPixelFromNotInitiallyzedImageThrows) {
+  EXPECT_THROW(View<uint16_t>({2, 2}, 10).get_pixel_at({0, 0}),
+      ViewExceptions::ImageWasNotInitialyzedException);
+}
+
+
+TEST(ViewConstructionWithouImage, TryingToGetPixelFromOneChannelImageThrows) {
+  auto image = std::make_unique<GrayScaleImage<uint16_t>>(1, 2, 10);
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_THROW(view.get_pixel_at({0, 0}),
+      ViewExceptions::InvalidNumberOfChannelsException);
+}
+
+
+TEST(ViewConstructionWithouImage,
+    TryingToGetPixelFromFromInvalidCoordinateThrowsImageException) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_THROW(view.get_pixel_at({42, 42}),
+      ImageChannelExceptions::InvalidIndexReadException);
+}
+
+
+TEST(ViewConstructionWithouImage,
+    TryingToGetPixelFromFromInvalidVCoordinateThrowsImageException) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_THROW(view.get_pixel_at({42, 0}),
+      ImageChannelExceptions::InvalidIndexReadException);
+}
+
+
+TEST(ViewConstructionWithouImage,
+    TryingToGetPixelFromFromInvalidIUCoordinateThrowsImageException) {
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+  auto view = View<uint16_t>(std::move(image));
+  EXPECT_THROW(view.get_pixel_at({0, 42}),
+      ImageChannelExceptions::InvalidIndexReadException);
+}
+
+
+// TEST(ViewConstructionWithouImage, TryingToGetValueFromFromInvalidChannelThrows) {
+//   auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+//   auto view = View<uint16_t>(std::move(image));
+//   EXPECT_THROW(view.get_pixel_at({0,0}), ViewExceptions::InvalidNumberOfChannelsException);
+// }
+
+
 TEST(InitialViewTests, ViewHasSameWidthAsItsInitializerImage) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   auto image_width = image->get_width();
   auto view = View<uint16_t>(std::move(image));
   EXPECT_EQ(view.get_width(), image_width);
@@ -52,7 +126,7 @@ TEST(InitialViewTests, ViewHasSameWidthAsItsInitializerImage) {
 
 
 TEST(InitialViewTests, ViewHasSameHeightAsItsInitializerImage) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   auto image_height = image->get_height();
   auto view = View<uint16_t>(std::move(image));
   EXPECT_EQ(view.get_height(), image_height);
@@ -60,7 +134,7 @@ TEST(InitialViewTests, ViewHasSameHeightAsItsInitializerImage) {
 
 
 TEST(InitialViewTests, ViewHasSameBppAsItsInitializerImage) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   auto image_bpp = image->get_bpp();
   auto view = View<uint16_t>(std::move(image));
   EXPECT_EQ(view.get_bpp(), image_bpp);
@@ -68,7 +142,7 @@ TEST(InitialViewTests, ViewHasSameBppAsItsInitializerImage) {
 
 
 TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
-  auto image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  auto image = std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   auto image_type = image->get_type();
   auto view = View<uint16_t>(std::move(image));
   EXPECT_EQ(view.get_image_type(), image_type);
@@ -76,13 +150,15 @@ TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
 
 
 struct ImageInViewTests : public testing::Test {
-protected:
+ protected:
   View<uint16_t> view;
-  ImageInViewTests(){
-    std::unique_ptr<Image<uint16_t>> image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
-    auto as_three_channel = static_cast<ThreeChannelImage<uint16_t>*>(image.get());
-    as_three_channel->set_pixel_at({1023,1023,1023}, 0,0);
-    as_three_channel->set_pixel_at({1023,0,0}, 0,1);
+  ImageInViewTests() {
+    std::unique_ptr<Image<uint16_t>> image =
+        std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+    auto as_three_channel =
+        static_cast<ThreeChannelImage<uint16_t> *>(image.get());
+    as_three_channel->set_pixel_at({1023, 1023, 1023}, 0, 0);
+    as_three_channel->set_pixel_at({1023, 0, 0}, 0, 1);
     view = std::move(image);
   }
 };
@@ -104,7 +180,7 @@ TEST_F(ImageInViewTests, ViewAssigmentFromImageBpp) {
 
 
 TEST_F(ImageInViewTests, CanGetWhitePixelFromView) {
-  const auto& [r, g, b] = view.get_pixel_at({0,0});
+  const auto &[r, g, b] = view.get_pixel_at({0, 0});
   EXPECT_EQ(r, 1023);
   EXPECT_EQ(g, 1023);
   EXPECT_EQ(b, 1023);
@@ -112,7 +188,7 @@ TEST_F(ImageInViewTests, CanGetWhitePixelFromView) {
 
 
 TEST_F(ImageInViewTests, CanGetRedPixelFromView) {
-  const auto& [r, g, b] = view.get_pixel_at({0,1});
+  const auto &[r, g, b] = view.get_pixel_at({0, 1});
   EXPECT_EQ(r, 1023);
   EXPECT_EQ(g, 0);
   EXPECT_EQ(b, 0);

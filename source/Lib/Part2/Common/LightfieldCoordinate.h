@@ -15,27 +15,27 @@ class LightfieldCoordinate {
       "The type of the lightfield coordinates must be integral.");
 
 
-  LightfieldCoordinate(const T t, const T s, const T v, const T u)
+  LightfieldCoordinate(const T t, const T s, const T v, const T u) noexcept
       : dimensions({t, s, v, u}){};
 
 
-  LightfieldCoordinate(const std::tuple<T, T, T, T>& dimensions)
+  LightfieldCoordinate(const std::tuple<T, T, T, T>& dimensions) noexcept
       : dimensions(dimensions){};
 
 
-  LightfieldCoordinate(const LightfieldCoordinate<T>& other)
+  LightfieldCoordinate(const LightfieldCoordinate<T>& other) noexcept
       : dimensions(other.dimensions){};
 
 
   ~LightfieldCoordinate() = default;
 
 
-  bool operator==(const LightfieldCoordinate<T>& other) const {
+  bool operator==(const LightfieldCoordinate<T>& other) const noexcept {
     return this->dimensions == other.dimensions;
   }
 
 
-  bool operator!=(const LightfieldCoordinate<T>& other) const {
+  bool operator!=(const LightfieldCoordinate<T>& other) const noexcept {
     return this->dimensions != other.dimensions;
   }
 
@@ -147,7 +147,7 @@ class LightfieldCoordinate {
   }
 
 
-  void set(const std::tuple<T, T, T, T>& other) {
+  void set(const std::tuple<T, T, T, T>& other) noexcept {
     this->dimensions = other;
   }
 

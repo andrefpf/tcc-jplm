@@ -74,4 +74,42 @@ class InvalidZeroDimensionException : public std::exception {
 
 }  // namespace LightfieldDimensionExceptions
 
+
+namespace ViewExceptions {
+
+class InvalidZeroWidthException : public std::exception {
+  const char* what() const noexcept override {
+    return "The view width was set to zero but it cannot be zero";
+  }
+};
+
+
+class InvalidZeroHeightException : public std::exception {
+  const char* what() const noexcept override {
+    return "The view height was set to zero but it cannot be zero";
+  }
+};
+
+
+class InvalidZeroBppException : public std::exception {
+  const char* what() const noexcept override {
+    return "The view height was set to zero but it cannot be zero";
+  }
+};
+
+
+class ImageWasNotInitialyzedException : public std::exception {
+  const char* what() const noexcept override {
+    return "The image contained in this view was not initialized.";
+  }
+};
+
+class InvalidNumberOfChannelsException : public std::exception {
+  const char* what() const noexcept override {
+    return "The image contained in this view has a invalid number of channels.";
+  }
+};
+
+}  // namespace ViewExceptions
+
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_COMMONEXCEPTIONS_H__ */
