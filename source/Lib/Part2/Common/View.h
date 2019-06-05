@@ -73,8 +73,7 @@ class View {
 
   View(const View<T>& other)
       : image_(other.get_image_clone()), view_size(other.view_size),
-        bpp(other.bpp) {
-  }
+        bpp(other.bpp) {}
 
 
   std::unique_ptr<Image<T>> get_image_clone() const noexcept {
@@ -86,13 +85,11 @@ class View {
 
 
   View(View<T>&& other) noexcept {
-    // std::cout << "Im in the view move constructor" << std::endl;
     *this = std::move(other);
   }
 
 
   void operator=(View<T>&& other) noexcept {
-    // std::cout << "Im in the view move assign" << std::endl;
     if (this != &other) {
       std::swap(this->image_, other.image_);
       std::swap(this->view_size, other.view_size);
@@ -102,41 +99,34 @@ class View {
 
 
   void operator=(Image<T>&& source_image) noexcept {
-    std::cout << "using this weird operator" << std::endl;
     std::swap(this->image_, source_image);
+    this->view_size = std::make_pair(image_->get_width(), image_->get_height()),
+    this->bpp = image_->get_bpp();
   }
 
 
   void operator=(const View<T>& other) {
-    // std::cout << "Im in view copy assign" << std::endl;
-    this->image_ = other.image_->clone();
+    this->image_ = other.get_image_clone();
+    this->view_size = other.view_size;
+    this->bpp = other.bpp;
   }
 
 
   ~View() = default;
 
 
-  decltype(image_->get_width()) get_width() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_width();
+  auto get_width() const noexcept {
+    return std::get<0>(view_size);
   }
 
 
-  decltype(image_->get_height()) get_height() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_height();
+  auto get_height() const noexcept {
+    return std::get<1>(view_size);
   }
 
 
-  decltype(image_->get_bpp()) get_bpp() const noexcept {
-    if (!image_) {
-      return 0;
-    }
-    return image_->get_bpp();
+  auto get_bpp() const noexcept {
+    return bpp;
   }
 
 
@@ -161,8 +151,11 @@ class View {
 
   std::tuple<T, T, T> get_pixel_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
+    if(!image_) {
+      //throw
+    }
     if (image_->get_number_of_channels() != 3) {
-      //THROW
+      //throw
     }
     auto image_with_three_channels =
         static_cast<ThreeChannelImage<T>*>(image_.get());
