@@ -1,10 +1,12 @@
 # JPL-RC
 
 Build instructions:
-  ```cd jplm
+  ```
+  cd jplm
   mkdir build
   cmake ..
-  make -j```
+  make -j
+  ```
 
 Test instructions:
   ```~/jplm/build/$ ctest```
