@@ -54,9 +54,12 @@
 // #include <variant>
 // #include <vector>
 #include "ImageExceptions.h"
+#include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageUtils.h"
 #include "PPMBinaryFile.h"
 // #include "PGMBinaryFile.h"
+
+#include <memory>
 
 namespace PixelMapFileIO {
 
@@ -66,30 +69,43 @@ std::unique_ptr<PixelMapFile> open(const std::string& filename,
     std::size_t max_value);
 
 
-// struct VariantImageExtractorToUint16T {
-//   template<template<typename> class ImageT0, template<typename> class ImageT1,
-//       typename T0, typename T1>
-//   std::unique_ptr<RGBImage<uint16_t>> operator()(
-//       std::variant<std::unique_ptr<Image<uint8_t>>,
-//           std::unique_ptr<Image<uint16_t>>>& input) {
-//     if (input.index() == 1) {
-//       // return std::move(std::get<1>(input));
-//     }
-//     //needs conversion. how to do it?
-//   }
-// };
+struct VariantImageExtractorToUint16T {
+  template<template<typename> class ImageT0, typename T0>
+  std::unique_ptr<RGBImage<uint16_t>> operator()(
+      std::unique_ptr<ImageT0<T0>>& image) {
+    if constexpr (std::is_same<T0, uint16_t>::value) {
+      return std::unique_ptr<RGBImage<uint16_t>>(
+          static_cast<RGBImage<uint16_t>*>(image.release()));
+    }
+
+    auto output_image = std::make_unique<RGBImage<uint16_t>>(
+        image->get_width(), image->get_height(), image->get_bpp());
+    auto output_image_iterator = output_image->begin();
+
+    //TODO: finding why cannot work with const?
+    for (auto& channel : *(image)) {
+      auto output_image_channel_iterator = output_image_iterator->begin();
+      for (const auto value : channel) {
+        *output_image_channel_iterator = static_cast<uint16_t>(value);
+        ++output_image_channel_iterator;
+      }
+      ++output_image_iterator;
+    }
+
+    return output_image;
+  }
+};
 
 
-// template<template<typename> class ImageTout, typename Tout>
-// std::unique_ptr<ImageTout<Tout>> extract_image_with_type_from_variant(
-//     std::variant<std::unique_ptr<Image<uint8_t>>,
-//         std::unique_ptr<Image<uint16_t>>>& input) {
-//   auto image_uint16_t = std::visit(VariantImageExtractorToUint16T(), input);
-//   return ImageUtils::get_image_with_new_container_type<ImageTout, RGBImage,
-//       Tout, uint16_t>(std::move(image_uint16_t));
-
-//   //uint16_t
-// }
+template<template<typename> class ImageTout, typename Tout>
+std::unique_ptr<ImageTout<Tout>> extract_image_with_type_from_variant(
+    std::variant<std::unique_ptr<Image<uint8_t>>,
+        std::unique_ptr<Image<uint16_t>>>& input) {
+  auto image_uint16_t = std::visit(VariantImageExtractorToUint16T(), input);
+  auto ret_image = ImageUtils::get_image_with_new_container_type<ImageTout,
+      RGBImage, Tout, uint16_t>(std::move(image_uint16_t));
+  return std::move(ret_image);
+}
 
 }  // namespace PixelMapFileIO
 
