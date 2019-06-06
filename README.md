@@ -1,13 +1,17 @@
 # JPL-RC
 
 Build instructions:
-  ```cd jplm
-  mkdir build
-  cmake ..
-  make -j```
+  ```bash
+  ~$ cd jplm
+  ~/jplm/$ mkdir build; cd build
+  ~/jplm/build/$ cmake ..
+  ~/jplm/build/$ make -j
+  ```
 
 Test instructions:
-  ```~/jplm/build/$ ctest```
+  ```bash
+  ~/jplm/build/$ ctest
+  ```
 
 
 ctest --verbose //shows all tests
