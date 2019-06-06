@@ -201,12 +201,12 @@ class Generic2DStructure {
   }
 
 
-  auto cbegin() {
+  auto cbegin() const {
     return Raster2DIterator<const T>(this->elements.get());
   }
 
 
-  auto cend() {
+  auto cend() const {
     return Raster2DIterator<const T>(
         this->elements.get() + this->number_of_elements);
   }
