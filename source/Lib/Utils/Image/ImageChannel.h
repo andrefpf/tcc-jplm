@@ -104,7 +104,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   virtual ImageChannel* generate_ptr_to_clone() const override {
     return new ImageChannel(*this);
-  };
+  }
 
 
   void fill_with(const T value) {

@@ -49,17 +49,18 @@
 
 
 template<typename T>
-class Lightfield : public Generic2DStructure<View<T>> {
+class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  public:
-  Lightfield(std::size_t width, std::size_t height)
-      : Generic2DStructure<View<T>>(width, height) {
-      //the alloc all resources is virtual  
-      this->alloc_all_resources();
+  Lightfield(const std::size_t width, const std::size_t height, const bool auto_alloc_resources=true)
+      : Generic2DStructure<std::unique_ptr<View<T>>>(width, height, auto_alloc_resources) {
   };
 
+  Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size, const bool auto_alloc_resources=true) 
+  : Generic2DStructure<std::unique_ptr<View<T>>>(t_s_size, auto_alloc_resources){
+  }
 
-
-  Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
+  //TODO: verify how to make a copy considering derived classes
+  Lightfield(const Lightfield& other) : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
     //FIXME
   }
 
@@ -69,26 +70,27 @@ class Lightfield : public Generic2DStructure<View<T>> {
 
   View<T>& get_view_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
-    return this->get_element_reference_at(coordinate);
+    return *this->get_element_reference_at(coordinate);
   }
 
 
   //FIXME
-  View<T>& get_view_copy_at(
+  View<T> get_view_copy_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
-    return this->get_element_reference_at(coordinate);
+    return *this->get_element_reference_at(coordinate);
   }
 
 
   void set_view_at(const View<T>& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    this->set_element_at(view, coordinate);
+    //i should create a copy to view here and than move it to the generic2dstructure
+    this->set_element_at(std::move(std::make_unique<View<T>>(view)), coordinate);
   }
 
 
   void set_view_at(
       View<T>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
-    this->set_element_at(std::move(view), coordinate);
+    this->set_element_at(std::move(std::make_unique<View<T>>(view)), coordinate);
   }
 
 
@@ -98,7 +100,7 @@ class Lightfield : public Generic2DStructure<View<T>> {
     if (!this->elements) {
       //Throws
     }
-    return this->elements[0].get_width();
+    return this->elements[0]->get_width();
   }
 
 
@@ -106,7 +108,7 @@ class Lightfield : public Generic2DStructure<View<T>> {
     if (!this->elements) {
       //Throws
     }
-    return this->elements[0].get_height();
+    return this->elements[0]->get_height();
   }
 
 
@@ -114,7 +116,7 @@ class Lightfield : public Generic2DStructure<View<T>> {
     if (!this->elements) {
       //Throws
     }
-    return this->elements[0].get_bpp();
+    return this->elements[0]->get_bpp();
   }
 
 
@@ -128,12 +130,15 @@ class Lightfield : public Generic2DStructure<View<T>> {
 
 
   inline View<T>* operator[](const int i) {
-    return this->elements_for_2d_access[i];
+    // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
+    // return unique_ptr_to_view.get();
+    return (*this->elements_for_2d_access[i]).get();
   }
 
 
   inline const View<T>* operator[](const int i) const {
-    return this->elements_for_2d_access[i];
+    // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
+    return (*this->elements_for_2d_access[i]).get();
   }
 
 

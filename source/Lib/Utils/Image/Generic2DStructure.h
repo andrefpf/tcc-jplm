@@ -48,6 +48,14 @@
 #include "ImageExceptions.h"  //FIXME: change the exceptions to be in namespace Generic2DStructure
 #include "Lib/Utils/Image/Raster2DIterator.h"
 
+
+template<class T>
+struct is_unique_ptr : std::false_type {};
+
+template<class T>
+struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
+
+
 template<typename T>
 class Generic2DStructure {
  private:
@@ -63,15 +71,20 @@ class Generic2DStructure {
   std::vector<T*> elements_for_2d_access;
 
 
+  Generic2DStructure(const std::pair<std::size_t, std::size_t>& size,
+      const bool auto_alloc_resources = true)
+      : Generic2DStructure<T>(
+            std::get<0>(size), std::get<1>(size), auto_alloc_resources) {
+  }
 
 
-
-  Generic2DStructure(const std::size_t width, const std::size_t height, const bool auto_alloc_resources=true)
+  Generic2DStructure(const std::size_t width, const std::size_t height,
+      const bool auto_alloc_resources = true)
       : width(width), height(height), number_of_elements(width * height),
         elements(nullptr) {
     if (number_of_elements == 0)
       throw ImageChannelExceptions::InvalidSizeException();
-    if(auto_alloc_resources) {
+    if (auto_alloc_resources) {
       this->alloc_all_resources();
     }
   }
@@ -83,12 +96,15 @@ class Generic2DStructure {
     //FIXME
   }
 
+
   virtual ~Generic2DStructure() = default;
+
 
   virtual Generic2DStructure* generate_ptr_to_clone() const = 0;
 
+
   void alloc_raster_structure_default_init() {
-    elements=std::make_unique<T[]>(number_of_elements);
+    elements = std::make_unique<T[]>(number_of_elements);
   }
 
 
@@ -125,7 +141,17 @@ class Generic2DStructure {
     if (!is_coordinate_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
-    this->elements[i * this->width + j] = element;
+    if constexpr (is_unique_ptr<T>::value) {
+      typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
+          ElemType;
+      auto element_ptr = element.get();
+      //gets the element pointed by the unique_ptr
+      //hopefully this will call the
+      this->elements[i * this->width + j] =
+          std::make_unique<ElemType>(*element_ptr);
+    } else {
+      this->elements[i * this->width + j] = element;
+    }
   }
 
 
@@ -169,7 +195,9 @@ class Generic2DStructure {
     if (!is_coordinate_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexReadException();
     }
-
+    // if constexpr (is_unique_ptr<T>::value) {
+    //   return *this->elements[i * this->width + j];
+    // }
     return this->elements[i * this->width + j];
   }
 
