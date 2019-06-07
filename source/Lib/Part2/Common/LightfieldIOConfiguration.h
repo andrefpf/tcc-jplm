@@ -7,23 +7,26 @@
 
 class LightfieldIOConfiguration {
  protected:
-  LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
-  LightfieldDimension<std::size_t> lightfield_size;
+  const std::string lightfield_path;
+  const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
+  const LightfieldDimension<std::size_t> lightfield_size;
 
  public:
-  LightfieldIOConfiguration(
+  LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldCoordinate<std::size_t>& initial_coordinate,
       const LightfieldCoordinate<std::size_t>& final_coordinate)
-      : lightfield_initial_coordinate(initial_coordinate),
+      : lightfield_path(path_to_lightfield),
+        lightfield_initial_coordinate(initial_coordinate),
         lightfield_size(final_coordinate - initial_coordinate){};
 
-        
-   LightfieldIOConfiguration(
+
+  LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldCoordinate<std::size_t>& initial_coordinate,
       const LightfieldDimension<std::size_t>& lightfield_size)
-      : lightfield_initial_coordinate(initial_coordinate),
+      : lightfield_path(path_to_lightfield),
+        lightfield_initial_coordinate(initial_coordinate),
         lightfield_size(lightfield_size){};
-         
+
 
   ~LightfieldIOConfiguration() = default;
 
@@ -38,20 +41,24 @@ class LightfieldIOConfiguration {
   }
 
 
+  std::string get_path() const noexcept {
+    return lightfield_path;
+  }
+
+
   std::size_t get_number_of_pixels_per_view() const noexcept {
-  	return lightfield_size.get_number_of_pixels_per_view();
+    return lightfield_size.get_number_of_pixels_per_view();
   }
 
 
   std::size_t get_number_of_pixels_per_lightfield() const noexcept {
-  	return lightfield_size.get_number_of_views_per_lightfield();
+    return lightfield_size.get_number_of_views_per_lightfield();
   }
 
 
   std::size_t get_number_of_views_per_lightfield() const noexcept {
-  	return lightfield_size.get_number_of_views_per_lightfield();
+    return lightfield_size.get_number_of_views_per_lightfield();
   }
-
 
 
   std::vector<std::pair<std::size_t, std::size_t>> get_raster_view_coordinates()
@@ -70,8 +77,6 @@ class LightfieldIOConfiguration {
     }
     return ret_val;
   }
-
-
 };
 
 
