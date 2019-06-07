@@ -69,7 +69,8 @@ class LightfieldIOConfiguration {
     auto final_s = initial_s + lightfield_size.get_s();
     auto number_of_views = get_number_of_views_per_lightfield();
 
-    std::vector<std::pair<std::size_t, std::size_t>> ret_val(number_of_views);
+    std::vector<std::pair<std::size_t, std::size_t>> ret_val;
+    ret_val.reserve(number_of_views);
     for (auto t = initial_t; t < final_t; ++t) {
       for (auto s = initial_s; s < final_s; ++s) {
         ret_val.emplace_back(std::make_pair(t, s));
