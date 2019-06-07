@@ -63,11 +63,17 @@ class Generic2DStructure {
   std::vector<T*> elements_for_2d_access;
 
 
-  Generic2DStructure(const std::size_t width, const std::size_t height)
+
+
+
+  Generic2DStructure(const std::size_t width, const std::size_t height, const bool auto_alloc_resources=true)
       : width(width), height(height), number_of_elements(width * height),
-        elements(std::make_unique<T[]>(number_of_elements)) {
+        elements(nullptr) {
     if (number_of_elements == 0)
       throw ImageChannelExceptions::InvalidSizeException();
+    if(auto_alloc_resources) {
+      this->alloc_all_resources();
+    }
   }
 
 
@@ -81,12 +87,25 @@ class Generic2DStructure {
 
   virtual Generic2DStructure* generate_ptr_to_clone() const = 0;
 
-  void alloc_resources() {
+  void alloc_raster_structure_default_init() {
+    elements=std::make_unique<T[]>(number_of_elements);
+  }
+
+
+  void alloc_2d_resource_pointers() {
+    elements_for_2d_access.clear();
     elements_for_2d_access.resize(height);
     for (auto i = decltype(height){0}; i < height; ++i) {
       elements_for_2d_access[i] = &elements[i * width];
     }
   }
+
+
+  virtual void alloc_all_resources() {
+    alloc_raster_structure_default_init();
+    alloc_2d_resource_pointers();
+  }
+
 
  public:
   inline bool is_coordinate_valid(

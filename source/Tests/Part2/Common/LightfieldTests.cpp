@@ -43,6 +43,8 @@
 #include "gtest/gtest.h"
 
 
+
+
 TEST(InitialLightfieldTests, LightfieldHoldsGivenWidth) {
 	Lightfield<uint16_t> lightfield(2,3);
 	EXPECT_EQ(lightfield.get_width(), 2);
@@ -194,6 +196,17 @@ TEST_F(LightfieldViewTests, APixelCanBeAcessedByBracketOperator) {
   EXPECT_EQ(my_pixel_2, 12);
 }
 
+
+TEST(Anything, Test) {
+  auto tst = std::make_unique<int[]>(0);
+  if(!tst) {
+    std::cout << "not alocated" << std::endl;
+  } else {
+    std::cout << "alocated" << std::endl;
+    auto a = tst[0];
+    std::cout << "alocated " << a << std::endl;
+  }
+}
 
 // TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
 //   lightfield.set_view_at(std::move(view), {0,0});

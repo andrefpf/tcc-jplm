@@ -69,16 +69,15 @@ class ImageChannel : public Generic2DStructure<T> {
  public:
   ImageChannel(
       const std::size_t width, const std::size_t height, const std::size_t bpp)
-      : Generic2DStructure<T>(width, height), bpp(bpp) {
+      : Generic2DStructure<T>(width, height, false), bpp(bpp) {
     if (bpp == 0)
       throw ImageChannelExceptions::InvalidSizeException();
-    this->alloc_resources();
+    this->alloc_all_resources();
   }
 
 
   ImageChannel(const ImageChannel<T>& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
-    this->alloc_resources();
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
   }
@@ -86,6 +85,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   ImageChannel(ImageChannel<T>&& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
+        //TODO: check if it is possible to initiallyze the Generic2DStructure with false
     *this = std::move(other);
   }
 
@@ -173,7 +173,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   void operator=(const ImageChannel<T>& other) {
     if (!this->has_equal_size(other)) {  //needs to realloc
-      this->alloc_resources();
+      this->alloc_all_resources();
     }
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));

@@ -45,14 +45,18 @@
 #include "LightfieldDimension.h"
 #include "View.h"
 
+//template<class ViewT<typename>, 
+
 
 template<typename T>
 class Lightfield : public Generic2DStructure<View<T>> {
  public:
   Lightfield(std::size_t width, std::size_t height)
       : Generic2DStructure<View<T>>(width, height) {
-    this->alloc_resources();
+      //the alloc all resources is virtual  
+      this->alloc_all_resources();
   };
+
 
 
   Lightfield(const Lightfield& other) : Generic2DStructure<View<T>>(other) {
@@ -69,6 +73,7 @@ class Lightfield : public Generic2DStructure<View<T>> {
   }
 
 
+  //FIXME
   View<T>& get_view_copy_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
     return this->get_element_reference_at(coordinate);
@@ -85,6 +90,8 @@ class Lightfield : public Generic2DStructure<View<T>> {
       View<T>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
     this->set_element_at(std::move(view), coordinate);
   }
+
+
 
 
   auto get_views_width() const {
@@ -109,6 +116,9 @@ class Lightfield : public Generic2DStructure<View<T>> {
     }
     return this->elements[0].get_bpp();
   }
+
+
+
 
 
   auto get_dimensions() const {
