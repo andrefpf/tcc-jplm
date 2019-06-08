@@ -21,6 +21,7 @@ include(JPLMWarnings)
 include(JPLMCompilerOptimizations)
 
 #including external libraries by downloading them from git..
+include(ExternalCPPItertools)
 include(ExternalOpenJPEG)
 include(ExternalGoogleTest)
 
@@ -35,8 +36,7 @@ include_directories(source/Lib/Utils/Image)
 
 #defines an example executable, used to test external libraries...
 add_executable(example source/Tests/example_test.cpp)
-#defines a dependencie between example executable and openjpeg libray
-add_dependencies(example openjpeg) #this is necessary in this case because 
+add_dependencies(example openjpeg)
 #otherwise the executable may not find the include.
 
 target_include_directories(example PRIVATE "${INCLUDE_DIRECTORIES};${openjpeg_INCLUDE}")

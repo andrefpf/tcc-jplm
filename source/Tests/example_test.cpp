@@ -42,6 +42,24 @@
 #include <iostream>
 #include "gtest/gtest.h"
 #include "openjpeg.h"
+#include "cppitertools/range.hpp"
+
+using iter::range;
+
+TEST(CppIterTools, TestRange) {
+  auto r = range(3);
+  EXPECT_EQ(r.start(), 0);
+  EXPECT_EQ(r.stop(), 3);
+  EXPECT_EQ(r.step(), 1);
+
+  // make sure iterators aren't changing the value
+  auto it = r.begin();
+  ++it;
+
+  EXPECT_EQ(r.start(), 0);
+  EXPECT_EQ(r.stop(), 3);
+  EXPECT_EQ(r.step(), 1);
+}
 
 TEST(OpenJP2K, TestJP2K_A) {
   EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
