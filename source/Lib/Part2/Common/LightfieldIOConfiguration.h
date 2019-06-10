@@ -1,6 +1,7 @@
 #ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDIOCONFIGURATION_H__
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELDIOCONFIGURATION_H__
 
+#include <filesystem>
 #include <tuple>
 #include <vector>
 #include "LightfieldDimension.h"
@@ -11,21 +12,31 @@ class LightfieldIOConfiguration {
   const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
   const LightfieldDimension<std::size_t> lightfield_size;
 
+
+  void check_configurations() {
+    namespace fs = std::filesystem;
+    if (!fs::is_directory(lightfield_path)) {
+      throw LightfieldIOConfigurationExceptions::InvalidLightfieldPath();
+    }
+  }
+
+
  public:
-  LightfieldIOConfiguration(const std::string& path_to_lightfield,
-      const LightfieldCoordinate<std::size_t>& initial_coordinate,
-      const LightfieldCoordinate<std::size_t>& final_coordinate)
-      : lightfield_path(path_to_lightfield),
-        lightfield_initial_coordinate(initial_coordinate),
-        lightfield_size(final_coordinate - initial_coordinate){};
-
-
   LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldCoordinate<std::size_t>& initial_coordinate,
       const LightfieldDimension<std::size_t>& lightfield_size)
       : lightfield_path(path_to_lightfield),
         lightfield_initial_coordinate(initial_coordinate),
-        lightfield_size(lightfield_size){};
+        lightfield_size(lightfield_size) {
+    check_configurations();
+  };
+
+
+  LightfieldIOConfiguration(const std::string& path_to_lightfield,
+      const LightfieldCoordinate<std::size_t>& initial_coordinate,
+      const LightfieldCoordinate<std::size_t>& final_coordinate)
+      : LightfieldIOConfiguration(path_to_lightfield, initial_coordinate,
+            LightfieldDimension(final_coordinate - initial_coordinate)){};
 
 
   ~LightfieldIOConfiguration() = default;

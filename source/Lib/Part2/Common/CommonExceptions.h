@@ -104,6 +104,7 @@ class ImageWasNotInitialyzedException : public std::exception {
   }
 };
 
+
 class InvalidNumberOfChannelsException : public std::exception {
   const char* what() const noexcept override {
     return "The image contained in this view has a invalid number of channels.";
@@ -111,5 +112,14 @@ class InvalidNumberOfChannelsException : public std::exception {
 };
 
 }  // namespace ViewExceptions
+
+
+namespace LightfieldIOConfigurationExceptions {
+class InvalidLightfieldPath : public std::exception {
+  const char* what() const noexcept override {
+    return "The lightfield must be a path";
+  }
+};
+}  // namespace LightfieldIOConfigurationExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_COMMONEXCEPTIONS_H__ */

@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-06-06 15:26:52
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-06-07 18:32:21
+* @Last Modified time: 2019-06-10 12:28:07
 */
 
 
@@ -21,8 +21,8 @@ TEST(ViewFromPPMFileIntantiation, Test) {
 
 	LightfieldIOConfiguration lfc(resources_path+"/small_greek/", initial, size);
 	// EXPECT_EQ(lfc.get_size(), size);
-	std::cout << "initialization of lightfield from ppm" << std::endl;
 	auto lf = LightfieldFromPPMFile<uint16_t>(lfc);
+	// lf.
 }
 
 
