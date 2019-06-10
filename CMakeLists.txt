@@ -21,9 +21,9 @@ include(JPLMWarnings)
 include(JPLMCompilerOptimizations)
 
 #including external libraries by downloading them from git..
+include(ExternalGoogleTest)
 include(ExternalCPPItertools)
 include(ExternalOpenJPEG)
-include(ExternalGoogleTest)
 
 link_libraries(stdc++fs)
 
