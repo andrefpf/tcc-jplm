@@ -62,13 +62,14 @@ class LightfieldIOConfiguration {
   }
 
 
-  std::size_t get_number_of_pixels_per_lightfield() const noexcept {
+  std::size_t get_number_of_views_per_lightfield() const noexcept {
     return lightfield_size.get_number_of_views_per_lightfield();
   }
 
 
-  std::size_t get_number_of_views_per_lightfield() const noexcept {
-    return lightfield_size.get_number_of_views_per_lightfield();
+  std::size_t get_number_of_pixels_per_lightfield() const noexcept {
+    return get_number_of_views_per_lightfield() *
+           get_number_of_pixels_per_view();
   }
 
 
