@@ -41,25 +41,30 @@
 #ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
 
-#include "Generic2DStructure.h"
-#include "LightfieldDimension.h"
-#include "View.h"
+#include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/View.h"
+#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Utils/Image/Generic2DStructure.h"
 
 //template<class ViewT<typename>,
 
 
 template<typename T>
 class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
+ protected:
+  std::unique_ptr<ViewIOPolicy<T>> view_io_policy;
+
  public:
   Lightfield(const std::size_t width, const std::size_t height,
       const bool auto_alloc_resources = true)
       : Generic2DStructure<std::unique_ptr<View<T>>>(
-            width, height, auto_alloc_resources){};
+            width, height, auto_alloc_resources),
+        view_io_policy(std::make_unique<ViewIOPolicyLimitlessMemory<T>>()){};
 
   Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
       const bool auto_alloc_resources = true)
-      : Generic2DStructure<std::unique_ptr<View<T>>>(
-            t_s_size, auto_alloc_resources) {
+      : Lightfield(std::get<0>(t_s_size), std::get<1>(t_s_size),
+            auto_alloc_resources) {
   }
 
   //TODO: verify how to make a copy considering derived classes
@@ -70,6 +75,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   ~Lightfield() = default;
+
+
+  // void set_view_io_policy(const ViewIOPolicy<T>& view_io_policy) {
+
+  // }
+
+  void set_view_io_policy(ViewIOPolicy<T>&& view_io_policy) {
+    this->view_io_policy=std::move(view_io_policy);
+  }
 
 
   virtual View<T>& get_view_at(

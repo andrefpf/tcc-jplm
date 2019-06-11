@@ -207,7 +207,10 @@ class View {
 
 
   virtual T get_value_at(const std::size_t channel,
-      const std::pair<std::size_t, std::size_t>& coordinate) const {
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    if (!image_) {
+      load_image(view_size);
+    }
     if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
@@ -224,6 +227,10 @@ class View {
               << std::get<0>(size) << "x" << std::get<1>(size)
               << "with initial point at (" << std::get<0>(initial) << ", "
               << std::get<1>(initial) << ")" << std::endl;
+  }
+
+  void load_image() {
+    load_image(this->view_size);
   }
 };
 
