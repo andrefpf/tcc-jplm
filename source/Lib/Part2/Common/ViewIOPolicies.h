@@ -1,10 +1,10 @@
 #ifndef VIEWIOPOLICIES_H__
 #define VIEWIOPOLICIES_H__
 
-#include "Lib/Part2/Common/CommonExceptions.h"
-#include "Lib/Utils/Image/Image.h"
-#include "Lib/Part2/Common/View.h"
 #include <queue>
+#include "Lib/Part2/Common/CommonExceptions.h"
+#include "Lib/Part2/Common/View.h"
+#include "Lib/Utils/Image/Image.h"
 
 template<typename T>
 class ViewIOPolicy {
@@ -13,7 +13,7 @@ class ViewIOPolicy {
   ~ViewIOPolicy() = default;
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
-      const std::pair<std::size_t, std::size_t>& coordinate) const = 0;
+      const std::pair<std::size_t, std::size_t>& coordinate) = 0;
 };
 
 
@@ -24,9 +24,31 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
   ~ViewIOPolicyLimitlessMemory() = default;
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
-      const std::pair<std::size_t, std::size_t>& coordinate) const {
-      view.load_image();
-      return view.get_value_at(channel, coordinate);
+      const std::pair<std::size_t, std::size_t>& coordinate) override {
+    view.load_image();
+    return view.get_value_at(channel, coordinate);
+  }
+};
+
+
+template<typename T>
+class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
+ protected:
+  View<T>* last = nullptr;
+
+ public:
+  ViewIOPolicyOneAtATime() = default;
+  ~ViewIOPolicyOneAtATime() = default;
+
+  virtual T get_value_at(View<T>& view, const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) override {
+    if (last != nullptr && last != &view) {
+      last->release_image();
+      std::cout << "released" << std::endl;
+    }
+    view.load_image();
+    last = &view;
+    return view.get_value_at(channel, coordinate);
   }
 };
 
@@ -41,7 +63,6 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
 //     }
 //     return image->get_pixel_at(channel, coordinate);
 //   };
-
 
 
 // template<typename T>
@@ -70,7 +91,6 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
 //   ~ViewIOPolicyLimitedMemory() = default;
 
 
-
 //   virtual T get_value_at(const Image<T>* image,
 //       const std::size_t channel,
 //       const std::pair<std::size_t, std::size_t>& coordinate) const {
@@ -87,11 +107,10 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
 // };
 
 
-
 // //this policy seems to make sense only for MuLELf
 // template<typename T>
 // class LevelDCacheViewIOPolicy : public ViewIOPolicy<T> {
-//  protected: 
+//  protected:
 //  	std::size_t begin = 0;
 //  	std::size_t end = 0;
 
@@ -112,7 +131,6 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
 //   ~LevelDCacheViewIOPolicy() = default;
 
 
-
 //   virtual T get_value_at(const Image<T>* image,
 //       const std::size_t channel,
 //       const std::pair<std::size_t, std::size_t>& coordinate) const override {
@@ -131,7 +149,6 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
 //   };
 
 
-  
 // };
 
 #endif /* end of include guard: VIEWIOPOLICIES_H__ */

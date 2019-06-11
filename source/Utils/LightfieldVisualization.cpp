@@ -77,20 +77,47 @@ uint8_t convert_from_16_bit_to_8_bit_using_depth(
 }
 
 
+// void load_view_into_image(
+//     const std::pair<std::size_t, std::size_t> &view_coordinate) {
+//   try {
+//     auto &view_ptr = lightfield->get_view_at(view_coordinate);
+//     unsigned char *p = image32;
+
+//     for (auto i = decltype(view_ptr.get_width()){0}; i < view_ptr.get_width();
+//          i++) {
+//       for (auto j = decltype(view_ptr.get_height()){0};
+//            j < view_ptr.get_height(); j++) {
+//         const auto &[r, g, b] = view_ptr.get_pixel_at({i, j});
+//         *p++ = convert_from_16_bit_to_8_bit_using_depth(b, view_ptr.get_bpp());
+//         *p++ = convert_from_16_bit_to_8_bit_using_depth(g, view_ptr.get_bpp());
+//         *p++ = convert_from_16_bit_to_8_bit_using_depth(r, view_ptr.get_bpp());
+//         *p++ = 0;
+//       }
+//     }
+
+//   } catch (ImageChannelExceptions::InvalidIndexReadException &e) {
+//     std::cerr << "Error: " << e.what() << std::endl;
+//   };
+// }
+
 void load_view_into_image(
     const std::pair<std::size_t, std::size_t> &view_coordinate) {
   try {
-    auto &view_ptr = lightfield->get_view_at(view_coordinate);
+    // auto &view_ptr = lightfield->get_view_at(view_coordinate);
     unsigned char *p = image32;
+    const auto [t, s] = view_coordinate;
 
-    for (auto i = decltype(view_ptr.get_width()){0}; i < view_ptr.get_width();
+    for (auto i = decltype(lightfield->get_views_width()){0}; i < lightfield->get_views_width();
          i++) {
-      for (auto j = decltype(view_ptr.get_height()){0};
-           j < view_ptr.get_height(); j++) {
-        const auto &[r, g, b] = view_ptr.get_pixel_at({i, j});
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(b, view_ptr.get_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(g, view_ptr.get_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(r, view_ptr.get_bpp());
+      for (auto j = decltype(lightfield->get_views_height()){0};
+           j < lightfield->get_views_height(); j++) {
+        // const auto &[r, g, b] = lightfield-.get_pixel_at({i, j});
+        const auto r = lightfield->get_value_at(0, {t, s, i, j});
+	    const auto g = lightfield->get_value_at(1, {t, s, i, j});
+	    const auto b = lightfield->get_value_at(2, {t, s, i, j});
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(b, lightfield->get_views_bpp());
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(g, lightfield->get_views_bpp());
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(r, lightfield->get_views_bpp());
         *p++ = 0;
       }
     }
@@ -117,6 +144,11 @@ int main() {
   image32 = (unsigned char *) malloc(
       lightfield->get_views_width() * lightfield->get_views_height() * 4);
   char text[255];
+
+  auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+  // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
+  lightfield->set_view_io_policy(std::move(policy));
+
   init_x();
   while (1) {
     XNextEvent(display, &event);

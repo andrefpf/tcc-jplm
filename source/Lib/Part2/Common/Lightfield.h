@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__
 
+#include "Lib/Part2/Common/LightfieldCoordinate.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Part2/Common/ViewIOPolicies.h"
@@ -81,8 +82,16 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
   // }
 
-  void set_view_io_policy(ViewIOPolicy<T>&& view_io_policy) {
-    this->view_io_policy=std::move(view_io_policy);
+  void set_view_io_policy(std::unique_ptr<ViewIOPolicy<T>>&& view_io_policy) {
+    this->view_io_policy = std::move(view_io_policy);
+  }
+
+
+  virtual T get_value_at(const std::size_t channel,
+      const LightfieldCoordinate<std::size_t>& coordinate) const {
+    auto& view = get_view_at(coordinate.get_t_and_s());
+    return view_io_policy->get_value_at(
+        view, channel, coordinate.get_v_and_u());
   }
 
 
