@@ -96,6 +96,23 @@ class View {
   }
 
 
+  Image<T>* get_image_ptr() {
+    if (!image_) {
+      return nullptr;
+    }
+    return image_.get();
+  }
+
+  void release_image() {
+    image_.reset(nullptr);
+  }
+
+
+  void set_image(Image<T>&& image) {
+    image_ = std::move(image);
+  }
+
+
   View(View<T>&& other) noexcept {
     *this = std::move(other);
   }
@@ -127,7 +144,7 @@ class View {
   }
 
 
-  ~View() = default;
+  virtual ~View() = default;
 
 
   auto get_width() const noexcept {
@@ -173,7 +190,10 @@ class View {
 
 
   virtual std::tuple<T, T, T> get_pixel_at(
-      const std::pair<std::size_t, std::size_t>& coordinate) const {
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    if (!image_) {
+      load_image(view_size);
+    }
     if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
@@ -186,7 +206,8 @@ class View {
   }
 
 
-  virtual T get_value_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+  virtual T get_value_at(const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
@@ -195,6 +216,16 @@ class View {
     }
     return image_->get_pixel_at(channel, coordinate);
   }
+
+
+  virtual void load_image(const std::pair<std::size_t, std::size_t>& size,
+      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) {
+    std::cout << "Im not sure how to load a image with size "
+              << std::get<0>(size) << "x" << std::get<1>(size)
+              << "with initial point at (" << std::get<0>(initial) << ", "
+              << std::get<1>(initial) << ")" << std::endl;
+  }
 };
+
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEW_H__ */

@@ -7,12 +7,12 @@
 namespace ImageUtils {
 
 	template<typename Tout, typename Tin>
-	constexpr void check_image_container_requisites(const std::unique_ptr<Image<Tin>>& image_in) {
+	constexpr void check_image_container_requisites(const Image<Tin>& image_in) {
 		if constexpr(std::is_same<Tin, Tout>::value){
 			//copy image from image_in and return
 			return; //if the types are the same, there is no need for further checking
 		}
-		if (image_in->get_bpp() > sizeof(Tout)*8) {
+		if (image_in.get_bpp() > sizeof(Tout)*8) {
 			//throw ImageUtilsExceptions::ContainerHasFewerBitsThanNeededException();
 		}
 		if constexpr (std::is_signed<Tin>::value && std::is_unsigned<Tout>::value) {
@@ -28,7 +28,7 @@ namespace ImageUtils {
 	 template<template<typename> class ImageTout, template<typename> class ImageTin,
       typename Tout, typename Tin>
 	std::unique_ptr<ImageTout<Tout>> get_image_with_new_container_type(const std::unique_ptr<ImageTin<Tin>>& image_in) {
-		check_image_container_requisites<Tout, Tin>(image_in);
+		check_image_container_requisites<Tout, Tin>(*image_in.get());
 		// auto image_out = std::make_unique<ImageTout<Tout>>(image_in->get_width(), image_in->get_height(), image_in->get_bpp());
 		auto intermediary_image = ImageColorSpaceConversion::convert::to<ImageTout>(image_in);
 		if constexpr(std::is_same<Tin, Tout>::value) {
@@ -37,9 +37,9 @@ namespace ImageUtils {
 		auto output_image = std::make_unique<ImageTout<Tout>>(image_in->get_width(), image_in->get_height(), image_in->get_bpp());
 		auto output_image_iterator = output_image->begin();
 
-		for(const auto& channel: intermediary_image) {
+		for(auto& channel: *intermediary_image) {
 			auto output_image_channel_iterator = output_image_iterator->begin();
-			for(const auto value: channel) {
+			for(auto value: channel) {
 				*output_image_channel_iterator = static_cast<Tout>(value);
 				output_image_channel_iterator++;
 			}

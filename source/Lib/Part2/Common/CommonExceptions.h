@@ -47,6 +47,7 @@ namespace LightfieldCoordinateExceptions {
 
 
 class UnsignedUnderflowException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "This operation generated an underflow";
   }
@@ -54,6 +55,7 @@ class UnsignedUnderflowException : public std::exception {
 
 
 class OverflowException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "This operation generated an overflow";
   }
@@ -67,6 +69,7 @@ namespace LightfieldDimensionExceptions {
 
 
 class InvalidZeroDimensionException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "A dimension must be a positive number different than zero.";
   }
@@ -78,6 +81,7 @@ class InvalidZeroDimensionException : public std::exception {
 namespace ViewExceptions {
 
 class InvalidZeroWidthException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The view width was set to zero but it cannot be zero";
   }
@@ -85,6 +89,7 @@ class InvalidZeroWidthException : public std::exception {
 
 
 class InvalidZeroHeightException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The view height was set to zero but it cannot be zero";
   }
@@ -92,6 +97,7 @@ class InvalidZeroHeightException : public std::exception {
 
 
 class InvalidZeroBppException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The view height was set to zero but it cannot be zero";
   }
@@ -99,6 +105,7 @@ class InvalidZeroBppException : public std::exception {
 
 
 class ImageWasNotInitialyzedException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The image contained in this view was not initialized.";
   }
@@ -106,6 +113,7 @@ class ImageWasNotInitialyzedException : public std::exception {
 
 
 class InvalidNumberOfChannelsException : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The image contained in this view has a invalid number of channels.";
   }
@@ -116,6 +124,7 @@ class InvalidNumberOfChannelsException : public std::exception {
 
 namespace LightfieldIOConfigurationExceptions {
 class InvalidLightfieldPath : public std::exception {
+  public:
   const char* what() const noexcept override {
     return "The lightfield must be a path";
   }

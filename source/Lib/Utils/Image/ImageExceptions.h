@@ -45,6 +45,7 @@
 
 namespace ImageChannelExceptions {
 class InvalidSizeException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "A image channel size (width, height, bpp) cannot be zero";
   }
@@ -52,6 +53,7 @@ class InvalidSizeException : public std::exception {
 
 
 class InvalidIndexWriteException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Trying to write in invalid index of image channel";
   }
@@ -59,6 +61,7 @@ class InvalidIndexWriteException : public std::exception {
 
 
 class InvalidIndexReadException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Trying to read from invalid index of image channel";
   }
@@ -66,6 +69,7 @@ class InvalidIndexReadException : public std::exception {
 
 
 class InvalidBppException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "The image channel internal representation does not support a value "
            "with the required bpp.";
@@ -74,6 +78,7 @@ class InvalidBppException : public std::exception {
 
 
 class InvalidValueException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "The image channel internal representation does not support the "
            "required value.";
@@ -84,6 +89,7 @@ class InvalidValueException : public std::exception {
 
 namespace ImageIOExceptions {
 class InexistentPathException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Inexistent path.";
   }
@@ -91,6 +97,7 @@ class InexistentPathException : public std::exception {
 
 
 class FileAlreadyExistsException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "File already exists and I will not overwrite it.";
   }
@@ -98,6 +105,7 @@ class FileAlreadyExistsException : public std::exception {
 
 
 class InexistentFileException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Inexistent file.";
   }
@@ -105,6 +113,7 @@ class InexistentFileException : public std::exception {
 
 
 class NotARegularFileException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Not a regular file.";
   }
@@ -112,6 +121,7 @@ class NotARegularFileException : public std::exception {
 
 
 class UnknownImageTypeException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Unknown image type";
   }
@@ -119,12 +129,14 @@ class UnknownImageTypeException : public std::exception {
 
 
 class PermisionToReadDeniedException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Permission to read from file was denied.";
   }
 };
 
 class UnableToOpenFileException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Unable to open file.";
   }
@@ -134,6 +146,7 @@ class UnableToOpenFileException : public std::exception {
 
 namespace PixelMapFileIOExceptions {
 class InvalidPixelMapIndexException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Permission to read from file was denied.";
   }
@@ -141,6 +154,7 @@ class InvalidPixelMapIndexException : public std::exception {
 
 
 // class PixelMapFileNotSupportedException : public std::exception {
+// public:
 //   const char* what() const noexcept override {
 //     return "This type of pixel map file is not yet suported";
 //   }
@@ -148,6 +162,7 @@ class InvalidPixelMapIndexException : public std::exception {
 
 
 class IncompletePixelMapFileException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Permission to read from file was denied.";
   }
@@ -155,6 +170,7 @@ class IncompletePixelMapFileException : public std::exception {
 
 
 class NoImplementedYetPixelMapFileException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Permission to read from file was denied.";
   }
@@ -162,6 +178,7 @@ class NoImplementedYetPixelMapFileException : public std::exception {
 
 
 class BppMustBeLargerThanZeroException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Pix Map file (PPM, PGM or PNM) bpp must be larger than zero.";
   }
@@ -169,6 +186,7 @@ class BppMustBeLargerThanZeroException : public std::exception {
 
 
 class BppMustBeSmallerOrEqualToSixteenException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Pix Map file (PPM, PGM or PNM) bpp must be <= 16.";
   }
@@ -176,6 +194,7 @@ class BppMustBeSmallerOrEqualToSixteenException : public std::exception {
 
 
 class WidthMustBeLargerThanZeroException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Pix Map file (PPM, PGM or PNM) width must be larger than zero.";
   }
@@ -183,6 +202,7 @@ class WidthMustBeLargerThanZeroException : public std::exception {
 
 
 class HeightMustBeLargerThanZeroException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Pix Map file (PPM, PGM or PNM) height must be larger than zero.";
   }
@@ -195,6 +215,7 @@ class HeightMustBeLargerThanZeroException : public std::exception {
 namespace MetricsExceptions {
 
 class DifferentBppImagesException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Both images must have the same bpp for computing the metric.";
   }
@@ -202,6 +223,7 @@ class DifferentBppImagesException : public std::exception {
 
 
 class DifferentHeightImagesException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Both images must have the same height for computing the metric.";
   }
@@ -209,6 +231,7 @@ class DifferentHeightImagesException : public std::exception {
 
 
 class DifferentWidthImagesException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Both images must have the same width for computing the metric.";
   }
@@ -216,6 +239,7 @@ class DifferentWidthImagesException : public std::exception {
 
 
 class DifferentSizeImagesException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Both images must have the same size for computing the metric.";
   }
@@ -223,6 +247,7 @@ class DifferentSizeImagesException : public std::exception {
 
 
 class DifferentColorSpaceImagesException : public std::exception {
+ public:
   const char* what() const noexcept override {
     return "Both images must be at the same color space to enable computing "
            "the metric.";

@@ -3,6 +3,7 @@
 
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+#include "Lib/Utils/Image/ImageUtils.h"
 #include "Lib/Utils/Image/PixelMapFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
 
@@ -24,15 +25,28 @@ class ViewFromPPMFile : public View<T> {
   };
 
 
-  ViewFromPPMFile(ViewFromPPMFile&& other) {
-    std::cout << "in move contructor" << std::endl;
+  ViewFromPPMFile(ViewFromPPMFile&& other) noexcept
+      : View<T>(std::move(other)) {
     std::swap(name_translator, other.name_translator);
     std::swap(ppm_file, other.ppm_file);
   }
 
 
-  //     auto oppened_image_as_rgb = std::unique_ptr<PPMBinaryFile>(
-  // static_cast<PPMBinaryFile*>(oppened_image.release()));
+  void load_image(const std::pair<std::size_t, std::size_t>& size,
+      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) override {
+    const auto& [i, j] = initial;
+    if ((i == 0) && (j == 0) && (size == this->view_size)) {
+      //loads the entire image
+      auto readed_variant = ppm_file->read_full_image();
+      auto readed_image =
+          PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
+              uint16_t>(readed_variant);
+      this->image_ = ImageUtils::get_image_with_new_container_type<RGBImage,
+          RGBImage, T, uint16_t>(readed_image);
+    } else {
+      //loads image patch
+    }
+  }
 
   ~ViewFromPPMFile() = default;
 };

@@ -307,6 +307,25 @@ class ThreeChannelImage : public Image<T> {
 
 
   virtual ~ThreeChannelImage() = default;
+
+  auto begin() {
+    return this->channels.begin();
+  }
+
+
+  auto end() {
+    return this->channels.end();
+  }
+
+
+  auto cbegin() {
+    return this->channels.cbegin();
+  }
+
+
+  auto cend() {
+    return this->channels.cend();
+  }
 };
 
 
@@ -351,6 +370,25 @@ class RGBImage : public ThreeChannelImage<T> {
 
   std::vector<std::string> get_channel_names() const final {
     return {"Red", "Green", "Blue"};
+  }
+
+  auto begin() {
+    return this->channels.begin();
+  }
+
+
+  auto end() {
+    return this->channels.end();
+  }
+
+
+  auto cbegin() {
+    return this->channels.cbegin();
+  }
+
+
+  auto cend() {
+    return this->channels.cend();
   }
 };
 

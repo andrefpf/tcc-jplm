@@ -63,8 +63,8 @@ struct LightfieldViewTests: public testing::Test
   Lightfield<uint16_t> lightfield; // = Lightfield<uint16_t>(2,3);
   std::unique_ptr<RGBImage<uint16_t>> image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
   View<uint16_t> view;
-  LightfieldViewTests() : lightfield(2,3) {
-    view = View<uint16_t>(std::move(image));
+  LightfieldViewTests() : lightfield(2,3), view(std::move(image)) {
+    // view = View<uint16_t>(std::move(image));
   }
 
 };

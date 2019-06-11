@@ -151,15 +151,16 @@ TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
 
 struct ImageInViewTests : public testing::Test {
  protected:
-  View<uint16_t> view;
-  ImageInViewTests() {
-    std::unique_ptr<Image<uint16_t>> image =
+  std::unique_ptr<Image<uint16_t>> image =
         std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+  View<uint16_t> view;
+  ImageInViewTests(): view(std::move(image)) {
+    // view.get_im
     auto as_three_channel =
-        static_cast<ThreeChannelImage<uint16_t> *>(image.get());
+        static_cast<ThreeChannelImage<uint16_t> *>(view.get_image_ptr());
     as_three_channel->set_pixel_at({1023, 1023, 1023}, 0, 0);
     as_three_channel->set_pixel_at({1023, 0, 0}, 0, 1);
-    view = std::move(image);
+    
   }
 };
 

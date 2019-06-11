@@ -142,7 +142,7 @@ class Generic2DStructure {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
     if constexpr (is_unique_ptr<T>::value) {
-      typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
+        typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
           ElemType;
       auto element_ptr = element.get();
       //gets the element pointed by the unique_ptr
@@ -186,7 +186,7 @@ class Generic2DStructure {
   }
 
 
-  T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
+  void check_for_access_errors(const std::size_t i, const std::size_t j) const {
     if (!elements) {
       //FIXME
       std::cerr << "ptr not set.. " << std::endl;
@@ -195,11 +195,31 @@ class Generic2DStructure {
     if (!is_coordinate_valid(i, j)) {
       throw ImageChannelExceptions::InvalidIndexReadException();
     }
-    // if constexpr (is_unique_ptr<T>::value) {
-    //   return *this->elements[i * this->width + j];
-    // }
-    return this->elements[i * this->width + j];
   }
+
+
+  // std::enable_if_t<is_unique_ptr<T>::value, ElemType&> 
+  // get_element_reference_at(const std::size_t i, const std::size_t j) const {
+  //   check_for_access_errors(i, j);
+  //   auto element_ptr = this->elements[i * this->width + j].get();
+  //   return *element_ptr;
+  // }
+
+
+  // std::enable_if_t<!is_unique_ptr<T>::value, T&> 
+  // get_element_reference_at(const std::size_t i, const std::size_t j) const {
+  //   check_for_access_errors(i, j);
+  //   // if constexpr (is_unique_ptr<T>::value) {
+  //   //   return *this->elements[i * this->width + j];
+  //   // }
+  //   return this->elements[i * this->width + j];
+  // }
+
+  T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
+    check_for_access_errors(i, j);
+    return this->elements[i * this->width + j];
+  }  
+
 
 
   T get_element_value_at(
