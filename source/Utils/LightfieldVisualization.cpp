@@ -145,7 +145,8 @@ int main() {
       lightfield->get_views_width() * lightfield->get_views_height() * 4);
   char text[255];
 
-  auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+  // auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+  auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
   // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   lightfield->set_view_io_policy(std::move(policy));
 

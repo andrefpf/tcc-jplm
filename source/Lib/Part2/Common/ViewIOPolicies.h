@@ -44,7 +44,6 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
       const std::pair<std::size_t, std::size_t>& coordinate) override {
     if (last != nullptr && last != &view) {
       last->release_image();
-      std::cout << "released" << std::endl;
     }
     view.load_image();
     last = &view;
@@ -52,59 +51,67 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
   }
 };
 
-// virtual T get_value_at(const View<T>& view,
-//       const std::size_t channel,
-//       const std::pair<std::size_t, std::size_t>& coordinate) const {
-//     if (!image) {
-//       throw ViewExceptions::ImageWasNotInitialyzedException();
-//     }
-//     if (channel >= image->get_number_of_channels()) {
-//       throw ViewExceptions::InvalidNumberOfChannelsException();
-//     }
-//     return image->get_pixel_at(channel, coordinate);
-//   };
+
+template<typename T>
+class ViewIOPolicyQueue : public ViewIOPolicy<T> {
+protected:
+  std::queue<View<T>*> circular_list;
+
+  bool is_loaded() {
+    
+  }
+
+  void release_view_image() {
+    if (circular_list.size() > 0) {
+      auto ref_to_view = circular_list.front();
+      ref_to_view->release_image();
+      circular_list.pop();
+      std::cout << "poped" << std::endl;
+    }
+  }
+};
 
 
-// template<typename T>
-// class ViewIOPolicyLimitedMemory {
-// protected:
-//   //value equivalent to 9 1920x1080 views with uint16_t
-//   std::size_t max_bytes = 111974400; //about 14 MB
-//   std::size_t current_bytes = 0;
+template<typename T>
+class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
+ protected:
+  std::size_t max_views = 3;
+  std::size_t current_views = 0;
 
-//   std::queue<View<T>&> circular_list;
-
-//   void release_view_image() {
-//     if (circular_list.size() > 0) {
-//       auto ref_to_view = circular_list.front();
-//       ref_to_view.release_image();
-//       circular_list.pop();
-//     }
-//   }
-
-
-//   // void
-
-
-//  public:
-//   ViewIOPolicyLimitedMemory() = default;
-//   ~ViewIOPolicyLimitedMemory() = default;
+  virtual T get_value_at(View<T>& view, const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) override {
+    if (current_views + 1 > max_views) {
+      this->release_view_image();
+    } else {
+      current_views++;
+    }
+    this->circular_list.push(&view);
+    view.load_image();
+    return view.get_value_at(channel, coordinate);
+  }
+};
 
 
-//   virtual T get_value_at(const Image<T>* image,
-//       const std::size_t channel,
-//       const std::pair<std::size_t, std::size_t>& coordinate) const {
-//     if (channel >= image->get_number_of_channels()) {
-//       throw ViewExceptions::InvalidNumberOfChannelsException();
-//     }
-//     if (!image) {
-//       throw ViewExceptions::ImageWasNotInitialyzedException();
-//     }
-//     return image->get_pixel_at(channel, coordinate);
-//   };
+template<typename T>
+class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
+ protected:
+  //value equivalent to 9 1920x1080 views with uint16_t
+  std::size_t max_bytes = 111974400;  //about 14 MB
+  std::size_t current_bytes = 0;
 
-
-// };
+  virtual T get_value_at(View<T>& view, const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) override {
+    auto expected_number_of_bytes = view.get_number_of_pixels() * 3 * sizeof(T);
+    if (current_bytes + expected_number_of_bytes > max_bytes) {
+      this->release_view_image();
+    } else {
+      current_bytes += expected_number_of_bytes;
+    }
+    this->circular_list.push(&view);
+    view.load_image();
+    return view.get_value_at(channel, coordinate);
+  }
+};
 
 
 // //this policy seems to make sense only for MuLELf

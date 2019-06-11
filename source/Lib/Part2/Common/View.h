@@ -177,6 +177,14 @@ class View {
     return image_->get_number_of_channels();
   }
 
+  auto get_number_of_pixels() const {
+    return get_width()*get_height();
+  }
+ 
+  auto get_number_of_pixels_per_channel() const {
+    return get_number_of_channels()*get_number_of_pixels();
+  }
+
 
   //these are unsafe
   inline virtual ImageChannel<T>& operator[](const int i) noexcept {
