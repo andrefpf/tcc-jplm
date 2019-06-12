@@ -44,7 +44,7 @@
 #include <tuple>
 #include "LightfieldCoordinate.h"
 
-template<typename T>
+template<typename T = std::size_t>
 class LightfieldDimension : public LightfieldCoordinate<T> {
  protected:
   void check_for_zero_dimension(
