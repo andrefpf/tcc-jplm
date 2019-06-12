@@ -12,6 +12,7 @@ class ViewIOPolicy {
   ViewIOPolicy() = default;
   ~ViewIOPolicy() = default;
 
+
   virtual T get_value_at(View<T>& view, const std::size_t channel,
       const std::pair<std::size_t, std::size_t>& coordinate) = 0;
 };
@@ -22,6 +23,7 @@ class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
  public:
   ViewIOPolicyLimitlessMemory() = default;
   ~ViewIOPolicyLimitlessMemory() = default;
+
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
       const std::pair<std::size_t, std::size_t>& coordinate) override {
@@ -36,9 +38,11 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
  protected:
   View<T>* last = nullptr;
 
+
  public:
   ViewIOPolicyOneAtATime() = default;
   ~ViewIOPolicyOneAtATime() = default;
+
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
       const std::pair<std::size_t, std::size_t>& coordinate) override {
@@ -54,19 +58,23 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
 
 template<typename T>
 class ViewIOPolicyQueue : public ViewIOPolicy<T> {
-protected:
-  std::queue<View<T>*> circular_list;
+ protected:
+  std::deque<View<T>*> queue;
 
-  bool is_loaded() {
-    
+
+  bool is_loaded(const View<T>* view) const {
+    if (std::find(queue.begin(), queue.end(), view) == queue.end()) {
+      return false;
+    }
+    return true;
   }
 
+
   void release_view_image() {
-    if (circular_list.size() > 0) {
-      auto ref_to_view = circular_list.front();
+    if (queue.size() > 0) {
+      auto ref_to_view = queue.front();
       ref_to_view->release_image();
-      circular_list.pop();
-      std::cout << "poped" << std::endl;
+      queue.pop_front();
     }
   }
 };
@@ -78,15 +86,18 @@ class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
   std::size_t max_views = 3;
   std::size_t current_views = 0;
 
+
   virtual T get_value_at(View<T>& view, const std::size_t channel,
       const std::pair<std::size_t, std::size_t>& coordinate) override {
-    if (current_views + 1 > max_views) {
-      this->release_view_image();
-    } else {
-      current_views++;
+    if (!this->is_loaded(&view)) {
+      if (current_views + 1 > max_views) {
+        this->release_view_image();
+      } else {
+        current_views++;
+      }
+      this->queue.push_back(&view);
+      view.load_image();
     }
-    this->circular_list.push(&view);
-    view.load_image();
     return view.get_value_at(channel, coordinate);
   }
 };
@@ -99,16 +110,20 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
   std::size_t max_bytes = 111974400;  //about 14 MB
   std::size_t current_bytes = 0;
 
+
   virtual T get_value_at(View<T>& view, const std::size_t channel,
       const std::pair<std::size_t, std::size_t>& coordinate) override {
-    auto expected_number_of_bytes = view.get_number_of_pixels() * 3 * sizeof(T);
-    if (current_bytes + expected_number_of_bytes > max_bytes) {
-      this->release_view_image();
-    } else {
-      current_bytes += expected_number_of_bytes;
+    if (!this->is_loaded(&view)) {
+      auto expected_number_of_bytes =
+          view.get_number_of_pixels() * 3 * sizeof(T);
+      if (current_bytes + expected_number_of_bytes > max_bytes) {
+        this->release_view_image();
+      } else {
+        current_bytes += expected_number_of_bytes;
+      }
+      this->queue.push_back(&view);
+      view.load_image();
     }
-    this->circular_list.push(&view);
-    view.load_image();
     return view.get_value_at(channel, coordinate);
   }
 };
