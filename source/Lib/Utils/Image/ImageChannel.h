@@ -221,6 +221,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
 
   T get_value_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+    // std::cout << "getting pixel in channel" << std::endl;
     return this->get_element_value_at(coordinate);
   }
 

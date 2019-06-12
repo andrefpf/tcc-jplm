@@ -49,9 +49,10 @@ Display *display;
 int screen;
 Window win;
 GC gc;
-void init_x();
+void init_x(Lightfield<uint16_t> &lightfield,
+    const LightfieldIOConfiguration &configuration);
 void close_x();
-void redraw();
+void redraw(const Lightfield<uint16_t> &lightfield);
 
 unsigned char *image32;
 size_t past_positional_view_x = 5;
@@ -60,15 +61,6 @@ int inverted_axis = 0;
 int horizontal_views = 0;
 int vertical_views = 0;
 
-std::string resources_path = "../resources";
-
-LightfieldDimension<std::size_t> size(3, 3, 32, 32);
-LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-LightfieldIOConfiguration configuration(
-    {resources_path + "/small_greek/"}, initial, size);
-
-std::unique_ptr<LightfieldFromPPMFile<uint16_t>> lightfield =
-    std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
 
 uint8_t convert_from_16_bit_to_8_bit_using_depth(
     uint16_t source, uint8_t depth) {
@@ -77,47 +69,23 @@ uint8_t convert_from_16_bit_to_8_bit_using_depth(
 }
 
 
-// void load_view_into_image(
-//     const std::pair<std::size_t, std::size_t> &view_coordinate) {
-//   try {
-//     auto &view_ptr = lightfield->get_view_at(view_coordinate);
-//     unsigned char *p = image32;
-
-//     for (auto i = decltype(view_ptr.get_width()){0}; i < view_ptr.get_width();
-//          i++) {
-//       for (auto j = decltype(view_ptr.get_height()){0};
-//            j < view_ptr.get_height(); j++) {
-//         const auto &[r, g, b] = view_ptr.get_pixel_at({i, j});
-//         *p++ = convert_from_16_bit_to_8_bit_using_depth(b, view_ptr.get_bpp());
-//         *p++ = convert_from_16_bit_to_8_bit_using_depth(g, view_ptr.get_bpp());
-//         *p++ = convert_from_16_bit_to_8_bit_using_depth(r, view_ptr.get_bpp());
-//         *p++ = 0;
-//       }
-//     }
-
-//   } catch (ImageChannelExceptions::InvalidIndexReadException &e) {
-//     std::cerr << "Error: " << e.what() << std::endl;
-//   };
-// }
-
-void load_view_into_image(
+void load_view_into_image(Lightfield<uint16_t> &lightfield,
     const std::pair<std::size_t, std::size_t> &view_coordinate) {
   try {
-    // auto &view_ptr = lightfield->get_view_at(view_coordinate);
     unsigned char *p = image32;
-    const auto [t, s] = view_coordinate;
+    const auto& image = static_cast<const RGBImage<uint16_t>&>(lightfield.get_image_at(view_coordinate));
 
-    for (auto i = decltype(lightfield->get_views_width()){0}; i < lightfield->get_views_width();
-         i++) {
-      for (auto j = decltype(lightfield->get_views_height()){0};
-           j < lightfield->get_views_height(); j++) {
-        // const auto &[r, g, b] = lightfield-.get_pixel_at({i, j});
-        const auto r = lightfield->get_value_at(0, {t, s, i, j});
-	    const auto g = lightfield->get_value_at(1, {t, s, i, j});
-	    const auto b = lightfield->get_value_at(2, {t, s, i, j});
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(b, lightfield->get_views_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(g, lightfield->get_views_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(r, lightfield->get_views_bpp());
+    for (auto i = decltype(lightfield.get_views_height()){0};
+         i < lightfield.get_views_height(); ++i) {
+      for (auto j = decltype(lightfield.get_views_width()){0};
+           j < lightfield.get_views_width(); ++j) {
+        const auto& [r, g, b] = image.get_pixel_at(i, j);
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(
+            b, lightfield.get_views_bpp());
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(
+            g, lightfield.get_views_bpp());
+        *p++ = convert_from_16_bit_to_8_bit_using_depth(
+            r, lightfield.get_views_bpp());
         *p++ = 0;
       }
     }
@@ -127,9 +95,31 @@ void load_view_into_image(
   };
 }
 
+std::string resources_path = "../resources";
 
-// int main(int argc, char const *argv[]) {
-int main() {
+int main(int argc, char const *argv[]) {
+  // int main() {
+  std::string path_to_lightfield;
+  if (argc < 2) {
+    path_to_lightfield = std::string({resources_path + "/small_greek/"});
+  } else {
+    path_to_lightfield = std::string(argv[1]);
+  }
+
+  int t = 3;
+  int s = 3;
+
+  if (argc == 3) {
+    t = s = atoi(argv[2]);
+  }
+
+  LightfieldDimension<std::size_t> size(t, s, 32, 32);
+  LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+  LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
+
+  std::unique_ptr<LightfieldFromPPMFile<uint16_t>> lightfield =
+      std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
+
   auto view_relative_horizontal_size =
       lightfield->get_views_width() / ((double) lightfield->get_width() - 1);
   auto view_relative_vertical_size =
@@ -143,19 +133,32 @@ int main() {
 
   image32 = (unsigned char *) malloc(
       lightfield->get_views_width() * lightfield->get_views_height() * 4);
+
+
   char text[255];
 
   // auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
-  auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
+  // auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
+  // auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
+  auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
+  policy->set_max_bytes(lightfield->get_views_width() * lightfield->get_views_height() * 2 * 30);
+  // auto policy = std::make_unique<ViewIOPolicyLimitlessMemory<uint16_t>>();
+  
   // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   lightfield->set_view_io_policy(std::move(policy));
+  std::cout << "lightfield->get_views_width(): "
+            << lightfield->get_views_width() << std::endl;
+  std::cout << "lightfield->get_views_height(): "
+            << lightfield->get_views_height() << std::endl;
 
-  init_x();
+  init_x(*lightfield, configuration);
+
+  std::cout << "init" << std::endl;
   while (1) {
     XNextEvent(display, &event);
 
     if (event.type == Expose && event.xexpose.count == 0) {
-      redraw();
+      redraw(*lightfield);
     }
     if (event.type == KeyPress &&
         XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
@@ -177,8 +180,8 @@ int main() {
       if ((past_t != t) || (past_s != s)) {
         past_t = t;
         past_s = s;
-        load_view_into_image({t, s});
-        redraw();
+        load_view_into_image(*lightfield, {t, s});
+        redraw(*lightfield);
       }
     }
   }
@@ -186,17 +189,20 @@ int main() {
   return 0;
 }
 
-void init_x() {
+void init_x(Lightfield<uint16_t> &lightfield,
+    const LightfieldIOConfiguration &configuration) {
   unsigned long black, white;
 
   display = XOpenDisplay((char *) 0);
   screen = DefaultScreen(display);
   black = BlackPixel(display, screen), white = WhitePixel(display, screen);
 
-  load_view_into_image({0, 0});
+  std::cout << "before load" << std::endl;
+  load_view_into_image(lightfield, {0, 0});
+  std::cout << "after load" << std::endl;
 
   win = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0,
-      lightfield->get_views_width(), lightfield->get_views_height(), 5, black,
+      lightfield.get_views_width(), lightfield.get_views_height(), 5, black,
       white);
 
   XSetStandardProperties(display, win, configuration.get_path().c_str(), "Test",
@@ -218,12 +224,12 @@ void close_x() {
   exit(1);
 }
 
-void redraw() {
+void redraw(const Lightfield<uint16_t> &lightfield) {
   XClearWindow(display, win);
   Visual *visual = DefaultVisual(display, 0);
   XImage *ximage =
       XCreateImage(display, visual, 24, ZPixmap, 0, (char *) image32,
-          lightfield->get_views_width(), lightfield->get_views_height(), 32, 0);
+          lightfield.get_views_width(), lightfield.get_views_height(), 32, 0);
   XPutImage(display, win, DefaultGC(display, 0), ximage, 0, 0, 0, 0,
-      lightfield->get_views_width(), lightfield->get_views_height());
+      lightfield.get_views_width(), lightfield.get_views_height());
 }

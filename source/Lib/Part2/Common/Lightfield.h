@@ -68,19 +68,12 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
             auto_alloc_resources) {
   }
 
-  //TODO: verify how to make a copy considering derived classes
-  Lightfield(const Lightfield& other)
-      : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
-    //FIXME
-  }
+  
+  Lightfield(const Lightfield& other) = delete;
 
 
   ~Lightfield() = default;
 
-
-  // void set_view_io_policy(const ViewIOPolicy<T>& view_io_policy) {
-
-  // }
 
   void set_view_io_policy(std::unique_ptr<ViewIOPolicy<T>>&& view_io_policy) {
     this->view_io_policy = std::move(view_io_policy);
@@ -102,11 +95,16 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  //setters and getters with move and copy may cause object slicing
-  //FIXME
+  //getters with move and copy may cause object slicing
   virtual std::unique_ptr<View<T>> get_view_copy_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
     return std::move(this->get_element_reference_at(coordinate));
+  }
+
+
+  virtual const Image<T>& get_image_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->get_image_at(view);
   }
 
 
@@ -170,7 +168,8 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   virtual Lightfield* generate_ptr_to_clone() const override {
-    return new Lightfield(*this);
+    // return new Lightfield(*this);
+    return nullptr; //one should not make a copy of lf
   };
 };
 

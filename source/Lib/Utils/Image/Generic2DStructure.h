@@ -127,7 +127,7 @@ class Generic2DStructure {
   inline bool is_coordinate_valid(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
     auto [i, j] = coordinate;
-    return i < width && j < height;
+    return i < height && j < width;
   }
 
 
@@ -146,7 +146,6 @@ class Generic2DStructure {
           ElemType;
       auto element_ptr = element.get();
       //gets the element pointed by the unique_ptr
-      //hopefully this will call the
       this->elements[i * this->width + j] =
           std::make_unique<ElemType>(*element_ptr);
     } else {
@@ -193,6 +192,7 @@ class Generic2DStructure {
       exit(2);
     }
     if (!is_coordinate_valid(i, j)) {
+      std::cout << "invalid coordinate" << i << "," << j << std::endl;
       throw ImageChannelExceptions::InvalidIndexReadException();
     }
   }
@@ -216,6 +216,14 @@ class Generic2DStructure {
   // }
 
   T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
+    // std::cout << "after checking for error 2d structure" << std::endl;
+    // std::cout << "width: " << width << '\n';
+    // std::cout << "height: " << height << '\n';
+    // std::cout << "number_of_elements: " << number_of_elements << '\n';
+    // std::cout << "i: " << i << '\n';
+    // std::cout << "j: " << j << '\n';
+    // std::cout << "i * this->width: " << i * this->width << '\n';
+    // std::cout << "i * this->width + j: " << i * this->width + j << '\n';
     check_for_access_errors(i, j);
     return this->elements[i * this->width + j];
   }  
@@ -224,6 +232,7 @@ class Generic2DStructure {
 
   T get_element_value_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
+    // std::cout << "getting pixel im 2d structure" << std::endl;
     return get_element_reference_at(coordinate);
   }
 

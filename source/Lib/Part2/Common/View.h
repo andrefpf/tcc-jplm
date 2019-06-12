@@ -111,6 +111,13 @@ class View {
   }
 
 
+  bool has_image() const {
+    if(image_)
+      return true;
+    return false;
+  }
+
+
   View(View<T>&& other) noexcept {
     *this = std::move(other);
   }
@@ -223,6 +230,7 @@ class View {
     if (channel >= image_->get_number_of_channels()) {
       throw ViewExceptions::InvalidNumberOfChannelsException();
     }
+    // std::cout << "getting pixel" << std::endl;
     return image_->get_pixel_at(channel, coordinate);
   }
 
@@ -236,6 +244,7 @@ class View {
   }
 
   void load_image() {
+    // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';
     load_image(this->view_size);
   }
 };
