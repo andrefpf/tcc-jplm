@@ -10,6 +10,8 @@
 template<typename T>
 class ViewFromPPMFile : public View<T> {
  protected:
+  const std::string path;
+  const std::pair<std::size_t, std::size_t> position;
   std::unique_ptr<ViewToFilenameTranslator> name_translator;
   std::unique_ptr<PixelMapFile> ppm_file;
 
@@ -17,12 +19,21 @@ class ViewFromPPMFile : public View<T> {
   ViewFromPPMFile(const std::string& path,
       const std::pair<std::size_t, std::size_t>& position)
       //using the default view constructor because we cannot initialize first the derived class members
-      : View<T>(), name_translator(std::make_unique<PPM3CharViewToFilename>()),
+      : View<T>(), path(path), position(position),
+        name_translator(std::make_unique<PPM3CharViewToFilename>()),
         ppm_file(PixelMapFileIO::open(
             {path + name_translator->view_position_to_filename(position)})) {
     this->view_size = {ppm_file->get_width(), ppm_file->get_height()};
     this->bpp = ppm_file->get_number_of_bits_per_pixel();
   };
+
+
+  ViewFromPPMFile(const ViewFromPPMFile& other)
+      : View<T>(other), path(other.path), position(other.position),
+        name_translator(std::make_unique<PPM3CharViewToFilename>()),
+        ppm_file(PixelMapFileIO::open(
+            {path + name_translator->view_position_to_filename(position)})) {
+  }
 
 
   ViewFromPPMFile(ViewFromPPMFile&& other) noexcept

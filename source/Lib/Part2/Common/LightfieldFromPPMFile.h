@@ -21,11 +21,11 @@ class LightfieldFromPPMFile : public Lightfield<T> {
   }
   ~LightfieldFromPPMFile() = default;
 
-  virtual void set_view_at(
-      View<T>&& view, const std::pair<std::size_t, std::size_t>& coordinate) override {
-    this->set_element_at(
-        std::move(std::make_unique<ViewFromPPMFile<T>>(std::move(static_cast<ViewFromPPMFile<T>&&>(view)))), coordinate);
-  }
+  // virtual void set_view_at(
+  //     View<T>&& view, const std::pair<std::size_t, std::size_t>& coordinate) override {
+  //   this->set_element_at(
+  //       std::move(std::make_unique<ViewFromPPMFile<T>>(std::move(static_cast<ViewFromPPMFile<T>&&>(view)))), coordinate);
+  // }
 };
 
 #endif /* end of include guard: LIGHTFIELDFROMPPMFILE_H__ */

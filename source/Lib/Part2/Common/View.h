@@ -52,6 +52,10 @@ class View {
   std::pair<std::size_t, std::size_t> view_size;
   std::size_t bpp;
 
+  //required by some base classes
+  View() = default;
+
+
  public:
   static_assert(std::is_integral<T>::value, "The view type must be integral");
 
@@ -74,12 +78,6 @@ class View {
       throw ViewExceptions::InvalidZeroHeightException();
     }
   }
-
-
-  View() {
-    // std::cout << "This is the view default constructor..." << std::endl;
-  }
-  //for now this is needed in the lightfield constructor
 
 
   View(const View<T>& other)
@@ -178,11 +176,11 @@ class View {
   }
 
   auto get_number_of_pixels() const {
-    return get_width()*get_height();
+    return get_width() * get_height();
   }
- 
+
   auto get_number_of_pixels_per_channel() const {
-    return get_number_of_channels()*get_number_of_pixels();
+    return get_number_of_channels() * get_number_of_pixels();
   }
 
 
