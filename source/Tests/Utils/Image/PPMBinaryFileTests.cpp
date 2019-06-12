@@ -44,6 +44,7 @@
 #include "PixelMapFileIO.h"
 #include "gtest/gtest.h"
 
+
 std::string resources_path = "../resources";
 
 
