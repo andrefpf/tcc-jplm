@@ -159,7 +159,7 @@ struct ImageInViewTests : public testing::Test {
     auto as_three_channel =
         static_cast<ThreeChannelImage<uint16_t> *>(view.get_image_ptr());
     as_three_channel->set_pixel_at({1023, 1023, 1023}, 0, 0);
-    as_three_channel->set_pixel_at({1023, 0, 0}, 0, 1);
+    as_three_channel->set_pixel_at({1023, 0, 0}, 1, 0);
     
   }
 };
@@ -189,7 +189,7 @@ TEST_F(ImageInViewTests, CanGetWhitePixelFromView) {
 
 
 TEST_F(ImageInViewTests, CanGetRedPixelFromView) {
-  const auto &[r, g, b] = view.get_pixel_at({0, 1});
+  const auto &[r, g, b] = view.get_pixel_at({1, 0});
   EXPECT_EQ(r, 1023);
   EXPECT_EQ(g, 0);
   EXPECT_EQ(b, 0);

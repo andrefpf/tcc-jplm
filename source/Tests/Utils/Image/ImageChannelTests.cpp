@@ -184,9 +184,9 @@ TEST_F(ImageChannelTestUInt16T, ImageChannelGetNumberOfPixels) {
 }
 
 
-TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOuNot) {
-  for (auto i = 0; i < width + 100; ++i) {
-    for (auto j = 0; j < height + 100; ++j) {
+TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOrNot) {
+  for (auto i = 0; i < height + 100; ++i) {
+    for (auto j = 0; j < width + 100; ++j) {
       EXPECT_EQ(image_channel->is_coordinate_valid({i, j}),
           image_channel->is_coordinate_valid(i, j));
     }
@@ -195,8 +195,8 @@ TEST_F(ImageChannelTestUInt16T, ValidIndexMustReturnTheSameWhenUsingPairOuNot) {
 
 
 TEST_F(ImageChannelTestUInt16T, ValidIndexMustBeValidated) {
-  for (auto i = 0; i < width; ++i) {
-    for (auto j = 0; j < height; ++j) {
+  for (auto i = 0; i < height; ++i) {
+    for (auto j = 0; j < width; ++j) {
       EXPECT_TRUE(image_channel->is_coordinate_valid(i, j));
     }
   }
