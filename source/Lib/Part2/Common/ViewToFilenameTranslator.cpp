@@ -42,6 +42,14 @@
 
 std::string PPM3CharViewToFilename::view_position_to_filename(
     const std::pair<std::size_t, std::size_t>& position) const {
+	const auto& [t, s] = position;
+	if(t > 999) {
+		throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+	}
+	if (s > 999)
+	{
+		throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+	}
   std::ostringstream string_stream;
   string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
                 << '_' << std::setw(3) << std::setfill('0')

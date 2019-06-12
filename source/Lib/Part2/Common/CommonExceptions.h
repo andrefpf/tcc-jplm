@@ -131,4 +131,14 @@ class InvalidLightfieldPath : public std::exception {
 };
 }  // namespace LightfieldIOConfigurationExceptions
 
+
+namespace ViewToFilenameTranslatorExceptions {
+class Char3OverflowException : public std::exception {
+  public:
+  const char* what() const noexcept override {
+    return "The required view position is larger than 999, which is the maximum supported in this representation";
+  }
+};
+}
+
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_COMMONEXCEPTIONS_H__ */
