@@ -38,34 +38,22 @@
  *  \date     2019-02-19
  */
 
+
 #ifndef JPLM_LIB_UTILS_IMAGE_COLORSPACES_H__
 #define JPLM_LIB_UTILS_IMAGE_COLORSPACES_H__
 
-/*
- * ColorSpaces.h
- *
- * Author: Ismael Seidel
- */
 
-#include <climits>  //for CHAR_BIT
-#include <cmath>
 #include <iostream>
 #include <limits>
 #include <tuple>
 #include <vector>
-// #include <typeinfo>
 #include <memory>
+#include "Lib/Utils/Image/ColorModelUtils.h"
 
-// From pg 6 of BT.709:
-// The operator INT returns the value of 0 for fractional parts in the range of 0 to 0.4999... and +1 for fractional parts
-// in the range of 0.5 to 0.9999..., i.e. it rounds up fractions above 0.5.
 
 namespace ColorSpaces {
 
 enum ColorSpace { RGB, BT601, BT709, BT2020, YCoCg };
-// enum class RGB   { R=0, G =1, B =2};
-// enum class YCbCr { Y=0, Cb=1, Cr=2};
-// enum class YCoCg { Y=0, Co=1, Cg=2};
 
 enum RGB { R = 0, G = 1, B = 2 };
 enum YCbCr { Y = 0, Cb = 1, Cr = 2 };
@@ -96,64 +84,16 @@ class BT2020Coefficients {
   static constexpr double kg = 1.0 - kb - kr;
 };
 
-template<typename T, std::size_t exp>
-constexpr std::enable_if_t<std::is_floating_point<T>::value, T> power_of_2() {
-  T odd = static_cast<T>(1);
-  if constexpr (exp % 2 == 1) {
-    odd = static_cast<T>(2);
-  }
-  T half = static_cast<T>(1);
-  if constexpr (exp != 0) {
-    half = power_of_2<T, exp / 2>();
-  }
-  return odd * half * half;
+template<typename T, std::size_t nbits>
+constexpr void check_for_integral_type_with_at_least_8_bits() {
+  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
+  static_assert(std::is_integral<T>::value, "Must be an integral type");
 }
-
-template<typename T, std::size_t exp>
-constexpr std::enable_if_t<std::is_integral<T>::value, T> power_of_2() {
-  constexpr std::size_t bits_per_byte = CHAR_BIT;  //number of bits in a byte
-  static_assert((sizeof(T) * bits_per_byte) > exp,
-      "Power of two result will be larger than the supported by the defined "
-      "variable");
-  if constexpr (exp == 0)
-    return static_cast<T>(1);
-  return static_cast<T>(1) << exp;
-}
-
-template<typename T, std::size_t bpp>
-constexpr T get_max_value_for_bpp() {
-  constexpr std::size_t max_plus_one = power_of_2<T, bpp>() - 1;
-  return static_cast<T>(max_plus_one);
-}
-
-template<typename T = uint8_t, std::size_t nbits = 8>
-double normalize01(const T& value) {
-  static_assert(std::is_unsigned<T>::value,
-      "Only unsigned values are supported in this normalization");
-  constexpr auto power_of_two = power_of_2<std::size_t, nbits>();
-  if (value >= power_of_two)
-    return 1.0;
-  return value / static_cast<double>(power_of_two - 1.0);
-}
-
-template<typename T = uint8_t, std::size_t nbits = 8>
-T inverse_normalize01(double value) {
-  static_assert(std::is_unsigned<T>::value,
-      "Only unsigned values are supported in this normalization");
-  if (value > 1.0)
-    return static_cast<T>(power_of_2<std::size_t, nbits>() - 1);
-  if (value < 0.0)
-    return 0;
-  return static_cast<T>(std::round(
-      value * (static_cast<double>(power_of_2<std::size_t, nbits>()) - 1.0)));
-}
-
-double clip01d(double value);
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral(double y) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 4>());
   constexpr auto mult_term =
@@ -164,8 +104,8 @@ T y_double_to_integral(double y) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double(T y) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 4>());
   constexpr auto mult_term =
@@ -176,8 +116,8 @@ double y_integral_to_double(T y) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral(double cbcr) {
-  static_assert(nbits >= 8, "nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 1>());
   constexpr auto mult_term =
@@ -188,8 +128,8 @@ T cbcr_double_to_integral(double cbcr) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double cbcr_integral_to_double(T cbcr) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = power_of_2<double, nbits - 1>();
   constexpr auto mult_term = power_of_2<double, nbits - 8>() * 224.0;
@@ -199,8 +139,8 @@ double cbcr_integral_to_double(T cbcr) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
@@ -210,8 +150,8 @@ double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double_no_dynamic_range_reduction(T y) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
@@ -221,8 +161,8 @@ double y_integral_to_double_no_dynamic_range_reduction(T y) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral_no_dynamic_range_reduction(double y) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
 
@@ -233,8 +173,8 @@ T y_double_to_integral_no_dynamic_range_reduction(double y) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = power_of_2<double, nbits - 1>();  //offset
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
@@ -244,8 +184,8 @@ double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral_no_dynamic_range_reduction(double cbcr) {
-  static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
-  static_assert(std::is_integral<T>::value, "Must be an integral type");
+  check_for_integral_type_with_at_least_8_bits<T, nbits>();
+  using namespace ColorModelUtils;
 
   constexpr auto sum_term = power_of_2<double, nbits - 1>();  //offset
   constexpr auto mult_term = power_of_2<double, nbits>() - 1.0;
@@ -290,6 +230,7 @@ constexpr T clip_min_max(const T value) {
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
 std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
+  using namespace ColorModelUtils;
   static_assert(std::is_integral<T>::value,
       "This conversion function expects an integral typename");
   using namespace std;
@@ -323,6 +264,7 @@ std::tuple<T, T, T> rgb_to_ycbcr_integral(const std::tuple<T, T, T>& rgb) {
 template<typename ConversionCoefficients>
 std::tuple<double, double, double> ycbcr_to_rgb_base_double(
     const std::tuple<double, double, double>& ycbcr) {
+  using namespace ColorModelUtils;
   using namespace std;
 
   constexpr double kb = ConversionCoefficients::kb;
@@ -345,6 +287,7 @@ std::tuple<T, T, T> ycbcr_to_rgb_integral(const std::tuple<T, T, T>& ycbcr) {
   static_assert(std::is_integral<T>::value,
       "This conversion function expects an integral typename");
   using namespace std;
+  using namespace ColorModelUtils;
 
   constexpr double kb = ConversionCoefficients::kb;
   constexpr double kr = ConversionCoefficients::kr;
@@ -385,6 +328,7 @@ std::tuple<T, T, T> convert_rgb_to_ycbcr(const std::tuple<T, T, T>& rgb) {
                 (sizeof(T) * 8 > nbits)) {
     return rgb_to_ycbcr_integral<T, nbits, ConversionCoefficients>(rgb);
   }
+  using namespace ColorModelUtils;
 
   auto normalized_rgb = std::make_tuple(normalize01<T, nbits>(std::get<R>(rgb)),
       normalize01<T, nbits>(std::get<G>(rgb)),
@@ -414,6 +358,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
   if constexpr ((std::is_integral<T>::value) && (sizeof(T) * 8 > nbits)) {
     return ycbcr_to_rgb_integral<T, nbits, ConversionCoefficients>(ycbcr);
   }
+  using namespace ColorModelUtils;
   const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
       {y_integral_to_double_no_dynamic_range_reduction<T, nbits>(
            std::get<Y>(ycbcr)),
@@ -428,6 +373,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
+  using namespace ColorModelUtils;
   const auto [r, g, b] = ycbcr_to_rgb_base_double<ConversionCoefficients>(
       {y_integral_to_double<T, nbits>(std::get<Y>(ycbcr)),
           cbcr_integral_to_double<T, nbits>(std::get<Cb>(ycbcr)),
@@ -447,6 +393,36 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb(const std::tuple<T, T, T>& ycbcr) {
     return convert_ycbcr_to_rgb_reducing_dynamic_range<T, nbits,
         ConversionCoefficients>(ycbcr);
   }
+}
+
+template<typename T, std::size_t nbits>
+std::tuple<T, T, T> convert_rgb_to_ycocg_round(const std::tuple<T, T, T>& rgb) {
+  using namespace ColorModelUtils;
+  const auto& [r, g, b] = rgb;
+  auto temp_co = r - b;  //may be negative
+  auto t = b + (temp_co >> 1);
+  auto temp_cg = g - t;  //may be negative
+  T y = t + (temp_cg >> 1);
+  constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 1>());
+  T co = temp_co + sum_term;
+  T cg = temp_cg + sum_term;
+  return {y, co, cg};
+}
+
+
+template<typename T, std::size_t nbits>
+std::tuple<T, T, T> convert_ycocg_to_rgb_round(
+    const std::tuple<T, T, T>& ycocg) {
+  using namespace ColorModelUtils;
+  const auto& [y, co, cg] = ycocg;
+  constexpr auto sum_term = static_cast<double>(power_of_2<T, nbits - 1>());
+  auto temp_co = co - sum_term;
+  auto temp_cg = cg - sum_term;
+  auto t = y - (temp_co >> 1);
+  T g = temp_cg + t;
+  T b = t - (temp_co >> 1);
+  T r = temp_co + b;
+  return {r, g, b};
 }
 
 

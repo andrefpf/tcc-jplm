@@ -54,9 +54,10 @@ void init_x(Lightfield<uint16_t> &lightfield,
 void close_x();
 void redraw(const Lightfield<uint16_t> &lightfield);
 
+
 unsigned char *image32;
-size_t past_positional_view_x = 5;
-size_t past_positional_view_y = 5;
+size_t past_positional_view_x = 0;
+size_t past_positional_view_y = 0;
 int inverted_axis = 0;
 int horizontal_views = 0;
 int vertical_views = 0;
@@ -95,10 +96,11 @@ void load_view_into_image(Lightfield<uint16_t> &lightfield,
   };
 }
 
+
 std::string resources_path = "../resources";
 
+
 int main(int argc, char const *argv[]) {
-  // int main() {
   std::string path_to_lightfield;
   if (argc < 2) {
     path_to_lightfield = std::string({resources_path + "/small_greek/"});
@@ -146,14 +148,9 @@ int main(int argc, char const *argv[]) {
   
   // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   lightfield->set_view_io_policy(std::move(policy));
-  std::cout << "lightfield->get_views_width(): "
-            << lightfield->get_views_width() << std::endl;
-  std::cout << "lightfield->get_views_height(): "
-            << lightfield->get_views_height() << std::endl;
 
   init_x(*lightfield, configuration);
 
-  std::cout << "init" << std::endl;
   while (1) {
     XNextEvent(display, &event);
 
@@ -197,9 +194,7 @@ void init_x(Lightfield<uint16_t> &lightfield,
   screen = DefaultScreen(display);
   black = BlackPixel(display, screen), white = WhitePixel(display, screen);
 
-  std::cout << "before load" << std::endl;
   load_view_into_image(lightfield, {0, 0});
-  std::cout << "after load" << std::endl;
 
   win = XCreateSimpleWindow(display, DefaultRootWindow(display), 0, 0,
       lightfield.get_views_width(), lightfield.get_views_height(), 5, black,

@@ -39,8 +39,8 @@
  */
 
 #include <iostream>
-#include "Lib/Utils/Image/RGBImage.h"
 #include "Lib/Part2/Common/View.h"
+#include "Lib/Utils/Image/RGBImage.h"
 #include "gtest/gtest.h"
 
 
@@ -153,15 +153,14 @@ TEST(InitialViewTests, ViewHasSameTypeAsItsInitializerImage) {
 struct ImageInViewTests : public testing::Test {
  protected:
   std::unique_ptr<Image<uint16_t>> image =
-        std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
+      std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   View<uint16_t> view;
-  ImageInViewTests(): view(std::move(image)) {
+  ImageInViewTests() : view(std::move(image)) {
     // view.get_im
     auto as_three_channel =
         static_cast<ThreeChannelImage<uint16_t> *>(view.get_image_ptr());
     as_three_channel->set_pixel_at({1023, 1023, 1023}, 0, 0);
     as_three_channel->set_pixel_at({1023, 0, 0}, 1, 0);
-    
   }
 };
 
