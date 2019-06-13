@@ -153,14 +153,6 @@ class InvalidPixelMapIndexException : public std::exception {
 };
 
 
-// class PixelMapFileNotSupportedException : public std::exception {
-// public:
-//   const char* what() const noexcept override {
-//     return "This type of pixel map file is not yet suported";
-//   }
-// };
-
-
 class IncompletePixelMapFileException : public std::exception {
  public:
   const char* what() const noexcept override {
