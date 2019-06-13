@@ -41,22 +41,10 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
 
-// #include <inttypes.h>
-// #include <cmath>
-// #include <experimental/tuple>
-// #include <filesystem>
-// #include <fstream>
-// #include <iostream>
-// #include <iterator>
-// #include <string>
-// #include <type_traits>
-// #include <utility>
-// #include <variant>
-// #include <vector>
-#include "ImageExceptions.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageUtils.h"
-#include "PPMBinaryFile.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
 // #include "PGMBinaryFile.h"
 
 #include <memory>
@@ -82,8 +70,7 @@ struct VariantImageExtractorToUint16T {
         image->get_width(), image->get_height(), image->get_bpp());
     auto output_image_iterator = output_image->begin();
 
-    //TODO: finding why cannot work with const?
-    for (auto& channel : *(image)) {
+    for (const auto& channel : *(image)) {
       auto output_image_channel_iterator = output_image_iterator->begin();
       for (const auto value : channel) {
         *output_image_channel_iterator = static_cast<uint16_t>(value);

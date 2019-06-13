@@ -32,7 +32,7 @@
  */
 
 /** \file     PPMBinaryFile.cpp
- *  \brief    Test of image utils.
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-07

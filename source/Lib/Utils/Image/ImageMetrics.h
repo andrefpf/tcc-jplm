@@ -42,9 +42,9 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGEMETRICS_H__
 
 #include <iomanip>  //for setprecision
-#include "Image.h"
-#include "ImageChannelUtils.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageChannelUtils.h"
+#include "Lib/Utils/Image/Metrics.h"
 
 namespace ImageMetrics {
 enum class Available { PSNR, MSE, SSE };

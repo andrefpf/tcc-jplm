@@ -42,7 +42,7 @@
 #define JPLM_LIB_PART2_COMMON_LIGHTFIELDDIMENSION_H__
 
 #include <tuple>
-#include "LightfieldCoordinate.h"
+#include "Lib/Part2/Common/LightfieldCoordinate.h"
 
 template<typename T = std::size_t>
 class LightfieldDimension : public LightfieldCoordinate<T> {

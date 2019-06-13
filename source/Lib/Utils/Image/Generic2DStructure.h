@@ -45,7 +45,7 @@
 #include <memory>  //unique_ptr
 #include <utility>  //std::pair
 #include <vector>
-#include "ImageExceptions.h"  //FIXME: change the exceptions to be in namespace Generic2DStructure
+#include "Lib/Utils/Image/ImageExceptions.h"  //FIXME: change the exceptions to be in namespace Generic2DStructure
 #include "Lib/Utils/Image/Raster2DIterator.h"
 
 

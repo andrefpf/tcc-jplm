@@ -39,9 +39,9 @@
  */
 
 #include <iostream>
-#include "ImageIO.h"
-#include "PPMBinaryFile.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/ImageIO.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 #include "gtest/gtest.h"
 
 

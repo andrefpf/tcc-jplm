@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
 
-#include "ImageFile.h"
+#include "Lib/Utils/Image/ImageFile.h"
 
 
 //P1 and P4 are bitmaps, PBM (portable bitmap), or pbm - Netpbm bi-level image format according to http://netpbm.sourceforge.net/doc/pbm.html

@@ -31,7 +31,6 @@ include_directories(.)
 include_directories(cfg)
 include_directories(doc)
 include_directories(source)
-include_directories(source/Lib/Utils/Image)
 
 #defines an example executable, used to test external libraries...
 add_executable(example source/Tests/example_test.cpp)

@@ -45,8 +45,8 @@
 #include <type_traits>
 #include <typeinfo>
 #include <variant>
-#include "ColorSpaces.h"
-#include "Image.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "Lib/Utils/Image/Image.h"
 
 
 namespace ImageColorSpaceConversion {

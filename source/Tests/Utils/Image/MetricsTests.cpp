@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "Metrics.h"
+#include "Lib/Utils/Image/Metrics.h"
 #include "gtest/gtest.h"
 
 TEST(Metrics_PSNR, ThreesVector) {

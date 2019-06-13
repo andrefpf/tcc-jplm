@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "Image.h"
+#include "Lib/Utils/Image/Image.h"
 #include "gtest/gtest.h"
 
 

@@ -53,7 +53,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include "Image.h"
+#include "Lib/Utils/Image/Image.h"
 
 class ImageFile {
  public:

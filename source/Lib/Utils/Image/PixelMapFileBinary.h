@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__
 
-#include "PixelMapFile.h"
+#include "Lib/Utils/Image/PixelMapFile.h"
 
 constexpr bool using_little_endian() {
   if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)

@@ -42,8 +42,8 @@
 #include <iostream>
 #include <random>
 #include <tuple>
-#include "ColorSpaces.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "Lib/Utils/Image/Metrics.h"
 #include "gtest/gtest.h"
 
 TEST(PowerOf2IntegralType, TwoAtZeroIsOne) {

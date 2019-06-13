@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PPMBINARYFILE_H__
 #define JPLM_LIB_UTILS_IMAGE_PPMBINARYFILE_H__
 
-#include "ImageColorSpacesConversor.h"
-#include "PixelMapFileBinary.h"
+#include "Lib/Utils/Image/ImageColorSpacesConversor.h"
+#include "Lib/Utils/Image/PixelMapFileBinary.h"
 
 
 class PPMBinaryFile : public PixelMapFileBinary {
@@ -78,27 +78,18 @@ class PPMBinaryFile : public PixelMapFileBinary {
   template<typename T>
   void write_image_to_file(const Image<T>& image) {
     if (!file.is_open()) {
-      std::cout << "File is not open.." << std::endl;
       if (!std::filesystem::exists(filename)) {
-        std::cout << "creating file " << filename << "  does not exists..." << std::endl;
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        std::cout << "File created because it does not exists..." << std::endl;
-        // std::fstream file(filename, std::ios::out);
         if (file.is_open()) {
           file << 'P' << type << std::endl;
           file << width << " " << height << std::endl;
           file << max_value << std::endl;
           raster_begin = file.tellg();
-          // std::cout << "I wrote" << std::endl;
         }
       } else {
-        std::cout << "File already exists, oppening again" << std::endl;
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        std::cout << "now i oppened here" << std::endl;
       }
     }
-    // std::cout << "This is the image type: " << image.get_type() << std::endl;
-    // std::cout << "Image width: " << image.get_width() << std::endl;
     if (file.is_open()) {
       if (image.get_type() == ImageType::RGB) {
         std::vector<std::tuple<T, T, T>> rgb_vector(
@@ -136,6 +127,8 @@ class PPMBinaryFile : public PixelMapFileBinary {
       }
     } else {
       std::cout << "still not open... what is happening?" << std::endl;
+      //TODO:
+      //throw ErrorOpeningImageToWrite
     }
   }
 
@@ -143,25 +136,18 @@ class PPMBinaryFile : public PixelMapFileBinary {
   void write_image_patch_to_file(
       const Image<T>& patch_image, std::pair<std::size_t, std::size_t> origin) {
     if (!file.is_open()) {
-      std::cout << "File is not open.." << std::endl;
       if (!std::filesystem::exists(filename)) {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        std::cout << "File created because it does not exists..." << std::endl;
-        // std::fstream file(filename, std::ios::out);
         if (file.is_open()) {
           file << 'P' << type << std::endl;
           file << width << " " << height << std::endl;
           file << max_value << std::endl;
           raster_begin = file.tellg();
-          // std::cout << "I wrote" << std::endl;
         }
       } else {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        // std::cout << "now i oppened here" << std::endl;
       }
     }
-    // std::cout << "This is the patch_image type: " << patch_image.get_type() << std::endl;
-    // std::cout << "patch_image width: " << patch_image.get_width() << std::endl;
     if (file.is_open()) {
       if (patch_image.get_type() == ImageType::RGB) {
         auto patch_width = patch_image.get_width();

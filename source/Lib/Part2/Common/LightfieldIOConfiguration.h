@@ -44,7 +44,7 @@
 #include <filesystem>
 #include <tuple>
 #include <vector>
-#include "LightfieldDimension.h"
+#include "Lib/Part2/Common/LightfieldDimension.h"
 
 class LightfieldIOConfiguration {
  protected:

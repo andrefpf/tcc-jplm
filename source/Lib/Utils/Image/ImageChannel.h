@@ -48,9 +48,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "Generic2DStructure.h"
-#include "ImageExceptions.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/Generic2DStructure.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
+#include "Lib/Utils/Image/Metrics.h"
 
 template<typename T>
 class ImageChannel : public Generic2DStructure<T> {

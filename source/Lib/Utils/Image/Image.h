@@ -42,7 +42,7 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGE_H__
 
 #include <vector>
-#include "ImageChannel.h"
+#include "Lib/Utils/Image/ImageChannel.h"
 
 //The BT types should also support full and reduced dynamic ranges
 enum ImageType { Invalid, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };

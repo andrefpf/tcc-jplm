@@ -41,9 +41,9 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 #define JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 
-#include "PPMBinaryFile.h"
-#include "PixelMapFile.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFile.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 namespace ImageIO {
 

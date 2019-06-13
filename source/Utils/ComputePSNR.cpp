@@ -42,9 +42,9 @@
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
 #include <sstream>
-#include "Image.h"
-#include "ImageMetrics.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageMetrics.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 
 void show_psnr(

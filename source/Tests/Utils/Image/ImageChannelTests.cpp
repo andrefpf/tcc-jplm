@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "ImageChannel.h"
+#include "Lib/Utils/Image/ImageChannel.h"
 #include "gtest/gtest.h"
 
 struct ImageChannelTestUInt8T : testing::Test {
