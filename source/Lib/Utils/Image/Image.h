@@ -342,35 +342,6 @@ class ThreeChannelImage : public Image<T> {
 
 
   virtual ~ThreeChannelImage() = default;
-
-  auto begin() {
-    return this->channels.begin();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto begin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto end() const noexcept {
-    return this->channels.cend();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
-  }
 };
 
 
@@ -420,31 +391,6 @@ class RGBImage : public ThreeChannelImage<T> {
   auto begin() {
     return this->channels.begin();
   }
-
-
-  auto begin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto end() const noexcept {
-    return this->channels.cend();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
-  }
 };
 
 
@@ -481,26 +427,6 @@ class YCbCrImage : public ThreeChannelImage<T> {
   std::vector<std::string> get_channel_names() const final {
     return {"Y", "Cb", "Cr"};
   }
-
-
-  auto begin() {
-    return this->channels.begin();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
-  }
 };
 
 
@@ -535,26 +461,6 @@ class BT601Image : public YCbCrImage<T> {
   virtual BT601Image* generate_ptr_to_clone() const override {
     return new BT601Image<T>(*this);
   }
-
-
-  auto begin() {
-    return this->channels.begin();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
-  }
 };
 
 template<typename T>
@@ -587,26 +493,6 @@ class BT709Image : public YCbCrImage<T> {
 
   virtual BT709Image* generate_ptr_to_clone() const override {
     return new BT709Image<T>(*this);
-  }
-
-
-  auto begin() {
-    return this->channels.begin();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
   }
 };
 
@@ -685,27 +571,6 @@ class GrayScaleImage : public Image<T> {
   virtual GrayScaleImage* generate_ptr_to_clone() const override {
     return new GrayScaleImage<T>(*this);
   }
-
-
-  //the iterators for GrayScaleImage are the iterators of its only channel
-  auto begin() {
-    return this->channels[0].begin();
-  }
-
-
-  auto end() {
-    return this->channels[0].end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels[0].cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels[0].cend();
-  }
 };
 
 
@@ -741,26 +606,6 @@ class YCoCgImage : public ThreeChannelImage<T> {
 
   std::vector<std::string> get_channel_names() const final {
     return {"Y", "Co", "Cg"};
-  }
-
-
-  auto begin() {
-    return this->channels.begin();
-  }
-
-
-  auto end() {
-    return this->channels.end();
-  }
-
-
-  auto cbegin() const noexcept {
-    return this->channels.cbegin();
-  }
-
-
-  auto cend() const noexcept {
-    return this->channels.cend();
   }
 };
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGE_H__ */
