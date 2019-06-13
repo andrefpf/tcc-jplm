@@ -15,3 +15,4 @@ add_image_lib_test(PixelMapFileIO pixelmap_file_io_tests PixelMapFileIOTests.cpp
 add_image_lib_test(PPMBinaryFile ppm_binary_file_tests PPMBinaryFileTests.cpp)
 add_image_lib_test(PPMBinaryFileImage ppm_binary_file_image_tests PPMBinaryFileImageTests.cpp)
 add_image_lib_test(Raster2DIterator raster_2d_iterator_tests Raster2DIteratorTests.cpp)
+add_image_lib_test(ImageUtils image_utils_tests ImageUtilsTests.cpp)

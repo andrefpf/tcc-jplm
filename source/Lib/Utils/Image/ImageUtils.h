@@ -12,14 +12,21 @@ constexpr void check_image_container_requisites(const Image<Tin>& image_in) {
     return;  //if the types are the same, there is no need for further checking
   }
   if (image_in.get_bpp() > sizeof(Tout) * 8) {
-    //throw ImageUtilsExceptions::ContainerHasFewerBitsThanNeededException();
+    throw ImageUtilsExceptions::ContainerHasFewerBitsThanNeededException();
   }
   if constexpr (std::is_signed<Tin>::value && std::is_unsigned<Tout>::value) {
     //check in to garantee all values >= 0;
-  }
-  if constexpr (std::numeric_limits<Tin>::max() >
-                std::numeric_limits<Tout>::max()) {
-    //check for maximum value in Tin?
+    for (const auto& channel : image_in) {
+      for (const auto& value : channel) {
+        if constexpr (std::is_signed<Tin>::value &&
+                      std::is_unsigned<Tout>::value) {
+          if (value < 0) {
+            throw ImageUtilsExceptions::
+                NegativeValueInUnsignedVariableException();
+          }
+        }
+      }
+    }
   }
 }
 

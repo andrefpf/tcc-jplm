@@ -257,4 +257,33 @@ class DifferentColorSpaceImagesException : public std::exception {
 
 }  // namespace MetricsExceptions
 
+namespace ImageUtilsExceptions {
+class ContainerHasFewerBitsThanNeededException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to fit image in container with fewer bits than the images "
+           "original bit depth";
+  }
+};
+
+
+class NegativeValueInUnsignedVariableException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to fit image with negative values in image with unsigned "
+           "variable representation";
+  }
+};
+
+
+class OverflowException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to insert value in variable type with fewer bits than the "
+           "needed to keep such value. (Value > Max)";
+  }
+};
+
+}  // namespace ImageUtilsExceptions
+
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */
