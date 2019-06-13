@@ -39,15 +39,3 @@
  */
 
 #include "PixelMapFile.h"
-
-PixelMapFile::~PixelMapFile() {
-  if (file.is_open())
-    file.close();
-}
-
-void PixelMapFile::open() {
-  if (!file.is_open())
-    file.open(filename);
-  if (!file.is_open())
-    std::cerr << "Unable to open file " << filename << "." << std::endl;
-}

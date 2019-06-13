@@ -31,84 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageFile.h
+/** \file     ImageFile.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-08
+ *  \date     2019-06-13
  */
 
-#ifndef JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__
-#define JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__
-
-#include <inttypes.h>
-#include <cmath>
-#include <experimental/tuple>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <variant>
-#include <vector>
-
-class ImageFile {
- protected:
-  std::string filename;
-  std::fstream file;
-  std::streampos raster_begin;  // should be const..
-  std::size_t width = 0;
-  std::size_t height = 0;
+#include "ImageFile.h"
 
 
- public:
-  ImageFile(const std::string& file_name) : filename(file_name){};
+ImageFile::~ImageFile() {
+  if (file.is_open())
+    file.close();
+}
 
 
-  ImageFile(const std::filesystem::path& file_name) : filename(file_name.c_str()){};
-
-
-  ImageFile(const ImageFile& other) = delete;
-
-
-  ImageFile(ImageFile&& other) {
-    std::swap(filename, other.filename);
-    std::swap(width, other.width);
-    std::swap(height, other.height);
-    std::swap(file, other.file);
-    std::swap(raster_begin, other.raster_begin);
-  }
-
-
-  ImageFile(const std::string& file_name, std::size_t width, std::size_t height)
-      : filename(file_name), width(width), height(height){};
-
-
-  ImageFile(const std::string& file_name, const std::streampos raster_begin,
-      std::size_t width, std::size_t height)
-      : filename(file_name), raster_begin(raster_begin), width(width),
-        height(height){};
-
-
-  virtual ~ImageFile();
-
-  auto get_width() const noexcept {
-    return width;
-  }
-
-
-  auto get_height() const noexcept {
-    return height;
-  }
-
-
-  decltype(raster_begin) get_raster_begin() const {
-    return raster_begin;
-  }
-
-  void open();
-};
-
-#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__ */
+void ImageFile::open() {
+  if (!file.is_open())
+    file.open(filename);
+  if (!file.is_open())
+    std::cerr << "Unable to open file " << filename << "." << std::endl;
+}
