@@ -39,7 +39,8 @@
  */
 
 #include <iostream>
-#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/RGBImage.h"
+#include "Lib/Utils/Image/YCbCrImage.h"
 #include "gtest/gtest.h"
 
 

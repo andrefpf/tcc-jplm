@@ -39,6 +39,7 @@
  */
 
 #include <iostream>
+#include "Lib/Utils/Image/RGBImage.h"
 #include "Lib/Part2/Common/View.h"
 #include "gtest/gtest.h"
 

@@ -43,7 +43,7 @@
 
 #include <type_traits>  //is_integral
 #include "Lib/Part2/Common/CommonExceptions.h"
-#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ThreeChannelImage.h"
 
 template<typename T>
 class View {
