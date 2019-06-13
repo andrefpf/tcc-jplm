@@ -101,8 +101,10 @@ class View {
     return image_.get();
   }
 
-  void release_image() {
-    image_.reset(nullptr);
+
+  std::unique_ptr<Image<T>> release_image() {
+    return std::move(std::unique_ptr<Image<T>>(image_.release()));
+    // image_.reset(nullptr);
   }
 
 
@@ -112,7 +114,7 @@ class View {
 
 
   bool has_image() const {
-    if(image_)
+    if (image_)
       return true;
     return false;
   }
@@ -182,9 +184,11 @@ class View {
     return image_->get_number_of_channels();
   }
 
+
   auto get_number_of_pixels() const {
     return get_width() * get_height();
   }
+
 
   auto get_number_of_pixels_per_channel() const {
     return get_number_of_channels() * get_number_of_pixels();
@@ -242,6 +246,7 @@ class View {
               << "with initial point at (" << std::get<0>(initial) << ", "
               << std::get<1>(initial) << ")" << std::endl;
   }
+
 
   void load_image() {
     // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';

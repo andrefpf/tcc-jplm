@@ -192,38 +192,12 @@ class Generic2DStructure {
       exit(2);
     }
     if (!is_coordinate_valid(i, j)) {
-      std::cout << "invalid coordinate" << i << "," << j << std::endl;
       throw ImageChannelExceptions::InvalidIndexReadException();
     }
   }
 
 
-  // std::enable_if_t<is_unique_ptr<T>::value, ElemType&> 
-  // get_element_reference_at(const std::size_t i, const std::size_t j) const {
-  //   check_for_access_errors(i, j);
-  //   auto element_ptr = this->elements[i * this->width + j].get();
-  //   return *element_ptr;
-  // }
-
-
-  // std::enable_if_t<!is_unique_ptr<T>::value, T&> 
-  // get_element_reference_at(const std::size_t i, const std::size_t j) const {
-  //   check_for_access_errors(i, j);
-  //   // if constexpr (is_unique_ptr<T>::value) {
-  //   //   return *this->elements[i * this->width + j];
-  //   // }
-  //   return this->elements[i * this->width + j];
-  // }
-
   T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
-    // std::cout << "after checking for error 2d structure" << std::endl;
-    // std::cout << "width: " << width << '\n';
-    // std::cout << "height: " << height << '\n';
-    // std::cout << "number_of_elements: " << number_of_elements << '\n';
-    // std::cout << "i: " << i << '\n';
-    // std::cout << "j: " << j << '\n';
-    // std::cout << "i * this->width: " << i * this->width << '\n';
-    // std::cout << "i * this->width + j: " << i * this->width + j << '\n';
     check_for_access_errors(i, j);
     return this->elements[i * this->width + j];
   }  
@@ -277,12 +251,12 @@ class Generic2DStructure {
   }
 
 
-  auto cbegin() const {
+  auto cbegin() const noexcept {
     return Raster2DIterator<const T>(this->elements.get());
   }
 
 
-  auto cend() const {
+  auto cend() const noexcept {
     return Raster2DIterator<const T>(
         this->elements.get() + this->number_of_elements);
   }

@@ -44,13 +44,16 @@
 #include <vector>
 #include "ImageChannel.h"
 
-enum ImageType { Invalid, GrayScale, RGB, YCoCg, BT601, BT709, BT2020 };
+//The BT types should also support full and reduced dynamic ranges
+enum ImageType { Invalid, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };
+
 
 template<typename T>
 class Image {
  protected:
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
+
 
   bool is_equal(const Image<T>& other) const {
     if (this != &other) {
@@ -67,12 +70,24 @@ class Image {
     return true;
   }
 
+
  public:
   Image(std::size_t width, std::size_t height, std::size_t bpp,
       std::size_t number_of_channels, ImageType type)
       : type(type) {
     channels.reserve(number_of_channels);
     for (decltype(number_of_channels) i = 0; i < number_of_channels; ++i) {
+      channels.emplace_back(ImageChannel<T>(width, height, bpp));
+    }
+  }
+
+
+  //this constructor allows for creating image channels with different bpps
+  Image(std::size_t width, std::size_t height, std::vector<std::size_t> bpps,
+      ImageType type)
+      : type(type) {
+    channels.reserve(bpps.size());
+    for (const auto& bpp : bpps) {
       channels.emplace_back(ImageChannel<T>(width, height, bpp));
     }
   }
@@ -142,6 +157,16 @@ class Image {
 
   auto get_bpp() const {
     return channels[0].get_bpp();
+  }
+
+
+  auto get_bpps() const {
+    std::vector<std::size_t> bpps;
+    bpps.reserve(channels.size());
+    for (const auto& channel : channels) {
+      bpps.emplace_back(channel.get_bpp());
+    }
+    return bpps;
   }
 
 
@@ -232,12 +257,12 @@ class Image {
   }
 
 
-  auto cbegin() {
+  auto cbegin() const noexcept {
     return channels.cbegin();
   }
 
 
-  auto cend() {
+  auto cend() const noexcept {
     return channels.cend();
   }
 
@@ -318,12 +343,12 @@ class ThreeChannelImage : public Image<T> {
   }
 
 
-  auto cbegin() {
+  auto cbegin() const noexcept {
     return this->channels.cbegin();
   }
 
 
-  auto cend() {
+  auto cend() const noexcept {
     return this->channels.cend();
   }
 };
@@ -382,12 +407,12 @@ class RGBImage : public ThreeChannelImage<T> {
   }
 
 
-  auto cbegin() {
+  auto cbegin() const noexcept {
     return this->channels.cbegin();
   }
 
 
-  auto cend() {
+  auto cend() const noexcept {
     return this->channels.cend();
   }
 };
@@ -426,6 +451,26 @@ class YCbCrImage : public ThreeChannelImage<T> {
   std::vector<std::string> get_channel_names() const final {
     return {"Y", "Cb", "Cr"};
   }
+
+
+  auto begin() {
+    return this->channels.begin();
+  }
+
+
+  auto end() {
+    return this->channels.end();
+  }
+
+
+  auto cbegin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto cend() const noexcept {
+    return this->channels.cend();
+  }
 };
 
 
@@ -460,6 +505,26 @@ class BT601Image : public YCbCrImage<T> {
   virtual BT601Image* generate_ptr_to_clone() const override {
     return new BT601Image<T>(*this);
   }
+
+
+  auto begin() {
+    return this->channels.begin();
+  }
+
+
+  auto end() {
+    return this->channels.end();
+  }
+
+
+  auto cbegin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto cend() const noexcept {
+    return this->channels.cend();
+  }
 };
 
 template<typename T>
@@ -492,6 +557,26 @@ class BT709Image : public YCbCrImage<T> {
 
   virtual BT709Image* generate_ptr_to_clone() const override {
     return new BT709Image<T>(*this);
+  }
+
+
+  auto begin() {
+    return this->channels.begin();
+  }
+
+
+  auto end() {
+    return this->channels.end();
+  }
+
+
+  auto cbegin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto cend() const noexcept {
+    return this->channels.cend();
   }
 };
 
@@ -569,6 +654,27 @@ class GrayScaleImage : public Image<T> {
 
   virtual GrayScaleImage* generate_ptr_to_clone() const override {
     return new GrayScaleImage<T>(*this);
+  }
+
+
+  //the iterators for GrayScaleImage are the iterators of its only channel
+  auto begin() {
+    return this->channels[0].begin();
+  }
+
+
+  auto end() {
+    return this->channels[0].end();
+  }
+
+
+  auto cbegin() const noexcept {
+    return this->channels[0].cbegin();
+  }
+
+
+  auto cend() const noexcept {
+    return this->channels[0].cend();
   }
 };
 
