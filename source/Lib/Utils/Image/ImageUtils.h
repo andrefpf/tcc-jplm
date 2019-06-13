@@ -37,9 +37,9 @@ namespace ImageUtils {
 		auto output_image = std::make_unique<ImageTout<Tout>>(image_in->get_width(), image_in->get_height(), image_in->get_bpp());
 		auto output_image_iterator = output_image->begin();
 
-		for(auto& channel: *intermediary_image) {
+		for(const auto& channel: *intermediary_image) {
 			auto output_image_channel_iterator = output_image_iterator->begin();
-			for(auto value: channel) {
+			for(const auto& value: channel) {
 				*output_image_channel_iterator = static_cast<Tout>(value);
 				output_image_channel_iterator++;
 			}

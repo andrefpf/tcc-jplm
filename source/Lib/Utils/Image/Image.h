@@ -257,6 +257,16 @@ class Image {
   }
 
 
+  auto begin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto end() const noexcept {
+    return this->channels.cend();
+  }
+
+
   auto cbegin() const noexcept {
     return channels.cbegin();
   }
@@ -343,6 +353,16 @@ class ThreeChannelImage : public Image<T> {
   }
 
 
+  auto begin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto end() const noexcept {
+    return this->channels.cend();
+  }
+
+
   auto cbegin() const noexcept {
     return this->channels.cbegin();
   }
@@ -399,6 +419,16 @@ class RGBImage : public ThreeChannelImage<T> {
 
   auto begin() {
     return this->channels.begin();
+  }
+
+
+  auto begin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto end() const noexcept {
+    return this->channels.cend();
   }
 
 

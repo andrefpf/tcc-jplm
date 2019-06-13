@@ -142,7 +142,7 @@ class Generic2DStructure {
       throw ImageChannelExceptions::InvalidIndexWriteException();
     }
     if constexpr (is_unique_ptr<T>::value) {
-        typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
+      typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
           ElemType;
       auto element_ptr = element.get();
       //gets the element pointed by the unique_ptr
@@ -200,8 +200,7 @@ class Generic2DStructure {
   T& get_element_reference_at(const std::size_t i, const std::size_t j) const {
     check_for_access_errors(i, j);
     return this->elements[i * this->width + j];
-  }  
-
+  }
 
 
   T get_element_value_at(
@@ -248,6 +247,16 @@ class Generic2DStructure {
 
   auto end() {
     return Raster2DIterator<T>(this->elements.get() + this->number_of_elements);
+  }
+
+
+  auto begin() const noexcept {
+    return this->cbegin();
+  }
+
+
+  auto end() const noexcept {
+    return this->cend();
   }
 
 
