@@ -63,31 +63,30 @@ int horizontal_views = 0;
 int vertical_views = 0;
 
 
-uint8_t convert_from_16_bit_to_8_bit_using_depth(
-    uint16_t source, uint8_t depth) {
-  uint32_t shift = depth - 8;
+template<int depth = 10>
+uint8_t convert_from_16_bit_to_8_bit_using_depth(uint16_t source) {
+  constexpr auto shift = depth - 8;
   return (source) >> shift;
 }
 
-
+template<int depth = 10>
 void load_view_into_image(Lightfield<uint16_t> &lightfield,
     const std::pair<std::size_t, std::size_t> &view_coordinate) {
   try {
     unsigned char *p = image32;
-    const auto& image = static_cast<const RGBImage<uint16_t>&>(lightfield.get_image_at(view_coordinate));
+    const auto &image = static_cast<const RGBImage<uint16_t> &>(
+        lightfield.get_image_at(view_coordinate));
 
-    for (auto i = decltype(lightfield.get_views_height()){0};
-         i < lightfield.get_views_height(); ++i) {
-      for (auto j = decltype(lightfield.get_views_width()){0};
-           j < lightfield.get_views_width(); ++j) {
-        const auto& [r, g, b] = image.get_pixel_at(i, j);
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(
-            b, lightfield.get_views_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(
-            g, lightfield.get_views_bpp());
-        *p++ = convert_from_16_bit_to_8_bit_using_depth(
-            r, lightfield.get_views_bpp());
-        *p++ = 0;
+    const auto width = lightfield.get_views_width();
+    const auto height = lightfield.get_views_height();
+
+    for (auto i = decltype(height){0}; i < height; ++i) {
+      for (auto j = decltype(width){0}; j < width; ++j) {
+        const auto &[r, g, b] = image.get_pixel_at(i, j);
+        *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(b);
+        *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(g);
+        *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(r);
+         p++; 
       }
     }
 
@@ -111,8 +110,12 @@ int main(int argc, char const *argv[]) {
   int t = 3;
   int s = 3;
 
-  if (argc == 3) {
+  if (argc >= 3) {
     t = s = atoi(argv[2]);
+  }
+
+   if (argc == 4) {
+    s = atoi(argv[3]);
   }
 
   LightfieldDimension<std::size_t> size(t, s, 32, 32);
@@ -143,28 +146,26 @@ int main(int argc, char const *argv[]) {
   // auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
   // auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
   auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
-  policy->set_max_bytes(lightfield->get_views_width() * lightfield->get_views_height() * 2 * 30);
+  policy->set_max_bytes(
+      lightfield->get_views_width() * lightfield->get_views_height() * 2 * 100);
   // auto policy = std::make_unique<ViewIOPolicyLimitlessMemory<uint16_t>>();
-  
+
   // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   lightfield->set_view_io_policy(std::move(policy));
 
   init_x(*lightfield, configuration);
 
   while (1) {
+    auto pending = XPending(display);
     XNextEvent(display, &event);
+    auto last_event = event;
 
-    if (event.type == Expose && event.xexpose.count == 0) {
-      redraw(*lightfield);
-    }
-    if (event.type == KeyPress &&
-        XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
-      if (text[0] == 'q') {
-        close_x();
-      }
-      printf("You pressed the %c key!\n", text[0]);
-    }
     if (event.type == MotionNotify) {
+      while(event.type == MotionNotify && pending > 1) {
+        last_event = event;
+        XNextEvent(display, &event);
+        pending = XPending(display);        
+      }
       auto x = event.xbutton.x;
       auto y = event.xbutton.y;
 
@@ -180,6 +181,18 @@ int main(int argc, char const *argv[]) {
         load_view_into_image(*lightfield, {t, s});
         redraw(*lightfield);
       }
+      continue;
+    }
+    if (event.type == Expose && event.xexpose.count == 0) {
+      redraw(*lightfield);
+      continue;
+    }
+    if (event.type == KeyPress &&
+        XLookupString(&event.xkey, text, 255, &key, 0) == 1) {
+      if (text[0] == 'q') {
+        close_x();
+      }
+      printf("You pressed the %c key!\n", text[0]);
     }
   }
 
