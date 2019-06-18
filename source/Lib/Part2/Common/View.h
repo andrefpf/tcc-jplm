@@ -86,6 +86,11 @@ class View {
   }
 
 
+  virtual View<T>* clone() const {
+    return new View<T>(*this);
+  }
+
+
   std::unique_ptr<Image<T>> get_image_clone() const noexcept {
     if (!image_) {
       return nullptr;

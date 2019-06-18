@@ -58,11 +58,6 @@ struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
 
 template<typename T>
 class Generic2DStructure {
- private:
-  auto clone() const {
-    return std::unique_ptr<Generic2DStructure>(generate_ptr_to_clone());
-  }
-
  protected:
   const std::size_t width;
   const std::size_t height;
@@ -89,18 +84,18 @@ class Generic2DStructure {
     }
   }
 
-
+  //TODO: check if possible to make copy constructor protected
   Generic2DStructure(const Generic2DStructure& other)
       : width(other.width), height(other.height),
         number_of_elements(other.number_of_elements) {
-    //FIXME
+    //FIXME: copy all elements from other
   }
 
 
   virtual ~Generic2DStructure() = default;
 
-
-  virtual Generic2DStructure* generate_ptr_to_clone() const = 0;
+  //virtual copy constructor idiom
+  virtual Generic2DStructure* clone() const = 0;
 
 
   void alloc_raster_structure_default_init() {

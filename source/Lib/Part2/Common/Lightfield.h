@@ -69,7 +69,10 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
   
-  Lightfield(const Lightfield& other) = delete;
+  Lightfield(const Lightfield& other) : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
+    this->view_io_policy = std::unique_ptr<ViewIOPolicy<T>>(other.view_io_policy->clone());
+    //the copy of content should be handled by generic2dStructure...
+  };
 
 
   ~Lightfield() = default;
@@ -167,9 +170,8 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  virtual Lightfield* generate_ptr_to_clone() const override {
-    // return new Lightfield(*this);
-    return nullptr; //one should not make a copy of lf
+  virtual Lightfield* clone() const override {
+    return new Lightfield(*this);
   };
 };
 

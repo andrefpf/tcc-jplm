@@ -78,6 +78,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   ImageChannel(const ImageChannel<T>& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
+    //FIXME: this should be part of Generic2DStructure copy contructor
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
   }
@@ -102,7 +103,7 @@ class ImageChannel : public Generic2DStructure<T> {
   ~ImageChannel() = default;
 
 
-  virtual ImageChannel* generate_ptr_to_clone() const override {
+  virtual ImageChannel* clone() const override {
     return new ImageChannel(*this);
   }
 
@@ -136,7 +137,7 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
-  std::vector<T> as_raster_vector() {
+  std::vector<T> as_raster_vector() { //TODO: check if this method may be const
     auto temp_ptr = this->elements.get();
     auto ret_vector = std::vector<T>();
     ret_vector.reserve(this->number_of_elements);

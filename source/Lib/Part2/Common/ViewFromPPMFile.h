@@ -76,6 +76,11 @@ class ViewFromPPMFile : public View<T> {
   }
 
 
+  virtual ViewFromPPMFile<T>* clone() const override {
+    return new ViewFromPPMFile<T>(*this);
+  }
+
+
   ViewFromPPMFile(ViewFromPPMFile&& other) noexcept
       : View<T>(std::move(other)) {
     std::swap(name_translator, other.name_translator);

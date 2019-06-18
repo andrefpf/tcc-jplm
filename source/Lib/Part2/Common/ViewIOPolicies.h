@@ -54,7 +54,10 @@ class ViewIOPolicy {
 
  public:
   ViewIOPolicy() = default;
-  ~ViewIOPolicy() = default;
+
+  ViewIOPolicy(const ViewIOPolicy<T>& other) = default;
+
+  virtual ~ViewIOPolicy() = default;
 
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
@@ -68,22 +71,29 @@ class ViewIOPolicy {
     load_image_if_necessary(view);
     return *view.get_image_ptr();
   }
+
+  virtual ViewIOPolicy<T>* clone() const = 0;
 };
 
 
 template<typename T>
 class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
- public:
-  ViewIOPolicyLimitlessMemory() = default;
-
-
-  ~ViewIOPolicyLimitlessMemory() = default;
-
+protected:
 
   void load_image_if_necessary(View<T>& view) override {
     if (!view.has_image())
       view.load_image();
   }
+
+ public:
+
+  virtual ViewIOPolicyLimitlessMemory<T>* clone() const override {
+    return new ViewIOPolicyLimitlessMemory(*this);
+  }
+
+
+
+
 };
 
 
@@ -92,13 +102,6 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
  protected:
   View<T>* last = nullptr;
 
- public:
-  ViewIOPolicyOneAtATime() = default;
-
-
-  ~ViewIOPolicyOneAtATime() = default;
-
-
   void load_image_if_necessary(View<T>& view) {
     if (last != nullptr && last != &view) {
       last->release_image();
@@ -106,9 +109,18 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
     view.load_image();
     last = &view;
   }
+
+ public:
+
+  virtual ViewIOPolicyOneAtATime<T>* clone() const override {
+    return new ViewIOPolicyOneAtATime(*this);
+  }
+  
+
 };
 
 
+//abstract
 template<typename T>
 class ViewIOPolicyQueue : public ViewIOPolicy<T> {
  protected:
@@ -120,7 +132,6 @@ class ViewIOPolicyQueue : public ViewIOPolicy<T> {
     return set.count(view) > 0;
   }
 
-
   void release_view_image() {
     if (queue.size() > 0) {
       auto ref_to_view = queue.front();
@@ -129,6 +140,10 @@ class ViewIOPolicyQueue : public ViewIOPolicy<T> {
       set.erase(ref_to_view);
     }
   }
+
+  public:
+  virtual ViewIOPolicyQueue<T>* clone() const = 0;
+
 };
 
 
@@ -150,6 +165,12 @@ class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
       this->set.insert(&view);
       view.load_image();
     }
+  }
+
+public:
+
+  virtual ViewIOPolicyLimitedNumberOfViews<T>* clone() const override {
+    return new ViewIOPolicyLimitedNumberOfViews(*this);
   }
 };
 
@@ -177,6 +198,12 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
   }
 
  public:
+
+  virtual ViewIOPolicyLimitedMemory<T>* clone() const override {
+    return new ViewIOPolicyLimitedMemory(*this);
+  }
+
+
   void set_max_bytes(std::size_t bytes) {
     max_bytes = bytes;
     while (current_bytes > max_bytes) {
