@@ -57,23 +57,18 @@ struct SimpleLFCoordinateTest : public testing::Test {
 };
 
 
-TEST_F(SimpleLFCoordinateTest, GetTMustGetInitialValues) {
+TEST_F(SimpleLFCoordinateTest, GetUsingStructuredBinding) {
   const auto [ret_t, ret_s, ret_v, ret_u] = coordinate->get();
-  EXPECT_EQ(ret_t, t);
-  EXPECT_EQ(ret_s, s);
-  EXPECT_EQ(ret_v, v);
-  EXPECT_EQ(ret_u, u);
+  EXPECT_EQ(ret_t, coordinate->get_t());
+  EXPECT_EQ(ret_s, coordinate->get_s());
+  EXPECT_EQ(ret_v, coordinate->get_v());
+  EXPECT_EQ(ret_u, coordinate->get_u());
 }
 
 
-TEST_F(
-    SimpleLFCoordinateTest, CoordinateMustGetInitialValuesForStructuredBinding) {
-  const auto [ret_t, ret_s, ret_v, ret_u] =
-      *(coordinate.get());  //the current get is from the unique_ptr
-  EXPECT_EQ(ret_t, t);
-  EXPECT_EQ(ret_s, s);
-  EXPECT_EQ(ret_v, v);
-  EXPECT_EQ(ret_u, u);
+TEST_F(SimpleLFCoordinateTest, GetMustGetInitialValues) {
+  const auto coordinate_tuple = coordinate->get();
+  EXPECT_EQ(coordinate_tuple, std::tie(t, s, v, u));
 }
 
 
@@ -153,9 +148,27 @@ TEST_F(SimpleLFCoordinateTest, SetTMustChangeTInTheNextGet) {
 }
 
 
+TEST_F(SimpleLFCoordinateTest, SetTMustNotChangeOtherDimensionsInTheNextGet) {
+  [[maybe_unused]] const auto [ret_t, ret_s, ret_v, ret_u] = coordinate->get();
+  coordinate->set_t(coordinate->get_t() + 5);
+  EXPECT_EQ(coordinate->get_s(), ret_s);
+  EXPECT_EQ(coordinate->get_v(), ret_v);
+  EXPECT_EQ(coordinate->get_u(), ret_u);
+}
+
+
 TEST_F(SimpleLFCoordinateTest, SetSMustChangeSInTheNextGet) {
   coordinate->set_s(coordinate->get_s() + 5);
   EXPECT_EQ(coordinate->get_s(), s + 5);
+}
+
+
+TEST_F(SimpleLFCoordinateTest, SetSMustNotChangeOtherDimensionsInTheNextGet) {
+  [[maybe_unused]] const auto [ret_t, ret_s, ret_v, ret_u] = coordinate->get();
+  coordinate->set_s(coordinate->get_s() + 5);
+  EXPECT_EQ(coordinate->get_t(), ret_t);
+  EXPECT_EQ(coordinate->get_v(), ret_v);
+  EXPECT_EQ(coordinate->get_u(), ret_u);
 }
 
 
@@ -165,38 +178,59 @@ TEST_F(SimpleLFCoordinateTest, SetVMustChangeVInTheNextGet) {
 }
 
 
+TEST_F(SimpleLFCoordinateTest, SetVMustNotChangeOtherDimensionsInTheNextGet) {
+  [[maybe_unused]] const auto [ret_t, ret_s, ret_v, ret_u] = coordinate->get();
+  coordinate->set_v(coordinate->get_v() + 5);
+  EXPECT_EQ(coordinate->get_t(), ret_t);
+  EXPECT_EQ(coordinate->get_s(), ret_s);
+  EXPECT_EQ(coordinate->get_u(), ret_u);
+}
+
+
 TEST_F(SimpleLFCoordinateTest, SetUMustChangeUInTheNextGet) {
   coordinate->set_u(coordinate->get_u() + 5);
   EXPECT_EQ(coordinate->get_u(), u + 5);
 }
 
 
+TEST_F(SimpleLFCoordinateTest, SetUMustNotChangeOtherDimensionsInTheNextGet) {
+  [[maybe_unused]] const auto [ret_t, ret_s, ret_v, ret_u] = coordinate->get();
+  coordinate->set_u(coordinate->get_u() + 5);
+  EXPECT_EQ(coordinate->get_t(), ret_t);
+  EXPECT_EQ(coordinate->get_s(), ret_s);
+  EXPECT_EQ(coordinate->get_v(), ret_v);
+}
+
 TEST_F(SimpleLFCoordinateTest, TwoDimentionsEquallyInitializedAreEqual) {
-	auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v, u);
+  auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v, u);
   EXPECT_EQ(*(coordinate.get()), other_Coordinate);
 }
 
 
-TEST_F(SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInTAreNotEqual) {
-	auto other_Coordinate = LightfieldCoordinate<std::size_t>(t+1, s, v, u);
+TEST_F(
+    SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInTAreNotEqual) {
+  auto other_Coordinate = LightfieldCoordinate<std::size_t>(t + 1, s, v, u);
   EXPECT_NE(*(coordinate.get()), other_Coordinate);
 }
 
 
-TEST_F(SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInSAreNotEqual) {
-	auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s+1, v, u);
+TEST_F(
+    SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInSAreNotEqual) {
+  auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s + 1, v, u);
   EXPECT_NE(*(coordinate.get()), other_Coordinate);
 }
 
 
-TEST_F(SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInVAreNotEqual) {
-	auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v+1, u);
+TEST_F(
+    SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInVAreNotEqual) {
+  auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v + 1, u);
   EXPECT_NE(*(coordinate.get()), other_Coordinate);
 }
 
 
-TEST_F(SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInUAreNotEqual) {
-	auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v, u+1);
+TEST_F(
+    SimpleLFCoordinateTest, TwoDimentionsInitializedDifferentlyInUAreNotEqual) {
+  auto other_Coordinate = LightfieldCoordinate<std::size_t>(t, s, v, u + 1);
   EXPECT_NE(*(coordinate.get()), other_Coordinate);
 }
 

@@ -198,7 +198,8 @@ class LightfieldCoordinate {
   }
 };
 
-
+//the lines below are used to access lf coordinate as tuples,
+//this also enables structured binding :)
 namespace std {
 template<typename T>
 struct tuple_size<LightfieldCoordinate<T>>
