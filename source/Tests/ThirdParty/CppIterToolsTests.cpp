@@ -39,14 +39,16 @@
  *  \date     2019-06-18
  */
 
-
+#include <algorithm>
 #include <iostream>
-#include "cppitertools/range.hpp"
 #include "cppitertools/accumulate.hpp"
-#include "cppitertools/chain.hpp"
+#include "cppitertools/range.hpp"
+#include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
 
+using iter::accumulate;
 using iter::range;
+using iter::repeat;
 
 TEST(CppIterTools, TestRangeOneArgument) {
   auto r = range(3);
@@ -215,6 +217,65 @@ TEST(CppIterTools, TestIndexedRangeWithThreeDoubleArguments) {
   EXPECT_DOUBLE_EQ(r[4], 0.8);
 }
 
+TEST(CppIterTools, TestAccumulateSimple) {
+  const std::vector<int> expected{1, 3, 6, 10, 15};
+  const std::vector<int> data{1, 2, 3, 4, 5};
+  auto acc = accumulate(data);
+  const std::vector<int> accumulated(std::begin(acc), std::end(acc));
+  EXPECT_TRUE(accumulated == expected);
+}
+
+TEST(CppIterTools, TestAccumulateSimpleMuliplication) {
+  const std::vector<int> expected{1, 2, 6, 24, 120};
+  const std::vector<int> data{1, 2, 3, 4, 5};
+  auto acc = accumulate(data, [](int a, int b) { return a * b; });
+  const std::vector<int> accumulated(std::begin(acc), std::end(acc));
+  EXPECT_TRUE(accumulated == expected);
+}
+
+TEST(CppIterTools, TestAccumulateZeroInMiddleMuliplication) {
+  const std::vector<int> expected{3, 12, 72, 144, 144, 1296, 0, 0, 0, 0};
+  const std::vector<int> data{3, 4, 6, 2, 1, 9, 0, 7, 5, 8};
+  auto acc = accumulate(data, [](int a, int b) { return a * b; });
+  const std::vector<int> accumulated(std::begin(acc), std::end(acc));
+  EXPECT_TRUE(accumulated == expected);
+}
+
+TEST(CppIterTools, TestAccumulateWithMaximumFunction) {
+  const std::vector<int> expected{3, 4, 6, 6, 6, 9, 9, 9, 9, 9};
+  const std::vector<int> data{3, 4, 6, 2, 1, 9, 0, 7, 5, 8};
+  auto acc = accumulate(data, [](int a, int b) { return std::max(a, b); });
+  const std::vector<int> accumulated(std::begin(acc), std::end(acc));
+  EXPECT_TRUE(accumulated == expected);
+}
+
+TEST(CppIterTools, TestAccumulateSimulateLoadAmortizationOfAnnualPayments) {
+  // Amortize a 5% loan of 1000 with 4 annual payments of 90
+  const std::vector<double> expected{1000, 960.0, 918.0, 873.9, 827.595};
+  const std::vector<int> cashflows{1000, -90, -90, -90, -90};
+  auto acc = accumulate(cashflows,
+      [](auto balance, auto payment) { return balance * 1.05 + payment; });
+  const std::vector<double> accumulated(std::begin(acc), std::end(acc));
+  for (int i : range(expected.size()))
+    EXPECT_NEAR(accumulated[i], expected[i], 0.1);
+}
+
+TEST(CppIterTools, TestAccumulateandRepeatSimulateChaoticRecurrenceRelation) {
+  // See: https://en.wikipedia.org/wiki/Logistic_map
+  const std::vector<double> expected{0.40, 0.91, 0.30, 0.81, 0.60, 0.92, 0.29,
+      0.79, 0.63, 0.88, 0.39, 0.90, 0.33, 0.84, 0.52, 0.95, 0.18, 0.57, 0.93,
+      0.25, 0.71, 0.79, 0.63, 0.88, 0.39, 0.91, 0.32, 0.83, 0.54, 0.95, 0.20,
+      0.60, 0.91, 0.30, 0.80, 0.60};
+  constexpr double r = 3.8;
+  const auto logistic_map = [&r](auto x, [[maybe_unused]] auto _) {
+    return r * x * (1 - x);
+  };
+  auto inputs = repeat(0.4, expected.size());
+  auto acc = accumulate(inputs, logistic_map);
+  const std::vector<double> accumulated(std::begin(acc), std::end(acc));
+  for (int i : range(expected.size()))
+    EXPECT_NEAR(accumulated[i], expected[i], 0.1);
+}
 
 
 int main(int argc, char *argv[]) {
