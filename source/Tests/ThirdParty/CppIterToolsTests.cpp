@@ -42,11 +42,13 @@
 #include <algorithm>
 #include <iostream>
 #include "cppitertools/accumulate.hpp"
+#include "cppitertools/chain.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
+using iter::chain;
 using iter::range;
 using iter::repeat;
 
@@ -275,6 +277,51 @@ TEST(CppIterTools, TestAccumulateandRepeatSimulateChaoticRecurrenceRelation) {
   const std::vector<double> accumulated(std::begin(acc), std::end(acc));
   for (int i : range(expected.size()))
     EXPECT_NEAR(accumulated[i], expected[i], 0.1);
+}
+
+
+TEST(CppIterTools, TestChainBasicTwoStrings) {
+  const std::vector<char> expected{'A', 'B', 'C', 'D', 'E', 'F'};
+  const std::string s1{"ABC"};
+  const std::string s2{"DEF"};
+  auto ch = chain(s1, s2);
+  const std::vector<char> chained(std::begin(ch), std::end(ch));
+  EXPECT_TRUE(chained == expected);
+}
+
+TEST(CppIterTools, TestChainBasicThreeStrings) {
+  const std::vector<char> expected{'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'};
+  const std::string s1{"ABC"};
+  const std::string s2{"DEF"};
+  const std::string s3{"XYZ"};
+  auto ch = chain(s1, s2, s3);
+  const std::vector<char> chained(std::begin(ch), std::end(ch));
+  EXPECT_TRUE(chained == expected);
+}
+
+
+TEST(CppIterTools, TestChainBasicThreeStringsInplaceDefined) {
+  const std::vector<char> expected{'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'};
+  auto ch = chain(std::string{"ABC"}, std::string{"DEF"}, std::string{"XYZ"});
+  const std::vector<char> chained(std::begin(ch), std::end(ch));
+  EXPECT_TRUE(chained == expected);
+}
+
+TEST(CppIterTools, TestChainFromInterable) {
+  const std::vector<char> expected{'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'};
+  const std::vector<std::string> iterable{"ABC", "DEF", "XYZ"};
+  auto ch = chain.from_iterable(iterable);
+  const std::vector<char> chained(std::begin(ch), std::end(ch));
+  EXPECT_TRUE(chained == expected);
+}
+
+TEST(CppIterTools, TestChainAsFlattener) {
+  const std::vector<int> expected{2, 4, 6, 8, 10, 12, 14, 16, 18};
+  std::vector<std::vector<int>> vector_of_vectors{
+      {}, {2, 4, 6}, {}, {8, 10, 12}, {14, 16, 18}, {}};
+  auto ch = chain.from_iterable(vector_of_vectors);
+  const std::vector<int> chained(std::begin(ch), std::end(ch));
+  EXPECT_TRUE(chained == expected);
 }
 
 
