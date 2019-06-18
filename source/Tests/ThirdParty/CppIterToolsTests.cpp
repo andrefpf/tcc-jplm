@@ -43,12 +43,14 @@
 #include <iostream>
 #include "cppitertools/accumulate.hpp"
 #include "cppitertools/chain.hpp"
+#include "cppitertools/combinations.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
 using iter::chain;
+using iter::combinations;
 using iter::range;
 using iter::repeat;
 
@@ -178,12 +180,12 @@ TEST(CppIterTools, TestConstExprRange) {
 
   constexpr auto it = r2.begin();  // std::begin isn't constexpr
   constexpr auto i = *it;
-  EXPECT_TRUE(i == 4);
+  EXPECT_EQ(i, 4);
 
   constexpr auto rf = range(10.0);
   constexpr auto itf = rf.begin();
   constexpr auto f = *itf;
-  EXPECT_TRUE(f == 0.0);
+  EXPECT_EQ(f, 0.0);
 }
 
 TEST(CppIterTools, TestIndexedRange) {
@@ -324,8 +326,27 @@ TEST(CppIterTools, TestChainAsFlattener) {
   EXPECT_TRUE(chained == expected);
 }
 
+TEST(CppIterTools, TestCombinationsSimpleVectorTwoByTwo) {
+  const std::vector<std::vector<char>> expected{
+      {'A', 'B'}, {'A', 'C'}, {'A', 'D'}, {'B', 'C'}, {'B', 'D'}, {'C', 'D'}};
+  std::string iterable{"ABCD"};
+  std::vector<std::vector<char>> combined;
+  for (auto&& v : combinations(iterable, 2))
+    combined.emplace_back(std::begin(v), std::end(v));
+  EXPECT_EQ(combined, expected);
+}
 
-int main(int argc, char *argv[]) {
+TEST(CppIterTools, TestCombinationsSimpleVectorThreeByThree) {
+  const std::vector<std::vector<int>> expected{
+      {0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}};
+  const std::vector<int> iterable{0, 1, 2, 3};
+  std::vector<std::vector<int>> combined;
+  for (auto&& v : combinations(iterable, 3))
+    combined.emplace_back(std::begin(v), std::end(v));
+  EXPECT_EQ(combined, expected);
+}
+
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
