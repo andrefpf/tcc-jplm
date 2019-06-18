@@ -45,9 +45,9 @@
 
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <tuple>
 #include <vector>
-#include <memory>
 #include "Lib/Utils/Image/ColorModelUtils.h"
 
 
@@ -84,11 +84,13 @@ class BT2020Coefficients {
   static constexpr double kg = 1.0 - kb - kr;
 };
 
+
 template<typename T, std::size_t nbits>
 constexpr void check_for_integral_type_with_at_least_8_bits() {
   static_assert(nbits >= 8, "The nbits must be larger or equal to 8.");
   static_assert(std::is_integral<T>::value, "Must be an integral type");
 }
+
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral(double y) {
@@ -102,6 +104,7 @@ T y_double_to_integral(double y) {
   return static_cast<T>(std::round(mult_term * y + sum_term));
 }
 
+
 template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double(T y) {
   check_for_integral_type_with_at_least_8_bits<T, nbits>();
@@ -113,6 +116,7 @@ double y_integral_to_double(T y) {
 
   return (y - sum_term) / mult_term;
 }
+
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral(double cbcr) {
@@ -126,6 +130,7 @@ T cbcr_double_to_integral(double cbcr) {
   return static_cast<T>(std::round(mult_term * cbcr + sum_term));
 }
 
+
 template<typename T = uint8_t, std::size_t nbits = 8>
 double cbcr_integral_to_double(T cbcr) {
   check_for_integral_type_with_at_least_8_bits<T, nbits>();
@@ -136,6 +141,7 @@ double cbcr_integral_to_double(T cbcr) {
 
   return (cbcr - sum_term) / mult_term;
 }
+
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
@@ -148,6 +154,7 @@ double ycbcr_integral_to_double_no_dynamic_range_reduction(T value) {
   return static_cast<double>(value) / mult_term;
 }
 
+
 template<typename T = uint8_t, std::size_t nbits = 8>
 double y_integral_to_double_no_dynamic_range_reduction(T y) {
   check_for_integral_type_with_at_least_8_bits<T, nbits>();
@@ -158,6 +165,7 @@ double y_integral_to_double_no_dynamic_range_reduction(T y) {
 
   return static_cast<double>(y) / mult_term;
 }
+
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T y_double_to_integral_no_dynamic_range_reduction(double y) {
@@ -181,6 +189,7 @@ double cbcr_integral_to_double_no_dynamic_range_reduction(T cbcr) {
 
   return static_cast<double>(cbcr - sum_term) / mult_term;
 }
+
 
 template<typename T = uint8_t, std::size_t nbits = 8>
 T cbcr_double_to_integral_no_dynamic_range_reduction(double cbcr) {
@@ -213,19 +222,6 @@ std::tuple<double, double, double> rgb_to_ycbcr_base_double(
   return std::make_tuple(y, cb, cr);
 }
 
-template<typename T, std::size_t max_val>
-constexpr T clip_max(const T value) {
-  if (value < max_val)
-    return value;
-  return max_val;
-}
-
-template<typename T, std::size_t max_val>
-constexpr T clip_min_max(const T value) {
-  if (value < 0)
-    return static_cast<T>(0);
-  return clip_max<T, max_val>(value);
-}
 
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
@@ -281,6 +277,7 @@ std::tuple<double, double, double> ycbcr_to_rgb_base_double(
   return std::make_tuple(r, g, b);
 }
 
+
 template<typename T = uint8_t, std::size_t nbits = 8,
     typename ConversionCoefficients>
 std::tuple<T, T, T> ycbcr_to_rgb_integral(const std::tuple<T, T, T>& ycbcr) {
@@ -320,6 +317,7 @@ std::tuple<T, T, T> ycbcr_to_rgb_integral(const std::tuple<T, T, T>& ycbcr) {
 
   return {integral_r, integral_g, integral_b};
 }
+
 
 template<typename T, std::size_t nbits, typename ConversionCoefficients,
     bool keep_dynamic_range>
@@ -370,6 +368,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb_keeping_dynamic_range(
       inverse_normalize01<T, nbits>(g), inverse_normalize01<T, nbits>(b));
 }
 
+
 template<typename T, std::size_t nbits, typename ConversionCoefficients>
 std::tuple<T, T, T> convert_ycbcr_to_rgb_reducing_dynamic_range(
     const std::tuple<T, T, T>& ycbcr) {
@@ -394,6 +393,7 @@ std::tuple<T, T, T> convert_ycbcr_to_rgb(const std::tuple<T, T, T>& ycbcr) {
         ConversionCoefficients>(ycbcr);
   }
 }
+
 
 template<typename T, std::size_t nbits>
 std::tuple<T, T, T> convert_rgb_to_ycocg_round(const std::tuple<T, T, T>& rgb) {
@@ -453,7 +453,7 @@ class ColorSpacesConverter : public GenericColorSpacesConverter<T,
   };
 };
 
-//TODO: instead of new, use unique_ptr
+
 template<typename T, typename ConversionCoefficients, bool keep_dynamic_range>
 class ConversorProvider {
  public:

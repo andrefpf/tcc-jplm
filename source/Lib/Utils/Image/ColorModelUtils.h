@@ -106,6 +106,22 @@ T inverse_normalize01(double value) {
 }
 
 
+template<typename T, std::size_t max_val>
+constexpr T clip_max(const T value) {
+  if (value < max_val)
+    return value;
+  return max_val;
+}
+
+
+template<typename T, std::size_t max_val>
+constexpr T clip_min_max(const T value) {
+  if (value < 0)
+    return static_cast<T>(0);
+  return clip_max<T, max_val>(value);
+}
+
+
 double clip01d(double value);
 
 }  // namespace ColorModelUtils

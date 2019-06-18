@@ -44,6 +44,7 @@
 #include <iomanip>  //for setprecision
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageChannelUtils.h"
+#include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "Lib/Utils/Image/Metrics.h"
 
 namespace ImageMetrics {
@@ -173,16 +174,72 @@ void print_sses(const Image<T>& original, const Image<T>& encoded) {
 
 
 namespace visitors {
+
+template<template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+void image_parameter_check() {
+static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
+        "Original image must be an image!");
+    static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
+        "Encoded image must be an image!");
+}
+
+
+// struct ColorSpaceVisitor {
+//     template<template<typename> class ImageT0, template<typename> class ImageT1,
+//       typename T0, typename T1>
+//   void operator()(const std::unique_ptr<ImageT0<T0>>& original,
+//       const std::unique_ptr<ImageT1<T1>>& encoded) {
+//     image_parameter_check<ImageT0, ImageT1, T0, T1>();
+//     if constexpr (std::is_same<T0, T1>::value) {
+//       if (original->get_type() == encoded->get_type()) {
+//         return print_psnrs(*(static_cast<Image<T0>*>(original.get())),
+//             *(static_cast<Image<T1>*>(encoded.get())));
+//       }
+//       std::cerr << "Images are from different types..." << std::endl;
+//     }
+//     different_representations_message<T0, T1>();
+//   }
+
+//   template<template<typename> class ImageT0, template<typename> class ImageT1,
+//       typename T0, typename T1>
+//   auto operator()(const std::unique_ptr<ImageT0<T0>>& original,
+//       const std::unique_ptr<ImageT1<T1>>& encoded, const ImageType type) {
+//     using namespace ImageColorSpaceConversion;
+//     switch (type) {
+//       case ImageType::RGB:
+//         operator()(
+//             convert::to<RGBImage>(original), convert::to<RGBImage>(encoded));
+//         break;
+//       case ImageType::BT601:
+//         operator()(convert::to<BT601Image>(original),
+//             convert::to<BT601Image>(encoded));
+//         break;
+//       case ImageType::BT709:
+//         operator()(convert::to<BT709Image>(original),
+//             convert::to<BT709Image>(encoded));
+//         break;
+//       case ImageType::BT2020:
+//         operator()(convert::to<BT2020Image>(original),
+//             convert::to<BT2020Image>(encoded));
+//         break;
+//       default:
+//         std::cerr << "Error default" << std::endl;
+//     }
+//   }
+//  protected:
+//   ColorSpaceVisitor() = default;
+// };
+
 //PSNR Visitor
 struct PSNRPrinter {
+  // using ColorSpaceVisitor::operator();
+
   template<template<typename> class ImageT0, template<typename> class ImageT1,
       typename T0, typename T1>
   void operator()(const std::unique_ptr<ImageT0<T0>>& original,
       const std::unique_ptr<ImageT1<T1>>& encoded) {
-    static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
-        "Original image must be an image!");
-    static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
-        "Encoded image must be an image!");
+    image_parameter_check<ImageT0, ImageT1, T0, T1>();
     if constexpr (std::is_same<T0, T1>::value) {
       if (original->get_type() == encoded->get_type()) {
         return print_psnrs(*(static_cast<Image<T0>*>(original.get())),
@@ -192,10 +249,21 @@ struct PSNRPrinter {
     }
     different_representations_message<T0, T1>();
   }
+
+  template<template<typename> class type_class, template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+  void operator()(const std::unique_ptr<ImageT0<T0>>& original,
+      const std::unique_ptr<ImageT1<T1>>& encoded) {
+      using namespace ImageColorSpaceConversion;
+      operator()(convert::to<type_class>(encoded), convert::to<type_class>(original));
+  }
+
 };
 
 
 struct PSNRGetter {
+  // using ColorSpaceVisitor::operator();
+
   template<template<typename> class ImageT0, template<typename> class ImageT1,
       typename T0, typename T1>
   std::vector<double> operator()(const std::unique_ptr<ImageT0<T0>>& original,
@@ -210,6 +278,7 @@ struct PSNRGetter {
     }
     return std::vector<double>();
   }
+
 };
 
 

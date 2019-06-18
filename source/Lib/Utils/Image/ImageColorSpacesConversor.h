@@ -215,11 +215,13 @@ ImageOut<T> to(const ImageIn<T>& source) {
   static_assert(std::is_base_of<Image<T>, ImageOut<T>>::value,
       "The output for conversion must be an image...");
 
-
+  //first check if both images are from the same type (in and out)
   if constexpr (std::is_same<ImageIn<T>, ImageOut<T>>::value) {
-    return source;
+    return source;  //no need for conversion, returns a copy of source
   }
 
+  //if in and out are ycbr, but different recomendations, creates an intermediary rgb representation
+  // and then converts
   if constexpr (is_ycbcr<ImageIn, T>() && is_ycbcr<ImageOut, T>()) {
     auto temp_as_rgb = to<RGBImage>(source);
     return to<ImageOut>(temp_as_rgb);
