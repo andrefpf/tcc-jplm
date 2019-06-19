@@ -35,6 +35,7 @@
  *  \brief    Tests for the external library CppIterTools
  *  \details  See more details about it at
  *            https://github.com/ryanhaining/cppitertools
+ *            https://docs.python.org/3/library/itertools.html
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-18
  */
@@ -46,6 +47,7 @@
 #include "cppitertools/combinations.hpp"
 #include "cppitertools/combinations_with_replacement.hpp"
 #include "cppitertools/compress.hpp"
+#include "cppitertools/count.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -55,6 +57,7 @@ using iter::chain;
 using iter::combinations;
 using iter::combinations_with_replacement;
 using iter::compress;
+using iter::count;
 using iter::range;
 using iter::repeat;
 
@@ -401,6 +404,80 @@ TEST(CppIterTools, TestCompressVectorWithTransformedSelector) {
   std::vector<unsigned int> compressed(std::begin(c), std::end(c));
   EXPECT_EQ(compressed, expected);
 }
+
+
+TEST(CppIterTools, TestCountSimple) {
+  const std::vector<char> expected{10, 11, 12, 13, 14};
+  std::vector<char> counted;
+  for (auto c : count(10)) {
+    counted.push_back(c);
+    if (c == 14)
+      break;
+  }
+  EXPECT_EQ(expected, counted);
+}
+
+
+TEST(CppIterTools, TestCountParameterless) {
+  const std::vector<char> expected{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  std::vector<char> counted;
+  for (auto c : count()) {
+    counted.push_back(c);
+    if (c == 9)
+      break;
+  }
+  EXPECT_EQ(expected, counted);
+}
+
+TEST(CppIterTools, TestCountNoDefaultStep) {
+  const std::vector<int> expected{0, 2, 4, 6, 8, 10};
+  std::vector<int> counted;
+  for (auto c : count(0, 2)) {
+    counted.push_back(c);
+    if (c > 9)
+      break;
+  }
+  EXPECT_EQ(expected, counted);
+}
+
+TEST(CppIterTools, TestCountNoDefaultStepWithFloatRange) {
+  const std::vector<double> expected{0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
+  std::vector<double> counted;
+  for (auto c : count(0.0, 0.2)) {
+    counted.push_back(c);
+    if (c >= 1.0)
+      break;
+  }
+  for (int i : range(expected.size()))
+    EXPECT_DOUBLE_EQ(counted[i], expected[i]);
+}
+
+
+TEST(CppIterTools, TestCountDecreasing) {
+  const std::vector<int> expected{10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1};
+  std::vector<int> counted;
+  for (auto c : count(10, -1)) {
+    counted.push_back(c);
+    if (c <= -1)
+      break;
+  }
+  EXPECT_EQ(expected, counted);
+}
+
+/*
+ * TODO: Negative float steps not working, check the submitted issue at
+ *       https://github.com/ryanhaining/cppitertools/issues/60
+TEST(CppIterTools, TestCountNoDefaultStepWithDecreasingFloatRange) {
+  const std::vector<double> expected{1.0, 0.5, 0.0, -0.5, -1.0};
+  std::vector<double> counted;
+  for (auto c : count(1.0, -0.5)) {
+    counted.push_back(c);
+    if (c <= -1.0) break;
+  }
+  for (int i : range(expected.size()))
+    EXPECT_DOUBLE_EQ(expected[i], counted[i]);
+}
+*/
 
 
 int main(int argc, char* argv[]) {
