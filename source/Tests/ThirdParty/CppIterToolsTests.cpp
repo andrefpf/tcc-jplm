@@ -53,6 +53,7 @@
 #include "cppitertools/enumerate.hpp"
 #include "cppitertools/filter.hpp"
 #include "cppitertools/filterfalse.hpp"
+#include "cppitertools/groupby.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -68,6 +69,7 @@ using iter::dropwhile;
 using iter::enumerate;
 using iter::filter;
 using iter::filterfalse;
+using iter::groupby;
 using iter::range;
 using iter::repeat;
 
@@ -591,11 +593,52 @@ TEST(CppIterTools, TestFilterfalseSimpleString) {
   const std::string expected{"acegikmoqsuwy"};
   const std::string input{"abcdefghijklmnopqrstuvwxyz"};
   auto f = filterfalse([](auto x) { return x % 2 == 0; }, input);
-  const  std::string filtered(std::begin(f), std::end(f));
+  const std::string filtered(std::begin(f), std::end(f));
   EXPECT_EQ(expected, filtered);
 }
 
+TEST(CppIterTools, TestGroupByMap) {
+  const std::string expected =
+      "A bear is a animal."
+      "A duck is a animal."
+      "A cactus is a plant."
+      "A speed boat is a vehicle."
+      "A school bus is a vehicle.";
+  using VectorOfPairs = std::vector<std::pair<std::string, std::string>>;
+  const VectorOfPairs input{{"animal", "bear"}, {"animal", "duck"},
+      {"plant", "cactus"}, {"vehicle", "speed boat"},
+      {"vehicle", "school bus"}};
+  std::string out;
+  for (auto&& groups_of_pairs : groupby(input, [](auto s) { return s.first; }))
+    for (auto&& list_of_things : groups_of_pairs.second) {
+      auto thing = list_of_things.second;
+      out = out + "A " + thing + " is a " + groups_of_pairs.first + ".";
+    }
+  EXPECT_EQ(expected, out);
+}
 
+
+TEST(CppIterTools, TestGroupByString) {
+  using VectorOfVectorsOfStrings = std::vector<std::vector<std::string>>;
+  VectorOfVectorsOfStrings expected{
+      {"hi", "ab", "ho"}, {"abc", "def"}, {"abcde", "efghi"}};
+  std::vector<std::string> input = {
+      "hi", "ab", "ho", "abc", "def", "abcde", "efghi"};
+  VectorOfVectorsOfStrings grouped;
+  for (auto&& gb : groupby(input, [](const auto& s) { return s.length(); }))
+    grouped.emplace_back(std::begin(gb.second), std::end(gb.second));
+  EXPECT_EQ(expected, grouped);
+}
+
+TEST(CppIterTools, TestGroupByStringCheckKey) {
+  const std::vector<int> expected_keys = {2, 3, 5};
+  std::vector<std::string> input = {
+      "hi", "ab", "ho", "abc", "def", "abcde", "efghi"};
+  std::vector<int> keys;
+  for (auto&& gb : groupby(input, [](const auto& s) { return s.length(); }))
+    keys.push_back(gb.first);
+  EXPECT_EQ(expected_keys, keys);
+}
 
 
 int main(int argc, char* argv[]) {
