@@ -51,6 +51,7 @@
 #include "cppitertools/cycle.hpp"
 #include "cppitertools/dropwhile.hpp"
 #include "cppitertools/enumerate.hpp"
+#include "cppitertools/filter.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -64,6 +65,7 @@ using iter::count;
 using iter::cycle;
 using iter::dropwhile;
 using iter::enumerate;
+using iter::filter;
 using iter::range;
 using iter::repeat;
 
@@ -547,13 +549,28 @@ TEST(CppIterTools, TestEnumerateSimpleString) {
   EXPECT_EQ(expected, enumerated);
 }
 
-
 TEST(CppIterTools, TestEnumerateSimpleArray) {
   using VectorOfPairs = std::vector<std::pair<std::size_t, char>>;
   const VectorOfPairs expected{{0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}};
   auto e = enumerate(std::array{'A', 'B', 'C', 'D'});
   const VectorOfPairs enumerated(std::begin(e), std::end(e));
   EXPECT_EQ(expected, enumerated);
+}
+
+TEST(CppIterTools, TestFilterSimpleVector) {
+  const std::vector<int> expected{-5, -4, -3, -2, -1};
+  auto number_list = range(-5, 5);
+  auto f = filter([](auto x) { return x < 0; }, number_list);
+  const std::vector<int> filtered(std::begin(f), std::end(f));
+  EXPECT_EQ(expected, filtered);
+}
+
+TEST(CppIterTools, TestFilterSimpleString) {
+  const std::string expected{"abcdefghijklmnopqrstuvwxyz"};
+  const std::string printable{"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r"};
+  auto f = printable | filter([](auto c) { return !std::isdigit(c) && std::islower(c); });
+  const std::string filtered(std::begin(f), std::end(f));
+  EXPECT_EQ(expected, filtered);
 }
 
 
