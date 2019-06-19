@@ -54,6 +54,7 @@
 #include "cppitertools/filter.hpp"
 #include "cppitertools/filterfalse.hpp"
 #include "cppitertools/groupby.hpp"
+#include "cppitertools/imap.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -70,6 +71,7 @@ using iter::enumerate;
 using iter::filter;
 using iter::filterfalse;
 using iter::groupby;
+using iter::imap;
 using iter::range;
 using iter::repeat;
 
@@ -638,6 +640,32 @@ TEST(CppIterTools, TestGroupByStringCheckKey) {
   for (auto&& gb : groupby(input, [](const auto& s) { return s.length(); }))
     keys.push_back(gb.first);
   EXPECT_EQ(expected_keys, keys);
+}
+
+TEST(CppIterTools, TestImapSimple) {
+  const std::vector<int> expected = {1, 4, 9, 16, 25};
+  const std::vector<int> input = {1, 2, 3, 4, 5};
+  const auto m = imap([](auto x) { return x * x; }, input);
+  std::vector<int> mapped(std::begin(m), std::end(m));
+  EXPECT_EQ(expected, mapped);
+}
+
+TEST(CppIterTools, TestImapSimplePiped) {
+  const std::vector<int> expected = {1, 4, 9, 16, 25};
+  const std::vector<int> input = {1, 2, 3, 4, 5};
+  const auto m = input | imap([](auto x) { return x * x; });
+  std::vector<int> mapped(std::begin(m), std::end(m));
+  EXPECT_EQ(expected, mapped);
+}
+
+
+TEST(CppIterTools, TestImapSimpleTwoParameters) {
+  const std::vector<int> expected = {11, 22, 33, 44, 55};
+  const std::vector<int> p1 = {1, 2, 3, 4, 5};
+  const std::vector<int> p2 = {10, 20, 30, 40, 50};
+  const auto m = imap([](int x, int y) { return x + y; }, p1, p2);
+  std::vector<int> mapped(std::begin(m), std::end(m));
+  EXPECT_EQ(expected, mapped);
 }
 
 
