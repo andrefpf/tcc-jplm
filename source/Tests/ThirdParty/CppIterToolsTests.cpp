@@ -44,6 +44,8 @@
 #include "cppitertools/accumulate.hpp"
 #include "cppitertools/chain.hpp"
 #include "cppitertools/combinations.hpp"
+#include "cppitertools/combinations_with_replacement.hpp"
+#include "cppitertools/compress.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -51,6 +53,8 @@
 using iter::accumulate;
 using iter::chain;
 using iter::combinations;
+using iter::combinations_with_replacement;
+using iter::compress;
 using iter::range;
 using iter::repeat;
 
@@ -326,7 +330,7 @@ TEST(CppIterTools, TestChainAsFlattener) {
   EXPECT_TRUE(chained == expected);
 }
 
-TEST(CppIterTools, TestCombinationsSimpleVectorTwoByTwo) {
+TEST(CppIterTools, TestCombinationsSimpleStringTwoByTwo) {
   const std::vector<std::vector<char>> expected{
       {'A', 'B'}, {'A', 'C'}, {'A', 'D'}, {'B', 'C'}, {'B', 'D'}, {'C', 'D'}};
   std::string iterable{"ABCD"};
@@ -345,6 +349,59 @@ TEST(CppIterTools, TestCombinationsSimpleVectorThreeByThree) {
     combined.emplace_back(std::begin(v), std::end(v));
   EXPECT_EQ(combined, expected);
 }
+
+
+TEST(CppIterTools, TestCombinationsWithReplacementSimpleStringTwoByTwo) {
+  const std::vector<std::vector<char>> expected{
+      {'A', 'A'}, {'A', 'B'}, {'A', 'C'}, {'B', 'B'}, {'B', 'C'}, {'C', 'C'}};
+  std::string iterable{"ABC"};
+  std::vector<std::vector<char>> combined;
+  for (auto&& v : combinations_with_replacement(iterable, 2))
+    combined.emplace_back(std::begin(v), std::end(v));
+  EXPECT_EQ(combined, expected);
+}
+
+
+TEST(CppIterTools, TestCompressSimpleVector) {
+  const std::vector<char> expected{'A', 'C', 'E', 'F'};
+  const std::vector<char> iterable{'A', 'B', 'C', 'D', 'E', 'F'};
+  const std::vector<bool> selector{true, false, true, false, true, true};
+  auto c = compress(iterable, selector);
+  std::vector<char> compressed(std::begin(c), std::end(c));
+  EXPECT_EQ(compressed, expected);
+}
+
+TEST(CppIterTools, TestCompressSimpleString) {
+  const std::vector<char> expected{'A', 'C', 'E', 'F'};
+  std::string iterable{"ABCDEF"};
+  const std::vector<bool> selector{true, false, true, false, true, true};
+  auto c = compress(iterable, selector);
+  std::vector<char> compressed(std::begin(c), std::end(c));
+  EXPECT_EQ(compressed, expected);
+}
+
+TEST(CppIterTools, TestCompressStringWithIntSelector) {
+  const std::vector<char> expected{'A', 'C', 'E', 'F'};
+  std::string iterable{"ABCDEF"};
+  const std::vector<int> selector{1, 0, 1, 0, 1, 1};
+  auto c = compress(iterable, selector);
+  std::vector<char> compressed(std::begin(c), std::end(c));
+  EXPECT_EQ(compressed, expected);
+}
+
+
+TEST(CppIterTools, TestCompressVectorWithTransformedSelector) {
+  const std::vector<unsigned int> expected{11, 13, 15, 17, 19};
+  std::vector<bool> selector;
+  auto iterable = range(20);
+  std::transform(std::begin(iterable), std::end(iterable),
+      std::back_inserter(selector),
+      [](unsigned int it) { return ((it > 10) && (it % 2 != 0)); });
+  auto c = compress(iterable, selector);
+  std::vector<unsigned int> compressed(std::begin(c), std::end(c));
+  EXPECT_EQ(compressed, expected);
+}
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
