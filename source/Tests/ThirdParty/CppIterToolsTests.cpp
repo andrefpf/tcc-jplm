@@ -50,6 +50,7 @@
 #include "cppitertools/count.hpp"
 #include "cppitertools/cycle.hpp"
 #include "cppitertools/dropwhile.hpp"
+#include "cppitertools/enumerate.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -62,6 +63,7 @@ using iter::compress;
 using iter::count;
 using iter::cycle;
 using iter::dropwhile;
+using iter::enumerate;
 using iter::range;
 using iter::repeat;
 
@@ -525,6 +527,33 @@ TEST(CppIterTools, TestDropwhileSimple) {
   auto d = dropwhile(filter, std::vector<int>{1, 4, 6, 4, 1});
   const std::vector<int> dropped(std::begin(d), std::end(d));
   EXPECT_EQ(expected, dropped);
+}
+
+
+TEST(CppIterTools, TestEnumerateSimpleStringVariable) {
+  using VectorOfPairs = std::vector<std::pair<std::size_t, char>>;
+  const VectorOfPairs expected{{0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}};
+  std::string str = "ABCD";
+  auto e = enumerate(str);
+  const VectorOfPairs enumerated(std::begin(e), std::end(e));
+  EXPECT_EQ(expected, enumerated);
+}
+
+TEST(CppIterTools, TestEnumerateSimpleString) {
+  using VectorOfPairs = std::vector<std::pair<std::size_t, char>>;
+  const VectorOfPairs expected{{0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}};
+  auto e = enumerate(std::string("ABCD"));
+  const VectorOfPairs enumerated(std::begin(e), std::end(e));
+  EXPECT_EQ(expected, enumerated);
+}
+
+
+TEST(CppIterTools, TestEnumerateSimpleArray) {
+  using VectorOfPairs = std::vector<std::pair<std::size_t, char>>;
+  const VectorOfPairs expected{{0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}};
+  auto e = enumerate(std::array{'A', 'B', 'C', 'D'});
+  const VectorOfPairs enumerated(std::begin(e), std::end(e));
+  EXPECT_EQ(expected, enumerated);
 }
 
 
