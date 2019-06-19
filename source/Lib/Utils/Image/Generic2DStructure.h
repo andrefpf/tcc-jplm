@@ -52,8 +52,27 @@
 template<class T>
 struct is_unique_ptr : std::false_type {};
 
+
 template<class T>
 struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
+
+
+template<class T>
+class is_clonable {
+  template<class TN>
+  static std::true_type test_function_signature(TN* (TN::*) () const);
+
+  template<class TN>
+  static decltype(test_function_signature(&TN::clone)) test(std::nullptr_t);
+
+  template<class TN>
+  static std::false_type test(...);
+
+ public:
+  using type = decltype(test<T>(nullptr));
+  static const bool value = type::value;
+};
+
 
 
 template<typename T>
@@ -84,11 +103,32 @@ class Generic2DStructure {
     }
   }
 
-  //TODO: check if possible to make copy constructor protected
+
   Generic2DStructure(const Generic2DStructure& other)
       : width(other.width), height(other.height),
         number_of_elements(other.number_of_elements) {
     //FIXME: copy all elements from other
+    if (other.elements) {
+      this->alloc_all_resources();
+      for (auto i = decltype(number_of_elements){0}; i < number_of_elements;
+           ++i) {
+        if constexpr (is_unique_ptr<T>::value) {
+          typedef
+              typename std::remove_reference<decltype(*std::declval<T>())>::type
+                  ElemType;
+          if constexpr (is_clonable<ElemType>::value) {
+            this->elements[i] = std::make_unique<ElemType>(
+                *(other.elements.get()->get()->clone()));
+          } else {
+            this->elements[i] = std::make_unique<ElemType>(
+                *(other.elements.get()->get()));  //unique_ptr to unique ptr
+          }
+        } else {
+          this->elements[i] =
+              other;  //TODO: check if this cover all possibilities
+        }
+      }
+    }
   }
 
 
