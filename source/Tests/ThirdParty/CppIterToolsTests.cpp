@@ -55,6 +55,7 @@
 #include "cppitertools/filterfalse.hpp"
 #include "cppitertools/groupby.hpp"
 #include "cppitertools/imap.hpp"
+#include "cppitertools/permutations.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -72,6 +73,7 @@ using iter::filter;
 using iter::filterfalse;
 using iter::groupby;
 using iter::imap;
+using iter::permutations;
 using iter::range;
 using iter::repeat;
 
@@ -667,6 +669,24 @@ TEST(CppIterTools, TestImapSimpleTwoParameters) {
   std::vector<int> mapped(std::begin(m), std::end(m));
   EXPECT_EQ(expected, mapped);
 }
+
+TEST(CppIterTools, TestPermutationSimple) {
+  std::multiset<std::vector<int>> expected{
+      {1, 7, 9}, {1, 9, 7}, {7, 1, 9}, {7, 9, 1}, {9, 1, 7}, {9, 7, 1}};
+  std::multiset<std::vector<int>> permuted;
+  for (auto&& st : permutations(std::vector<int>{1, 7, 9}))
+    permuted.emplace(std::begin(st), std::end(st));
+  EXPECT_EQ(expected, permuted);
+}
+
+TEST(CppIterTools, TestPermutationSimpleWithRange) {
+  std::multiset<std::string> expected{"ABC", "ACB", "BAC", "BCA", "CAB", "CBA"};
+  std::multiset<std::string> permuted;
+  for (auto&& st : permutations(std::string("ABC")))
+    permuted.emplace(std::begin(st), std::end(st));
+  EXPECT_EQ(expected, permuted);
+}
+
 
 
 int main(int argc, char* argv[]) {
