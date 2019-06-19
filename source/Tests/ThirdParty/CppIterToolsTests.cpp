@@ -52,6 +52,7 @@
 #include "cppitertools/dropwhile.hpp"
 #include "cppitertools/enumerate.hpp"
 #include "cppitertools/filter.hpp"
+#include "cppitertools/filterfalse.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -66,6 +67,7 @@ using iter::cycle;
 using iter::dropwhile;
 using iter::enumerate;
 using iter::filter;
+using iter::filterfalse;
 using iter::range;
 using iter::repeat;
 
@@ -567,11 +569,33 @@ TEST(CppIterTools, TestFilterSimpleVector) {
 
 TEST(CppIterTools, TestFilterSimpleString) {
   const std::string expected{"abcdefghijklmnopqrstuvwxyz"};
-  const std::string printable{"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r"};
-  auto f = printable | filter([](auto c) { return !std::isdigit(c) && std::islower(c); });
+  const std::string printable{
+      "0123456789abcdefghijklmnopqrstuvwxyzABCD"
+      "EFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,"
+      "-./:;<=>?@[\\]^_`{|}~ \t\n\r"};
+  auto f = printable |
+           filter([](auto c) { return !std::isdigit(c) && std::islower(c); });
   const std::string filtered(std::begin(f), std::end(f));
   EXPECT_EQ(expected, filtered);
 }
+
+TEST(CppIterTools, TestFilterfalseSimpleVector) {
+  const std::vector<int> expected{0, 2, 4, 6, 8};
+  auto r = range(10);
+  auto f = filterfalse([](auto x) { return x % 2; }, r);
+  const std::vector<int> filtered(std::begin(f), std::end(f));
+  EXPECT_EQ(expected, filtered);
+}
+
+TEST(CppIterTools, TestFilterfalseSimpleString) {
+  const std::string expected{"acegikmoqsuwy"};
+  const std::string input{"abcdefghijklmnopqrstuvwxyz"};
+  auto f = filterfalse([](auto x) { return x % 2 == 0; }, input);
+  const  std::string filtered(std::begin(f), std::end(f));
+  EXPECT_EQ(expected, filtered);
+}
+
+
 
 
 int main(int argc, char* argv[]) {
