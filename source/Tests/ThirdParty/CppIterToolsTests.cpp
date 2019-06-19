@@ -48,6 +48,8 @@
 #include "cppitertools/combinations_with_replacement.hpp"
 #include "cppitertools/compress.hpp"
 #include "cppitertools/count.hpp"
+#include "cppitertools/cycle.hpp"
+#include "cppitertools/dropwhile.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -58,6 +60,8 @@ using iter::combinations;
 using iter::combinations_with_replacement;
 using iter::compress;
 using iter::count;
+using iter::cycle;
+using iter::dropwhile;
 using iter::range;
 using iter::repeat;
 
@@ -478,6 +482,50 @@ TEST(CppIterTools, TestCountNoDefaultStepWithDecreasingFloatRange) {
     EXPECT_DOUBLE_EQ(expected[i], counted[i]);
 }
 */
+
+
+TEST(CppIterTools, TestCycleSimpleVector) {
+  const std::vector<int> expected{0, 1, 2, 3, 0, 1, 2, 3};
+  const std::vector<int> period{0, 1, 2, 3};
+  std::vector<int> cycled;
+  for (auto c : cycle(period)) {
+    cycled.push_back(c);
+    if (cycled.size() == 2 * period.size())
+      break;
+  }
+  EXPECT_EQ(expected, cycled);
+}
+
+
+TEST(CppIterTools, TestCycleSimpleString) {
+  const std::vector<char> expected{
+      'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'};
+  const std::string period("ABCD");
+  std::vector<char> cycled;
+  for (auto c : cycle(period)) {
+    cycled.push_back(c);
+    if (cycled.size() == 3 * period.size())
+      break;
+  }
+  EXPECT_EQ(expected, cycled);
+}
+
+TEST(CppIterTools, TestDropwhileSimplePiped) {
+  const std::vector<int> expected{6, 4, 1};
+  std::vector<int> input{1, 4, 6, 4, 1};
+  auto d = input | dropwhile([](int i) { return i < 5; });
+  const std::vector<int> dropped(std::begin(d), std::end(d));
+  EXPECT_EQ(expected, dropped);
+}
+
+
+TEST(CppIterTools, TestDropwhileSimple) {
+  const std::vector<int> expected{6, 4, 1};
+  auto filter = [](auto i) { return i < 5; };
+  auto d = dropwhile(filter, std::vector<int>{1, 4, 6, 4, 1});
+  const std::vector<int> dropped(std::begin(d), std::end(d));
+  EXPECT_EQ(expected, dropped);
+}
 
 
 int main(int argc, char* argv[]) {
