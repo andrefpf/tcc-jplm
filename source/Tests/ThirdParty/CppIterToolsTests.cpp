@@ -56,6 +56,7 @@
 #include "cppitertools/groupby.hpp"
 #include "cppitertools/imap.hpp"
 #include "cppitertools/permutations.hpp"
+#include "cppitertools/powerset.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -74,6 +75,7 @@ using iter::filterfalse;
 using iter::groupby;
 using iter::imap;
 using iter::permutations;
+using iter::powerset;
 using iter::range;
 using iter::repeat;
 
@@ -624,7 +626,7 @@ TEST(CppIterTools, TestGroupByMap) {
 
 TEST(CppIterTools, TestGroupByString) {
   using VectorOfVectorsOfStrings = std::vector<std::vector<std::string>>;
-  VectorOfVectorsOfStrings expected{
+  const VectorOfVectorsOfStrings expected{
       {"hi", "ab", "ho"}, {"abc", "def"}, {"abcde", "efghi"}};
   std::vector<std::string> input = {
       "hi", "ab", "ho", "abc", "def", "abcde", "efghi"};
@@ -671,7 +673,7 @@ TEST(CppIterTools, TestImapSimpleTwoParameters) {
 }
 
 TEST(CppIterTools, TestPermutationSimple) {
-  std::multiset<std::vector<int>> expected{
+  const std::multiset<std::vector<int>> expected{
       {1, 7, 9}, {1, 9, 7}, {7, 1, 9}, {7, 9, 1}, {9, 1, 7}, {9, 7, 1}};
   std::multiset<std::vector<int>> permuted;
   for (auto&& st : permutations(std::vector<int>{1, 7, 9}))
@@ -679,14 +681,64 @@ TEST(CppIterTools, TestPermutationSimple) {
   EXPECT_EQ(expected, permuted);
 }
 
-TEST(CppIterTools, TestPermutationSimpleWithRange) {
-  std::multiset<std::string> expected{"ABC", "ACB", "BAC", "BCA", "CAB", "CBA"};
+TEST(CppIterTools, TestPermutationSimpleString) {
+  const std::multiset<std::string> expected{"ABC", "ACB", "BAC", "BCA", "CAB", "CBA"};
   std::multiset<std::string> permuted;
   for (auto&& st : permutations(std::string("ABC")))
     permuted.emplace(std::begin(st), std::end(st));
   EXPECT_EQ(expected, permuted);
 }
 
+
+TEST(CppIterTools, TestPowersetSimple) {
+  const std::multiset<std::vector<int>> expected{
+      {}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}};
+  std::multiset<std::vector<int>> combined;
+  for (auto&& st : powerset(std::vector<int>{1, 2, 3}))
+    combined.emplace(std::begin(st), std::end(st));
+  EXPECT_EQ(expected, combined);
+}
+
+
+TEST(CppIterTools, TestPowersetSimpleString) {
+  const std::multiset<std::string> expected{
+      "", "A", "B", "C", "AB", "AC", "BC", "ABC"};
+  std::multiset<std::string> combined;
+  for (auto&& st : powerset(std::string("ABC")))
+    combined.emplace(std::begin(st), std::end(st));
+  EXPECT_EQ(expected, combined);
+}
+
+TEST(CppIterTools, TestPowersetAsCombinationsVector) {
+  const std::multiset<std::vector<int>> expected{
+      {}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}};
+  std::vector<int> items{1, 2, 3};
+  std::multiset<std::vector<int>> power_set;
+  for (auto&& x : powerset(items))
+    power_set.emplace(std::begin(x), std::end(x));
+  std::multiset<std::vector<int>> combined{{}};
+  for (auto length : range(items.size() + 1))
+    for (auto&& x : combinations(items, length))
+      combined.emplace(std::begin(x), std::end(x));
+  EXPECT_EQ(expected, power_set);
+  EXPECT_EQ(expected, combined);
+  EXPECT_EQ(combined, power_set);
+}
+
+
+TEST(CppIterTools, TestPowersetAsCombinationsString) {
+  const std::multiset<std::string> expected{
+      "", "A", "B", "C", "AB", "AC", "BC", "ABC"};
+  std::string items("ABC");
+  std::multiset<std::string> power_set;
+  for (auto&& st : powerset(items))
+    power_set.emplace(std::begin(st), std::end(st));
+  std::multiset<std::string> power_set_combined{""};
+  for (auto length : range(items.size() + 1))
+    for (auto&& x : combinations(items, length))
+      power_set_combined.emplace(std::begin(x), std::end(x));
+  EXPECT_EQ(expected, power_set);
+}
 
 
 int main(int argc, char* argv[]) {
