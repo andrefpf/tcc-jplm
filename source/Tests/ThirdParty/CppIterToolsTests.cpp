@@ -61,6 +61,7 @@
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "cppitertools/reversed.hpp"
+#include "cppitertools/slice.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -82,6 +83,7 @@ using iter::product;
 using iter::range;
 using iter::repeat;
 using iter::reversed;
+using iter::slice;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -825,6 +827,41 @@ TEST(CppIterTools, TestReversedString) {
   EXPECT_EQ(expected, reversed);
 }
 
+TEST(CppIterTools, TestSliceVector) {
+  const std::vector<int> expected{0, 3, 6, 9, 12};
+  const std::vector<int> input{0,1,2,3,4,5,6,7,8,9,10,11,12,13};
+  const auto s = slice(input,0,15,3);
+  const std::vector<int> sliced(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sliced);
+}
+
+TEST(CppIterTools, TestSliceString) {
+  const std::string expected("AB");
+  const auto s = slice(std::string("ABCDEFG"), 2);
+  const std::string sliced(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sliced);
+}
+
+TEST(CppIterTools, TestSliceStartStopString) {
+  const std::string expected("CD");
+  const auto s = slice(std::string("ABCDEFG"), 2, 4);
+  const std::string sliced(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sliced);
+}
+
+TEST(CppIterTools, TestSliceStartString) {
+  const std::string expected("CDEFG");
+  const auto s = slice(std::string("ABCDEFG"), 2, 7);
+  const std::string sliced(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sliced);
+}
+
+TEST(CppIterTools, TestSliceStartStopStepString) {
+  const std::string expected("ACEG");
+  const auto s = slice(std::string("ABCDEFG"), 0, 7, 2);
+  const std::string sliced(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sliced);
+}
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
