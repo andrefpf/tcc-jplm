@@ -62,6 +62,7 @@
 #include "cppitertools/repeat.hpp"
 #include "cppitertools/reversed.hpp"
 #include "cppitertools/slice.hpp"
+#include "cppitertools/sliding_window.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -84,6 +85,7 @@ using iter::range;
 using iter::repeat;
 using iter::reversed;
 using iter::slice;
+using iter::sliding_window;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -829,8 +831,8 @@ TEST(CppIterTools, TestReversedString) {
 
 TEST(CppIterTools, TestSliceVector) {
   const std::vector<int> expected{0, 3, 6, 9, 12};
-  const std::vector<int> input{0,1,2,3,4,5,6,7,8,9,10,11,12,13};
-  const auto s = slice(input,0,15,3);
+  const std::vector<int> input{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+  const auto s = slice(input, 0, 15, 3);
   const std::vector<int> sliced(std::begin(s), std::end(s));
   EXPECT_EQ(expected, sliced);
 }
@@ -862,6 +864,30 @@ TEST(CppIterTools, TestSliceStartStopStepString) {
   const std::string sliced(std::begin(s), std::end(s));
   EXPECT_EQ(expected, sliced);
 }
+
+TEST(CppIterTools, TestSlidingwindowVector) {
+  using VectorOFVectors = std::multiset<std::multiset<int>>;
+  const VectorOFVectors expected{{1, 2, 3, 4}, {2, 3, 4, 5}, {3, 4, 5, 6},
+      {4, 5, 6, 7}, {5, 6, 7, 8}, {6, 7, 8, 9}};
+  const auto s = sliding_window(std::vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9}, 4);
+  VectorOFVectors slide_windows;
+  for (auto&& win : s)
+    slide_windows.emplace(std::begin(win), std::end(win));
+  EXPECT_EQ(expected, slide_windows);
+}
+
+
+TEST(CppIterTools, TestSlidingwindowString) {
+  using VectorOFVectors = std::multiset<std::string>;
+  const VectorOFVectors expected{"AB", "BC", "CD", "DE", "EF"};
+  const auto s = sliding_window(std::string("ABCDEF"), 2);
+  VectorOFVectors slide_windows;
+  for (auto&& win : s)
+    slide_windows.emplace(std::begin(win), std::end(win));
+  EXPECT_EQ(expected, slide_windows);
+}
+
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
