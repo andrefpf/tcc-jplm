@@ -67,6 +67,7 @@
 #include "cppitertools/sliding_window.hpp"
 #include "cppitertools/sorted.hpp"
 #include "cppitertools/starmap.hpp"
+#include "cppitertools/takewhile.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -92,6 +93,7 @@ using iter::slice;
 using iter::sliding_window;
 using iter::sorted;
 using iter::starmap;
+using iter::takewhile;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -914,6 +916,26 @@ TEST(CppIterTools, TestStarmap) {
   const std::vector<int> mapped(std::begin(s), std::end(s));
   EXPECT_EQ(expected, mapped);
 }
+
+
+TEST(CppIterTools, TestTakewhileSimplePiped) {
+  const std::vector<int> expected{0, 1, 2, 3, 4};
+  std::vector<int> input{0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1};
+  auto d = input | takewhile([](int i) { return i < 5; });
+  const std::vector<int> dropped(std::begin(d), std::end(d));
+  EXPECT_EQ(expected, dropped);
+}
+
+
+TEST(CppIterTools, TestTakewhileSimple) {
+  const std::vector<int> expected{1, 4};
+  std::vector<int> input{1, 4, 6, 4, 1};
+  auto filter = [](auto i) { return i < 5; };
+  auto d = takewhile(filter, input);
+  const std::vector<int> dropped(std::begin(d), std::end(d));
+  EXPECT_EQ(expected, dropped);
+}
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
