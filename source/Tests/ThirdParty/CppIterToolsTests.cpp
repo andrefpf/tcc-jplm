@@ -68,6 +68,8 @@
 #include "cppitertools/sorted.hpp"
 #include "cppitertools/starmap.hpp"
 #include "cppitertools/takewhile.hpp"
+#include "cppitertools/unique_everseen.hpp"
+#include "cppitertools/unique_justseen.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -94,6 +96,8 @@ using iter::sliding_window;
 using iter::sorted;
 using iter::starmap;
 using iter::takewhile;
+using iter::unique_everseen;
+using iter::unique_justseen;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -935,6 +939,22 @@ TEST(CppIterTools, TestTakewhileSimple) {
   const std::vector<int> dropped(std::begin(d), std::end(d));
   EXPECT_EQ(expected, dropped);
 }
+
+
+TEST(CppIterTools, TestUniqueEverseenString) {
+  const std::string expected("ABCD");
+  auto u = unique_everseen(std::string("AAAABBBCCDAABBB"));
+  const std::string unique(std::begin(u), std::end(u));
+  EXPECT_EQ(expected, unique);
+}
+
+TEST(CppIterTools, TestUniqueJustseenString) {
+  const std::string expected("ABCDAB");
+  auto u = unique_justseen(std::string("AAAABBBCCDAABBB"));
+  const std::string unique(std::begin(u), std::end(u));
+  EXPECT_EQ(expected, unique);
+}
+
 
 
 int main(int argc, char* argv[]) {
