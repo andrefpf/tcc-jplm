@@ -60,6 +60,7 @@
 #include "cppitertools/product.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
+#include "cppitertools/reversed.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -80,6 +81,8 @@ using iter::powerset;
 using iter::product;
 using iter::range;
 using iter::repeat;
+using iter::reversed;
+
 
 TEST(CppIterTools, TestRangeOneArgument) {
   auto r = range(3);
@@ -788,12 +791,11 @@ TEST(CppIterTools, TestProductSimpleSingleVectorOfTuples) {
 
 
 TEST(CppIterTools, TestRepeatSingleInteger5Times) {
-  const std::vector<int> expected{1,1,1,1,1};
+  const std::vector<int> expected{1, 1, 1, 1, 1};
   auto r = repeat(1, 5);
   const std::vector<int> repeated(std::begin(r), std::end(r));
   EXPECT_EQ(expected, repeated);
 }
-
 
 TEST(CppIterTools, TestRepeatSimpleString) {
   const std::string expected{"ABCDABCDABCD"};
@@ -807,6 +809,21 @@ TEST(CppIterTools, TestRepeatSimpleString) {
   EXPECT_EQ(expected, repeated);
 }
 
+TEST(CppIterTools, TestReversedVector) {
+  const std::vector<int> expected{5, 4, 3, 2, 1, 0};
+  const std::vector<int> input{0, 1, 2, 3, 4, 5};
+  const auto r = reversed(input);
+  const std::vector<int> reversed(std::begin(r), std::end(r));
+  EXPECT_EQ(expected, reversed);
+}
+
+TEST(CppIterTools, TestReversedString) {
+  const std::string expected("DCBA");
+  const std::string input("ABCD");
+  const auto r = reversed(input);
+  const std::string reversed(std::begin(r), std::end(r));
+  EXPECT_EQ(expected, reversed);
+}
 
 
 int main(int argc, char* argv[]) {
