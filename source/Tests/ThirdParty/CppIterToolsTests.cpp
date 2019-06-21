@@ -512,7 +512,6 @@ TEST(CppIterTools, TestCycleSimpleVector) {
   EXPECT_EQ(expected, cycled);
 }
 
-
 TEST(CppIterTools, TestCycleSimpleString) {
   const std::vector<char> expected{
       'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'};
@@ -786,6 +785,29 @@ TEST(CppIterTools, TestProductSimpleSingleVectorOfTuples) {
   VectorOf4DTuple producted(std::begin(p), std::end(p));
   EXPECT_EQ(expected, producted);
 }
+
+
+TEST(CppIterTools, TestRepeatSingleInteger5Times) {
+  const std::vector<int> expected{1,1,1,1,1};
+  auto r = repeat(1, 5);
+  const std::vector<int> repeated(std::begin(r), std::end(r));
+  EXPECT_EQ(expected, repeated);
+}
+
+
+TEST(CppIterTools, TestRepeatSimpleString) {
+  const std::string expected{"ABCDABCDABCD"};
+  const std::string period("ABCD");
+  std::string repeated;
+  for (auto&& c : repeat(period)) {
+    repeated = repeated + c;
+    if (repeated.size() == 3 * period.size())
+      break;
+  }
+  EXPECT_EQ(expected, repeated);
+}
+
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
