@@ -63,6 +63,7 @@
 #include "cppitertools/reversed.hpp"
 #include "cppitertools/slice.hpp"
 #include "cppitertools/sliding_window.hpp"
+#include "cppitertools/sorted.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -86,6 +87,7 @@ using iter::repeat;
 using iter::reversed;
 using iter::slice;
 using iter::sliding_window;
+using iter::sorted;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -887,6 +889,20 @@ TEST(CppIterTools, TestSlidingwindowString) {
   EXPECT_EQ(expected, slide_windows);
 }
 
+TEST(CppIterTools, TestSorted) {
+  const std::vector<int> expected{0, 1, 2, 3, 4};
+  const auto s = sorted(std::vector<int>{4, 0, 2, 1, 3});
+  const std::vector<int> sorted_vector(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sorted_vector);
+}
+
+TEST(CppIterTools, TestSortedVectorOfVectors) {
+  using VectorOFVectors = std::vector<std::vector<int>>;
+  const VectorOFVectors expected{{3, 0}, {5, 0}, {6, 0}, {10, 0}};
+  const auto s = sorted(VectorOFVectors{{5, 0}, {3, 0}, {10, 0}, {6, 0}});
+  const VectorOFVectors sorted_vector(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, sorted_vector);
+}
 
 
 int main(int argc, char* argv[]) {
