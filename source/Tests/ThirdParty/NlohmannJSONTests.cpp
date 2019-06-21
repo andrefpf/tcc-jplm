@@ -79,6 +79,7 @@ struct SimpleSizeOneNlohmannJSONTest : public testing::Test {
 };
 
 
+
 TEST_F(SimpleEmptyNlohmannJSONTest, TestBooleanEmpty) {
   json j = true;
   run();
@@ -131,6 +132,51 @@ TEST_F(SimpleEmptyNlohmannJSONTest, TestNullEmpty) {
 
 TEST_F(SimpleSizeOneNlohmannJSONTest, TestBoolSize) {
   json j = true;
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestStringSize) {
+  json j = "Test";
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestArraySize) {
+  json j = json::array();
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestFilledArraySize) {
+  json j = {"A", "B", "C"};
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestObjectSize) {
+  json j = {"A", "B", "C"};
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestFilledObjectSize) {
+  json j = {{"one", 1}, {"two", 2}, {"three", 3}};
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestIntSize) {
+  json j = -15;
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestUIntSize) {
+  json j = 22u;
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestFloatSize) {
+  json j = 3.1415;
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestNullSize) {
+  json j = nullptr;
   run();
 }
 
