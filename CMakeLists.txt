@@ -24,6 +24,7 @@ include(JPLMCompilerOptimizations)
 include(ExternalGoogleTest)
 include(ExternalCLI11)
 include(ExternalCPPItertools)
+include(ExternalNlohmannJSON)
 include(ExternalOpenJPEG)
 
 link_libraries(stdc++fs)

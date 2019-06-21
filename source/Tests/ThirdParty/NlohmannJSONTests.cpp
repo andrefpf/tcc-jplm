@@ -31,69 +31,108 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CLI11Tests.cpp
- *  \brief    Tests for the external library CLI11
+/** \file     NlohmannJSONTests.cpp
+ *  \brief    Tests for the external library Nlohmann::JSON
  *  \details  See more details about it at
- *            https://github.com/CLIUtils/CLI11
+ *            https://github.com/nlohmann/json
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-21
  */
 
-#include <algorithm>
-#include <string>
-#include <vector>
-#include "CLI/CLI.hpp"
 #include "gtest/gtest.h"
+#include "nlohmann/json.hpp"
 
-using CLIArguments = std::vector<std::string>;
+using json = nlohmann::json;
 
-struct SimpleCLI11Test : public testing::Test {
+
+struct SimpleEmptyNlohmannJSONTest : public testing::Test {
  protected:
-  CLI::App app{"SimpleCLI11Test app"};
-  CLIArguments arguments;
-
-  SimpleCLI11Test() : arguments({""}) {
+  json j;
+  SimpleEmptyNlohmannJSONTest() : j({""}) {
   }
 
   void run() {
-    std::sort(std::begin(arguments), std::end(arguments));
-    app.parse(arguments);
+    const json j_const(j);
+    EXPECT_EQ(false, j.empty());
+    EXPECT_EQ(false, j_const.empty());
+    EXPECT_TRUE(j.empty() == (j.begin() == j.end()));
+    EXPECT_TRUE(j_const.empty() == (j_const.begin() == j_const.end()));
   }
 };
 
-TEST_F(SimpleCLI11Test, OneFlag) {
-  app.add_flag("-c,--count");
-  arguments = {"-c"};
+struct SimpleSizeOneNlohmannJSONTest : public testing::Test {
+ protected:
+  json j;
+  SimpleSizeOneNlohmannJSONTest() : j({""}) {
+  }
+
+  void run() {
+    const json j_const(j);
+    EXPECT_EQ(1, j.size());
+    EXPECT_EQ(1, j_const.size());
+    EXPECT_EQ(std::distance(j.begin(), j.end()), j.size());
+    EXPECT_EQ(std::distance(j_const.begin(), j_const.end()), j_const.size());
+    EXPECT_EQ(std::distance(j.rbegin(), j.rend()), j.size());
+    EXPECT_EQ(
+        std::distance(j_const.crbegin(), j_const.crend()), j_const.size());
+  }
+};
+
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestBooleanEmpty) {
+  json j = true;
   run();
-  EXPECT_EQ(1, app.count("-c"));
-  EXPECT_EQ(1, app.count("--count"));
 }
 
-TEST_F(SimpleCLI11Test, OneFlagLong) {
-  app.add_flag("-c,--count");
-  arguments = {"--count"};
+TEST_F(SimpleEmptyNlohmannJSONTest, TestStringEmpty) {
+  json j = "Test";
   run();
-  EXPECT_EQ(1, app.count("-c"));
-  EXPECT_EQ(1, app.count("--count"));
 }
 
-
-TEST_F(SimpleCLI11Test, OneFlagWindows) {
-  app.add_flag("-c,--count");
-  arguments = {"/c"};
-  app.allow_windows_style_options();
+TEST_F(SimpleEmptyNlohmannJSONTest, TestArrayEmpty) {
+  json j = json::array();
   run();
-  EXPECT_EQ(1, app.count("-c"));
-  EXPECT_EQ(1, app.count("--count"));
 }
 
-TEST_F(SimpleCLI11Test, CountNonExist) {
-  app.add_flag("-c,--count");
-  arguments = {"-c"};
+TEST_F(SimpleEmptyNlohmannJSONTest, TestFilledArrayEmpty) {
+  json j = {"A", "B", "C"};
   run();
-  EXPECT_THROW(app.count("--nonexist"), CLI::OptionNotFound);
 }
 
+TEST_F(SimpleEmptyNlohmannJSONTest, TestObjectEmpty) {
+  json j = {"A", "B", "C"};
+  run();
+}
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestFilledObjectEmpty) {
+  json j = {{"one", 1}, {"two", 2}, {"three", 3}};
+  run();
+}
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestIntEmpty) {
+  json j = -15;
+  run();
+}
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestUIntEmpty) {
+  json j = 22u;
+  run();
+}
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestFloatEmpty) {
+  json j = 3.1415;
+  run();
+}
+
+TEST_F(SimpleEmptyNlohmannJSONTest, TestNullEmpty) {
+  json j = nullptr;
+  run();
+}
+
+TEST_F(SimpleSizeOneNlohmannJSONTest, TestBoolSize) {
+  json j = true;
+  run();
+}
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);

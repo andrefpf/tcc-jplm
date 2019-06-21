@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 2.8.2)
+
+project(nlohmannjson-download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(json
+  GIT_REPOSITORY    https://github.com/nlohmann/json.git
+  GIT_TAG           master
+  SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/nlohmannjson-src/json"
+  BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/nlohmannjson-build/json"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)
