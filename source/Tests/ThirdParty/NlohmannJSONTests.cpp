@@ -35,6 +35,7 @@
  *  \brief    Tests for the external library Nlohmann::JSON
  *  \details  See more details about it at
  *            https://github.com/nlohmann/json
+ *            https://nlohmann.github.io/json/
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-21
  */
