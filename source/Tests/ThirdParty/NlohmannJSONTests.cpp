@@ -236,6 +236,14 @@ TEST_F(SimpleMaxSizeNlohmannJSONTest, TestFloatMaxsize) {
   run();
 }
 
+TEST(SimpleTest, Iterator) {
+  json j = { {"A", 1}, {"B", 2} };
+  int count = 1;
+  for (auto& i : j.items())
+    i.value() = ++count;
+  EXPECT_EQ(j, json({ {"A", 2}, {"B", 3} }));
+}
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
