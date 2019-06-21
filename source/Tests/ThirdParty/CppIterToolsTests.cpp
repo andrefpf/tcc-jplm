@@ -41,7 +41,9 @@
  */
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
+#include <tuple>
 #include "cppitertools/accumulate.hpp"
 #include "cppitertools/chain.hpp"
 #include "cppitertools/combinations.hpp"
@@ -64,6 +66,7 @@
 #include "cppitertools/slice.hpp"
 #include "cppitertools/sliding_window.hpp"
 #include "cppitertools/sorted.hpp"
+#include "cppitertools/starmap.hpp"
 #include "gtest/gtest.h"
 
 using iter::accumulate;
@@ -88,6 +91,7 @@ using iter::reversed;
 using iter::slice;
 using iter::sliding_window;
 using iter::sorted;
+using iter::starmap;
 
 
 TEST(CppIterTools, TestRangeOneArgument) {
@@ -873,8 +877,7 @@ TEST(CppIterTools, TestSlidingwindowVector) {
       {4, 5, 6, 7}, {5, 6, 7, 8}, {6, 7, 8, 9}};
   const auto s = sliding_window(std::vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9}, 4);
   VectorOFVectors slide_windows;
-  for (auto&& win : s)
-    slide_windows.emplace(std::begin(win), std::end(win));
+  for (auto&& win : s) slide_windows.emplace(std::begin(win), std::end(win));
   EXPECT_EQ(expected, slide_windows);
 }
 
@@ -884,8 +887,7 @@ TEST(CppIterTools, TestSlidingwindowString) {
   const VectorOFVectors expected{"AB", "BC", "CD", "DE", "EF"};
   const auto s = sliding_window(std::string("ABCDEF"), 2);
   VectorOFVectors slide_windows;
-  for (auto&& win : s)
-    slide_windows.emplace(std::begin(win), std::end(win));
+  for (auto&& win : s) slide_windows.emplace(std::begin(win), std::end(win));
   EXPECT_EQ(expected, slide_windows);
 }
 
@@ -904,6 +906,14 @@ TEST(CppIterTools, TestSortedVectorOfVectors) {
   EXPECT_EQ(expected, sorted_vector);
 }
 
+TEST(CppIterTools, TestStarmap) {
+  using VectorOFTuples = std::vector<std::tuple<int, int>>;
+  const std::vector<int> expected{32, 9, 1000};
+  const auto s = starmap([](int b, int e) { return std::pow(b, e); },
+      VectorOFTuples{{2, 5}, {3, 2}, {10, 3}});
+  const std::vector<int> mapped(std::begin(s), std::end(s));
+  EXPECT_EQ(expected, mapped);
+}
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
