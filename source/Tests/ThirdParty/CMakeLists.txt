@@ -7,3 +7,4 @@ function(add_thirdparty_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 endfunction()
 
 add_image_lib_test(CppIterTools cppitertools_tests CppIterToolsTests.cpp)
+add_image_lib_test(CLI11 cli11_tests CLI11Tests.cpp)
