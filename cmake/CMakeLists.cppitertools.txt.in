@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 2.8.2)
+
+project(cppitertools-download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(cppitertools
+  GIT_REPOSITORY    https://github.com/ryanhaining/cppitertools.git
+  GIT_TAG           master
+  SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/cppitertools-src/cppitertools"
+  BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/cppitertools-build/cppitertools"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)

@@ -16,4 +16,4 @@ link_directories(${openjpeg_LIB_DIR})
 set(openjpeg_LIB ${CMAKE_STATIC_LIBRARY_PREFIX}openjp2${CMAKE_STATIC_LIBRARY_SUFFIX})
 set(openjpeg_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/thirdparty/openjpeg/include)
 
-# include_directories(${openjpeg_INCLUDE})
+include_directories(${openjpeg_INCLUDE})

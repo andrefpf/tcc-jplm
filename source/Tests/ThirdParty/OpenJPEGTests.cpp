@@ -31,31 +31,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     example_test.cpp
- *  \brief    Very basic example of using Google Tests.
- *  \details  This example instantiates a test named NameOfCurrentTest
- *            in group NameOfGroupTest and checks if 0 == 0.
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-15
+/** \file     OpenJPEGTests.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-06-18
  */
-
-#include <iostream>
-#include "gtest/gtest.h"
-#include "openjpeg.h"
-
-TEST(OpenJP2K, TestJP2K_A) {
-  EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
-}
-
-TEST(OpenJP2K, TestJP2K_B) {
-  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 33);
-}
-
-TEST(NameOfGroupTest, NameOfCurrentTest) {
-  EXPECT_EQ(0, 0);
-}
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

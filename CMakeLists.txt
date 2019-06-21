@@ -21,8 +21,9 @@ include(JPLMWarnings)
 include(JPLMCompilerOptimizations)
 
 #including external libraries by downloading them from git..
-include(ExternalOpenJPEG)
 include(ExternalGoogleTest)
+include(ExternalCPPItertools)
+include(ExternalOpenJPEG)
 
 link_libraries(stdc++fs)
 
@@ -32,20 +33,6 @@ include_directories(cfg)
 include_directories(doc)
 include_directories(source)
 include_directories(source/Lib/Utils/Image)
-
-#defines an example executable, used to test external libraries...
-add_executable(example source/Tests/example_test.cpp)
-#defines a dependencie between example executable and openjpeg libray
-add_dependencies(example openjpeg) #this is necessary in this case because 
-#otherwise the executable may not find the include.
-
-target_include_directories(example PRIVATE "${INCLUDE_DIRECTORIES};${openjpeg_INCLUDE}")
-
-#informs the linker that it needs a library
-# target_link_libraries(example ${openjpeg_LIB})
-target_link_libraries(example openjp2)
-target_link_libraries(example gtest_main)
-
 
 add_executable(jpl-encoder-bin
         source/App/Encoder/jpl-encoder.cpp
@@ -64,3 +51,4 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
 enable_testing()
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
