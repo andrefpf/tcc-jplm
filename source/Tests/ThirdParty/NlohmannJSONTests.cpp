@@ -78,6 +78,17 @@ struct SimpleSizeOneNlohmannJSONTest : public testing::Test {
   }
 };
 
+struct SimpleMaxSizeNlohmannJSONTest : public testing::Test {
+ protected:
+  json j;
+  SimpleMaxSizeNlohmannJSONTest() : j({""}) {
+  }
+
+  void run() {
+    const json j_const(j);
+    EXPECT_EQ(j.max_size(), j_const.max_size());
+  }
+};
 
 
 TEST_F(SimpleEmptyNlohmannJSONTest, TestBooleanEmpty) {
@@ -101,7 +112,7 @@ TEST_F(SimpleEmptyNlohmannJSONTest, TestFilledArrayEmpty) {
 }
 
 TEST_F(SimpleEmptyNlohmannJSONTest, TestObjectEmpty) {
-  json j = {"A", "B", "C"};
+  json j = json::object();
   run();
 }
 
@@ -151,7 +162,7 @@ TEST_F(SimpleSizeOneNlohmannJSONTest, TestFilledArraySize) {
 }
 
 TEST_F(SimpleSizeOneNlohmannJSONTest, TestObjectSize) {
-  json j = {"A", "B", "C"};
+  json j = json::object();
   run();
 }
 
@@ -177,6 +188,51 @@ TEST_F(SimpleSizeOneNlohmannJSONTest, TestFloatSize) {
 
 TEST_F(SimpleSizeOneNlohmannJSONTest, TestNullSize) {
   json j = nullptr;
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestBooleanMaxsize) {
+  json j = true;
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestStringMaxsize) {
+  json j = "Test";
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestArrayMaxsize) {
+  json j = json::array();
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestFilledArrayMaxsize) {
+  json j = {"A", "B", "C"};
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestObjectMaxsize) {
+  json j = {"A", "B", "C"};
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestFilledObjectMaxsize) {
+  json j = {{"one", 1}, {"two", 2}, {"three", 3}};
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestIntMaxsize) {
+  json j = -15;
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestUIntMaxsize) {
+  json j = 22u;
+  run();
+}
+
+TEST_F(SimpleMaxSizeNlohmannJSONTest, TestFloatMaxsize) {
+  json j = 3.1415;
   run();
 }
 
