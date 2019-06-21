@@ -57,6 +57,7 @@
 #include "cppitertools/imap.hpp"
 #include "cppitertools/permutations.hpp"
 #include "cppitertools/powerset.hpp"
+#include "cppitertools/product.hpp"
 #include "cppitertools/range.hpp"
 #include "cppitertools/repeat.hpp"
 #include "gtest/gtest.h"
@@ -76,6 +77,7 @@ using iter::groupby;
 using iter::imap;
 using iter::permutations;
 using iter::powerset;
+using iter::product;
 using iter::range;
 using iter::repeat;
 
@@ -682,7 +684,8 @@ TEST(CppIterTools, TestPermutationSimple) {
 }
 
 TEST(CppIterTools, TestPermutationSimpleString) {
-  const std::multiset<std::string> expected{"ABC", "ACB", "BAC", "BCA", "CAB", "CBA"};
+  const std::multiset<std::string> expected{
+      "ABC", "ACB", "BAC", "BCA", "CAB", "CBA"};
   std::multiset<std::string> permuted;
   for (auto&& st : permutations(std::string("ABC")))
     permuted.emplace(std::begin(st), std::end(st));
@@ -740,6 +743,49 @@ TEST(CppIterTools, TestPowersetAsCombinationsString) {
   EXPECT_EQ(expected, power_set);
 }
 
+
+TEST(CppIterTools, TestProductSimpleTwoStrings) {
+  const std::multiset<std::string> expected{
+      "Ax", "Ay", "Bx", "By", "Cx", "Cy", "Dx", "Dy"};
+  std::multiset<std::string> producted;
+  for (auto&& [p, q] : product(std::string("ABCD"), std::string("xy")))
+    producted.emplace(std::string({p, q}));
+  EXPECT_EQ(expected, producted);
+}
+
+TEST(CppIterTools, TestProductSimpleSingleStringWithRepeat) {
+  const std::multiset<std::string> expected{"AA", "AB", "AC", "AD", "BA", "BB",
+      "BC", "BD", "CA", "CB", "CC", "CD", "DA", "DB", "DC", "DD"};
+  std::multiset<std::string> producted;
+  for (auto&& [p, q] : product<2>(std::string("ABCD")))
+    producted.emplace(std::string({p, q}));
+  EXPECT_EQ(expected, producted);
+}
+
+TEST(CppIterTools, TestProductSimpleSingleVectorOfTuples) {
+  using Tuple4D = std::tuple<int, int, char, char>;
+  using VectorOf4DTuple = std::vector<Tuple4D>;
+  const VectorOf4DTuple expected{{1, 7, 'a', 'x'}, {1, 7, 'a', 'y'},
+      {1, 7, 'a', 'z'}, {1, 7, 'a', 't'}, {1, 7, 'b', 'x'}, {1, 7, 'b', 'y'},
+      {1, 7, 'b', 'z'}, {1, 7, 'b', 't'}, {1, 8, 'a', 'x'}, {1, 8, 'a', 'y'},
+      {1, 8, 'a', 'z'}, {1, 8, 'a', 't'}, {1, 8, 'b', 'x'}, {1, 8, 'b', 'y'},
+      {1, 8, 'b', 'z'}, {1, 8, 'b', 't'}, {2, 7, 'a', 'x'}, {2, 7, 'a', 'y'},
+      {2, 7, 'a', 'z'}, {2, 7, 'a', 't'}, {2, 7, 'b', 'x'}, {2, 7, 'b', 'y'},
+      {2, 7, 'b', 'z'}, {2, 7, 'b', 't'}, {2, 8, 'a', 'x'}, {2, 8, 'a', 'y'},
+      {2, 8, 'a', 'z'}, {2, 8, 'a', 't'}, {2, 8, 'b', 'x'}, {2, 8, 'b', 'y'},
+      {2, 8, 'b', 'z'}, {2, 8, 'b', 't'}, {3, 7, 'a', 'x'}, {3, 7, 'a', 'y'},
+      {3, 7, 'a', 'z'}, {3, 7, 'a', 't'}, {3, 7, 'b', 'x'}, {3, 7, 'b', 'y'},
+      {3, 7, 'b', 'z'}, {3, 7, 'b', 't'}, {3, 8, 'a', 'x'}, {3, 8, 'a', 'y'},
+      {3, 8, 'a', 'z'}, {3, 8, 'a', 't'}, {3, 8, 'b', 'x'}, {3, 8, 'b', 'y'},
+      {3, 8, 'b', 'z'}, {3, 8, 'b', 't'}};
+  const auto v1 = {1, 2, 3};
+  const auto v2 = {7, 8};
+  const auto v3 = {'a', 'b'};
+  const auto v4 = {'x', 'y', 'z', 't'};
+  const auto p = product(v1, v2, v3, v4);
+  VectorOf4DTuple producted(std::begin(p), std::end(p));
+  EXPECT_EQ(expected, producted);
+}
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
