@@ -35,9 +35,10 @@
  *  \brief    Tests for the external library CLI11
  *  \details  See more details about it at
  *            https://github.com/CLIUtils/CLI11
-  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-21
  */
+
 #include <algorithm>
 #include <string>
 #include <vector>
