@@ -32,8 +32,49 @@
  */
 
 /** \file     OpenJPEGTests.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    Tests for the external library OpenJPEG
+ *  \details  See more details about it at
+ *            https://github.com/uclouvain/openjpeg
+ *            https://www.openjpeg.org/
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-18
  */
+
+#include "gtest/gtest.h"
+#include "openjpeg.h"
+
+TEST(OpenJP2K, Openjp2_Openjpeg_h) {
+  EXPECT_EQ(OPJ_PROFILE_NONE, 0x0000);
+  EXPECT_EQ(OPJ_PROFILE_0, 0x0001);
+  EXPECT_EQ(OPJ_PROFILE_1, 0x0002);
+  EXPECT_EQ(OPJ_PROFILE_PART2, 0x8000);
+  EXPECT_EQ(OPJ_PROFILE_CINEMA_2K, 0x0003);
+  EXPECT_EQ(OPJ_PROFILE_CINEMA_4K, 0x0004);
+  EXPECT_EQ(OPJ_PROFILE_CINEMA_S2K, 0x0005);
+  EXPECT_EQ(OPJ_PROFILE_CINEMA_S4K, 0x0006);
+  EXPECT_EQ(OPJ_PROFILE_CINEMA_LTS, 0x0007);
+  EXPECT_EQ(OPJ_PROFILE_BC_SINGLE, 0x0100);
+  EXPECT_EQ(OPJ_PROFILE_BC_MULTI, 0x0200);
+  EXPECT_EQ(OPJ_PROFILE_BC_MULTI_R, 0x0300);
+  EXPECT_EQ(OPJ_PROFILE_IMF_2K, 0x0400);
+  EXPECT_EQ(OPJ_PROFILE_IMF_4K, 0x0401);
+  EXPECT_EQ(OPJ_PROFILE_IMF_8K, 0x0402);
+  EXPECT_EQ(OPJ_PROFILE_IMF_2K_R, 0x0403);
+  EXPECT_EQ(OPJ_PROFILE_IMF_4K_R, 0x0800);
+  EXPECT_EQ(OPJ_PROFILE_IMF_8K_R, 0x0801);
+  EXPECT_EQ(OPJ_EXTENSION_NONE, 0x0000);
+  EXPECT_EQ(OPJ_EXTENSION_MCT, 0x0100);
+  EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
+  EXPECT_EQ(OPJ_CINEMA_48_CS, 651041);
+  EXPECT_EQ(OPJ_CINEMA_24_COMP, 1041666);
+  EXPECT_EQ(OPJ_CINEMA_48_COMP, 520833);
+  EXPECT_EQ(OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG, 0x0001);
+  EXPECT_EQ(OPJ_DPARAMETERS_DUMP_FLAG, 0x0002);
+}
+
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
