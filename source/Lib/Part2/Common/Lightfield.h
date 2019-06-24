@@ -56,6 +56,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   std::unique_ptr<ViewIOPolicy<T>> view_io_policy;
 
  public:
+
+  /**
+   * @brief      Constructor of the Lightfield object.
+   *
+   * @param[in]  width                 The width (number of horizontal views of the Lightfield)
+   * @param[in]  height                The height (number of vertical views of the Lightfield)
+   * @param[in]  view_io_policy        The view i/o policy
+   * @param[in]  auto_alloc_resources  If set, automatic allocate the resources of the Generic2DStructure.
+   */
   Lightfield(const std::size_t width, const std::size_t height,
       // ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
