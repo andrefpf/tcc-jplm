@@ -57,6 +57,13 @@ template<class T>
 struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
 
 
+/**
+ * \brief      A helper class used to check if another class has declared a clone function 
+ *
+ * \tparam     T     The class to be checked
+ * 
+ * \details    Uses SFINAE
+ */
 template<class T>
 class is_clonable {
   template<class TN>
@@ -65,16 +72,33 @@ class is_clonable {
   template<class TN>
   static decltype(test_function_signature(&TN::clone)) test(std::nullptr_t);
 
+  /**
+   * \brief      Function that returns std::false_type if the test failed to resolve for the
+   * function signature 
+   *
+   * \param[in]  <unnamed>  { any other param else for nullptr_t if the test_function signature is resolved, any param otherwise. }
+   *
+   * \tparam     TN         { The class being tested }
+   *
+   * \return     { Always returns std::false_type }
+   */
   template<class TN>
   static std::false_type test(...);
 
  public:
+  /**
+   * evaluates the type as either std::false_type of std::true_type
+   */
   using type = decltype(test<T>(nullptr));
   static const bool value = type::value;
 };
 
 
-
+/**
+ * \brief      Class for generic 2d structure.
+ *
+ * \tparam     T     The data type used for storing each element.
+ */
 template<typename T>
 class Generic2DStructure {
  protected:

@@ -48,6 +48,15 @@
 template<typename T>
 class LightfieldFromPPMFile : public Lightfield<T> {
  public:
+
+  /**
+   * @brief      Constructs the object.
+   *
+   * @param[in]  configuration   The configuration
+   * @param[in]      view_io_policy  The view i/o policy
+   * 
+   * @snippet ../../../Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   */
   LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),

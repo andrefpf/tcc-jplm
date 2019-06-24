@@ -56,7 +56,6 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   std::unique_ptr<ViewIOPolicy<T>> view_io_policy;
 
  public:
-
   /**
    * @brief      Constructor of the Lightfield object.
    *
@@ -64,6 +63,9 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
    * @param[in]  height                The height (number of vertical views of the Lightfield)
    * @param[in]  view_io_policy        The view i/o policy
    * @param[in]  auto_alloc_resources  If set, automatic allocate the resources of the Generic2DStructure.
+   * 
+   * Instantiates a new Lightfield according to the parameters, using a view_io_policy
+   * 
    */
   Lightfield(const std::size_t width, const std::size_t height,
       // ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
@@ -76,14 +78,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  // Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
-  //     ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
-  //     const bool auto_alloc_resources = true)
-  //     : Lightfield(std::get<0>(t_s_size), std::get<1>(t_s_size),
-  //           std::move(view_io_policy), auto_alloc_resources) {
-  // }
-
-
+  /**
+   * @brief      Constructor of the Lightfield object using a pair.
+   *
+   * @param[in]  t_s_size              A std::pair containing the width and height (t, s) of the Lightfield
+   * @param[in]  view_io_policy        The view i/o policy
+   * @param[in]  auto_alloc_resources  The automatic allocate resources
+   * 
+   * @details    Delegates the construction of the object to the 
+   */
   Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
       const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const bool auto_alloc_resources = true)
@@ -92,6 +95,11 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  /**
+   * @brief      Copy constructor of the Lightfield object.
+   *
+   * @param[in]  other  The lightfield that is the source for this copy
+   */
   Lightfield(const Lightfield& other)
       : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
     this->view_io_policy =
@@ -100,11 +108,36 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   };
 
 
-  ~Lightfield() = default;
+  /**
+   * @brief      Destroys the Lightfield using the default destructor.
+   * @details    Notice that no freeing of resources is necessary, as it is
+   * being taken care by std::unique_ptr
+   * 
+   */
+  virtual ~Lightfield() = default;
 
 
+  /**
+   * @brief      Sets the view i/o policy.
+   * @details    Transfers the ownership of the view_io_policy to this lightfield.
+   *
+   * @param[in]      view_io_policy  An r-value reference to the view i/o policy
+   * 
+   */
   void set_view_io_policy(std::unique_ptr<ViewIOPolicy<T>>&& view_io_policy) {
     this->view_io_policy = std::move(view_io_policy);
+  }
+
+
+  /**
+   * @brief Sets the view i/o policy.
+   * @details Creates a deep copy of a view_io_policy which will be owned by this lightfield
+   * 
+   * @param[in] view_io_policy Const reference to a view_io_policy
+   */
+  void set_view_io_policy(const ViewIOPolicy<T>& view_io_policy) {
+    this->view_io_policy =
+        std::unique_ptr<ViewIOPolicy<T>>(view_io_policy->clone());
   }
 
 
@@ -190,12 +223,27 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  /**
+   * @brief      Access operator
+   *
+   * @param[in]  i     index in dimension T of the Lightfield
+   *
+   * @return     A constant pointer to View<T> that can be used to access data in S dimension
+   * @warning    This operator will not check for the availability of the data. Thus it may 
+   * cause a segmentation fault. 
+   */
   inline const View<T>* operator[](const int i) const {
     // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
     return (*this->elements_for_2d_access[i]).get();
   }
 
 
+
+  /**
+   * @brief      Creates a new instance of the object with same properties than original.
+   *
+   * @return     Copy of this object.
+   */
   virtual Lightfield* clone() const override {
     return new Lightfield(*this);
   };

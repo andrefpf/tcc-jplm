@@ -45,7 +45,10 @@
 #include "Lib/Utils/Image/ColorModelUtils.h"
 #include "gtest/gtest.h"
 
-
+/** @addtogroup ImageLibTests
+ *  Color Model Utils (Power of 2..., max ranges)
+ *  @{
+ */
 
 TEST(PowerOf2IntegralType, TwoAtZeroIsOne) {
   auto two_at_zero = ColorModelUtils::power_of_2<std::size_t, 0>();
@@ -186,3 +189,5 @@ TEST(InverseNormalize, AboveOneGoesToMaximumValueUI16T) {
       ColorModelUtils::inverse_normalize01<uint16_t, 8>(value);
   EXPECT_EQ(255, inverse_normalized);
 }
+
+ /**@}*/
