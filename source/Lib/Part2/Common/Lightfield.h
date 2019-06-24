@@ -57,20 +57,36 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
  public:
   Lightfield(const std::size_t width, const std::size_t height,
+      // ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
+      const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const bool auto_alloc_resources = true)
       : Generic2DStructure<std::unique_ptr<View<T>>>(
             width, height, auto_alloc_resources),
-        view_io_policy(std::make_unique<ViewIOPolicyLimitlessMemory<T>>()){};
+        view_io_policy(
+            std::unique_ptr<ViewIOPolicy<T>>(view_io_policy.clone())) {
+  }
+
+
+  // Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
+  //     ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
+  //     const bool auto_alloc_resources = true)
+  //     : Lightfield(std::get<0>(t_s_size), std::get<1>(t_s_size),
+  //           std::move(view_io_policy), auto_alloc_resources) {
+  // }
+
 
   Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
+      const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const bool auto_alloc_resources = true)
-      : Lightfield(std::get<0>(t_s_size), std::get<1>(t_s_size),
+      : Lightfield(std::get<0>(t_s_size), std::get<1>(t_s_size), view_io_policy,
             auto_alloc_resources) {
   }
 
-  
-  Lightfield(const Lightfield& other) : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
-    this->view_io_policy = std::unique_ptr<ViewIOPolicy<T>>(other.view_io_policy->clone());
+
+  Lightfield(const Lightfield& other)
+      : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
+    this->view_io_policy =
+        std::unique_ptr<ViewIOPolicy<T>>(other.view_io_policy->clone());
     //the copy of content should be handled by generic2dStructure...
   };
 
@@ -105,7 +121,8 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  virtual const Image<T>& get_image_at(const std::pair<std::size_t, std::size_t>& coordinate) const {
+  virtual const Image<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
     auto& view = get_view_at(coordinate);
     return view_io_policy->get_image_at(view);
   }
