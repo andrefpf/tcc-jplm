@@ -57,12 +57,12 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
  public:
   /**
-   * @brief      Constructor of the Lightfield object.
+   * \brief      Constructor of the Lightfield object.
    *
-   * @param[in]  width                 The width (number of horizontal views of the Lightfield)
-   * @param[in]  height                The height (number of vertical views of the Lightfield)
-   * @param[in]  view_io_policy        The view i/o policy
-   * @param[in]  auto_alloc_resources  If set, automatic allocate the resources of the Generic2DStructure.
+   * \param[in]  width                 The width (number of horizontal views of the Lightfield)
+   * \param[in]  height                The height (number of vertical views of the Lightfield)
+   * \param[in]  view_io_policy        The view i/o policy
+   * \param[in]  auto_alloc_resources  If set, automatic allocate the resources of the Generic2DStructure.
    * 
    * Instantiates a new Lightfield according to the parameters, using a view_io_policy
    * 
@@ -79,13 +79,13 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Constructor of the Lightfield object using a pair.
+   * \brief      Constructor of the Lightfield object using a pair.
    *
-   * @param[in]  t_s_size              A std::pair containing the width and height (t, s) of the Lightfield
-   * @param[in]  view_io_policy        The view i/o policy
-   * @param[in]  auto_alloc_resources  The automatic allocate resources
+   * \param[in]  t_s_size              A std::pair containing the width and height (t, s) of the Lightfield
+   * \param[in]  view_io_policy        The view i/o policy
+   * \param[in]  auto_alloc_resources  The automatic allocate resources
    * 
-   * @details    Delegates the construction of the object to the 
+   * \details    Delegates the construction of the object to the 
    */
   Lightfield(const std::pair<std::size_t, std::size_t>& t_s_size,
       const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
@@ -96,9 +96,9 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Copy constructor of the Lightfield object.
+   * \brief      Copy constructor of the Lightfield object.
    *
-   * @param[in]  other  The lightfield that is the source for this copy
+   * \param[in]  other  The lightfield that is the source for this copy
    */
   Lightfield(const Lightfield& other)
       : Generic2DStructure<std::unique_ptr<View<T>>>(other) {
@@ -109,8 +109,8 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Destroys the Lightfield using the default destructor.
-   * @details    Notice that no freeing of resources is necessary, as it is
+   * \brief      Destroys the Lightfield using the default destructor.
+   * \details    Notice that no freeing of resources is necessary, as it is
    * being taken care by std::unique_ptr
    * 
    */
@@ -118,11 +118,14 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Sets the view i/o policy.
-   * @details    Transfers the ownership of the view_io_policy to this lightfield.
+   * \brief      Sets the view i/o policy.
    *
-   * @param[in]      view_io_policy  An r-value reference to the view i/o policy
+   * \param[in]      view_io_policy  An r-value reference to the view i/o policy
    * 
+   * \details    Transfers the ownership of the view_io_policy to this lightfield. 
+   * 
+   * \e Example: 
+   * \snippet Utils/LightfieldVisualization.cpp Setting a view_io_policy into a Lightfield
    */
   void set_view_io_policy(std::unique_ptr<ViewIOPolicy<T>>&& view_io_policy) {
     this->view_io_policy = std::move(view_io_policy);
@@ -130,10 +133,10 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief Sets the view i/o policy.
-   * @details Creates a deep copy of a view_io_policy which will be owned by this lightfield
+   * \brief Sets the view i/o policy.
+   * \details Creates a deep copy of a view_io_policy which will be owned by this lightfield
    * 
-   * @param[in] view_io_policy Const reference to a view_io_policy
+   * \param[in] view_io_policy Const reference to a view_io_policy
    */
   void set_view_io_policy(const ViewIOPolicy<T>& view_io_policy) {
     this->view_io_policy =
@@ -224,12 +227,12 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Access operator
+   * \brief      Access operator
    *
-   * @param[in]  i     index in dimension T of the Lightfield
+   * \param[in]  i     index in dimension T of the Lightfield
    *
-   * @return     A constant pointer to View<T> that can be used to access data in S dimension
-   * @warning    This operator will not check for the availability of the data. Thus it may 
+   * \return     A constant pointer to View<T> that can be used to access data in S dimension
+   * \warning    This operator will not check for the availability of the data. Thus it may 
    * cause a segmentation fault. 
    */
   inline const View<T>* operator[](const int i) const {
@@ -240,9 +243,9 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   /**
-   * @brief      Creates a new instance of the object with same properties than original.
+   * \brief      Creates a new instance of the object with same properties than original.
    *
-   * @return     Copy of this object.
+   * \return     Copy of this object.
    */
   virtual Lightfield* clone() const override {
     return new Lightfield(*this);

@@ -45,17 +45,27 @@
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/ViewFromPPMFile.h"
 
+
+/**
+ * @brief A class that holds a complete lightfield, where the views are obtained from PPM Files.
+ * @details [long description]
+ * 
+ * @tparam T Its the type of each pixel in the Lightfield.
+ */
 template<typename T>
 class LightfieldFromPPMFile : public Lightfield<T> {
  public:
 
   /**
-   * @brief      Constructs the object.
+   * \brief      Constructs the object.
    *
-   * @param[in]  configuration   The configuration
-   * @param[in]      view_io_policy  The view i/o policy
+   * \param[in]  configuration   The configuration
+   * \param[in]      view_io_policy  The view i/o policy
    * 
-   * @snippet ../../../Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   * \details This kind of lightfield can be build using only the configuration and a default view io policy. 
+   * 
+   * For instance:
+   * \snippet Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
    */
   LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
@@ -67,7 +77,14 @@ class LightfieldFromPPMFile : public Lightfield<T> {
           coordinate);
     }
   }
+
+
+
+  /**
+   * \brief Destructor of the LightfieldFromPPMFile (default)
+   */
   ~LightfieldFromPPMFile() = default;
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__ */

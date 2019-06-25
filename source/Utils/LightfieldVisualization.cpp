@@ -98,14 +98,7 @@ void load_view_into_image(Lightfield<uint16_t> &lightfield,
 
 std::string resources_path = "../resources";
 
-/**
- * @brief      { function_description }
- *
- * @param[in]  argc  The argc
- * @param      argv  The argv
- * @snippet    LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
- * @return     { description_of_the_return_value }
- */
+
 int main(int argc, char const *argv[]) {
   std::string path_to_lightfield;
   if (argc < 2) {
@@ -125,6 +118,7 @@ int main(int argc, char const *argv[]) {
     s = atoi(argv[3]);
   }
 
+  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
   LightfieldDimension<std::size_t> size(t, s, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
   LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
@@ -133,6 +127,7 @@ int main(int argc, char const *argv[]) {
   std::unique_ptr<LightfieldFromPPMFile<uint16_t>> lightfield =
       std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
   //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
+  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
 
   auto view_relative_horizontal_size =
       lightfield->get_views_width() / ((double) lightfield->get_width() - 1);
@@ -154,13 +149,16 @@ int main(int argc, char const *argv[]) {
   // auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
   // auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
   // auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
+  // auto policy = std::make_unique<ViewIOPolicyLimitlessMemory<uint16_t>>();
+  // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
+  
+  //! [Setting a view_io_policy into a Lightfield]
   auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
   policy->set_max_bytes(
       lightfield->get_views_width() * lightfield->get_views_height() * 2 * 100);
-  // auto policy = std::make_unique<ViewIOPolicyLimitlessMemory<uint16_t>>();
 
-  // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   lightfield->set_view_io_policy(std::move(policy));
+  //! [Setting a view_io_policy into a Lightfield]
 
   init_x(*lightfield, configuration);
 

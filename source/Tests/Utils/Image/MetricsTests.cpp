@@ -43,10 +43,15 @@
 #include "gtest/gtest.h"
 
 TEST(Metrics_PSNR, ThreesVector) {
+
+  //! [Computing PSNR of a vector with the error values]
   std::vector<int> vector({3, 3, 3});
   auto max_value = 255;
+  auto psnr = Metrics::get_peak_signal_to_noise_ratio(vector, max_value);
+  //! [Computing PSNR of a vector with the error values]
+
   EXPECT_DOUBLE_EQ(10.0 * std::log10((max_value * max_value) / 9.0),
-      Metrics::get_peak_signal_to_noise_ratio(vector, 255));
+      psnr);
 }
 
 
