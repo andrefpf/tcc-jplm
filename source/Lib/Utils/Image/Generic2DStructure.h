@@ -101,6 +101,7 @@ class is_clonable {
  */
 template<typename T>
 class Generic2DStructure {
+  //TODO: could be more similar to std::vector, like including capacity(), size() and shrink_to_fit() methods
  protected:
   const std::size_t width;
   const std::size_t height;

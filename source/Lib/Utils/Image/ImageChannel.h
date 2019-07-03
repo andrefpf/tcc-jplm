@@ -129,6 +129,7 @@ class ImageChannel : public Generic2DStructure<T> {
    * @param value The value used to fill the channel with.
    */
   void fill_with(const T value) {
+    //TODO: check if it is possible to replace this by using std::fill(this->begin(), this->end(), value);
     if constexpr (std::is_same<T, uint8_t>::value) {
       std::memset(this->elements.get(), value, this->number_of_elements);
     } else {
