@@ -49,8 +49,8 @@
 class LightfieldIOConfiguration {
  protected:
   const std::string lightfield_path;
-  const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
   const LightfieldDimension<std::size_t> lightfield_size;
+  const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
 
 
   void check_configurations() {
@@ -63,11 +63,10 @@ class LightfieldIOConfiguration {
 
  public:
   LightfieldIOConfiguration(const std::string& path_to_lightfield,
-      const LightfieldCoordinate<std::size_t>& initial_coordinate,
-      const LightfieldDimension<std::size_t>& lightfield_size)
-      : lightfield_path(path_to_lightfield),
-        lightfield_initial_coordinate(initial_coordinate),
-        lightfield_size(lightfield_size) {
+      const LightfieldDimension<std::size_t>& lightfield_size,
+      const LightfieldCoordinate<std::size_t>& initial_coordinate = {0,0,0,0})
+      : lightfield_path(path_to_lightfield), lightfield_size(lightfield_size),
+        lightfield_initial_coordinate(initial_coordinate) {
     check_configurations();
   };
 
@@ -75,9 +74,13 @@ class LightfieldIOConfiguration {
   LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldCoordinate<std::size_t>& initial_coordinate,
       const LightfieldCoordinate<std::size_t>& final_coordinate)
-      : LightfieldIOConfiguration(path_to_lightfield, initial_coordinate,
-            LightfieldDimension(final_coordinate - initial_coordinate)){};
+      : LightfieldIOConfiguration(path_to_lightfield,
+            LightfieldDimension(final_coordinate - initial_coordinate),
+            initial_coordinate){};
 
+
+  // LightfieldIOConfiguration(const std::string& path_to_lightfield,
+  //   const std::pair<std::size_t, std::size_t>& initial_st_coordinate)
 
   ~LightfieldIOConfiguration() = default;
 

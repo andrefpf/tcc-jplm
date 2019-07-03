@@ -99,6 +99,12 @@ void write(const Image<T>& patch_image, const std::string& filename,
 }
 
 
+template<template<typename> class ImageT, typename T> 
+std::unique_ptr<ImageT<T>> read(const std::string& path) {
+  
+}
+
+
 }  // namespace ImageIO
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__ */

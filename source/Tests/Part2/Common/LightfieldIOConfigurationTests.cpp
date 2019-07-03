@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-06-04 11:47:31
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-06-10 12:50:35
+* @Last Modified time: 2019-06-26 16:18:31
 */
 #include <iostream>
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
@@ -16,7 +16,7 @@ TEST(InitializationOfLighfieldIOConfiguration,
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
 
   LightfieldIOConfiguration lfc(
-      {resources_path + "/small_greek"}, initial, size);
+      {resources_path + "/small_greek"}, size, initial);
   EXPECT_EQ(lfc.get_size(), size);
 }
 
@@ -27,7 +27,7 @@ TEST(InitializationOfLighfieldIOConfiguration,
   LightfieldCoordinate<std::size_t> initial(6, 7, 8, 9);
 
   LightfieldIOConfiguration lfc(
-      {resources_path + "/small_greek"}, initial, size);
+      {resources_path + "/small_greek"}, size, initial);
   EXPECT_EQ(lfc.get_size(), size);
 }
 

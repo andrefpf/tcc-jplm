@@ -124,7 +124,7 @@ int main(int argc, char const *argv[]) {
   LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
 
   //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
-  std::unique_ptr<LightfieldFromPPMFile<uint16_t>> lightfield =
+  auto lightfield =
       std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
   //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
   //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
@@ -145,12 +145,6 @@ int main(int argc, char const *argv[]) {
 
 
   char text[255];
-
-  // auto policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
-  // auto policy = std::make_unique<ViewIOPolicyLimitedNumberOfViews<uint16_t>>();
-  // auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
-  // auto policy = std::make_unique<ViewIOPolicyLimitlessMemory<uint16_t>>();
-  // auto policy = ViewIOPolicyOneAtATime<uint16_t>();
   
   //! [Setting a view_io_policy into a Lightfield]
   auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
@@ -199,7 +193,7 @@ int main(int argc, char const *argv[]) {
       if (text[0] == 'q') {
         close_x();
       }
-      printf("You pressed the %c key!\n", text[0]);
+      printf("You pressed the %c key! Press 'q' to quit. \n", text[0]);
     }
   }
 

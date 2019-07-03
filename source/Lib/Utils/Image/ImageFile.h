@@ -54,6 +54,10 @@
 #include <variant>
 #include <vector>
 
+
+enum class ImageFileTypes {PPM};
+
+
 class ImageFile {
  protected:
   std::string filename;

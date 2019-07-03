@@ -113,6 +113,13 @@ class Image {
   virtual Image* generate_ptr_to_clone() const = 0;
 
 
+  /**
+   * \brief      Image move assignment.
+   *
+   * \param      other  The other image
+   *
+   * \return     This image with the data from other
+   */
   Image& operator=(Image&& other) {
     if (this != &other) {
       this->channels.clear();
@@ -122,6 +129,13 @@ class Image {
   }
 
 
+  /**
+   * \brief      Image copy assignment.
+   *
+   * \param[in]  other  The other image
+   *
+   * \return     This image with a copy of the data from the other image.
+   */
   Image& operator=(const Image& other) {
     if (this != &other) {
       this->channels = other.channels;
@@ -130,21 +144,43 @@ class Image {
   }
 
 
+  /**
+   * \brief      Equal operator
+   *
+   * \param[in]  other  The other image to be compared with this
+   *
+   * \return     If the other image is equal this image, returns true. Otherwise, returns false.
+   */
   bool operator==(const Image<T>& other) const {
     return this->is_equal(other);
   }
 
 
+  /**
+   * \brief      Not equal operator
+   *
+   * \param[in]  other  The other image to be compared with this
+   *
+   * \return     If the other image is equal this image, returns false. Otherwise, returns true.
+   * 
+   * \details It is the oposite of operator==. Thus, uses operator== to avoid replicating code.
+   */
   bool operator!=(const Image<T>& other) const {
     return !(*this == other);
   }
 
 
+  /**
+   * \brief      Gets the number of channels.
+   *
+   * \return     The number of channels that this image have.
+   */
   auto get_number_of_channels() const {
     return channels.size();
   }
 
 
+  
   auto get_width() const {
     return channels[0].get_width();
   }

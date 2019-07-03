@@ -109,17 +109,31 @@ class Generic2DStructure {
   std::vector<T*> elements_for_2d_access;
 
 
-  Generic2DStructure(const std::pair<std::size_t, std::size_t>& size,
+  /**
+   * \brief      Constructs the object.
+   *
+   * \details Delegates the construction
+   *
+   * \param[in]  width                 The width
+   * \param[in]  height                The height
+   * \param[in]  auto_alloc_resources  Selects if the structure should alloc the resources in construction or a base class will be responsible for allocating
+   */
+  Generic2DStructure(const std::size_t width, const std::size_t height,
       const bool auto_alloc_resources = true)
-      : Generic2DStructure<T>(
-            std::get<0>(size), std::get<1>(size), auto_alloc_resources) {
+      : Generic2DStructure<T>({width, height}, auto_alloc_resources) {
   }
 
 
-  Generic2DStructure(const std::size_t width, const std::size_t height,
+  /**
+   * \brief      Constructs the object.
+   *
+   * \param[in]  size                  Selects if the structure should alloc the resources in construction or a base class will be responsible for allocating
+   * \param[in]  auto_alloc_resources  The automatic allocate resources
+   */
+  Generic2DStructure(const std::pair<std::size_t, std::size_t>& size,
       const bool auto_alloc_resources = true)
-      : width(width), height(height), number_of_elements(width * height),
-        elements(nullptr) {
+      : width(std::get<0>(size)), height(std::get<1>(size)),
+        number_of_elements(width * height), elements(nullptr) {
     if (number_of_elements == 0)
       throw ImageChannelExceptions::InvalidSizeException();
     if (auto_alloc_resources) {
@@ -128,6 +142,11 @@ class Generic2DStructure {
   }
 
 
+  /**
+   * \brief      Copy constructor of Generic2DStructure
+   *
+   * \param[in]  other  The other
+   */
   Generic2DStructure(const Generic2DStructure& other)
       : width(other.width), height(other.height),
         number_of_elements(other.number_of_elements) {
@@ -162,11 +181,16 @@ class Generic2DStructure {
   virtual Generic2DStructure* clone() const = 0;
 
 
+  /**
+   * \brief      (M)Allocs an arraw with number_of_elements elements as a std::unique_ptr
+   */
   void alloc_raster_structure_default_init() {
     elements = std::make_unique<T[]>(number_of_elements);
   }
 
-
+  /**
+   * \brief      Makes a vector with pointers to allow for 2D access of this structure.
+   */
   void alloc_2d_resource_pointers() {
     elements_for_2d_access.clear();
     elements_for_2d_access.resize(height);
@@ -176,6 +200,9 @@ class Generic2DStructure {
   }
 
 
+  /**
+   * \brief      (M)Allocs all resources (both array and vector for 2D access)
+   */
   virtual void alloc_all_resources() {
     alloc_raster_structure_default_init();
     alloc_2d_resource_pointers();
@@ -183,13 +210,28 @@ class Generic2DStructure {
 
 
  public:
+  /**
+   * \brief      Determines if coordinate is valid.
+   *
+   * \param[in]  coordinate  The coordinate
+   *
+   * \return     True if coordinate valid, False otherwise.
+   */
   inline bool is_coordinate_valid(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
-    auto [i, j] = coordinate;
+    const auto& [i, j] = coordinate;
     return i < height && j < width;
   }
 
 
+  /**
+   * \brief      Determines if coordinate valid.
+   *
+   * \param[in]  i     Row (to be checked against height)
+   * \param[in]  j     Column (to be checked against width)
+   *
+   * \return     True if coordinate valid, False otherwise.
+   */
   inline bool is_coordinate_valid(const std::size_t i, std::size_t j) const {
     return is_coordinate_valid({i, j});
   }
@@ -244,6 +286,12 @@ class Generic2DStructure {
   }
 
 
+  /**
+   * \brief      Performs a check to early detect accessing errors
+   *
+   * \param[in]  i     Row (to be checked against height)
+   * \param[in]  j     Column (to be checked against width)
+   */
   void check_for_access_errors(const std::size_t i, const std::size_t j) const {
     if (!elements) {
       //FIXME
@@ -274,26 +322,64 @@ class Generic2DStructure {
   }
 
 
-  inline T* data() const {
-    return this->elements.get();
+  /**
+   * \brief      Gets a pointer to the raw data
+   * \warning    Notice that by using this, there is no guarantees that the pointer will remain valid, 
+   * nor bound checking. Also, invalid data may be included in the Generic2DStructure
+   *
+   * \return     A pointer to the raw data
+   */
+  inline T* data() noexcept {
+    return this->elements.get();  //unique_ptr::get is const no except
   }
 
 
+  /**
+   * \brief      Gets a constant pointer to the raw data
+   *
+   * \return     Constant pointer to the raw data
+   */
+  const inline T* data() const noexcept {
+    return this->elements.get();  //unique_ptr::get is const no except
+  }
+
+  /**
+   * \brief      Gets the width.
+   *
+   * \return     The width.
+   */
   inline auto get_width() const noexcept {
     return width;
   }
 
 
+  /**
+   * \brief      Gets the height.
+   *
+   * \return     The height.
+   */
   inline auto get_height() const noexcept {
     return height;
   }
 
 
+  /**
+   * \brief      Gets the dimension (width, height).
+   *
+   * \return     The dimension.
+   */
   inline auto get_dimension() const noexcept {
     return std::make_pair(this->width, this->height);
   }
 
 
+  /**
+   * \brief      Determines if it has equal size.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if has equal size, False otherwise.
+   */
   bool has_equal_size(const Generic2DStructure<T>& other) const noexcept {
     return (other.width == this->width) && (other.height == this->height);
   }
