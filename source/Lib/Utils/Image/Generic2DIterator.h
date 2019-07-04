@@ -8,7 +8,7 @@ template<typename T>
 class Generic2DIterator {
  protected:
   T* data_ptr;
-  std::size_t stride; //TODO: check if this is the best type for keeping a stride
+  std::size_t stride; //! \todo: check if this is the best type for keeping a stride
 
  public:
 

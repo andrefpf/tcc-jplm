@@ -127,7 +127,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
       }
     } else {
       std::cout << "still not open... what is happening?" << std::endl;
-      //TODO:
+      //! \todo 
       //throw ErrorOpeningImageToWrite
     }
   }

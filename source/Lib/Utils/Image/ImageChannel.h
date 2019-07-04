@@ -99,7 +99,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   ImageChannel(ImageChannel<T>&& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
-    //TODO: check if it is possible to initiallyze the Generic2DStructure with false
+    //! \todo  check if it is possible to initiallyze the Generic2DStructure with false
     *this = std::move(other);
   }
 
@@ -129,7 +129,7 @@ class ImageChannel : public Generic2DStructure<T> {
    * @param value The value used to fill the channel with.
    */
   void fill_with(const T value) {
-    //TODO: check if it is possible to replace this by using std::fill(this->begin(), this->end(), value);
+    //! \todo  check if it is possible to replace this by using std::fill(this->begin(), this->end(), value);
     if constexpr (std::is_same<T, uint8_t>::value) {
       std::memset(this->elements.get(), value, this->number_of_elements);
     } else {
@@ -175,8 +175,8 @@ class ImageChannel : public Generic2DStructure<T> {
   * \return A vector with all values from the current channel.
   */
   std::vector<T> as_raster_vector() {  
-    //TODO: check if this method must exist
-    //TODO: check if this method may be const
+    //! \todo  check if this method must exist
+    //! \todo  check if this method may be const
     auto temp_ptr = this->elements.get();
     auto ret_vector = std::vector<T>();
     ret_vector.reserve(this->number_of_elements);
@@ -202,7 +202,7 @@ class ImageChannel : public Generic2DStructure<T> {
    * \return A pointer to the i^{th} row of the image channel
    */
   inline T* operator[](const int i) {
-    //TODO: check if this operator is not inherited from Generic2DStructure
+    //! \todo  check if this operator is not inherited from Generic2DStructure
     return this->elements_for_2d_access[i];
   }
 
@@ -216,7 +216,7 @@ class ImageChannel : public Generic2DStructure<T> {
    * \return     A const pointer to the i^{th} row of the image channel.
    */
   inline const T* operator[](const int i) const {
-    //TODO: check if this operator is not inherited from Generic2DStructure
+    //! \todo  check if this operator is not inherited from Generic2DStructure
     return this->elements_for_2d_access[i];
   }
 

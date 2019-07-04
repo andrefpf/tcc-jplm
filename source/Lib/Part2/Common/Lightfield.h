@@ -205,6 +205,21 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  auto get_number_of_channels_in_view() const {
+    if (!this->elements) {
+      //Throws
+    }
+    return this->elements[0]->get_number_of_channels(); 
+  }
+
+  auto get_number_of_pixels_per_view_channel() const {
+    if (!this->elements) {
+      //Throws
+    }
+    return get_views_width()*get_views_height();
+  }
+
+
   auto get_views_bpp() const {
     if (!this->elements) {
       //Throws

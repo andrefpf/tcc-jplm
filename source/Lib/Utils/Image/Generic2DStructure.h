@@ -101,7 +101,7 @@ class is_clonable {
  */
 template<typename T>
 class Generic2DStructure {
-  //TODO: could be more similar to std::vector, like including capacity(), size() and shrink_to_fit() methods
+  //! \todo  could be more similar to std::vector, like including capacity(), size() and shrink_to_fit() methods
  protected:
   const std::size_t width;
   const std::size_t height;
@@ -169,7 +169,7 @@ class Generic2DStructure {
           }
         } else {
           this->elements[i] =
-              other;  //TODO: check if this cover all possibilities
+              other;  //! \todo  check if this cover all possibilities
         }
       }
     }
@@ -385,7 +385,7 @@ class Generic2DStructure {
     return (other.width == this->width) && (other.height == this->height);
   }
 
-
+  //! \todo  check how the iterators perform for the case of T being a unique_ptr<T2>
   auto begin() {
     return Raster2DIterator<T>(this->elements.get());
   }
