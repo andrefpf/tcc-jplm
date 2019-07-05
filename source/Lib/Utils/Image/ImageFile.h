@@ -55,29 +55,33 @@
 #include <vector>
 
 
-enum class ImageFileTypes {PPM};
+//! \todo  Implement other types of image file to allow easy reading
+//! like PGM, PNG, BMP, etc
+enum class ImageFileType {PixelMap=0}; 
 
 
 class ImageFile {
  protected:
+  ImageFileType type;
   std::string filename;
   std::fstream file;
   std::streampos raster_begin;  // should be const..
-  std::size_t width = 0;
+  std::size_t width = 0; //is this valid?
   std::size_t height = 0;
 
 
  public:
-  ImageFile(const std::string& file_name) : filename(file_name){};
+  ImageFile(const ImageFileType& type, const std::string& file_name) : type(type), filename(file_name){};
 
 
-  ImageFile(const std::filesystem::path& file_name) : filename(file_name.c_str()){};
+  ImageFile(const ImageFileType& type, const std::filesystem::path& file_name) : type(type), filename(file_name.c_str()){};
 
 
   ImageFile(const ImageFile& other) = delete;
 
 
   ImageFile(ImageFile&& other) {
+    std::swap(type, other.type);
     std::swap(filename, other.filename);
     std::swap(width, other.width);
     std::swap(height, other.height);
@@ -86,17 +90,18 @@ class ImageFile {
   }
 
 
-  ImageFile(const std::string& file_name, std::size_t width, std::size_t height)
-      : filename(file_name), width(width), height(height){};
+  ImageFile(const ImageFileType& type, const std::string& file_name, std::size_t width, std::size_t height)
+      : type(type), filename(file_name), width(width), height(height){};
 
 
-  ImageFile(const std::string& file_name, const std::streampos raster_begin,
+  ImageFile(const ImageFileType& type, const std::string& file_name, const std::streampos raster_begin,
       std::size_t width, std::size_t height)
-      : filename(file_name), raster_begin(raster_begin), width(width),
+      : type(type), filename(file_name), raster_begin(raster_begin), width(width),
         height(height){};
 
 
   virtual ~ImageFile();
+
 
   auto get_width() const noexcept {
     return width;
@@ -112,7 +117,16 @@ class ImageFile {
     return raster_begin;
   }
 
+
+  auto get_type() const noexcept {
+    return type;
+  }
+
+
   void open();
+
+
+  //! \todo image file must have a read_image and write_image functions
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__ */

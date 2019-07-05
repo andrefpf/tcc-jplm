@@ -58,11 +58,11 @@ class PixelMapFile : public ImageFile {
 
  public:
   PixelMapFile(const std::string& file_name, PixelMapType type)
-      : ImageFile(file_name), type(type){};
+      : ImageFile(ImageFileType::PixelMap, file_name), type(type){};
 
 
   PixelMapFile(std::filesystem::path& file_name, PixelMapType type)
-      : ImageFile(file_name), type(type){};
+      : ImageFile(ImageFileType::PixelMap, file_name), type(type){};
 
 
   PixelMapFile(const PixelMapFile& other) = delete;
@@ -76,14 +76,16 @@ class PixelMapFile : public ImageFile {
 
   PixelMapFile(const std::string& file_name, PixelMapType type,
       std::size_t width, std::size_t height, std::size_t max_value)
-      : ImageFile(file_name, width, height), max_value(max_value), type(type){};
+      : ImageFile(ImageFileType::PixelMap, file_name, width, height),
+        max_value(max_value), type(type){};
 
 
   PixelMapFile(const std::string& file_name, const std::streampos raster_begin,
       PixelMapType type, std::size_t width, std::size_t height,
       std::size_t max_value)
-      : ImageFile(file_name, raster_begin, width, height), max_value(max_value),
-        type(type){};
+      : ImageFile(
+            ImageFileType::PixelMap, file_name, raster_begin, width, height),
+        max_value(max_value), type(type){};
 
 
   virtual ~PixelMapFile() = default;

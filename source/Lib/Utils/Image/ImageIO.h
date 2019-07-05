@@ -47,6 +47,7 @@
 
 namespace ImageIO {
 
+
 void write_image_to_file(
     const std::variant<Image<uint8_t>, Image<uint16_t>>& image,
     const std::string& filename);
@@ -82,6 +83,7 @@ void write(const Image<T>& image, const std::string& filename,
   }
 }
 
+
 template<typename T>
 void write(const Image<T>& patch_image, const std::string& filename,
     std::pair<std::size_t, std::size_t> origin) {
@@ -99,9 +101,69 @@ void write(const Image<T>& patch_image, const std::string& filename,
 }
 
 
-template<template<typename> class ImageT, typename T> 
-std::unique_ptr<ImageT<T>> read(const std::string& path) {
-  
+/**
+ * \brief      matlab like image reading function
+ *
+ * \param[in]  filename  The filename
+ *
+ * \tparam     ImageT    The expected return image class
+ * \tparam     T         The image value container in the ImageT
+ *
+ * \return     returns a std::unique_ptr to ImageT<T> read from file
+ */
+template<template<typename> class ImageT, typename T>
+std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
+  using fpath = std::filesystem::path;
+  auto name = fpath(filename);
+  if (name.extension() == fpath(".ppm")) {
+    auto ppm_file = PixelMapFileIO::open(filename);
+    auto image = ppm_file->read_full_image();
+    auto converted_image =
+        PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(image);
+    return std::move(converted_image);
+  }
+  throw std::logic_error("Not fully implemented: ImageIO::imread");
+}
+
+
+/**
+ * \brief      opens a image file pointer
+ *
+ * \return     A unique_ptr to the image file that is oppened
+ */
+std::unique_ptr<ImageFile> open(const std::string& filename) {
+  using fpath = std::filesystem::path;
+  auto name = fpath(filename);
+  if (name.extension() == fpath(".ppm")) {
+    return PixelMapFileIO::open(filename);
+  }
+  throw std::logic_error("Not fully implemented: ImageIO::open");
+}
+
+
+/**
+ * \brief      Function to read a image from a file
+ *
+ * \param      image_file  A oppened image file (using ImageIO::open(filename))
+ *
+ * \tparam     ImageT    The expected return image class
+ * \tparam     T         The image value container in the ImageT
+ *
+ * \return     returns a std::unique_ptr to ImageT<T> read from file
+ */
+template<template<typename> class ImageT, typename T>
+std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
+  switch (image_file.get_type()) {
+    case ImageFileType::PixelMap: {
+      auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
+      auto converted_image =
+          PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
+              image);
+      return std::move(converted_image);
+    }
+  }
+
+  throw std::logic_error("Not fully implemented: ImageIO::read");
 }
 
 
