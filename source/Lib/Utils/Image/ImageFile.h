@@ -62,7 +62,7 @@ enum class ImageFileType {PixelMap=0};
 
 class ImageFile {
  protected:
-  ImageFileType type;
+  ImageFileType type; 
   std::string filename;
   std::fstream file;
   std::streampos raster_begin;  // should be const..
@@ -102,22 +102,40 @@ class ImageFile {
 
   virtual ~ImageFile();
 
-
+  /**
+   * \brief      Gets the width of the image contained in the file.
+   *
+   * \return     The width.
+   */
   auto get_width() const noexcept {
     return width;
   }
 
 
+  /**
+   * \brief      Gets the height of the image contained in the file.
+   *
+   * \return     The height.
+   */
   auto get_height() const noexcept {
     return height;
   }
 
-
-  decltype(raster_begin) get_raster_begin() const {
+  /**
+   * \brief      Gets the raster begin, i.e., the position where the image data starts in the file.
+   *
+   * \return     The raster begin.
+   */
+  auto get_raster_begin() const {
     return raster_begin;
   }
 
 
+  /**
+   * \brief      Gets the type of the image file.
+   *
+   * \return     The type.
+   */
   auto get_type() const noexcept {
     return type;
   }

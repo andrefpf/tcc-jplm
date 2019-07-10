@@ -61,6 +61,15 @@ void write_image_to_file(
     const Image<uint8_t>& image, const std::string& filename);
 
 
+/**
+ * \brief      Function to write a full image to file
+ *
+ * \param[in]  image      The image
+ * \param[in]  filename   The filename
+ * \param[in]  overwrite  The overwrite flag. If set, the file will be overwritten if it already exists
+ *
+ * \tparam     T            The value container of the image (template resolution makes this hidden)
+ */
 template<typename T>
 void write(const Image<T>& image, const std::string& filename,
     const bool overwrite = false) {
@@ -84,6 +93,15 @@ void write(const Image<T>& image, const std::string& filename,
 }
 
 
+/**
+ * \brief      Function to write image patch to file
+ *
+ * \param[in]  patch_image  The image patch to be written
+ * \param[in]  filename     The filename
+ * \param[in]  origin       The origin (the initial point from which the patch will be placed)
+ *
+ * \tparam     T            The value container of the image (template resolution makes this hidden)
+ */
 template<typename T>
 void write(const Image<T>& patch_image, const std::string& filename,
     std::pair<std::size_t, std::size_t> origin) {
