@@ -55,7 +55,7 @@ class Image {
   std::vector<ImageChannel<T>> channels;
 
   /**
-   * \brief      Determines if equal.
+   * \brief      Determines this Image is equal to other Image with same type.
    *
    * \param[in]  other  The other
    *
@@ -99,15 +99,34 @@ class Image {
   }
 
 
+  /**
+   * \brief      Copy constructor of the Image
+   * \details    Copies the type and then uses the std::vector copy constructor to copy channels
+   *
+   * \param[in]  other  The other
+   */
   Image(const Image<T>& other) : type(other.type) {
     channels = other.channels;
   }
 
 
+  /**
+   * \brief      Move constructor of the Image
+   * \details    Copies the other type and then uses move assigment
+   * 
+   * \param      other  The other
+   */
   Image(Image<T>&& other) noexcept : type(other.type) {
     *this = std::move(other);
   }
 
+
+  /**
+   * \brief      Creates a new instance of the object with same properties than original.
+   * \details    Provides a deep copy of the image (derived classes included)
+   *
+   * \return     Copy of this object.
+   */
   auto clone() const {
     return std::unique_ptr<Image<T>>(generate_ptr_to_clone());
   }
@@ -116,6 +135,11 @@ class Image {
   virtual ~Image() = default;
 
 
+  /**
+   * \brief      Pure virtual function used to make a deep copy. 
+   *
+   * \return     A pointer to the derived image (as implemented in derive classes)
+   */
   virtual Image* generate_ptr_to_clone() const = 0;
 
 
@@ -186,22 +210,42 @@ class Image {
   }
 
 
-  
+  /**
+   * \brief      Gets the width of this Image.
+   *
+   * \return     The width.
+   */
   auto get_width() const {
     return channels[0].get_width();
   }
 
 
+  /**
+   * \brief      Gets the height of this Image.
+   *
+   * \return     The height.
+   */
   auto get_height() const {
     return channels[0].get_height();
   }
 
 
+  /**
+   * \brief      Gets the bits per pixel (bpp) of this Image.
+   *
+   * \return     The bits per pixel.
+   */
   auto get_bpp() const {
     return channels[0].get_bpp();
   }
 
 
+  /**
+   * \brief      Gets a vector with the bits per pixel (bpp) of each and every channel of this Image.
+   * \details    Useful for images with different bpp according to channel
+   *
+   * \return     The bpps.
+   */
   auto get_bpps() const {
     std::vector<std::size_t> bpps;
     bpps.reserve(channels.size());
@@ -211,19 +255,49 @@ class Image {
     return bpps;
   }
 
-
+  /**
+   * \brief      Gets the number of pixels per channel of this Image.
+   *
+   * \return     The number of pixels per channel.
+   */
   auto get_number_of_pixels_per_channel() const {
     return channels[0].get_number_of_pixels();
   }
 
 
+  /**
+   * \brief      Gets a vector with the umber of pixels of each and every channel of this Image.
+   * \details    Useful for images with different number of pixels according to channel
+   *
+   * \return     The std::vector with number of pixels.
+   */
+  auto get_number_of_pixels_of_each_channel() const {
+    std::vector<std::size_t> number_of_pixels;
+    number_of_pixels.reserve(channels.size());
+    for (const auto& channel : channels) {
+      number_of_pixels.emplace_back(channel.get_number_of_pixels());
+    }
+    return number_of_pixels;
+  }
+
+
+  /**
+   * \brief      Gets the number of pixels of this Image.
+   *
+   * \return     The number of pixels.
+   */
   auto get_number_of_pixels() const {
     return (this->get_number_of_channels()) *
            (this->get_number_of_pixels_per_channel());
   }
 
 
-  decltype(type) get_type() const {
+  /**
+   * \brief      Gets the type of this Image.
+   *
+   * \return     The type, from ImageType enum.
+   */
+  auto get_type() const {
     return type;
   }
 
@@ -282,13 +356,14 @@ class Image {
     return channels[i];
   }
 
+  
   void shift_pixels_by(int8_t shift) {
     for (auto& channel : channels) {
       channel.shift_pixels_by(shift);
     }
   }
 
-
+  
   auto begin() {
     return channels.begin();
   }

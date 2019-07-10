@@ -57,7 +57,7 @@ bool PixelMapFile::has_properties(PixelMapType type, std::size_t width,
 
 bool PixelMapFile::is_equivalent_to(const PixelMapFile& other) const noexcept {
   return has_properties(other.type, other.width, other.height, other.max_value);
-};
+}
 
 
 std::size_t PixelMapFile::get_number_of_bits_per_pixel() const {

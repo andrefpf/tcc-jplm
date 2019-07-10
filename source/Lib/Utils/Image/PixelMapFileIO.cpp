@@ -256,7 +256,6 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
           throw PixelMapFileIOExceptions::
               NoImplementedYetPixelMapFileException();  //return std::make_unique<PGMBinaryFile>(filename, raster_begin, width, height, max_value);
         case PixelMapType::P6:
-          std::cout << "Returning unique ptr to PPMBinaryFile";
           return std::make_unique<PPMBinaryFile>(
               filename, raster_begin, width, height, max_value);
         default: { std::cerr << "Not supported yet..." << std::endl; }
