@@ -81,7 +81,12 @@ class ImageFile {
 
   ImageFile(const ImageFile& other) = delete;
 
-
+  /**
+   * \brief      Move constructor of the ImageFile object.
+   *
+   * \param      other  The other
+   * \todo       Find how to implement move avoiding object slicing
+   */
   ImageFile(ImageFile&& other) {
     std::swap(type, other.type);
     std::swap(filename, other.filename);
@@ -128,6 +133,7 @@ class ImageFile {
   auto get_height() const noexcept {
     return height;
   }
+
 
   /**
    * \brief      Gets the raster begin, i.e., the position where the image data starts in the file.

@@ -54,7 +54,13 @@ class Image {
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
 
-
+  /**
+   * \brief      Determines if equal.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if equal, False otherwise.
+   */
   bool is_equal(const Image<T>& other) const {
     if (this != &other) {
       if (this->get_number_of_channels() != other.get_number_of_channels()) {

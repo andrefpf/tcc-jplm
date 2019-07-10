@@ -90,47 +90,67 @@ class PixelMapFile : public ImageFile {
 
   virtual ~PixelMapFile() = default;
 
-
-  decltype(type) get_type() const noexcept {
+  /**
+   * \brief      Gets the type.
+   *
+   * \return     The type, from the enum PixelMapType.
+   */
+  auto get_type() const noexcept {
     return type;
   }
 
 
+  /**
+   * \brief      Determines if this PixelMapFile has properties (type, width, height, and max_value).
+   *
+   * \param[in]  type       The type
+   * \param[in]  width      The width
+   * \param[in]  height     The height
+   * \param[in]  max_value  The maximum value
+   *
+   * \return     True if has properties, False otherwise.
+   */
   bool has_properties(PixelMapType type, std::size_t width, std::size_t height,
-      std::size_t max_value) const noexcept {
-    if (this->width != width)
-      return false;
-    if (this->height != height)
-      return false;
-    if (this->max_value != max_value)
-      return false;
-    if (this->type != type)
-      return false;
-
-    return true;
-  }
+      std::size_t max_value) const noexcept;
 
 
-  bool is_equivalent_to(const PixelMapFile& other) const noexcept {
-    return has_properties(
-        other.type, other.width, other.height, other.max_value);
-  };
+  /**
+   * \brief      Determines if this PixelMapFile is equivalent to other one.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if equivalent to, False otherwise.
+   */
+  bool is_equivalent_to(const PixelMapFile& other) const noexcept;
 
 
-  std::size_t get_number_of_bits_per_pixel() const {
-    std::size_t bits = 1;
-    while (std::pow(2, bits) < max_value) {
-      ++bits;
-    }
-    return bits;
-  }
+  /**
+   * \brief      Gets the number of bits per pixel.
+   * \details    Computes the number of bpp from the max_value
+   *
+   * \return     The number of bits per pixel.
+   */
+  std::size_t get_number_of_bits_per_pixel() const;
 
 
+  /**
+   * \brief      Reads a full image.
+   *
+   * \return     A variant of unique_ptrs of either Image<uint8_t> or Image<uint16_t>
+   */
   virtual std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_full_image() = 0;
 
 
+  /**
+   * \brief      Reads an image patch, i.e., a rectangular area of the complete image.
+   *
+   * \param[in]  origin  The origin
+   * \param[in]  lenght  The lenght
+   *
+   * \return     { description_of_the_return_value }
+   */
   virtual std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_image_patch(std::pair<std::size_t, std::size_t> origin,

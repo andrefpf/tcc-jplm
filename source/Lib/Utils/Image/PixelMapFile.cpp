@@ -39,3 +39,31 @@
  */
 
 #include "PixelMapFile.h"
+
+bool PixelMapFile::has_properties(PixelMapType type, std::size_t width,
+    std::size_t height, std::size_t max_value) const noexcept {
+  if (this->width != width)
+    return false;
+  if (this->height != height)
+    return false;
+  if (this->max_value != max_value)
+    return false;
+  if (this->type != type)
+    return false;
+
+  return true;
+}
+
+
+bool PixelMapFile::is_equivalent_to(const PixelMapFile& other) const noexcept {
+  return has_properties(other.type, other.width, other.height, other.max_value);
+};
+
+
+std::size_t PixelMapFile::get_number_of_bits_per_pixel() const {
+  std::size_t bits = 1;
+  while (std::pow(2, bits) < max_value) {
+    ++bits;
+  }
+  return bits;
+}
