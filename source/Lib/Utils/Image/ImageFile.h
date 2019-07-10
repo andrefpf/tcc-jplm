@@ -53,28 +53,30 @@
 #include <utility>
 #include <variant>
 #include <vector>
-
+#include "Lib/Utils/Image/ImageExceptions.h"
 
 //! \todo  Implement other types of image file to allow easy reading
 //! like PGM, PNG, BMP, etc
-enum class ImageFileType {PixelMap=0}; 
+enum class ImageFileType { PixelMap = 0 };
 
 
 class ImageFile {
  protected:
-  ImageFileType type; 
+  ImageFileType type;
   std::string filename;
   std::fstream file;
   std::streampos raster_begin;  // should be const..
-  std::size_t width = 0; //is this valid?
+  std::size_t width = 0;  //is this valid?
   std::size_t height = 0;
 
 
  public:
-  ImageFile(const ImageFileType& type, const std::string& file_name) : type(type), filename(file_name){};
+  ImageFile(const ImageFileType& type, const std::string& file_name)
+      : type(type), filename(file_name){};
 
 
-  ImageFile(const ImageFileType& type, const std::filesystem::path& file_name) : type(type), filename(file_name.c_str()){};
+  ImageFile(const ImageFileType& type, const std::filesystem::path& file_name)
+      : type(type), filename(file_name.c_str()){};
 
 
   ImageFile(const ImageFile& other) = delete;
@@ -90,16 +92,22 @@ class ImageFile {
   }
 
 
-  ImageFile(const ImageFileType& type, const std::string& file_name, std::size_t width, std::size_t height)
+  ImageFile(const ImageFileType& type, const std::string& file_name,
+      std::size_t width, std::size_t height)
       : type(type), filename(file_name), width(width), height(height){};
 
 
-  ImageFile(const ImageFileType& type, const std::string& file_name, const std::streampos raster_begin,
-      std::size_t width, std::size_t height)
-      : type(type), filename(file_name), raster_begin(raster_begin), width(width),
-        height(height){};
+  ImageFile(const ImageFileType& type, const std::string& file_name,
+      const std::streampos raster_begin, std::size_t width, std::size_t height)
+      : type(type), filename(file_name), raster_begin(raster_begin),
+        width(width), height(height){};
 
-
+  /**
+   * \brief      Destroys the object. 
+   * \details    Because the ImageFile object holds a istream, if it is open it needs to be closed.
+   * 
+   * \todo Check if the destructor of a base class is always executed or must be explicitly called in a derived class
+   */
   virtual ~ImageFile();
 
   /**
@@ -143,6 +151,12 @@ class ImageFile {
 
   void open();
 
+  /**
+  * \brief      Check the validity of the image from its filename
+  *
+  * \param[in]  filename  The filename
+  */
+  static void check(const std::string& filename);
 
   //! \todo image file must have a read_image and write_image functions
 };

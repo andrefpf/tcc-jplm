@@ -149,7 +149,7 @@ TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFile) {
     fs::remove(output_filename);
   }
   EXPECT_FALSE(fs::exists(output_filename));
-  ImageIO::write(*(image.get()), output_filename);
+  ImageIO::imwrite(*(image.get()), output_filename);
   EXPECT_TRUE(fs::exists(output_filename));
 }
 
@@ -157,11 +157,11 @@ TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFile) {
 TEST_F(PPMBinaryWriteTests, ImageWriteOverExistingFileThrows) {
   namespace fs = std::filesystem;
   if (!fs::exists(output_filename)) {
-    ImageIO::write(*(image.get()), output_filename);
+    ImageIO::imwrite(*(image.get()), output_filename);
     EXPECT_TRUE(fs::exists(output_filename));
   }
 
-  EXPECT_THROW(ImageIO::write(*(image.get()), output_filename),
+  EXPECT_THROW(ImageIO::imwrite(*(image.get()), output_filename),
       ImageIOExceptions::FileAlreadyExistsException);
 }
 
@@ -172,7 +172,7 @@ TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFileThatCanBeOppened) {
     fs::remove(output_filename);
   }
   EXPECT_FALSE(fs::exists(output_filename));
-  ImageIO::write(*(image.get()), output_filename);
+  ImageIO::imwrite(*(image.get()), output_filename);
   auto ppm_file = PixelMapFileIO::open(output_filename);
   EXPECT_EQ(ppm_file->get_type(), PixelMapType::P6);
   fs::remove(output_filename);
@@ -186,7 +186,7 @@ TEST_F(PPMBinaryWriteTests,
     fs::remove(output_filename);
   }
   EXPECT_FALSE(fs::exists(output_filename));
-  ImageIO::write(*(image.get()), output_filename);
+  ImageIO::imwrite(*(image.get()), output_filename);
   auto ppm_file = PixelMapFileIO::open(output_filename);
 
   auto readed_image = ppm_file->read_full_image();

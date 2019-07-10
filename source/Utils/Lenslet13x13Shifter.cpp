@@ -55,7 +55,7 @@ void shift_view(
   std::visit(
       [filename_output](auto& view) {
         view->shift_pixels_by(2);
-        ImageIO::write(*(view.get()), filename_output);
+        ImageIO::imwrite(*(view.get()), filename_output);
       },
       view_variant);
 }

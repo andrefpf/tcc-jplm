@@ -48,6 +48,8 @@
 namespace ImageIO {
 
 
+
+
 void write_image_to_file(
     const std::variant<Image<uint8_t>, Image<uint16_t>>& image,
     const std::string& filename);
@@ -71,7 +73,7 @@ void write_image_to_file(
  * \tparam     T            The value container of the image (template resolution makes this hidden)
  */
 template<typename T>
-void write(const Image<T>& image, const std::string& filename,
+void imwrite(const Image<T>& image, const std::string& filename,
     const bool overwrite = false) {
   namespace fs = std::filesystem;
   using fpath = fs::path;
@@ -103,7 +105,7 @@ void write(const Image<T>& image, const std::string& filename,
  * \tparam     T            The value container of the image (template resolution makes this hidden)
  */
 template<typename T>
-void write(const Image<T>& patch_image, const std::string& filename,
+void imwrite(const Image<T>& patch_image, const std::string& filename,
     std::pair<std::size_t, std::size_t> origin) {
   using fpath = std::filesystem::path;
   auto name = fpath(filename);
@@ -117,6 +119,8 @@ void write(const Image<T>& patch_image, const std::string& filename,
     oppened_image_as_rgb->write_image_patch_to_file(patch_image, origin);
   }
 }
+
+
 
 
 /**
@@ -140,7 +144,8 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
         PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(image);
     return std::move(converted_image);
   }
-  throw std::logic_error("Not fully implemented: ImageIO::imread");
+  throw std::logic_error(
+      "Not fully implemented (for types other than ppm): ImageIO::imread");
 }
 
 
@@ -149,14 +154,7 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
  *
  * \return     A unique_ptr to the image file that is oppened
  */
-std::unique_ptr<ImageFile> open(const std::string& filename) {
-  using fpath = std::filesystem::path;
-  auto name = fpath(filename);
-  if (name.extension() == fpath(".ppm")) {
-    return PixelMapFileIO::open(filename);
-  }
-  throw std::logic_error("Not fully implemented: ImageIO::open");
-}
+std::unique_ptr<ImageFile> open(const std::string& filename);
 
 
 /**

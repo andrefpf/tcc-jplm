@@ -114,6 +114,8 @@ ImageOut<T> ycocg_conversion(const ImageIn<T>& source) {
   auto e_data = converted_image[1].data();
   auto f_data = converted_image[2].data();
 
+  //! \todo Implement YCoCg conversion. It should be possible to iterate over all using zip (from cppitertools)
+
   std::cerr << "YCoCg conversion is not implemented yet" << std::endl;
   exit(2);
 }
