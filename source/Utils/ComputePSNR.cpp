@@ -42,38 +42,91 @@
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
 #include <sstream>
-#include "Image.h"
-#include "ImageMetrics.h"
-#include "PixelMapFileIO.h"
+#include <map>
+#include <algorithm>
+#include <string> 
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageMetrics.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
+
+
+std::map<std::string, ImageType> string_to_image_type_map;
+
+void fill_map() {
+  string_to_image_type_map["rgb"]=ImageType::RGB;
+  string_to_image_type_map["bt601"]=ImageType::BT601;
+  string_to_image_type_map["bt709"]=ImageType::BT709;
+  string_to_image_type_map["bt2020"]=ImageType::BT2020;
+}
 
 
 void show_psnr(
-    const std::string& filename_original, const std::string& filename_decoded) {
+    const std::string& filename_original, const std::string& filename_decoded, const ImageType type=ImageType::RGB) {
   auto original_file = PixelMapFileIO::open(filename_original);
   auto decoded_file = PixelMapFileIO::open(filename_decoded);
 
-  auto original_image = original_file->read_full_image();
-  auto decoded_image = decoded_file->read_full_image();
+  auto original_image_variant = original_file->read_full_image();
+  auto original_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
+              uint16_t>(original_image_variant);
 
-  namespace visitor = ImageMetrics::visitors;
-  std::visit(visitor::PSNRPrinter(), original_image, decoded_image);
+  auto decoded_image_variant = decoded_file->read_full_image();
+  auto decoded_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
+              uint16_t>(decoded_image_variant);
+
+  auto printer = ImageMetrics::visitors::PSNRPrinter();
+
+   switch (type) {
+      case ImageType::RGB:
+        printer(original_image, decoded_image);
+        break;
+      case ImageType::BT601:
+        printer.operator()<BT601Image>(original_image, decoded_image);
+        break;
+      case ImageType::BT709:
+        printer.operator()<BT709Image>(original_image, decoded_image);
+        break;
+      case ImageType::BT2020:
+        printer.operator()<BT2020Image>(original_image, decoded_image);
+        break;
+      default:
+        std::cerr << "Error default" << std::endl;
+    }
+
 }
 
 
 int main(int argc, char const* argv[]) {
-  if (argc < 3) {
+  if (argc < 4) {
     std::cout << "Expecting 2 params\n";
     std::cout << "\tUsage: " << argv[0]
-              << " /path/to/input/directory/original.ppm "
-                 "/path/to/output/directory/decoded.ppm"
+              << " color_space"
+              << " /path/to/input/directory/original.ppm"
+                 " /path/to/output/directory/decoded.ppm"
               << std::endl;
     exit(1);
   }
+  fill_map();
 
-  std::string filename_original(argv[1]);
-  std::string filename_decoded(argv[2]);
+  std::string color_space(argv[1]);
+  std::transform(color_space.begin(), color_space.end(), color_space.begin(), ::tolower);
 
-  show_psnr(filename_original, filename_decoded);
+  auto type = ImageType::RGB; //default
+  auto it = string_to_image_type_map.find(color_space);
+  if (it == string_to_image_type_map.end()) {
+    std::cerr << "Unable to find color space " << color_space << ". The available ones are: \n";
+    for(const auto& map_iterator: string_to_image_type_map) {
+      std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
+    }
+    std::cerr << "Using RGB as default:\n";
+  } else {
+    type = it->second;
+  }
+
+
+  std::string filename_original(argv[2]);
+  std::string filename_decoded(argv[3]);
+
+  show_psnr(filename_original, filename_decoded, type);
 
   return 0;
 }

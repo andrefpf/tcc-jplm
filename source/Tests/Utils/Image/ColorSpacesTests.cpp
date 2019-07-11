@@ -36,155 +36,20 @@
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-02-19
+ *  \todo Refactor this cpp to allow for fast compile times and to be easy to find specific tests
  */
 
+/** @addtogroup ImageLibTests
+ *  Tests of color spaces...
+ *  @{
+ */
 
 #include <iostream>
 #include <random>
 #include <tuple>
-#include "ColorSpaces.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "Lib/Utils/Image/Metrics.h"
 #include "gtest/gtest.h"
-
-TEST(PowerOf2IntegralType, TwoAtZeroIsOne) {
-  auto two_at_zero = ColorSpaces::power_of_2<std::size_t, 0>();
-  EXPECT_EQ(1, two_at_zero);
-}
-
-
-TEST(PowerOf2IntegralType, TwoAtOneIsTwo) {
-  auto two_at_one = ColorSpaces::power_of_2<std::size_t, 1>();
-  EXPECT_EQ(2, two_at_one);
-}
-
-
-TEST(PowerOf2IntegralType, TwoAtTwoIsFour) {
-  auto two_at_two = ColorSpaces::power_of_2<std::size_t, 2>();
-  EXPECT_EQ(4, two_at_two);
-}
-
-
-TEST(PowerOf2IntegralType, TwoAtThreeIsFour) {
-  auto two_at_three = ColorSpaces::power_of_2<std::size_t, 3>();
-  EXPECT_EQ(8, two_at_three);
-}
-
-
-TEST(PowerOf2IntegralType, TwoAtTenIsOneThousandAndTwentyFour) {
-  auto two_at_ten = ColorSpaces::power_of_2<std::size_t, 10>();
-  EXPECT_EQ(1024, two_at_ten);
-}
-
-
-TEST(PowerOf2IntegralType, TwoAtKPlusOneIsTwoTimesTwoAtK) {
-  auto two_at_nine = ColorSpaces::power_of_2<std::size_t, 9>();
-  auto two_at_ten = ColorSpaces::power_of_2<std::size_t, 10>();
-  EXPECT_EQ(2 * two_at_nine, two_at_ten);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtZeroIsOne) {
-  auto two_at_zero = ColorSpaces::power_of_2<double, 0>();
-  EXPECT_EQ(1.0, two_at_zero);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtOneIsTwo) {
-  auto two_at_one = ColorSpaces::power_of_2<double, 1>();
-  EXPECT_EQ(2.0, two_at_one);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtTwoIsFour) {
-  auto two_at_two = ColorSpaces::power_of_2<double, 2>();
-  EXPECT_EQ(4.0, two_at_two);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtThreeIsFour) {
-  auto two_at_three = ColorSpaces::power_of_2<double, 3>();
-  EXPECT_EQ(8.0, two_at_three);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtTenIsOneThousandAndTwentyFour) {
-  auto two_at_ten = ColorSpaces::power_of_2<double, 10>();
-  EXPECT_EQ(1024.0, two_at_ten);
-}
-
-
-TEST(PowerOf2FloatingPointType, TwoAtKPlusOneIsTwoTimesTwoAtK) {
-  auto two_at_nine = ColorSpaces::power_of_2<double, 9>();
-  auto two_at_ten = ColorSpaces::power_of_2<double, 10>();
-  EXPECT_EQ(2.0 * two_at_nine, two_at_ten);
-}
-
-
-TEST(Normalize, MinimumValueGoesToZeroUI8T) {
-  uint8_t value = 0;
-  auto normalized = ColorSpaces::normalize01(value);
-  EXPECT_EQ(0.0, normalized);
-}
-
-
-TEST(Normalize, MinimumValueGoesToZeroUI16T) {
-  uint16_t value = 0;
-  auto normalized = ColorSpaces::normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(0.0, normalized);
-}
-
-
-TEST(Normalize, MaximumValueGoesToOneUI16T) {
-  uint16_t value = 255;
-  auto normalized = ColorSpaces::normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(1.0, normalized);
-}
-
-
-TEST(Normalize, AboveMaximumValueGoesToOneUI16T) {
-  uint16_t value = 256;
-  auto normalized = ColorSpaces::normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(1.0, normalized);
-}
-
-
-TEST(InverseNormalize, ZeroGoesToZeroUI8T) {
-  double value = 0.0;
-  auto inverse_normalized = ColorSpaces::inverse_normalize01(value);
-  EXPECT_EQ(0, inverse_normalized);
-}
-
-
-TEST(InverseNormalize, ZeroGoesToZeroUI16T) {
-  double value = 0.0;
-  auto inverse_normalized =
-      ColorSpaces::inverse_normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(0, inverse_normalized);
-}
-
-
-TEST(InverseNormalize, BelowZeroGoesToZeroUI16T) {
-  double value = -0.1;
-  auto inverse_normalized =
-      ColorSpaces::inverse_normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(0, inverse_normalized);
-}
-
-
-TEST(InverseNormalize, OneGoesToMaximumUI16T) {
-  double value = 1.0;
-  auto inverse_normalized =
-      ColorSpaces::inverse_normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(255, inverse_normalized);
-}
-
-
-TEST(InverseNormalize, AboveOneGoesToMaximumValueUI16T) {
-  double value = 1.25;
-  auto inverse_normalized =
-      ColorSpaces::inverse_normalize01<uint16_t, 8>(value);
-  EXPECT_EQ(255, inverse_normalized);
-}
 
 
 template<typename T>
@@ -195,20 +60,21 @@ std::tuple<T, T, T> get_rgb_black() {
 
 template<typename T, std::size_t bpp>
 std::tuple<T, T, T> get_rgb_white() {
-  T max = ColorSpaces::get_max_value_for_bpp<T, bpp>();
+  T max = ColorModelUtils::get_max_value_for_bpp<T, bpp>();
   return std::make_tuple(max, max, max);
 }
 
 
 template<typename T, std::size_t bpp>
 std::tuple<T, T, T> get_rgb_red() {
-  T max = ColorSpaces::get_max_value_for_bpp<T, bpp>();
+  T max = ColorModelUtils::get_max_value_for_bpp<T, bpp>();
   return std::make_tuple(max, 0, 0);
 }
 
+
 template<typename T, std::size_t bpp>
 std::tuple<T, T, T> get_rgb_blue() {
-  T max = ColorSpaces::get_max_value_for_bpp<T, bpp>();
+  T max = ColorModelUtils::get_max_value_for_bpp<T, bpp>();
   return std::make_tuple(0, 0, max);
 }
 
@@ -227,7 +93,7 @@ TEST(RGBToYCbCrBT601, WhiteMapsToMaxLuminanceAndHalfChrominances) {
   auto rgb = get_rgb_white<uint16_t, 10>();
   auto [y, cb, cr] = ColorSpaces::convert_rgb_to_ycbcr<uint16_t, 10,
       ColorSpaces::BT601Coefficients, true>(rgb);
-  auto max = ColorSpaces::get_max_value_for_bpp<uint16_t, 10>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<uint16_t, 10>();
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, 512);
   EXPECT_EQ(cr, 512);
@@ -239,7 +105,7 @@ TEST(RGBToYCbCrBT601, RedMapsToMaxCr) {
   auto ycbcr = ColorSpaces::convert_rgb_to_ycbcr<uint16_t, 10,
       ColorSpaces::BT601Coefficients, true>(rgb);
   auto cr = std::get<2>(ycbcr);
-  auto max = ColorSpaces::get_max_value_for_bpp<uint16_t, 10>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<uint16_t, 10>();
   EXPECT_EQ(cr, max);
 }
 
@@ -415,7 +281,7 @@ TYPED_TEST(RGBRedToYCbCrType, RedMapsToMaxCr) {
   auto ycbcr = ColorSpaces::convert_rgb_to_ycbcr<TypeParam, 10,
       ColorSpaces::BT601Coefficients, true>(this->red);
   auto cr = std::get<2>(ycbcr);
-  auto max = ColorSpaces::get_max_value_for_bpp<TypeParam, 10>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<TypeParam, 10>();
   EXPECT_EQ(cr, max);
 }
 
@@ -424,7 +290,7 @@ TYPED_TEST(
     RGBWhiteToYCbCrType, WhiteMapsToMaxLuminanceAndHalfChrominancesBT601) {
   auto [y, cb, cr] = ColorSpaces::convert_rgb_to_ycbcr<TypeParam, 8,
       ColorSpaces::BT601Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<TypeParam, 8>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<TypeParam, 8>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -437,8 +303,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -450,8 +317,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -463,8 +331,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -476,7 +345,7 @@ TYPED_TEST(
     RGBWhiteToYCbCrType, WhiteMapsToMaxLuminanceAndHalfChrominancesBT709) {
   auto [y, cb, cr] = ColorSpaces::convert_rgb_to_ycbcr<TypeParam, 8,
       ColorSpaces::BT709Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<TypeParam, 8>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<TypeParam, 8>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -489,8 +358,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -502,8 +372,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -515,8 +386,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -528,7 +400,7 @@ TYPED_TEST(
     RGBWhiteToYCbCrType, WhiteMapsToMaxLuminanceAndHalfChrominancesBT2020) {
   auto [y, cb, cr] = ColorSpaces::convert_rgb_to_ycbcr<TypeParam, 8,
       ColorSpaces::BT2020Coefficients, true>(this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<TypeParam, 8>();
+  auto max = ColorModelUtils::get_max_value_for_bpp<TypeParam, 8>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -542,8 +414,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -556,8 +429,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -570,8 +444,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->white);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, max);
   EXPECT_EQ(cb, half);
@@ -588,8 +463,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -598,8 +474,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -608,8 +485,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -618,8 +496,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -628,8 +507,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -638,8 +518,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -648,8 +529,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, RedMapsToMaxCrBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -658,8 +540,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, RedMapsToMaxCrBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -668,8 +551,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, RedMapsToMaxCrBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->red);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cr, max);
 }
 
@@ -679,8 +563,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -689,8 +574,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -699,8 +585,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT2020) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -709,8 +596,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -719,8 +607,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -729,8 +618,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT601) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -739,8 +629,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBpp, BlueMapsToMaxCbBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -749,8 +640,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppA, BlueMapsToMaxCbBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -759,8 +651,9 @@ TYPED_TEST(RGBToYCbCrTypeAndBppB, BlueMapsToMaxCbBT709) {
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->blue);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   EXPECT_EQ(cb, max);
 }
 
@@ -770,8 +663,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -783,8 +677,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -796,8 +691,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT601Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -810,8 +706,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -823,8 +720,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -836,8 +734,9 @@ TYPED_TEST(
   auto [y, cb,
       cr] = ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
       TypeParam::secondType, ColorSpaces::BT709Coefficients, true>(this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -851,8 +750,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -865,8 +765,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -879,8 +780,9 @@ TYPED_TEST(
       ColorSpaces::convert_rgb_to_ycbcr<typename TypeParam::firstType,
           TypeParam::secondType, ColorSpaces::BT2020Coefficients, true>(
           this->black);
-  auto max = ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
-      TypeParam::secondType>();
+  auto max =
+      ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
+          TypeParam::secondType>();
   auto half = (max + 1) / 2;
   EXPECT_EQ(y, 0);
   EXPECT_EQ(cb, half);
@@ -1491,7 +1393,7 @@ TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom16T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1516,7 +1418,7 @@ TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom32T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1541,7 +1443,7 @@ TYPED_TEST(YCbCrBT2020ToRGBTypeAndBppRandom64T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1579,7 +1481,7 @@ TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom16T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1603,7 +1505,7 @@ TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom32T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1627,7 +1529,7 @@ TYPED_TEST(YCbCrBT601ToRGBTypeAndBppRandom64T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1664,7 +1566,7 @@ TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom16T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1688,7 +1590,7 @@ TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom32T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1712,7 +1614,7 @@ TYPED_TEST(YCbCrBT709ToRGBTypeAndBppRandom64T,
     OneThousandRandomTestsRGBtoYCbCrToRGBGivesMaximumMSEOne) {
   std::default_random_engine generator(42);
   std::uniform_int_distribution<typename TypeParam::firstType> distribution(
-      0, ColorSpaces::get_max_value_for_bpp<typename TypeParam::firstType,
+      0, ColorModelUtils::get_max_value_for_bpp<typename TypeParam::firstType,
              TypeParam::secondType>());
 
   for (auto i = 0; i < 1000; ++i) {
@@ -1736,3 +1638,5 @@ int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+/**@}*/

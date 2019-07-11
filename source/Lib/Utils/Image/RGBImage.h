@@ -31,11 +31,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     View.cpp
+/** \file     ThreeChannelImage.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-31
+ *  \date     2019-06-13
  */
 
-#include "Lightfield.h"
+#ifndef JPLM_LIB_UTILS_IMAGE_RGBIMAGE_H__
+#define JPLM_LIB_UTILS_IMAGE_RGBIMAGE_H__
+
+#include "Lib/Utils/Image/ThreeChannelImage.h"
+
+template<typename T>
+class RGBImage : public ThreeChannelImage<T> {
+ public:
+  RGBImage(std::size_t width, std::size_t height, std::size_t bpp)
+      : ThreeChannelImage<T>(width, height, bpp, ImageType::RGB){};
+
+
+  RGBImage(RGBImage<T>&& other) noexcept
+      : ThreeChannelImage<T>(std::move(other)) {
+  }
+
+
+  RGBImage(const RGBImage<T>& other) : ThreeChannelImage<T>(other){};
+
+
+  RGBImage& operator=(RGBImage<T>&& other) {
+    ThreeChannelImage<T>::operator=(std::move(other));
+    return *this;
+  }
+
+
+  inline bool operator==(const RGBImage<T>& other) const {
+    return this->is_equal(other);
+  }
+
+
+  inline bool operator!=(const RGBImage<T>& other) const {
+    return !this->is_equal(other);
+  }
+
+
+  virtual RGBImage* generate_ptr_to_clone() const override {
+    return new RGBImage<T>(*this);
+  }
+
+
+  ~RGBImage() = default;
+
+
+  std::vector<std::string> get_channel_names() const final {
+    return {"Red", "Green", "Blue"};
+  }
+
+};
+
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_RGBIMAGE_H__ */

@@ -40,10 +40,10 @@
 
 
 #include <iostream>
-#include "Image.h"
-#include "ImageMetrics.h"
-#include "PPMBinaryFile.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageMetrics.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 #include "gtest/gtest.h"
 
 std::string resources_path = "../resources";

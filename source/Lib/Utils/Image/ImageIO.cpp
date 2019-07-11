@@ -31,13 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldDimension.cpp
+/** \file     ImageIO.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-03
+ *  \date     2019-05-29
  */
 
+#include "ImageIO.h"
 
-#include "LightfieldDimension.h"
-
+std::unique_ptr<ImageFile> ImageIO::open(const std::string& filename) {
+  using fpath = std::filesystem::path;
+  auto name = fpath(filename);
+  if (name.extension() == fpath(".ppm")) {
+    return PixelMapFileIO::open(filename);
+  }
+  throw std::logic_error("Not fully implemented: ImageIO::open");
+}

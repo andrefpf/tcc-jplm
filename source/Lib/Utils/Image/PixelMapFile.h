@@ -32,7 +32,7 @@
  */
 
 /** \file     PixelMapFile.h
- *  \brief    Test of image utils.
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-28
@@ -41,7 +41,8 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILE_H__
 
-#include "ImageFile.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageFile.h"
 
 
 //P1 and P4 are bitmaps, PBM (portable bitmap), or pbm - Netpbm bi-level image format according to http://netpbm.sourceforge.net/doc/pbm.html
@@ -49,105 +50,107 @@
 //P3 and P6 are fullcolor images, PPM (portable pixmap)
 enum PixelMapType { Unknown = 0, P1, P2, P3, P4, P5, P6 };
 
+
 class PixelMapFile : public ImageFile {
  protected:
-  std::string filename;
-  std::fstream file;
-  std::streampos raster_begin;  // should be const..
-  PixelMapType type = PixelMapType::Unknown;
-  std::size_t width = 0;
-  std::size_t height = 0;
   std::size_t max_value = 0;
+  PixelMapType type = PixelMapType::Unknown;
 
  public:
   PixelMapFile(const std::string& file_name, PixelMapType type)
-      : filename(file_name), type(type){};
+      : ImageFile(ImageFileType::PixelMap, file_name), type(type){};
 
 
   PixelMapFile(std::filesystem::path& file_name, PixelMapType type)
-      : filename(file_name.c_str()), type(type){};
+      : ImageFile(ImageFileType::PixelMap, file_name), type(type){};
 
 
   PixelMapFile(const PixelMapFile& other) = delete;
 
 
-  PixelMapFile(PixelMapFile&& other) {
-    std::swap(filename, other.filename);
+  PixelMapFile(PixelMapFile&& other) : ImageFile(std::move(other)) {
     std::swap(type, other.type);
-    std::swap(width, other.width);
-    std::swap(height, other.height);
     std::swap(max_value, other.max_value);
-    std::swap(file, other.file);
-    std::swap(raster_begin, other.raster_begin);
   }
 
 
   PixelMapFile(const std::string& file_name, PixelMapType type,
       std::size_t width, std::size_t height, std::size_t max_value)
-      : filename(file_name), type(type), width(width), height(height),
-        max_value(max_value){};
+      : ImageFile(ImageFileType::PixelMap, file_name, width, height),
+        max_value(max_value), type(type){};
 
 
   PixelMapFile(const std::string& file_name, const std::streampos raster_begin,
       PixelMapType type, std::size_t width, std::size_t height,
       std::size_t max_value)
-      : filename(file_name), raster_begin(raster_begin), type(type),
-        width(width), height(height), max_value(max_value){};
+      : ImageFile(
+            ImageFileType::PixelMap, file_name, raster_begin, width, height),
+        max_value(max_value), type(type){};
 
-  ~PixelMapFile();
 
-  void open();
+  virtual ~PixelMapFile() = default;
 
-  decltype(type) get_type() const noexcept {
+  /**
+   * \brief      Gets the type.
+   *
+   * \return     The type, from the enum PixelMapType.
+   */
+  auto get_type() const noexcept {
     return type;
   }
 
 
-  decltype(raster_begin) get_raster_begin() const {
-    return raster_begin;
-  }
-
-
-  decltype(width) get_width() const noexcept {
-    return width;
-  }
-
-
-  decltype(height) get_height() const noexcept {
-    return height;
-  }
-
-
+  /**
+   * \brief      Determines if this PixelMapFile has properties (type, width, height, and max_value).
+   *
+   * \param[in]  type       The type
+   * \param[in]  width      The width
+   * \param[in]  height     The height
+   * \param[in]  max_value  The maximum value
+   *
+   * \return     True if has properties, False otherwise.
+   */
   bool has_properties(PixelMapType type, std::size_t width, std::size_t height,
-      std::size_t max_value) const noexcept {
-    if (this->width != width)
-      return false;
-    if (this->height != height)
-      return false;
-    if (this->max_value != max_value)
-      return false;
-    if (this->type != type)
-      return false;
+      std::size_t max_value) const noexcept;
 
-    return true;
-  }
 
-  bool is_equivalent_to(const PixelMapFile& other) const noexcept {
-    return has_properties(
-        other.type, other.width, other.height, other.max_value);
-  };
+  /**
+   * \brief      Determines if this PixelMapFile is equivalent to other one.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if equivalent to, False otherwise.
+   */
+  bool is_equivalent_to(const PixelMapFile& other) const noexcept;
 
-  std::size_t get_number_of_bits_per_pixel() const {
-    std::size_t bits = 1;
-    while (std::pow(2, bits) < max_value) {
-      ++bits;
-    }
-    return bits;
-  }
 
+  /**
+   * \brief      Gets the number of bits per pixel.
+   * \details    Computes the number of bpp from the max_value
+   *
+   * \return     The number of bits per pixel.
+   */
+  std::size_t get_number_of_bits_per_pixel() const;
+
+
+  /**
+   * \brief      Reads a full image.
+   *
+   * \return     A variant of unique_ptrs of either Image<uint8_t> or Image<uint16_t>
+   */
   virtual std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_full_image() = 0;
+
+
+  /**
+   * \brief      Reads an image patch, i.e., a rectangular area of the complete image.
+   *
+   * \param[in]  origin  The origin
+   * \param[in]  lenght  The lenght
+   *
+   * \return     { description_of_the_return_value }
+   */
   virtual std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_image_patch(std::pair<std::size_t, std::size_t> origin,

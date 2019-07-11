@@ -32,10 +32,46 @@
  */
 
 /** \file     ImageFile.cpp
- *  \brief    Class that contains all exceptions that may be thrown by Image lib
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-08
+ *  \date     2019-06-13
  */
 
 #include "ImageFile.h"
+
+
+ImageFile::~ImageFile() {
+  if (file.is_open())
+    file.close();
+}
+
+
+void ImageFile::open() {
+  if (!file.is_open())
+    file.open(filename);
+  if (!file.is_open())
+    std::cerr << "Unable to open file " << filename << "." << std::endl;
+}
+
+
+void ImageFile::check(const std::string& filename) {
+  auto path = std::filesystem::path(filename).parent_path();
+  if (!std::filesystem::exists(path)) {
+    std::cerr << "Path " << path.c_str() << " does not exist." << std::endl;
+    throw ImageIOExceptions::InexistentPathException();
+  }
+  if (!std::filesystem::exists(filename)) {
+    std::cerr << "File " << filename
+              << " does not exist... Need more information to create a new file"
+              << std::endl;
+    throw ImageIOExceptions::InexistentFileException();
+  }
+  if (!std::filesystem::is_regular_file(filename)) {
+    std::cerr << "File " << filename
+              << " is not a regular file (maybe it is a directory?)"
+              << std::endl;
+    throw ImageIOExceptions::NotARegularFileException();
+  }
+  // if(std::filesystem::permission)
+}

@@ -31,11 +31,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldIO.cpp
+/** \file     ColorModelUtils.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-03
+ *  \date     2019-06-13
  */
 
-#include "LightfieldIO.h"
+#include "ColorModelUtils.h"
+
+double ColorModelUtils::clip01d(double value) {
+  if (value > 1.0) {
+    return 1.0;
+  }
+  if (value < 0.0) {
+    return 0.0;
+  }
+  return value;
+}

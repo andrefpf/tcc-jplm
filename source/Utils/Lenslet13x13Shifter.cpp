@@ -42,10 +42,10 @@
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
 #include <sstream>
-#include "Image.h"
-#include "ImageExceptions.h"
-#include "ImageIO.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
+#include "Lib/Utils/Image/ImageIO.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 
 void shift_view(
@@ -55,7 +55,7 @@ void shift_view(
   std::visit(
       [filename_output](auto& view) {
         view->shift_pixels_by(2);
-        ImageIO::write(*(view.get()), filename_output);
+        ImageIO::imwrite(*(view.get()), filename_output);
       },
       view_variant);
 }

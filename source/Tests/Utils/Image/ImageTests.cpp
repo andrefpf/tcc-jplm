@@ -38,8 +38,16 @@
  *  \date     2019-05-22
  */
 
+/**
+ * \defgroup ImageLibTests
+ * \ingroup Tests
+ */
+/**@{*/
+
+
 #include <iostream>
-#include "Image.h"
+#include "Lib/Utils/Image/RGBImage.h"
+#include "Lib/Utils/Image/YCbCrImage.h"
 #include "gtest/gtest.h"
 
 
@@ -58,6 +66,10 @@ struct GrayscaleImageTest : testing::Test {
 
 
 TEST_F(GrayscaleImageTest, GrayScaleImageHasOneChannel) {
+  /**
+   * \test Description of this test case. I expect the number of 
+   * channels of a grayscale image to be 1.
+   */
   EXPECT_EQ(1, image->get_number_of_channels());
 }
 
@@ -322,3 +334,5 @@ int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+/**@}*/

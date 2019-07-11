@@ -45,29 +45,86 @@
 #include <type_traits>
 #include <typeinfo>
 #include <variant>
-#include "ColorSpaces.h"
-#include "Image.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "Lib/Utils/Image/RGBImage.h"
+#include "Lib/Utils/Image/YCbCrImage.h"
+#include "Lib/Utils/Image/YCoCgImage.h"
 
 
 namespace ImageColorSpaceConversion {
 
-template<template<typename> class ImageT, typename T>
-constexpr bool is_ycbcr() {
-  return std::is_base_of_v<YCbCrImage<T>, ImageT<T>>;
+template<template<typename> class ImageOut, template<typename> class ImageIn,
+    typename T>
+constexpr void image_to_image_conversion_static_asserts() {
+  static_assert(std::is_base_of_v<Image<T>, ImageIn<T>>,
+      "In Image/Image conversion, input must be an Image...");
+  static_assert(std::is_base_of_v<Image<T>, ImageOut<T>>,
+      "In Image/Image conversion, output must be an Image...");
 }
+
 
 template<template<typename> class ImageT, typename T>
 constexpr bool is_rgb() {
   return std::is_base_of_v<RGBImage<T>, ImageT<T>>;
 }
 
+
+template<template<typename> class ImageT, typename T>
+constexpr bool is_ycbcr() {
+  return std::is_base_of_v<YCbCrImage<T>, ImageT<T>>;
+}
+
+
+template<template<typename> class ImageT, typename T>
+constexpr bool is_ycocg() {
+  return std::is_base_of_v<YCoCgImage<T>, ImageT<T>>;
+}
+
+
+template<template<typename> class ImageOut, template<typename> class ImageIn,
+    typename T>
+ImageOut<T> ycocg_conversion(const ImageIn<T>& source) {
+  image_to_image_conversion_static_asserts<ImageOut, ImageIn, T>();
+  if constexpr (is_ycocg<ImageIn, T>()) {
+    static_assert(
+        is_rgb<ImageOut, T>(), "As input is YCoCg, output must be RGB");
+
+  } else {
+    static_assert(is_rgb<ImageIn, T>() || std::is_same_v<Image<T>, ImageIn<T>>,
+        "As input is not YCoCg, input must be RGB or Base Image...");
+    if constexpr (!is_rgb<ImageIn, T>()) {
+      if (source.get_type() != ImageType::RGB) {
+        std::cerr << "Input is a base image with a type different from RGB."
+                  << std::endl;
+        exit(2);
+      }
+    }
+    static_assert(
+        is_ycbcr<ImageOut, T>(), "As input is not YCbCr, output must be...");
+  }
+
+  auto converted_image =
+      ImageOut<T>(source.get_width(), source.get_height(), source.get_bpp());
+
+  auto a_data = source[0].data();
+  auto b_data = source[1].data();
+  auto c_data = source[2].data();
+
+  auto d_data = converted_image[0].data();
+  auto e_data = converted_image[1].data();
+  auto f_data = converted_image[2].data();
+
+  //! \todo Implement YCoCg conversion. It should be possible to iterate over all using zip (from cppitertools)
+
+  std::cerr << "YCoCg conversion is not implemented yet" << std::endl;
+  exit(2);
+}
+
+
 template<template<typename> class ImageOut, template<typename> class ImageIn,
     typename T>
 ImageOut<T> ycbcr_conversion(const ImageIn<T>& source) {
-  static_assert(std::is_base_of_v<Image<T>, ImageIn<T>>,
-      "In RGB/YCbCr conversion, input must be an Image...");
-  static_assert(std::is_base_of_v<Image<T>, ImageOut<T>>,
-      "In RGB/YCbCr conversion, output must be an Image...");
+  image_to_image_conversion_static_asserts<ImageOut, ImageIn, T>();
 
   //checking correct usage
   if constexpr (is_ycbcr<ImageIn, T>()) {
@@ -149,6 +206,7 @@ ImageOut<T> ycbcr_conversion(const ImageIn<T>& source) {
   return converted_image;
 }
 
+
 namespace convert {
 
 template<template<typename> class ImageOut, template<typename> class ImageIn,
@@ -159,11 +217,13 @@ ImageOut<T> to(const ImageIn<T>& source) {
   static_assert(std::is_base_of<Image<T>, ImageOut<T>>::value,
       "The output for conversion must be an image...");
 
-
+  //first check if both images are from the same type (in and out)
   if constexpr (std::is_same<ImageIn<T>, ImageOut<T>>::value) {
-    return source;
+    return source;  //no need for conversion, returns a copy of source
   }
 
+  //if in and out are ycbr, but different recomendations, creates an intermediary rgb representation
+  // and then converts
   if constexpr (is_ycbcr<ImageIn, T>() && is_ycbcr<ImageOut, T>()) {
     auto temp_as_rgb = to<RGBImage>(source);
     return to<ImageOut>(temp_as_rgb);
@@ -197,12 +257,14 @@ ImageOut<T> to(const ImageIn<T>& source) {
   return ImageOut<T>(source.get_width(), source.get_height(), source.get_bpp());
 }
 
+
 template<template<typename> class ImageOut, template<typename> class ImageIn,
     typename T>
 std::unique_ptr<ImageOut<T>> to(const std::unique_ptr<ImageIn<T>>& source) {
   auto out_image = to<ImageOut>(*(source.get()));
   return std::make_unique<ImageOut<T>>(std::move(out_image));
 }
+
 
 template<template<typename> class ImageOut, template<typename> class ImageIn,
     typename T1, typename T2>

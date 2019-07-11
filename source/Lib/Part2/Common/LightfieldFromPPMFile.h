@@ -31,36 +31,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldIO.h
+/** \file     LightfieldFromPPMFile.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-03
+ *  \date     2019-06-07
  */
 
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
 
-#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__
-#define JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__
-
-#include <filesystem>
 #include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/View.h"
-#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/ViewFromPPMFile.h"
 
-namespace LightfieldIO {
-	// template <typename T>
-	// Lightfield<View<T>> open(const std::string& path, std::size_t t, std::size_t s) {
-	// 	namespace fs = std::filesystem;
-	// 	if(!fs::exists(path)) {
-	// 		//throws
-	// 	}
-	// 	if (!fs::is_directory(path)) {
-	// 		//throws
-	// 	}
-	// 	//how is to be the naming convention?
-	// 	auto view_to_filename = PPM3CharViewToFilename();
-	// 	for
-	// }
-}
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDIO_H__ */
+/**
+ * @brief A class that holds a complete lightfield, where the views are obtained from PPM Files.
+ * @details [long description]
+ * 
+ * @tparam T Its the type of each pixel in the Lightfield.
+ */
+template<typename T>
+class LightfieldFromPPMFile : public Lightfield<T> {
+ public:
+
+  /**
+   * \brief      Constructs the object.
+   *
+   * \param[in]  configuration   The configuration
+   * \param[in]      view_io_policy  The view i/o policy
+   * 
+   * \details This kind of lightfield can be build using only the configuration and a default view io policy. 
+   * 
+   * For instance:
+   * \snippet Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   */
+  LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+      ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
+      : Lightfield<T>(configuration.get_size().get_t_and_s(),
+            std::move(view_io_policy), true) {
+    for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
+      this->set_view_at(
+          std::move(ViewFromPPMFile<T>(configuration.get_path(), coordinate)),
+          coordinate);
+    }
+  }
+
+
+
+  /**
+   * \brief Destructor of the LightfieldFromPPMFile (default)
+   */
+  ~LightfieldFromPPMFile() = default;
+
+};
+
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__ */

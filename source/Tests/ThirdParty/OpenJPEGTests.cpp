@@ -37,3 +37,37 @@
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-06-18
  */
+
+/**
+ * \defgroup Tests
+ */
+/**@{*/
+
+/**
+ * \defgroup ExampleTests
+ */
+/**@{*/
+
+#include <iostream>
+#include "gtest/gtest.h"
+#include "openjpeg.h"
+
+TEST(OpenJP2K, TestJP2K_A) {
+  EXPECT_EQ(OPJ_CINEMA_24_CS, 1302083);
+}
+
+TEST(OpenJP2K, TestJP2K_B) {
+  EXPECT_EQ(OPJ_J2K_MAXRLVLS, 33);
+}
+
+TEST(NameOfGroupTest, NameOfCurrentTest) {
+  EXPECT_EQ(0, 0);
+}
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+
+/**@}*/
+/**@}*/

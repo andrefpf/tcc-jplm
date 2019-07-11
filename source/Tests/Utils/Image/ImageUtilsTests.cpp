@@ -31,11 +31,70 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     View.cpp
- *  \brief    
+/** \file     ImageUtilsTests.cpp
+ *  \brief    Test of lightfield.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-31
+ *  \date     2019-06-13
+ *
  */
 
-#include "View.h"
+#include <iostream>
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageUtils.h"
+#include "gtest/gtest.h"
+
+
+struct ImageContainerCheck : public testing::Test {
+  std::size_t width = 4;
+  std::size_t height = 3;
+  std::unique_ptr<RGBImage<uint16_t>> image_unsigned;
+  std::unique_ptr<RGBImage<int16_t>> image_signed;
+  ImageContainerCheck()
+      : image_unsigned(std::make_unique<RGBImage<uint16_t>>(width, height, 10)),
+        image_signed(std::make_unique<RGBImage<int16_t>>(width, height, 10)) {
+    for (auto& channel : *image_unsigned) {
+      for (auto& value : channel) {
+        value = 0;
+      }
+    }
+    for (auto& channel : *image_signed) {
+      for (auto& value : channel) {
+        value = 0;
+      }
+    }
+  }
+};
+
+
+TEST_F(ImageContainerCheck, Uint16FitsInUint16) {
+  EXPECT_NO_THROW(
+      ImageUtils::check_image_container_requisites<uint16_t>(*image_unsigned));
+}
+
+
+TEST_F(ImageContainerCheck, 10bppDoNotFitInUint8ThusThrows) {
+  EXPECT_THROW(
+      ImageUtils::check_image_container_requisites<uint8_t>(*image_unsigned),
+      ImageUtilsExceptions::ContainerHasFewerBitsThanNeededException);
+}
+
+
+TEST_F(ImageContainerCheck, UnsignedValuesCanBeIncludedInUintThus) {
+  EXPECT_NO_THROW(
+      ImageUtils::check_image_container_requisites<uint16_t>(*image_signed));
+}
+
+
+TEST_F(ImageContainerCheck, NegativeValuesCannotBeIncludedInUintThusThrows) {
+  image_signed->set_pixel_at({-1, 0, 0}, 0, 0);
+  EXPECT_THROW(
+      ImageUtils::check_image_container_requisites<uint16_t>(*image_signed),
+      ImageUtilsExceptions::NegativeValueInUnsignedVariableException);
+}
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

@@ -32,7 +32,7 @@
  */
 
 /** \file     ImageFile.h
- *  \brief    Class that contains all exceptions that may be thrown by Image lib
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-05-08
@@ -53,13 +53,118 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include "Image.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
+
+//! \todo  Implement other types of image file to allow easy reading
+//! like PGM, PNG, BMP, etc
+enum class ImageFileType { PixelMap = 0 };
+
 
 class ImageFile {
+ protected:
+  ImageFileType type;
+  std::string filename;
+  std::fstream file;
+  std::streampos raster_begin;  // should be const..
+  std::size_t width = 0;  //is this valid?
+  std::size_t height = 0;
+
+
  public:
-  void print_test() {
-    std::cout << "Test, I'm a ImageFile ;) " << std::endl;
+  ImageFile(const ImageFileType& type, const std::string& file_name)
+      : type(type), filename(file_name){};
+
+
+  ImageFile(const ImageFileType& type, const std::filesystem::path& file_name)
+      : type(type), filename(file_name.c_str()){};
+
+
+  ImageFile(const ImageFile& other) = delete;
+
+  /**
+   * \brief      Move constructor of the ImageFile object.
+   *
+   * \param      other  The other
+   * \todo       Find how to implement move avoiding object slicing
+   */
+  ImageFile(ImageFile&& other) {
+    std::swap(type, other.type);
+    std::swap(filename, other.filename);
+    std::swap(width, other.width);
+    std::swap(height, other.height);
+    std::swap(file, other.file);
+    std::swap(raster_begin, other.raster_begin);
   }
+
+
+  ImageFile(const ImageFileType& type, const std::string& file_name,
+      std::size_t width, std::size_t height)
+      : type(type), filename(file_name), width(width), height(height){};
+
+
+  ImageFile(const ImageFileType& type, const std::string& file_name,
+      const std::streampos raster_begin, std::size_t width, std::size_t height)
+      : type(type), filename(file_name), raster_begin(raster_begin),
+        width(width), height(height){};
+
+  /**
+   * \brief      Destroys the object. 
+   * \details    Because the ImageFile object holds a istream, if it is open it needs to be closed.
+   * 
+   * \todo Check if the destructor of a base class is always executed or must be explicitly called in a derived class
+   */
+  virtual ~ImageFile();
+
+  /**
+   * \brief      Gets the width of the image contained in the file.
+   *
+   * \return     The width.
+   */
+  auto get_width() const noexcept {
+    return width;
+  }
+
+
+  /**
+   * \brief      Gets the height of the image contained in the file.
+   *
+   * \return     The height.
+   */
+  auto get_height() const noexcept {
+    return height;
+  }
+
+
+  /**
+   * \brief      Gets the raster begin, i.e., the position where the image data starts in the file.
+   *
+   * \return     The raster begin.
+   */
+  auto get_raster_begin() const {
+    return raster_begin;
+  }
+
+
+  /**
+   * \brief      Gets the type of the image file.
+   *
+   * \return     The type.
+   */
+  auto get_type() const noexcept {
+    return type;
+  }
+
+
+  void open();
+
+  /**
+  * \brief      Check the validity of the image from its filename
+  *
+  * \param[in]  filename  The filename
+  */
+  static void check(const std::string& filename);
+
+  //! \todo image file must have a read_image and write_image functions
 };
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEFILE_H__ */

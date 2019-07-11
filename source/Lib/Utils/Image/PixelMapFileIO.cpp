@@ -41,17 +41,37 @@
 
 #include "PixelMapFileIO.h"
 
+/**
+ * \brief      Determines if a char is comment delimiter.
+ *
+ * \param[in]  c     The char to be checked
+ *
+ * \return     True if comment delimiter, False otherwise.
+ */
 bool is_comment_delimiter(char c) {
   const char sharp = 35;
   return (c == sharp);  // c#?
 }
 
+
+/**
+ * \brief      Reads in a comment.
+ *
+ * \param      istream  The input stream
+ */
 void read_comment(std::ifstream& istream) {
   std::string comment;
   getline(istream, comment);
   std::cout << "Comment: " << comment << std::endl;
 }
 
+
+/**
+ * \brief      Reads the pixel map stream until finding the next valid field.
+ * \details    Reads, char-by-char the istream while getting spaces or comments.
+ *
+ * \param      istream  The input stream
+ */
 void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
   char c;
   do {
@@ -65,6 +85,15 @@ void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
   }
 }
 
+
+/**
+ * \brief      Fills in the string that holds a size.
+ * \details Because of the recursive nature of this function we are using an in/out param.
+ * The need for reading char-by-char is because there can be a comment between the chars of a field...
+ *
+ * \param[in]      istream  The input stream
+ * \param[in/out]  size     The size
+ */
 void fill_size_string(std::ifstream& istream, std::string& size) {
   read_pixel_map_stream_until_next_field(istream);
   char c;
@@ -79,6 +108,15 @@ void fill_size_string(std::ifstream& istream, std::string& size) {
   }
 }
 
+
+/**
+ * \brief      Gets the file type.
+ * \details    It is expected that the next char in the istream be a P, followed by a number in the range [0..6]
+ *
+ * \param      istream  The input stream
+ *
+ * \return     The file type.
+ */
 PixelMapType get_file_type(std::ifstream& istream) {
   std::string type;
   istream >> type;
@@ -100,7 +138,15 @@ PixelMapType get_file_type(std::ifstream& istream) {
   throw PixelMapFileIOExceptions::InvalidPixelMapIndexException();
 }
 
-//a char-to-char reading is necessary because the container allows a comment in between the digits of a token...
+
+/**
+ * \brief      Gets the next size.
+ * \details    a char-to-char reading is necessary because the container allows a comment in between the digits of a token...
+ *
+ * \param      istream  The input stream
+ *
+ * \return     The next size.
+ */
 std::size_t get_next_size(std::ifstream& istream) {
   std::string size("");
   fill_size_string(istream, size);
@@ -110,28 +156,20 @@ std::size_t get_next_size(std::ifstream& istream) {
 
 // namespace PixelMapFileIO {
 
+/**
+ * \brief      opens a pixel map file from a filename.
+ *
+ * \param[in]  filename  The filename
+ *
+ * \return     A unique_ptr to the PixelMapFile
+ */
 std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     const std::string& filename) {
-  auto path = std::filesystem::path(filename).parent_path();
-  if (!std::filesystem::exists(path)) {
-    std::cerr << "Path " << path.c_str() << " does not exist." << std::endl;
-    throw ImageIOExceptions::InexistentPathException();
-  }
-  if (!std::filesystem::exists(filename)) {
-    std::cerr << "File " << filename
-              << " does not exist... Need more information to create a new file"
-              << std::endl;
-    throw ImageIOExceptions::InexistentFileException();
-  }
-  if (!std::filesystem::is_regular_file(filename)) {
-    std::cerr << "File " << filename
-              << " is not a regular file (maybe it is a directory?)"
-              << std::endl;
-    throw ImageIOExceptions::NotARegularFileException();
-  }
-  // if(std::filesystem::permission)
+
+  ImageFile::check(filename);
 
   std::ifstream file(filename, std::ios::in);
+
   if (!file.is_open()) {
     std::cerr << "Unable to open file " << filename << "." << std::endl;
     throw ImageIOExceptions::UnableToOpenFileException();
@@ -159,10 +197,6 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
   read_pixel_map_stream_until_next_field(file);  //next field is the 'raster'
 
   auto raster_begin = file.tellg();
-
-  // std::cout << "such file has width " << width << " and height " << height
-  //           << ". Its max value is " << max_value << std::endl;
-  // std::cout << "Raster begins at byte " << raster_begin << std::endl;
 
   file.close();
 
@@ -206,9 +240,22 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
       file.flush();
       file.close();
       switch (type) {
-        // case PixelMapType::P5: return std::make_unique<PGMBinaryFile>(filename, raster_begin, width, height, max_value);
+        case PixelMapType::P1:
+          throw PixelMapFileIOExceptions::
+              NoImplementedYetPixelMapFileException();  //return std::make_unique<PBMASCCIFile>(filename, raster_begin, width, height, max_value);
+        case PixelMapType::P2:
+          throw PixelMapFileIOExceptions::
+              NoImplementedYetPixelMapFileException();  //return std::make_unique<PGMASCCIFile>(filename, raster_begin, width, height, max_value);
+        case PixelMapType::P3:
+          throw PixelMapFileIOExceptions::
+              NoImplementedYetPixelMapFileException();  //return std::make_unique<PPMASCCIFile>(filename, raster_begin, width, height, max_value);
+        case PixelMapType::P4:
+          throw PixelMapFileIOExceptions::
+              NoImplementedYetPixelMapFileException();  //return std::make_unique<PBMBinaryFile>(filename, raster_begin, width, height, max_value);
+        case PixelMapType::P5:
+          throw PixelMapFileIOExceptions::
+              NoImplementedYetPixelMapFileException();  //return std::make_unique<PGMBinaryFile>(filename, raster_begin, width, height, max_value);
         case PixelMapType::P6:
-          std::cout << "Returning unique ptr to PPMBinaryFile";
           return std::make_unique<PPMBinaryFile>(
               filename, raster_begin, width, height, max_value);
         default: { std::cerr << "Not supported yet..." << std::endl; }

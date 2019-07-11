@@ -38,8 +38,8 @@
  *  \date     2019-05-28
  */
 
-#include "Image.h"
-#include "ImageColorSpacesConversor.h"
+#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "gtest/gtest.h"
 
 struct SimpleImageTypeChecksFromRGB : testing::Test {

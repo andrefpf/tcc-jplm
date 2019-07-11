@@ -31,39 +31,95 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.h
- *  \brief    
+/** \file     Raster2DIteratorTests.cpp
+ *  \brief    Test of lightfield.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+ *  \date     2019-06-12
+ *
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_VIEWTOFILENAMETRANSLATOR_H__
-#define JPLM_LIB_PART2_COMMON_VIEWTOFILENAMETRANSLATOR_H__
-
-#include <filesystem>
-#include <iomanip>  //std::setw and std::setfill
 #include <iostream>
-#include <sstream>
-#include "Lib/Part2/Common/CommonExceptions.h"
+#include "Lib/Utils/Image/Raster2DIterator.h"
+#include "gtest/gtest.h"
 
-class ViewToFilenameTranslator {
- public:
-  ViewToFilenameTranslator() = default;
-  virtual ~ViewToFilenameTranslator() = default;
-  virtual std::string view_position_to_filename(
-      const std::pair<std::size_t, std::size_t>& position) const = 0;
+
+struct Raster2DIteratorTest : public testing::Test {
+  int test[12];
+  Raster2DIterator<int> test_begin;
+  Raster2DIterator<int> test_end;
+  Raster2DIteratorTest() : test_begin(&test[0]), test_end(&test[11] + 1) {
+    for (auto i = 0; i < 12; ++i) {
+      test[i] = 0;
+    }
+  };
 };
 
 
-class PPM3CharViewToFilename : public ViewToFilenameTranslator {
- public:
-  PPM3CharViewToFilename() : ViewToFilenameTranslator(){};
-  ~PPM3CharViewToFilename() = default;
-
-  virtual std::string view_position_to_filename(
-      const std::pair<std::size_t, std::size_t>& position) const override;
-};
+TEST_F(Raster2DIteratorTest, IteratorBeginHasInitialValue) {
+  test[0] = 42;
+  EXPECT_EQ(*test_begin, 42);
+}
 
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWTOFILENAMETRANSLATOR_H__ */
+TEST_F(Raster2DIteratorTest, IteratorBeginPlusOneHasInitialValueOfIndexOne) {
+  test[1] = 40;
+  test_begin++;
+  EXPECT_EQ(*(test_begin), 40);
+}
+
+
+TEST_F(
+    Raster2DIteratorTest, IteratorBeginPostIncrementHasInitialValueOfIndexOne) {
+  test[0] = 42;
+  test[1] = 40;
+  EXPECT_EQ(*(test_begin++), 42);
+}
+
+
+TEST_F(
+    Raster2DIteratorTest, IteratorBeginPreIncrementHasInitialValueOfIndexOne) {
+  test[0] = 42;
+  test[1] = 40;
+  EXPECT_EQ(*(++test_begin), 40);
+}
+
+
+TEST_F(Raster2DIteratorTest, IteratorEndMinusOneHasTheLastValue) {
+  test[11] = 40;
+  EXPECT_EQ(*(--test_end), 40);
+}
+
+
+TEST_F(Raster2DIteratorTest,
+    IteratorEndPostDecrementValueIsEqualAsItWasBeforeDecrement) {
+  auto end = test_end;  //copy assignment
+  EXPECT_EQ(test_end--, end);
+}
+
+
+TEST_F(Raster2DIteratorTest, ReadingOfVectorIsCorrectInBeginEndLoop) {
+  for (auto i = 0; i < 12; ++i) {
+    test[i] = i;
+  }
+  auto temp = 0;
+  for (auto it = test_begin; it != test_end; ++it) {
+    EXPECT_EQ(*it, temp++);
+  }
+}
+
+
+TEST_F(Raster2DIteratorTest, WritingOfVectorIsCorrectInBeginEndLoop) {
+  auto temp = 0;
+  for (auto it = test_begin; it != test_end; ++it) {
+    *it = temp++;
+  }
+  for (auto i = 0; i < 12; ++i) {
+    EXPECT_EQ(i, test[i]);
+  }
+}
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

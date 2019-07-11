@@ -42,8 +42,8 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGECHANNELUTILS_H__
 
 
-#include "ImageChannel.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/ImageChannel.h"
+#include "Lib/Utils/Image/Metrics.h"
 
 namespace ImageChannelUtils {
 
