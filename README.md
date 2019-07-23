@@ -7,7 +7,7 @@ The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pl
 
 
 ### JPEG Pleno
-JPEG Pleno aims to provide a standard framework for representing new imaging modalities, such as texture-plus-depth, [light field](https://jpeg.org/jpegpleno/lightfield.html), [point cloud](https://jpeg.org/jpegpleno/pointcloud.html), and [holographic imaging](https://jpeg.org/jpegpleno/holography.html). Such imaging should be understood as light representations inspired by the plenoptic function, regardless of which model captured or created all or part of the content. [Read more]([https://jpeg.org/jpegpleno/index.html](https://jpeg.org/jpegpleno/index.html))
+JPEG Pleno aims to provide a standard framework for representing new imaging modalities, such as texture-plus-depth, [light field](https://jpeg.org/jpegpleno/lightfield.html), [point cloud](https://jpeg.org/jpegpleno/pointcloud.html), and [holographic imaging](https://jpeg.org/jpegpleno/holography.html). Such imaging should be understood as light representations inspired by the plenoptic function, regardless of which model captured or created all or part of the content. [Read more](https://jpeg.org/jpegpleno/index.html)
 
 ## Licence
 
@@ -120,4 +120,4 @@ For an illustration, see docs/diagrams/PacketDiagram.pdf
 
 
 [badge-license]: https://img.shields.io/badge/license-BSD--3--Clause-blue.svg "BSD 3-clause license"
-[link-license]: https://gitlab.com/smtlightfieldsteam/jplm/blob/master/LICENSE "BSD 3-clause license"
+[link-license]: https://gitlab.com/smtlightfieldsteam/jplm/blob/master/LICENSE.md "BSD 3-clause license"
