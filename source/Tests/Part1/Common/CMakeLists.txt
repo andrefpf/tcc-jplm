@@ -7,3 +7,4 @@ endfunction()
 
 add_jplm_part1_common_lib_test(BoxTests box_tests BoxTests.cpp)
 add_jplm_part1_common_lib_test(BoxDataHolderTests boxdataholder_tests BoxDataHolderTests.cpp)
+add_jplm_part1_common_lib_test(JpegPlenoSignatureBoxTests JpegPlenoSignatureBox_tests JpegPlenoSignatureBoxTests.cpp)

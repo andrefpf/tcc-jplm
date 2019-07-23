@@ -2,29 +2,28 @@
 * @Author: Ismael Seidel
 * @Date:   2019-07-23 15:37:58
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-07-23 16:27:51
+* @Last Modified time: 2019-07-23 18:01:49
 */
 
 #include "Box.h"
 
-
-auto Box::get_lbox() const noexcept {
+LBox Box::get_lbox() const noexcept {
   return this->l_box;
 }
 
 
-auto Box::get_tbox() const noexcept {
+TBox Box::get_tbox() const noexcept {
   return this->t_box;
 }
 
 
-auto Box::get_xlbox() const noexcept {
+std::optional<XLBox> Box::get_xlbox() const noexcept {
   return this->xl_box;
 }
 
 
-auto Box::get_dbox() const noexcept {
-  return this->d_box;
+std::unique_ptr<DBox> Box::get_dbox() const noexcept {
+  return std::unique_ptr<DBox>(this->d_box->clone());
 }
 
 

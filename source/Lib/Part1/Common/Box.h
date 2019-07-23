@@ -156,10 +156,10 @@ class Box {
 
   std::variant<LBox, XLBox> get_lenght();
 
-  auto get_lbox() const noexcept;
-  auto get_tbox() const noexcept;
-  auto get_xlbox() const noexcept;
-  auto get_dbox() const noexcept;
+  LBox get_lbox() const noexcept;
+  TBox get_tbox() const noexcept;
+  std::optional<XLBox> get_xlbox() const noexcept;
+  std::unique_ptr<DBox> get_dbox() const noexcept;
 
 
   //LBox (required) 4-byte big-endian usigned integer: uint32_t

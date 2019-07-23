@@ -12,9 +12,6 @@ class BoxDataHolder {
   BoxDataHolder() : value(0){};
 
 
-  // BoxDataHolder(T value) : value(value){};
-
-
   BoxDataHolder(const T& value) : value(value){};
 
 
@@ -22,7 +19,7 @@ class BoxDataHolder {
   }
 
 
-  auto get_value() {
+  T get_value() const {
     return value;
   }
 
@@ -32,8 +29,12 @@ class BoxDataHolder {
   }
 };
 
+
 template<typename T>
 std::ostream& operator<<(
-    std::ostream& stream, const BoxDataHolder<T>& box_data_holder);
+    std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
+  stream << box_data_holder.get_value();
+  return stream;
+}
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__ */
