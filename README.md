@@ -5,11 +5,22 @@ The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pl
 
 ## Scope of the project
 
+
 ### JPEG Pleno
 JPEG Pleno aims to provide a standard framework for representing new imaging modalities, such as texture-plus-depth, [light field](https://jpeg.org/jpegpleno/lightfield.html), [point cloud](https://jpeg.org/jpegpleno/pointcloud.html), and [holographic imaging](https://jpeg.org/jpegpleno/holography.html). Such imaging should be understood as light representations inspired by the plenoptic function, regardless of which model captured or created all or part of the content. [Read more]([https://jpeg.org/jpegpleno/index.html](https://jpeg.org/jpegpleno/index.html))
 
+## Licence
+
+[![badge-license]][link-license]
+
+
+## Current Status
+
+
+
 ## Known issues and limitations
 Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
+
 
 ## Prerequisites
 
@@ -20,10 +31,12 @@ Must support CXX 17
 #### Cmake
 Minimum version: 3.10
 
+
 ## Quick start 
 After building this project, you can use the provided software to encode and decode plenoptic images. 
 
 ### Lightfield (Part 2)
+
 #### Encoding
 Example:
   ```bash
@@ -34,7 +47,11 @@ Example:
   ```bash
   ~/jplm/build/$ ../bin/TAppDecoder --input ~/output.lf --output ~/decoded/greek/
   ```  
+
+
 ## Architecture overview
+TODO
+
 ## Build instructions
   ```bash
   ~$ cd jplm
@@ -100,3 +117,7 @@ For an illustration, see docs/diagrams/PacketDiagram.pdf
 		       - Encoder
 		       - Decoder
 
+
+
+[badge-license]: https://img.shields.io/badge/license-BSD--3--Clause-blue.svg "BSD 3-clause license"
+[link-license]: https://gitlab.com/smtlightfieldsteam/jplm/blob/master/LICENSE "BSD 3-clause license"
