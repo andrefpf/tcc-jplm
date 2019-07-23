@@ -2,6 +2,7 @@
 #define DEFINEDBOXES_H__
 
 #include "Box.h"
+#include <type_traits>
 
 enum class DefinedBoxesTypes : uint32_t {
   JPEGPlenoSignatureBoxType =  0x6A706C20,
@@ -12,7 +13,7 @@ enum class DefinedBoxesTypes : uint32_t {
   JPEGPlenoHologramBoxType =   0x6A70686F,
 };
 
-
+typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
 
 
 

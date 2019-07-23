@@ -46,34 +46,64 @@
 #include "BoxDataHolder.h"
 #include <optional>
 #include <variant>
+#include <any>
+#include <vector>
 
 
 
-class LBox : BoxDataHolder<uint32_t> {
+class LBox : public BoxDataHolder<uint32_t> {
  public:
-  LBox();
-  ~LBox();
+  LBox() = default;
+  LBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value){}
+  ~LBox() = default;
 };
 
-class TBox : BoxDataHolder<uint32_t>  {
+class TBox : public BoxDataHolder<uint32_t>  {
  public:
-  TBox();
-  ~TBox();
-};
-
-
-class XLBox : BoxDataHolder<uint64_t> {
- public:
-  XLBox();
-  ~XLBox();
+  TBox() = default;
+  TBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value){}
+  ~TBox() = default;
 };
 
 
+class XLBox : public BoxDataHolder<uint64_t> {
+ public:
+  XLBox() = default;
+  XLBox(const uint64_t& value) : BoxDataHolder<uint64_t>(value){}
+  ~XLBox() = default;
+};
+
+
+//Box contents (probably DataBox)
+//what is this?
 class DBox {
+protected:
+	//i'm not sure yet how to handle the contents of this box;
+ std::any contents;
  public:
-  DBox();
-  ~DBox();
+  DBox() = default;
+  
+
+  DBox(const std::any& contents) : contents(contents){}
+
+
+  virtual ~DBox(){};
+  virtual uint64_t get_size() const noexcept {
+  	return 0;
+  };
 };
+
+
+
+class CharArrayDBox : public DBox {
+public:
+	CharArrayDBox(std::vector<uint8_t> array) : DBox(std::make_any<std::vector<uint8_t>>(array)) {}
+	~CharArrayDBox() = default;
+	uint64_t get_size() const noexcept override {
+		return std::any_cast<std::vector<uint8_t>>(this->contents).size();
+	}
+};
+
 
 
 class Box {
@@ -83,11 +113,38 @@ class Box {
   std::optional<XLBox> xl_box;
   DBox d_box;
 
- public:
   Box() = default;
+ public:
+  Box(TBox t_box, const DBox& d_box) : t_box(t_box), d_box(d_box) {
+  	constexpr uint64_t LBox_size = 4; //bytes = 32 bits
+  	constexpr uint64_t TBox_size = 4; //bytes = 32 bits 
+  	//this means that the LBox will contain at least 8 bytes and thus
+  	//never use the reserved for ISO use values;
+  	
+  	auto total_box_size = LBox_size + TBox_size + d_box.get_size(); 
+  	//assuming that size fits in LBox (i.e., 32 bits)
+
+  	if(total_box_size > std::numeric_limits<uint32_t>::max()) {
+  		l_box.set_value(1);
+  		constexpr uint64_t XLBox_size = 8; //bytes = 64 bits
+  		total_box_size+=XLBox_size; //needs more XLBox_size bytes
+  		xl_box=XLBox(total_box_size);
+  	} else {
+  		l_box.set_value(total_box_size);
+  	}
+
+  }
   ~Box() = default;
 
   std::variant<LBox, XLBox> get_lenght();
+
+  auto get_lbox() const noexcept;
+  auto get_tbox() const noexcept;
+  auto get_xlbox() const noexcept;
+  auto get_dbox() const noexcept;
+	
+	
+	
 
   //LBox (required) 4-byte big-endian usigned integer: uint32_t
   //TBox (required) 4-byte big-endian usigned integer: uint32_t
@@ -96,6 +153,6 @@ class Box {
 };
 
 
-// std::ostream& operator<< (std::ostream& stream, const Box& Box);
+std::ostream& operator<< (std::ostream& stream, const Box& Box);
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOX_H__ */
