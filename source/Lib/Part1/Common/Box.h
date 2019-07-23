@@ -44,6 +44,10 @@
 
 #include <cstdint>
 #include "BoxDataHolder.h"
+#include <optional>
+#include <variant>
+
+
 
 class LBox : BoxDataHolder<uint32_t> {
  public:
@@ -76,19 +80,22 @@ class Box {
  protected:
   LBox l_box;
   TBox t_box;
-  XLBox xl_box;
+  std::optional<XLBox> xl_box;
   DBox d_box;
 
  public:
   Box() = default;
   ~Box() = default;
 
-
+  std::variant<LBox, XLBox> get_lenght();
 
   //LBox (required) 4-byte big-endian usigned integer: uint32_t
   //TBox (required) 4-byte big-endian usigned integer: uint32_t
   //XLBox (optional) if LBox.value = 1, 8-byte big-endian usigned integer: uint64_t
   //DBox (required) variable size: depends on what this contains
 };
+
+
+// std::ostream& operator<< (std::ostream& stream, const Box& Box);
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOX_H__ */

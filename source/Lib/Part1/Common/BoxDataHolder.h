@@ -14,8 +14,13 @@ public:
 		this->value = value;
 	}
 
+	BoxDataHolder(): value(0) {};
+
 	virtual ~BoxDataHolder(){}
-	
+
+
 };
+
+
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__ */

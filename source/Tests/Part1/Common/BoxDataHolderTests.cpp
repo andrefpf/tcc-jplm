@@ -50,6 +50,13 @@ TEST(BoxDataHolderBasicTest, TestGetValue) {
 }
 
 
+TEST(BoxDataHolderBasicTest, TestGetValueDefaultsToZero) {
+	BoxDataHolder<uint32_t> holder;
+	EXPECT_EQ(holder.get_value(), 0);
+}
+
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
