@@ -3,6 +3,10 @@
 
 The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pleno Part 4).
 
+### Part 4, Reference software
+
+Provides reference implementations for the standardized technologies within the JPEG Pleno framework for purpose of reference for prospective implementers of the standard and compliance testing.
+
 ## Scope of the project
 
 
