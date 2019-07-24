@@ -44,6 +44,54 @@
 #include "gtest/gtest.h"
 
 
+TEST(JpegPlenoFileTypeContentsBasics, InitializationDoesNotThrow) {
+  EXPECT_NO_THROW(
+      auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents());
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, GetsCorrectBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_brand(), 0x6a706c20);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesAsMinorVersion0) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_minor_version(), 0);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesACompatibilityListWithOneItem) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_reference_to_compatibility_list()
+                .size(),
+      1);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesACompatibilityListWithOneCompatibleStandard) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(
+      jpeg_pleno_file_type_contents.get_number_of_compatible_standards(), 1);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, CompatibleWithItsOwnBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_TRUE(jpeg_pleno_file_type_contents.is_the_file_compatible_with(
+      jpeg_pleno_file_type_contents.get_brand()));
+}
+
+
+TEST(FileTypeBoxBasic, InitializationDoesNotThrow) {
+  EXPECT_NO_THROW(
+      auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents()));
+}
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

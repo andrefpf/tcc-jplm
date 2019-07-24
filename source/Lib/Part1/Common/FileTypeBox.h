@@ -41,9 +41,9 @@
 #ifndef JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__
 #define JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__
 
+#include <algorithm>
 #include "Box.h"
 #include "DefinedBoxes.h"
-#include <algorithm>
 
 class FileTypeContents {
   uint32_t BR;  //brand
@@ -51,11 +51,13 @@ class FileTypeContents {
   std::vector<uint32_t> CL;
 
  public:
-  FileTypeContents(
-      uint32_t brand = static_cast<DefinedBoxesTypesUnderlyingType>(
-          DefinedBoxesTypes::JPEGPlenoSignatureBoxType),
-      uint32_t minor_version = 0, std::vector<uint32_t> compatibility_list = {})
+  FileTypeContents(uint32_t brand, uint32_t minor_version,
+      std::vector<uint32_t> compatibility_list)
       : BR(brand), MinV(minor_version), CL(compatibility_list){};
+
+
+  virtual ~FileTypeContents() {
+  }
 
   uint64_t get_size() const noexcept {
     constexpr auto brand_and_minor_version_size = 2 * sizeof(uint32_t);
@@ -76,19 +78,37 @@ class FileTypeContents {
   }
 
   void add_compatible_standard_to_list(uint32_t standard_code) {
-  	CL.push_back(standard_code);
+    CL.push_back(standard_code);
   }
 
   bool is_the_file_compatible_with(uint32_t standard_code) {
-  	auto result = std::find(CL.begin(), CL.end(), standard_code);
-  	if(result != CL.end())
-  		return true;
-  	return false;
+    auto result = std::find(CL.begin(), CL.end(), standard_code);
+    if (result != CL.end())
+      return true;
+    return false;
   }
 
   auto get_number_of_compatible_standards() {
-  	return CL.size();
+    return CL.size();
   }
+};
+
+
+class JpegPlenoFileTypeContents : public FileTypeContents {
+public:
+	JpegPlenoFileTypeContents(uint32_t minor_version = 0, std::vector<uint32_t> compatibility_list = {})
+      : FileTypeContents(
+      	static_cast<DefinedBoxesTypesUnderlyingType>(
+          DefinedBoxesTypes::JPEGPlenoSignatureBoxType),
+      	   minor_version,
+      	   compatibility_list
+      	) {
+      	//A file that conforms to this international standard shall have at least one CLi
+      	//filed and shall contain the value 'jpl\040' in one of the CLiFields
+      	if(!this->is_the_file_compatible_with(this->get_brand())) {
+      		this->add_compatible_standard_to_list(this->get_brand());
+      	}
+      }
 };
 
 
@@ -119,15 +139,13 @@ class FileTypeDBox : public DBox {
 
 class FileTypeBox : public Box {
  public:
-  FileTypeBox()
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::FileTypeBoxType)),
-            FileTypeDBox(FileTypeContents())){};
 
-   FileTypeBox(const FileTypeContents& contents)
+  FileTypeBox(const FileTypeContents& contents)
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::FileTypeBoxType)),
             FileTypeDBox(contents)){};
+
+
   ~FileTypeBox() = default;
 };
 
