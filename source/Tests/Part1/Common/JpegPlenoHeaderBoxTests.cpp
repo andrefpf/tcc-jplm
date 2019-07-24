@@ -31,88 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoHeaderBox.cpp
+/** \file     JpegPlenoHeaderBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOHEADERBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOHEADERBOX_H__
 
-#include <algorithm>
-#include "Box.h"
-#include "DefinedBoxes.h"
-
-class JpegPlenoHeaderContents {
- protected:
-  // uint32_t n_lf;
-  // uint32_t n_pc;
-  // uint32_t n_ho;
-  std::vector<uint64_t> plfb;  //ptrs to light field box
-  std::vector<uint64_t> ppcb;  //ptrs to point cloud box
-  std::vector<uint64_t> phob;  //ptrs to hologram box
-
- public:
-  uint32_t get_n_lf() const noexcept {
-    return plfb.size();
-  }
+#include <iostream>
+#include "Lib/Part1/Common/JpegPlenoHeaderBox.h"
+#include "gtest/gtest.h"
 
 
-  uint32_t get_n_pc() const noexcept {
-    return ppcb.size();
-  }
 
 
-  uint32_t get_n_ho() const noexcept {
-    return phob.size();
-  }
-
-
-  uint64_t get_size() const noexcept {
-    constexpr auto size_of_n_lf_n_pc_n_ho = 3 * sizeof(uint32_t);
-    return size_of_n_lf_n_pc_n_ho +
-           ((get_n_lf() + get_n_pc() + get_n_ho()) * sizeof(uint64_t));
-  }
-};
-
-
-class JpegPlenoHeaderDBox : public DBox {
- public:
-  JpegPlenoHeaderDBox(const JpegPlenoHeaderContents& contents)
-      : DBox(std::make_any<JpegPlenoHeaderContents>(contents)) {
-  }
-
-
-  JpegPlenoHeaderDBox(const JpegPlenoHeaderDBox& other)
-      : DBox(std::make_any<JpegPlenoHeaderContents>(
-            std::any_cast<JpegPlenoHeaderContents>(other.contents))) {
-  }
-
-
-  ~JpegPlenoHeaderDBox() = default;
-
-
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<JpegPlenoHeaderContents>(this->contents).get_size();
-  }
-
-
-  JpegPlenoHeaderDBox* clone() const override {
-    return new JpegPlenoHeaderDBox(*this);
-  }
-};
-
-
-class JpegPlenoHeaderBox : public Box {
- public:
-  JpegPlenoHeaderBox(const JpegPlenoHeaderDBox& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::JPEGPlenoHeaderBoxType)),
-            contents){};
-  ~JpegPlenoHeaderBox() = default;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOHEADERBOX_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
