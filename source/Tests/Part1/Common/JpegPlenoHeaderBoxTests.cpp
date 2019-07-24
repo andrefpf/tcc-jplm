@@ -44,6 +44,61 @@
 #include "gtest/gtest.h"
 
 
+TEST(JpegPlenoHeaderContentsBasic, Initialization) {
+  EXPECT_NO_THROW(JpegPlenoHeaderContents());
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, Initialization) {
+  EXPECT_NO_THROW(auto jpeg_pleno_header_box = JpegPlenoHeaderBox(JpegPlenoHeaderContents()));
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectTBoxValue) {
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(JpegPlenoHeaderContents());
+  EXPECT_EQ(jpeg_pleno_header_box.get_tbox().get_value(), 0x6a706c68);
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectLBoxValue) {
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(JpegPlenoHeaderContents());
+  EXPECT_EQ(jpeg_pleno_header_box.get_lbox().get_value(), 20);
+  //20: 4 from LBox, 4 from Tbox, 8 from N_LF, 8 from N_PC, 8 from N_HO
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectLBoxValueWhenAddedOneLF) {
+  auto header_contents = JpegPlenoHeaderContents();
+  header_contents.add_pointer_to_light_field_box(0);
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(header_contents);
+  EXPECT_EQ(jpeg_pleno_header_box.get_lbox().get_value(), 28);
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectLBoxValueWhenAddedOnePC) {
+  auto header_contents = JpegPlenoHeaderContents();
+  header_contents.add_pointer_to_point_cloud_box(0);
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(header_contents);
+  EXPECT_EQ(jpeg_pleno_header_box.get_lbox().get_value(), 28);
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectLBoxValueWhenAddedOneHo) {
+  auto header_contents = JpegPlenoHeaderContents();
+  header_contents.add_pointer_to_hologram_box(0);
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(header_contents);
+  EXPECT_EQ(jpeg_pleno_header_box.get_lbox().get_value(), 28);
+}
+
+
+TEST(JpegPlenoHeaderBoxBasic, CorrectLBoxValueWhenAddedOneOfEachType) {
+  auto header_contents = JpegPlenoHeaderContents();
+  header_contents.add_pointer_to_light_field_box(0);
+  header_contents.add_pointer_to_point_cloud_box(0);
+  header_contents.add_pointer_to_hologram_box(0);
+  auto jpeg_pleno_header_box = JpegPlenoHeaderBox(header_contents);
+  EXPECT_EQ(jpeg_pleno_header_box.get_lbox().get_value(), 20+24);
+}
 
 
 int main(int argc, char *argv[]) {

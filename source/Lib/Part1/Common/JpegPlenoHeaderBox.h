@@ -70,6 +70,27 @@ class JpegPlenoHeaderContents {
   }
 
 
+  void add_pointer_to_light_field_box(uint64_t ptr) { 
+    //the ptr is w.r.t the byte starting after the
+    //JpegPlenoHeaderDBox
+    plfb.push_back(ptr);
+  }
+
+
+  void add_pointer_to_point_cloud_box(uint64_t ptr) { 
+    //the ptr is w.r.t the byte starting after the
+    //JpegPlenoHeaderDBox
+    ppcb.push_back(ptr);
+  }
+
+
+  void add_pointer_to_hologram_box(uint64_t ptr) { 
+    //the ptr is w.r.t the byte starting after the
+    //JpegPlenoHeaderDBox
+    phob.push_back(ptr);
+  }
+
+
   uint64_t get_size() const noexcept {
     constexpr auto size_of_n_lf_n_pc_n_ho = 3 * sizeof(uint32_t);
     return size_of_n_lf_n_pc_n_ho +

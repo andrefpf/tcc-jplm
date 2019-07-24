@@ -61,9 +61,9 @@ TEST(JpegPlenoSignatureBoxBasic, XLBoxDoNotExist) {
 }
 
 
-TEST(JpegPlenoSignatureBoxBasic, TBoxValueNotOne) {
+TEST(JpegPlenoSignatureBoxBasic, LBoxValueNotOne) {
 	auto pleno_signature_box = JpegPlenoSignatureBox();
-	EXPECT_NE(pleno_signature_box.get_tbox().get_value(), 1);
+	EXPECT_NE(pleno_signature_box.get_lbox().get_value(), 1);
 }
 
 
