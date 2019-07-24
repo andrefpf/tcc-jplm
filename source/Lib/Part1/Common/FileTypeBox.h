@@ -43,15 +43,91 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
+#include <algorithm>
+
+class FileTypeContents {
+  uint32_t BR;  //brand
+  uint32_t MinV;  //minor version
+  std::vector<uint32_t> CL;
+
+ public:
+  FileTypeContents(
+      uint32_t brand = static_cast<DefinedBoxesTypesUnderlyingType>(
+          DefinedBoxesTypes::JPEGPlenoSignatureBoxType),
+      uint32_t minor_version = 0, std::vector<uint32_t> compatibility_list = {})
+      : BR(brand), MinV(minor_version), CL(compatibility_list){};
+
+  uint64_t get_size() const noexcept {
+    constexpr auto brand_and_minor_version_size = 2 * sizeof(uint32_t);
+    return brand_and_minor_version_size + CL.size() * sizeof(uint32_t);
+  }
+
+  uint32_t get_brand() const noexcept {
+    return BR;
+  }
+
+
+  uint32_t get_minor_version() const noexcept {
+    return MinV;
+  }
+
+  const std::vector<uint32_t>& get_reference_to_compatibility_list() const {
+    return CL;
+  }
+
+  void add_compatible_standard_to_list(uint32_t standard_code) {
+  	CL.push_back(standard_code);
+  }
+
+  bool is_the_file_compatible_with(uint32_t standard_code) {
+  	auto result = std::find(CL.begin(), CL.end(), standard_code);
+  	if(result != CL.end())
+  		return true;
+  	return false;
+  }
+
+  auto get_number_of_compatible_standards() {
+  	return CL.size();
+  }
+};
+
+
+class FileTypeDBox : public DBox {
+ public:
+  FileTypeDBox(const FileTypeContents& contents)
+      : DBox(std::make_any<FileTypeContents>(contents)) {
+  }
+
+  FileTypeDBox(const FileTypeDBox& other)
+      : DBox(std::make_any<FileTypeContents>(
+            std::any_cast<FileTypeContents>(other.contents))) {
+  }
+
+  ~FileTypeDBox() = default;
+
+
+  uint64_t get_size() const noexcept override {
+    return std::any_cast<FileTypeContents>(this->contents).get_size();
+  }
+
+
+  FileTypeDBox* clone() const override {
+    return new FileTypeDBox(*this);
+  }
+};
 
 
 class FileTypeBox : public Box {
  public:
-  //t_box d_box
   FileTypeBox()
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::FileTypeBoxType)),
-            CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
+            FileTypeDBox(FileTypeContents())){};
+
+   FileTypeBox(const FileTypeContents& contents)
+      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::FileTypeBoxType)),
+            FileTypeDBox(contents)){};
   ~FileTypeBox() = default;
 };
 
