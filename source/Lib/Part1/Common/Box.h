@@ -158,7 +158,8 @@ class Box {
   }
   ~Box() = default;
 
-  std::variant<LBox, XLBox> get_lenght();
+  std::variant<LBox, XLBox> get_lenght() const noexcept;
+  std::uint64_t get_size() const noexcept;
 
   LBox get_lbox() const noexcept;
   TBox get_tbox() const noexcept;
