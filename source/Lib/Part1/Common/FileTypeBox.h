@@ -44,4 +44,15 @@
 #include "Box.h"
 #include "DefinedBoxes.h"
 
+
+class FileTypeBox : public Box {
+ public:
+  //t_box d_box
+  FileTypeBox()
+      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::FileTypeBoxType)),
+            CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
+  ~FileTypeBox() = default;
+};
+
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__ */
