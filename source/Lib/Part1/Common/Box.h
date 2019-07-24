@@ -96,6 +96,10 @@ class DBox {
   virtual uint64_t get_size() const noexcept = 0;
 
   virtual DBox* clone() const = 0;
+
+  std::any& get_ref_to_contents() {
+    return contents;
+  }
 };
 
 
