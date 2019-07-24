@@ -1,13 +1,16 @@
+cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(.)
-include_directories(cfg)
-include_directories(doc)
-include_directories(source)
-
-cmake_minimum_required(VERSION 3.10)
-
 project(jplm)
+
+set (JPLM_NAME "JPEG Pleno Model")
+
+# The version number.
+set (JPLM_VERSION_MAJOR 0)
+set (JPLM_VERSION_MINOR 1)
+set (JPLM_VERSION_PATCH 0)
+
+
 
 #configuring paths
 set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
@@ -15,8 +18,22 @@ set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
+##puts the configuration file in the binary dir
+configure_file (
+  "${CMAKE_HOME_DIRECTORY}/cmake/JPLMConfig.h.in"
+  "${PROJECT_BINARY_DIR}/JPLMConfig.h"
+  )
+
+
+include_directories("${PROJECT_BINARY_DIR}")
+
+
+include_directories(.)
+include_directories(cfg)
+include_directories(doc)
+include_directories(source)
+
 #configuring the compiler
-set(CMAKE_CXX_STANDARD 17)
 include(JPLMWarnings)
 include(JPLMCompilerOptimizations)
 
