@@ -130,6 +130,10 @@ class DBox {
   bool operator==(const DBox& other) const {
     return this->is_equal(other);
   }
+
+  bool operator!=(const DBox& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
@@ -242,6 +246,30 @@ class Box {
       }
     }
     return true;
+  }
+
+  bool holds_same_data(const Box& other) const noexcept {
+    if (*(other.d_box) != *(this->d_box)) {
+      return false;
+    }
+    return true;
+  }
+
+
+  bool is_equal(const Box& other) const noexcept {
+    if (this->holds_same_data(other) && this->has_same_type(other) &&
+        this->has_same_lenght(other))
+      return true;
+    return false;
+  }
+
+
+  bool operator==(const Box& other) const {
+    return this->is_equal(other);
+  }
+
+  bool operator!=(const Box& other) const {
+    return !this->operator==(other);
   }
 
   //LBox (required) 4-byte big-endian usigned integer: uint32_t

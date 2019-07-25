@@ -76,9 +76,15 @@ TEST(JpegPlenoSignatureBoxBasic, CorrectTBoxValue) {
 TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesHaveTheSameType) {
 	auto pleno_signature_box_a = JpegPlenoSignatureBox();
 	auto pleno_signature_box_b = JpegPlenoSignatureBox();
-	EXPECT_EQ(pleno_signature_box_a.get_tbox(), pleno_signature_box_a.get_tbox());
+	EXPECT_EQ(pleno_signature_box_a.get_tbox(), pleno_signature_box_b.get_tbox());
 }
 
+
+TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesAreEqual) {
+	auto pleno_signature_box_a = JpegPlenoSignatureBox();
+	auto pleno_signature_box_b = JpegPlenoSignatureBox();
+	EXPECT_EQ(pleno_signature_box_a, pleno_signature_box_b);
+}
 
 TEST(JpegPlenoSignatureBoxBasic, CorrectDBoxValue) {
 	auto pleno_signature_box = JpegPlenoSignatureBox();
