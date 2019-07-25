@@ -5,6 +5,7 @@
 #include "JpegPlenoCodestreamBox.h"
 #include "JpegPlenoSignatureBox.h"
 #include "JpegPlenoThumbnailBox.h"
+#include "IntellectualPropertyBox.h"
 
 
 class JPLFile {
@@ -15,7 +16,7 @@ class JPLFile {
   std::optional<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
   std::optional<std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>>
       jpeg_pleno_codestreams;
-  // std::optional<IPRBox> ipr_box;
+  std::optional<IntellectualPropertyBox> ipr_box;
   // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
   // std::optional<std::vector<UUIDBox>> uuid_boxes;
   // std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;

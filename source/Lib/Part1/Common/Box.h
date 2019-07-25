@@ -57,6 +57,13 @@ class LBox : public BoxDataHolder<uint32_t> {
   LBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
   }
   ~LBox() = default;
+  bool operator==(const LBox& other) const {
+    return this->is_equal(other);
+  }
+
+  bool operator!=(const LBox& other) const {
+    return !operator==(other);
+  }
 };
 
 class TBox : public BoxDataHolder<uint32_t> {
@@ -65,6 +72,14 @@ class TBox : public BoxDataHolder<uint32_t> {
   TBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
   }
   ~TBox() = default;
+
+  bool operator==(const TBox& other) const {
+    return this->is_equal(other);
+  }
+
+  bool operator!=(const TBox& other) const {
+    return !operator==(other);
+  }
 };
 
 
@@ -74,6 +89,14 @@ class XLBox : public BoxDataHolder<uint64_t> {
   XLBox(const uint64_t& value) : BoxDataHolder<uint64_t>(value) {
   }
   ~XLBox() = default;
+
+  bool operator==(const XLBox& other) const {
+    return this->is_equal(other);
+  }
+
+  bool operator!=(const XLBox& other) const {
+    return !operator==(other);
+  }
 };
 
 
@@ -100,6 +123,7 @@ class DBox {
   std::any& get_ref_to_contents() {
     return contents;
   }
+
 };
 
 
@@ -166,6 +190,25 @@ class Box {
   std::optional<XLBox> get_xlbox() const noexcept;
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
+
+  bool has_same_type(const Box& other) const noexcept {
+    if (other.t_box == this->t_box)
+      return true;
+    return false;
+  }
+
+
+  bool has_same_lenght(const Box& other) const noexcept {
+    if (other.l_box != this->l_box) {
+      return false;
+    }
+    if(this->l_box.get_value() == 1) {
+      if(this->xl_box != other.xl_box) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   //LBox (required) 4-byte big-endian usigned integer: uint32_t
   //TBox (required) 4-byte big-endian usigned integer: uint32_t

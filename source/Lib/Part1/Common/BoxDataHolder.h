@@ -67,6 +67,14 @@ class BoxDataHolder {
   void set_value(T value) {
     this->value = value;
   }
+
+  bool is_equal(const BoxDataHolder& other) const noexcept {
+    if(this->value == other.value) {
+      return true;
+    }
+    return false;
+  }
+
 };
 
 
