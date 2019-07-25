@@ -144,7 +144,7 @@ class FileTypeDBox : public DBox {
   }
 
   bool is_equal(const DBox& other) const override {
-    if (typeid(this) != typeid(other))
+    if (typeid(*this) != typeid(other))
       return false;
     return (std::any_cast<FileTypeContents>(this->get_ref_to_contents()) ==
             std::any_cast<FileTypeContents>(other.get_ref_to_contents()));

@@ -134,7 +134,7 @@ class JpegPlenoHeaderDBox : public DBox {
   }
 
   bool is_equal(const DBox& other) const override {
-    if (typeid(this) != typeid(other))
+    if (typeid(*this) != typeid(other))
       return false;
     return (
         std::any_cast<JpegPlenoHeaderContents>(this->get_ref_to_contents()) ==
