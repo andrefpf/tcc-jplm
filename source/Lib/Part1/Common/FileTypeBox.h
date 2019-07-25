@@ -91,6 +91,15 @@ class FileTypeContents {
   auto get_number_of_compatible_standards() {
     return CL.size();
   }
+
+  bool operator==(const FileTypeContents& other) const {
+    return (std::tie(this->BR, this->MinV) == std::tie(other.BR, other.MinV)) &&
+           (this->CL == other.CL);
+  }
+
+  bool operator!=(const FileTypeContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
@@ -132,6 +141,13 @@ class FileTypeDBox : public DBox {
 
   FileTypeDBox* clone() const override {
     return new FileTypeDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(this) != typeid(other))
+      return false;
+    return (std::any_cast<FileTypeContents>(this->get_ref_to_contents()) ==
+            std::any_cast<FileTypeContents>(other.get_ref_to_contents()));
   }
 };
 

@@ -43,6 +43,27 @@
 #include "gtest/gtest.h"
 
 
+TEST(BoxBasicTest, BoxInitializationDoesNotThrow) {
+	EXPECT_NO_THROW(Box(TBox(0x00000000), EmptyDBox()));
+}
+
+TEST(BoxBasicTest, BoxInitializationDefaultDoesNotThrow) {
+	EXPECT_NO_THROW(Box(TBox(0x00000000)));
+}
+
+
+TEST(BoxBasicTest, ExpectedValueInBoxType) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_EQ(box.get_tbox(), TBox(0x00000000));
+}
+
+
+TEST(BoxBasicTest, ExpectedValueInBoxData) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_EQ(*box.get_dbox(), EmptyDBox());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

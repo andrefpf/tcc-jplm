@@ -80,6 +80,14 @@ class ChannelDefinitionContents {
     //3 is from the 3 fields in ChannelDescription
     return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
   }
+
+  bool operator==(const ChannelDefinitionContents& other) const {
+    return this->channel_descriptions == other.channel_descriptions;
+  }
+
+  bool operator!=(const ChannelDefinitionContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
@@ -106,6 +114,13 @@ class ChannelDefinitionDBox : public DBox {
 
   ChannelDefinitionDBox* clone() const override {
     return new ChannelDefinitionDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return (std::any_cast<ChannelDefinitionContents>(this->get_ref_to_contents()) ==
+            std::any_cast<ChannelDefinitionContents>(other.get_ref_to_contents()));
   }
 };
 

@@ -73,6 +73,13 @@ TEST(JpegPlenoSignatureBoxBasic, CorrectTBoxValue) {
 }
 
 
+TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesHaveTheSameType) {
+	auto pleno_signature_box_a = JpegPlenoSignatureBox();
+	auto pleno_signature_box_b = JpegPlenoSignatureBox();
+	EXPECT_EQ(pleno_signature_box_a.get_tbox(), pleno_signature_box_a.get_tbox());
+}
+
+
 TEST(JpegPlenoSignatureBoxBasic, CorrectDBoxValue) {
 	auto pleno_signature_box = JpegPlenoSignatureBox();
 	auto dbox = pleno_signature_box.get_dbox();

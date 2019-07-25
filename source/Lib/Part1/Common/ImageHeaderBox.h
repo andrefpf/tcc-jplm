@@ -46,35 +46,48 @@
 
 
 enum class CoderTypeC : uint8_t {
-	JPEG_2000=0,
-	JPEG=1,
-	JPEG_LS=2,
-	JPEG_XT=3,
-	JPEG_XR=4,
-	JPEG_XS=5
+  JPEG_2000 = 0,
+  JPEG = 1,
+  JPEG_LS = 2,
+  JPEG_XT = 3,
+  JPEG_XR = 4,
+  JPEG_XS = 5
 };
 
 
 typedef std::underlying_type<CoderTypeC>::type CoderTypeCUnderlyingType;
 
 
-class ImageHeaderContents
-{
-protected:
-	uint32_t height;
-	uint32_t width;
-	uint16_t nc;
-	uint8_t bpc;
-	CoderTypeC c;
-	uint8_t UnkC;
-	uint8_t IPR;
-public:
-	ImageHeaderContents();
-	~ImageHeaderContents();
+class ImageHeaderContents {
+ protected:
+  uint32_t height;
+  uint32_t width;
+  uint16_t nc;
+  uint8_t bpc;
+  CoderTypeC c;
+  uint8_t UnkC;
+  uint8_t IPR;
 
-	uint64_t get_size() const noexcept {
-		return 2*sizeof(uint32_t)+sizeof(uint16_t)+3*sizeof(uint8_t)+sizeof(CoderTypeCUnderlyingType);
-	}
+ public:
+  ImageHeaderContents();
+  ~ImageHeaderContents();
+
+  uint64_t get_size() const noexcept {
+    return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +
+           sizeof(CoderTypeCUnderlyingType);
+  }
+
+
+  bool operator==(const ImageHeaderContents& other) const {
+    return std::tie(this->height, this->width, this->nc, this->bpc, this->c,
+               this->UnkC, this->IPR) == std::tie(other.height, other.width,
+                                             other.nc, other.bpc, other.c,
+                                             other.UnkC, other.IPR);
+  }
+
+  bool operator!=(const ImageHeaderContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
@@ -101,6 +114,13 @@ class ImageHeaderDBox : public DBox {
 
   ImageHeaderDBox* clone() const override {
     return new ImageHeaderDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(this) != typeid(other))
+      return false;
+    return (std::any_cast<ImageHeaderContents>(this->get_ref_to_contents()) ==
+            std::any_cast<ImageHeaderContents>(other.get_ref_to_contents()));
   }
 };
 

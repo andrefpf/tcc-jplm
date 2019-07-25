@@ -51,6 +51,15 @@ public:
 	uint64_t get_size() const noexcept {
 		return 0;
 	}
+
+  bool operator==(const ContiguousCodestreamContents& ) const {
+    //! \todo Implement this class :)
+    return true; 
+  }
+
+  bool operator!=(const ContiguousCodestreamContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
@@ -77,6 +86,13 @@ class ContiguousCodestreamDBox : public DBox {
 
   ContiguousCodestreamDBox* clone() const override {
     return new ContiguousCodestreamDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return (std::any_cast<ContiguousCodestreamContents>(this->get_ref_to_contents()) ==
+            std::any_cast<ContiguousCodestreamContents>(other.get_ref_to_contents()));
   }
 };
 

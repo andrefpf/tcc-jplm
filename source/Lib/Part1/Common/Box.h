@@ -44,12 +44,12 @@
 
 #include <any>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <optional>
 #include <variant>
 #include <vector>
 #include "BoxDataHolder.h"
-
 
 class LBox : public BoxDataHolder<uint32_t> {
  public:
@@ -121,10 +121,15 @@ class DBox {
 
   virtual DBox* clone() const = 0;
 
-  std::any& get_ref_to_contents() {
+  const std::any& get_ref_to_contents() const {
     return contents;
   }
 
+  virtual bool is_equal(const DBox& other) const = 0;
+
+  bool operator==(const DBox& other) const {
+    return this->is_equal(other);
+  }
 };
 
 
@@ -146,20 +151,34 @@ class CharArrayDBox : public DBox {
     return std::any_cast<std::vector<uint8_t>>(this->contents).size();
   }
 
+  bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return (std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents()) ==
+            std::any_cast<std::vector<uint8_t>>(other.get_ref_to_contents()));
+  }
+
   CharArrayDBox* clone() const override {
     return new CharArrayDBox(*this);
   }
 };
 
 
-class EmptyDBox: public DBox {
-public:
+class EmptyDBox : public DBox {
+ public:
   EmptyDBox() = default;
   EmptyDBox(const EmptyDBox& other) = default;
   ~EmptyDBox() = default;
   uint64_t get_size() const noexcept override {
     return 0;
   }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return true;
+  }
+
   EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
   }
@@ -176,7 +195,7 @@ class Box {
   Box() = delete;
 
  public:
-  Box(TBox t_box, const DBox& d_box)
+  Box(TBox t_box, const DBox& d_box = EmptyDBox())
       : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
     constexpr uint64_t LBox_size = 4;  //bytes = 32 bits
     constexpr uint64_t TBox_size = 4;  //bytes = 32 bits
@@ -217,8 +236,8 @@ class Box {
     if (other.l_box != this->l_box) {
       return false;
     }
-    if(this->l_box.get_value() == 1) {
-      if(this->xl_box != other.xl_box) {
+    if (this->l_box.get_value() == 1) {
+      if (this->xl_box != other.xl_box) {
         return false;
       }
     }

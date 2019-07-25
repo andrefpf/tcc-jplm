@@ -69,22 +69,31 @@ class JpegPlenoHeaderContents {
     return phob.size();
   }
 
+  bool operator==(const JpegPlenoHeaderContents& other) const {
+    return std::tie(this->plfb, this->ppcb, this->phob) ==
+           std::tie(other.plfb, other.ppcb, other.phob);
+  }
 
-  void add_pointer_to_light_field_box(uint64_t ptr) { 
+  bool operator!=(const JpegPlenoHeaderContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  void add_pointer_to_light_field_box(uint64_t ptr) {
     //the ptr is w.r.t the byte starting after the
     //JpegPlenoHeaderDBox
     plfb.push_back(ptr);
   }
 
 
-  void add_pointer_to_point_cloud_box(uint64_t ptr) { 
+  void add_pointer_to_point_cloud_box(uint64_t ptr) {
     //the ptr is w.r.t the byte starting after the
     //JpegPlenoHeaderDBox
     ppcb.push_back(ptr);
   }
 
 
-  void add_pointer_to_hologram_box(uint64_t ptr) { 
+  void add_pointer_to_hologram_box(uint64_t ptr) {
     //the ptr is w.r.t the byte starting after the
     //JpegPlenoHeaderDBox
     phob.push_back(ptr);
@@ -122,6 +131,14 @@ class JpegPlenoHeaderDBox : public DBox {
 
   JpegPlenoHeaderDBox* clone() const override {
     return new JpegPlenoHeaderDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(this) != typeid(other))
+      return false;
+    return (
+        std::any_cast<JpegPlenoHeaderContents>(this->get_ref_to_contents()) ==
+        std::any_cast<JpegPlenoHeaderContents>(other.get_ref_to_contents()));
   }
 };
 
