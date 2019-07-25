@@ -58,6 +58,7 @@ enum class DefinedBoxesTypes : uint32_t {
   ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
   ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
   ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
+  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
 };
 
 typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
