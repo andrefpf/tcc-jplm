@@ -66,6 +66,7 @@ class LBox : public BoxDataHolder<uint32_t> {
   }
 };
 
+
 class TBox : public BoxDataHolder<uint32_t> {
  public:
   TBox() = default;
@@ -147,6 +148,20 @@ class CharArrayDBox : public DBox {
 
   CharArrayDBox* clone() const override {
     return new CharArrayDBox(*this);
+  }
+};
+
+
+class EmptyDBox: public DBox {
+public:
+  EmptyDBox() = default;
+  EmptyDBox(const EmptyDBox& other) = default;
+  ~EmptyDBox() = default;
+  uint64_t get_size() const noexcept override {
+    return 0;
+  }
+  EmptyDBox* clone() const override {
+    return new EmptyDBox(*this);
   }
 };
 
