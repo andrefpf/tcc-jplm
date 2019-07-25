@@ -42,47 +42,10 @@
 #define JPLM_LIB_PART1_COMMON_UUIDBOX_H__
 
 #include "Box.h"
+#include "DefinedBoxes.h"
+#include "UniversalUniqueIdentifier.h"
 
 //UUID
-
-struct my_uint48_t {
-  uint16_t hi;
-  uint64_t lo;
-};
-
-
-class UniversalUniqueIdentifier {
- protected:
-  my_uint48_t node;
-  uint8_t clock_seq_low;
-  uint8_t clock_seq_hi_and_reserved;
-  uint16_t time_hi_and_version;
-  uint16_t time_mid;
-  uint32_t time_low;
-
- public:
-  UniversalUniqueIdentifier();
-  ~UniversalUniqueIdentifier();
-
-  bool operator==(const UniversalUniqueIdentifier& other) const {
-    return std::tie(this->node, this->clock_seq_low,
-               this->clock_seq_hi_and_reserved, this->time_hi_and_version,
-               this->time_mid, this->time_low) ==
-           std::tie(other.node, other.clock_seq_low,
-               other.clock_seq_hi_and_reserved, other.time_hi_and_version,
-               other.time_mid, other.time_low);
-  }
-
-
-  bool operator!=(const UniversalUniqueIdentifier& other) const {
-    return !this->operator==(other);
-  }
-
-  uint64_t get_size() const noexcept {
-    return 16;
-    //16 = 128 bits
-  }
-};
 
 
 class UUIDBoxContents {
@@ -110,20 +73,20 @@ class UUIDBoxContents {
 };
 
 
-class UUIDBox : public DBox {
+class UUIDDBox : public DBox {
  public:
-  UUIDBox(const UUIDBoxContents& contents)
+  UUIDDBox(const UUIDBoxContents& contents)
       : DBox(std::make_any<UUIDBoxContents>(contents)) {
   }
 
 
-  UUIDBox(const UUIDBox& other)
+  UUIDDBox(const UUIDDBox& other)
       : DBox(std::make_any<UUIDBoxContents>(
             std::any_cast<UUIDBoxContents>(other.contents))) {
   }
 
 
-  ~UUIDBox() = default;
+  ~UUIDDBox() = default;
 
 
   uint64_t get_size() const noexcept override {
@@ -131,8 +94,8 @@ class UUIDBox : public DBox {
   }
 
 
-  UUIDBox* clone() const override {
-    return new UUIDBox(*this);
+  UUIDDBox* clone() const override {
+    return new UUIDDBox(*this);
   }
 
   bool is_equal(const DBox& other) const override {
@@ -141,6 +104,16 @@ class UUIDBox : public DBox {
     return (std::any_cast<UUIDBoxContents>(this->get_ref_to_contents()) ==
             std::any_cast<UUIDBoxContents>(other.get_ref_to_contents()));
   }
+};
+
+
+class UUIDBox : public Box {
+ public:
+  UUIDBox(const UUIDBoxContents& contents)
+      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::UUIDBoxType)),
+            UUIDDBox(contents)){};
+  ~UUIDBox() = default;
 };
 
 

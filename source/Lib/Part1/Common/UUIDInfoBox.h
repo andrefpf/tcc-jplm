@@ -31,43 +31,87 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
+/** \file     UUIDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
+#define JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
 
 #include "Box.h"
-#include <type_traits>
+#include "DefinedBoxes.h"
+#include "UniversalUniqueIdentifier.h"
 
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
+//! \todo implement
+class UUIDInfoBoxContents {
+ protected:
+  UniversalUniqueIdentifier id;
+  std::vector<uint8_t> data;
+
+ public:
+  UUIDInfoBoxContents();
+  ~UUIDInfoBoxContents();
+
+  uint64_t get_size() const noexcept {
+    return id.get_size() + data.size() * sizeof(uint8_t);
+  }
+
+
+  bool operator==(const UUIDInfoBoxContents& other) const {
+    return (this->id == other.id) && (this->data == other.data);
+  }
+
+
+  bool operator!=(const UUIDInfoBoxContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
+class UUIDInfoDBox : public DBox {
+ public:
+  UUIDInfoDBox(const UUIDInfoBoxContents& contents)
+      : DBox(std::make_any<UUIDInfoBoxContents>(contents)) {
+  }
 
 
+  UUIDInfoDBox(const UUIDInfoDBox& other)
+      : DBox(std::make_any<UUIDInfoBoxContents>(
+            std::any_cast<UUIDInfoBoxContents>(other.contents))) {
+  }
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+
+  ~UUIDInfoDBox() = default;
+
+
+  uint64_t get_size() const noexcept override {
+    return std::any_cast<UUIDInfoBoxContents>(this->contents).get_size();
+  }
+
+
+  UUIDInfoDBox* clone() const override {
+    return new UUIDInfoDBox(*this);
+  }
+
+  bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return (std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents()) ==
+            std::any_cast<UUIDInfoBoxContents>(other.get_ref_to_contents()));
+  }
+};
+
+
+class UUIDInfoBox : public Box {
+ public:
+  UUIDInfoBox(const UUIDInfoBoxContents& contents)
+      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::UUIDInfoBoxType)),
+            UUIDInfoDBox(contents)){};
+  ~UUIDInfoBox() = default;
+};
+
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__ */
