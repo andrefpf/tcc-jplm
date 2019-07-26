@@ -69,8 +69,8 @@ class ImageHeaderContents {
   uint8_t IPR;
 
  public:
-  ImageHeaderContents();
-  ~ImageHeaderContents();
+  ImageHeaderContents() = default;
+  ~ImageHeaderContents() = default;
 
   uint64_t size() const noexcept {
     return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +

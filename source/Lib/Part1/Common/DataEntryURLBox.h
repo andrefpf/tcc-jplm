@@ -67,8 +67,8 @@ class DataEntryURLBoxContents {
   std::string loc;  //location (the url)
 
  public:
-  DataEntryURLBoxContents();
-  ~DataEntryURLBoxContents();
+  DataEntryURLBoxContents() = default;
+  ~DataEntryURLBoxContents() = default;
 
   uint64_t size() const noexcept {
     return 4 + loc.size() + 1;

@@ -49,8 +49,8 @@ class UndefinedDBoxContents {
   std::vector<uint8_t> byte_array;
 
  public:
-  UndefinedDBoxContents();
-  ~UndefinedDBoxContents();
+  UndefinedDBoxContents() = default;
+  ~UndefinedDBoxContents() = default;
 
   uint64_t size() const noexcept {
     return byte_array.size() * sizeof(uint8_t);

@@ -72,8 +72,8 @@ class ChannelDefinitionContents {
   std::vector<ChannelDescription> channel_descriptions;
 
  public:
-  ChannelDefinitionContents();
-  ~ChannelDefinitionContents();
+  ChannelDefinitionContents() = default;
+  ~ChannelDefinitionContents() = default;
 
   uint64_t size() const noexcept {
     //2 is from N (number of channel descriptions)

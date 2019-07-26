@@ -53,8 +53,8 @@ class UUIDInfoBoxContents {
   DataEntryURLBox de;
 
  public:
-  UUIDInfoBoxContents();
-  ~UUIDInfoBoxContents();
+  UUIDInfoBoxContents() = default;
+  ~UUIDInfoBoxContents() = default;
 
   uint64_t size() const noexcept {
     return u_list.size() + de.size();
@@ -97,12 +97,15 @@ class UUIDInfoDBox : public DBox {
     return new UUIDInfoDBox(*this);
   }
 
+
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     return (std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents()) ==
             std::any_cast<UUIDInfoBoxContents>(other.get_ref_to_contents()));
   }
+
+
 };
 
 
@@ -112,6 +115,8 @@ class UUIDInfoBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::UUIDInfoBoxType)),
             UUIDInfoDBox(contents)){};
+
+
   ~UUIDInfoBox() = default;
 };
 

@@ -56,8 +56,7 @@ class FileTypeContents {
       : BR(brand), MinV(minor_version), CL(compatibility_list){};
 
 
-  virtual ~FileTypeContents() {
-  }
+  virtual ~FileTypeContents() = default;
 
   uint64_t size() const noexcept {
     constexpr auto brand_and_minor_version_size = 2 * sizeof(uint32_t);
