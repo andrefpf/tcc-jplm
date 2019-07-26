@@ -116,8 +116,7 @@ class UUIDDBox : public DBox {
   }
 
   void add_data(const std::vector<uint8_t>& data) {
-    auto& ref = std::any_cast<UUIDBoxContents&>(this->contents);
-    ref.add_data(data);
+    std::any_cast<UUIDBoxContents&>(this->contents).add_data(data);
   }
 };
 

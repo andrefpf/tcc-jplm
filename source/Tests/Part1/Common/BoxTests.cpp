@@ -64,6 +64,30 @@ TEST(BoxBasicTest, ExpectedValueInBoxData) {
 }
 
 
+TEST(BoxBasicTest, ExpectedBoxSize8) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_EQ(box.size(), 8);
+}
+
+
+TEST(BoxBasicTest, ExpectedNoXLFieldForSmallBox) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_FALSE(box.get_xlbox());
+}
+
+
+TEST(BoxBasicTest, ExpectedBoxLBoxDifferentFrom1) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_NE(box.get_lbox(), LBox(1));
+}
+
+
+TEST(BoxBasicTest, ExpectedBoxLenghtEqualSize) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_EQ(box.get_lbox().get_value(), box.size());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

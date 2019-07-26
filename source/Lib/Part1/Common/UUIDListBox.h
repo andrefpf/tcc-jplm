@@ -69,6 +69,7 @@ class UUIDListBoxContents {
     return !this->operator==(other);
   }
 
+
   uint16_t get_nu() const noexcept {
   	return id.size();
   }
@@ -100,6 +101,7 @@ class UUIDListDBox : public DBox {
   UUIDListDBox* clone() const override {
     return new UUIDListDBox(*this);
   }
+
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
