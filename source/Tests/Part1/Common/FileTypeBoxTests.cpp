@@ -40,56 +40,60 @@
 
 
 #include <iostream>
+#include "Lib/Part1/Common/JpegPlenoFileTypeContents.h"
 #include "Lib/Part1/Common/FileTypeBox.h"
 #include "gtest/gtest.h"
 
 
-TEST(JpegPlenoFileTypeContentsBasics, InitializationDoesNotThrow) {
-  EXPECT_NO_THROW(
-      auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents());
-}
-
-
-TEST(JpegPlenoFileTypeContentsBasics, GetsCorrectBrand) {
-  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
-  EXPECT_EQ(jpeg_pleno_file_type_contents.get_brand(), 0x6a706c20);
-}
-
-
-TEST(JpegPlenoFileTypeContentsBasics,
-    DefaultConstructorGeneratesAsMinorVersion0) {
-  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
-  EXPECT_EQ(jpeg_pleno_file_type_contents.get_minor_version(), 0);
-}
-
-
-TEST(JpegPlenoFileTypeContentsBasics,
-    DefaultConstructorGeneratesACompatibilityListWithOneItem) {
-  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
-  EXPECT_EQ(jpeg_pleno_file_type_contents.get_reference_to_compatibility_list()
-                .size(),
-      1);
-}
-
-
-TEST(JpegPlenoFileTypeContentsBasics,
-    DefaultConstructorGeneratesACompatibilityListWithOneCompatibleStandard) {
-  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
-  EXPECT_EQ(
-      jpeg_pleno_file_type_contents.get_number_of_compatible_standards(), 1);
-}
-
-
-TEST(JpegPlenoFileTypeContentsBasics, CompatibleWithItsOwnBrand) {
-  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
-  EXPECT_TRUE(jpeg_pleno_file_type_contents.is_the_file_compatible_with(
-      jpeg_pleno_file_type_contents.get_brand()));
-}
-
-
 TEST(FileTypeBoxBasic, InitializationDoesNotThrow) {
   EXPECT_NO_THROW(
-      auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents()));
+      auto file_type_box = FileTypeBox(FileTypeContents(0,0,{})));
+}
+
+
+struct FileTypeBoxContents : public testing::Test {
+ protected:
+  uint32_t brand = 0x0042;
+  uint32_t minor_version=25;
+  std::unique_ptr<FileTypeBox> file_type_box;
+  FileTypeBoxContents() {
+    // view.get_im
+    file_type_box = std::make_unique<FileTypeBox>(FileTypeContents(brand, minor_version, {0x0004}));
+  }
+
+  const FileTypeContents& get_content_of_file() {
+    return std::any_cast<const FileTypeContents&>(file_type_box->get_ref_to_dbox_contents());
+  }
+};
+
+
+TEST_F(FileTypeBoxContents, HoldsInitializedBrand) {
+  EXPECT_EQ(get_content_of_file().get_brand(), brand);
+}
+
+
+TEST_F(FileTypeBoxContents, HoldsInitializedMinorVersion) {
+  EXPECT_EQ(get_content_of_file().get_minor_version(), minor_version);
+}
+
+
+TEST_F(FileTypeBoxContents, HasCorrectSizeAfterCast) {
+  EXPECT_EQ(get_content_of_file().size(), 4+4+4);
+}
+
+
+TEST_F(FileTypeBoxContents, CompatibilityCheckFailsForStdNotDedinedInCompatibilityList) {
+  EXPECT_FALSE(get_content_of_file().is_the_file_compatible_with(0x0002));
+}
+
+
+TEST_F(FileTypeBoxContents, CompatibilityCheckSucceedsForStdDedinedInCompatibilityList) {
+  EXPECT_TRUE(get_content_of_file().is_the_file_compatible_with(0x0004));
+}
+
+
+TEST_F(FileTypeBoxContents, FileTypeBoxHasCorrectSize) {
+  EXPECT_EQ(file_type_box->size(), get_content_of_file().size()+4+4);
 }
 
 

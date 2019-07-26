@@ -81,23 +81,23 @@ class FileTypeContents {
     CL.push_back(standard_code);
   }
 
-  bool is_the_file_compatible_with(uint32_t standard_code) {
+  bool is_the_file_compatible_with(uint32_t standard_code) const noexcept {
     auto result = std::find(CL.begin(), CL.end(), standard_code);
     if (result != CL.end())
       return true;
     return false;
   }
 
-  auto get_number_of_compatible_standards() {
+  auto get_number_of_compatible_standards() const noexcept {
     return CL.size();
   }
 
-  bool operator==(const FileTypeContents& other) const {
+  bool operator==(const FileTypeContents& other) const noexcept {
     return (std::tie(this->BR, this->MinV) == std::tie(other.BR, other.MinV)) &&
            (this->CL == other.CL);
   }
 
-  bool operator!=(const FileTypeContents& other) const {
+  bool operator!=(const FileTypeContents& other) const noexcept {
     return !this->operator==(other);
   }
 };

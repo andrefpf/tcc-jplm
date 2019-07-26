@@ -31,57 +31,64 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Box.cpp
+/** \file     JpegPlenoFileTypeContentsTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-23
+ *  \date     2019-07-26
  */
 
-#include "Box.h"
 
-LBox Box::get_lbox() const noexcept {
-  return this->l_box;
+#include <iostream>
+#include "Lib/Part1/Common/JpegPlenoFileTypeContents.h"
+#include "Lib/Part1/Common/FileTypeBox.h"
+#include "gtest/gtest.h"
+
+
+TEST(JpegPlenoFileTypeContentsBasics, InitializationDoesNotThrow) {
+  EXPECT_NO_THROW(
+      auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents());
 }
 
 
-TBox Box::get_tbox() const noexcept {
-  return this->t_box;
+TEST(JpegPlenoFileTypeContentsBasics, GetsCorrectBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_brand(), 0x6a706c20);
 }
 
 
-std::optional<XLBox> Box::get_xlbox() const noexcept {
-  return this->xl_box;
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesAsMinorVersion0) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_minor_version(), 0);
 }
 
 
-std::unique_ptr<DBox> Box::get_dbox() const noexcept {
-  return std::unique_ptr<DBox>(this->d_box->clone());
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesACompatibilityListWithOneItem) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(jpeg_pleno_file_type_contents.get_reference_to_compatibility_list()
+                .size(),
+      1);
 }
 
 
-
-const DBox& Box::get_ref_to_dbox() const noexcept {
-  return *(this->d_box);
+TEST(JpegPlenoFileTypeContentsBasics,
+    DefaultConstructorGeneratesACompatibilityListWithOneCompatibleStandard) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_EQ(
+      jpeg_pleno_file_type_contents.get_number_of_compatible_standards(), 1);
 }
 
 
-const std::any& Box::get_ref_to_dbox_contents() const noexcept {
-  return this->d_box->get_ref_to_contents();
+TEST(JpegPlenoFileTypeContentsBasics, CompatibleWithItsOwnBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  EXPECT_TRUE(jpeg_pleno_file_type_contents.is_the_file_compatible_with(
+      jpeg_pleno_file_type_contents.get_brand()));
 }
 
 
-std::uint64_t Box::size() const noexcept {
-  return (this->xl_box) ? this->xl_box->get_value() : this->l_box.get_value();
-}
-
-
-std::ostream& operator<<(std::ostream& stream, const Box& box) {
-  stream << box.get_lbox() << box.get_tbox();
-  auto xlbox = box.get_xlbox();
-  if (xlbox) {
-    stream << xlbox.value();
-  }
-  // stream << box.get_dbox();
-  return stream;
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

@@ -228,6 +228,10 @@ class Box {
   std::optional<XLBox> get_xlbox() const noexcept;
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
+  const DBox& get_ref_to_dbox() const noexcept;
+
+  const std::any& get_ref_to_dbox_contents() const noexcept;
+
 
   bool has_same_type(const Box& other) const noexcept {
     if (other.t_box == this->t_box)
