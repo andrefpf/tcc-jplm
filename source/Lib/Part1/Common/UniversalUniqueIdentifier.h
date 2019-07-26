@@ -41,6 +41,8 @@
 #ifndef JPLM_LIB_PART1_COMMON_UNIVERSALUNIQUEIDENTIFIER_H__
 #define JPLM_LIB_PART1_COMMON_UNIVERSALUNIQUEIDENTIFIER_H__
 
+#include <iomanip>  //std::setfill, std::setw
+#include <iostream>
 #include <sstream>
 #include <tuple>
 
@@ -49,10 +51,10 @@ struct my_uint48_t {
   uint64_t lo;
 
   bool operator==(const my_uint48_t& other) const {
-    return (this->hi == other.hi) &&  (this->lo == other.lo);
+    return (this->hi == other.hi) && (this->lo == other.lo);
   }
 
-   bool operator!=(const my_uint48_t& other) const {
+  bool operator!=(const my_uint48_t& other) const {
     return !this->operator==(other);
   }
 };
@@ -68,8 +70,31 @@ class UniversalUniqueIdentifier {
   uint32_t time_low;
 
  public:
-  UniversalUniqueIdentifier();
-  ~UniversalUniqueIdentifier();
+  UniversalUniqueIdentifier()
+      : node({0, 0}), clock_seq_low(0), clock_seq_hi_and_reserved(0),
+        time_hi_and_version(0), time_mid(0), time_low(0) {
+  }
+
+  UniversalUniqueIdentifier(my_uint48_t node, uint8_t clock_seq_low,
+      uint8_t clock_seq_hi_and_reserved, uint16_t time_hi_and_version,
+      uint16_t time_mid, uint32_t time_low)
+      : node(node), clock_seq_low(clock_seq_low),
+        clock_seq_hi_and_reserved(clock_seq_hi_and_reserved),
+        time_hi_and_version(time_hi_and_version), time_mid(time_mid),
+        time_low(time_low) {
+  }
+
+
+  UniversalUniqueIdentifier(const std::string& hex_string) {
+    //! \todo implement
+    //static_assert(false, "Not implemented");
+    std::cerr << "Contructor not implemented yet << " << hex_string
+              << std::endl;
+  }
+
+
+  ~UniversalUniqueIdentifier() = default;
+
 
   bool operator==(const UniversalUniqueIdentifier& other) const {
     return std::tie(this->node, this->clock_seq_low,
@@ -85,17 +110,20 @@ class UniversalUniqueIdentifier {
     return !this->operator==(other);
   }
 
+
   uint64_t size() const noexcept {
     return 16;
     //16 = 128 bits
   }
 
+
   std::string to_hex_string() {
     std::stringstream string_stream;
-    string_stream << std::hex << (int) time_low << "-" << (int) time_mid << "-"
-                  << (int) time_hi_and_version << "-"
-                  << (int) clock_seq_hi_and_reserved << (int) clock_seq_low
-                  << "-" << (int) node.hi << (int) node.lo;
+    string_stream << std::hex << std::setfill('0') << std::setw(8)
+                  << (int) time_low << "-" << std::setw(4) << (int) time_mid << "-"
+                  << std::setw(4) << (int) time_hi_and_version << "-"
+                  << std::setw(2) << (int) clock_seq_hi_and_reserved << std::setw(2) << (int) clock_seq_low
+                  << "-" << std::setw(2) << (int) node.hi << std::setw(10) << (int) node.lo;
     return string_stream.str();
   }
 };
