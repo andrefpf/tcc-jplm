@@ -40,8 +40,33 @@
 
 #include "Box.h"
 
+std::variant<LBox, XLBox> Box::get_lenght() const noexcept {
+  constexpr uint64_t LBox_size = 4;  //bytes = 32 bits
+  constexpr uint64_t TBox_size = 4;  //bytes = 32 bits
+  //this means that the LBox will contain at least 8 bytes and thus
+  //never use the reserved for ISO use values;
+
+  auto total_box_size = LBox_size + TBox_size + d_box->size();
+  //assuming that size fits in LBox (i.e., 32 bits)
+
+  if (total_box_size > std::numeric_limits<uint32_t>::max()) {
+    // l_box.set_value(1); //kept for illustration...
+    // if XLBox is present, l_box must be 1;
+    constexpr uint64_t XLBox_size = 8;  //bytes = 64 bits
+    total_box_size += XLBox_size;  //needs more XLBox_size bytes
+    return XLBox(total_box_size);
+  }
+  return LBox(total_box_size);
+}
+
+
 LBox Box::get_lbox() const noexcept {
-  return this->l_box;
+  auto lenght = this->get_lenght();
+  if (lenght.index() == 0) {  //the lbox;
+    return std::get<0>(lenght);
+  }
+  //else, the type is XLBox, thus needs to set lbox to 1
+  return LBox(1);
 }
 
 
@@ -51,14 +76,16 @@ TBox Box::get_tbox() const noexcept {
 
 
 std::optional<XLBox> Box::get_xlbox() const noexcept {
-  return this->xl_box;
+  auto lenght = this->get_lenght();
+  if (lenght.index() == 0) {  //the lbox
+    return {};  //empty XLBox
+  }
+  return std::get<1>(lenght);
 }
-
 
 std::unique_ptr<DBox> Box::get_dbox() const noexcept {
   return std::unique_ptr<DBox>(this->d_box->clone());
 }
-
 
 
 DBox& Box::get_ref_to_dbox() const noexcept {
@@ -72,7 +99,10 @@ const std::any& Box::get_ref_to_dbox_contents() const noexcept {
 
 
 std::uint64_t Box::size() const noexcept {
-  return (this->xl_box) ? this->xl_box->get_value() : this->l_box.get_value();
+  auto lenght = this->get_lenght();
+  return std::visit(
+      [](auto& value_holder) { return (uint64_t)value_holder.get_value(); },
+      lenght);
 }
 
 

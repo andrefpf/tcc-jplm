@@ -209,9 +209,9 @@ class EmptyDBox : public DBox {
 
 class Box {
  protected:
-  LBox l_box;
+  // LBox l_box; //kept here just for illustration
   TBox t_box;
-  std::optional<XLBox> xl_box;
+  // std::optional<XLBox> xl_box; //kept here just for illustration
   std::unique_ptr<DBox> d_box;
 
   Box() = delete;
@@ -219,22 +219,6 @@ class Box {
  public:
   Box(TBox t_box, const DBox& d_box = EmptyDBox())
       : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
-    constexpr uint64_t LBox_size = 4;  //bytes = 32 bits
-    constexpr uint64_t TBox_size = 4;  //bytes = 32 bits
-    //this means that the LBox will contain at least 8 bytes and thus
-    //never use the reserved for ISO use values;
-
-    auto total_box_size = LBox_size + TBox_size + d_box.size();
-    //assuming that size fits in LBox (i.e., 32 bits)
-
-    if (total_box_size > std::numeric_limits<uint32_t>::max()) {
-      l_box.set_value(1);
-      constexpr uint64_t XLBox_size = 8;  //bytes = 64 bits
-      total_box_size += XLBox_size;  //needs more XLBox_size bytes
-      xl_box = XLBox(total_box_size);
-    } else {
-      l_box.set_value(total_box_size);
-    }
   }
   ~Box() = default;
 
@@ -258,13 +242,8 @@ class Box {
 
 
   bool has_same_lenght(const Box& other) const noexcept {
-    if (other.l_box != this->l_box) {
+    if (other.size() != this->size()) {
       return false;
-    }
-    if (this->l_box.get_value() == 1) {
-      if (this->xl_box != other.xl_box) {
-        return false;
-      }
     }
     return true;
   }

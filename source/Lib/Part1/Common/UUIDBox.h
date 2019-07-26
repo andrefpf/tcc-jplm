@@ -61,7 +61,6 @@ class UUIDBoxContents {
 
 
   uint64_t size() const noexcept {
-    std::cout << "elements in data: " << data.size() << std::endl;
     return id.size() + data.size() * sizeof(uint8_t);
   }
 
@@ -79,7 +78,6 @@ class UUIDBoxContents {
   void add_data(const std::vector<uint8_t>& data_to_add) {
     data.reserve(data_to_add.size());
     data.insert(data.end(), data_to_add.begin(), data_to_add.end());
-    std::cout << "the elem: " << data.size() << std::endl;
   }
 };
 
@@ -101,7 +99,6 @@ class UUIDDBox : public DBox {
 
 
   uint64_t size() const noexcept override {
-    std::cout << "getting size" << std::endl;
     return std::any_cast<UUIDBoxContents>(this->contents).size();
   }
 
