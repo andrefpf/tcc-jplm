@@ -36,7 +36,7 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-07-26
  */
 
 #ifndef JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__
@@ -50,6 +50,14 @@
 struct my_uint24_t {
   uint8_t hi;
   uint16_t lo;
+
+  bool operator==(const my_uint24_t& other) const {
+    return (this->hi == other.hi) &&  (this->lo == other.lo);
+  }
+
+   bool operator!=(const my_uint24_t& other) const {
+    return !this->operator==(other);
+  }
 };
 
 class DataEntryURLBoxContents {

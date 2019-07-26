@@ -31,11 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBox.h
+/** \file     UUIDInfoBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-07-26
  */
 
 #ifndef JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
