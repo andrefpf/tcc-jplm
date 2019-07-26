@@ -1,3 +1,4 @@
+
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -31,88 +32,109 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBox.h
+/** \file     DataEntryURLBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
-#define JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__
+#define JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__
 
 #include "Box.h"
 #include "DefinedBoxes.h"
 #include "UniversalUniqueIdentifier.h"
-#include "UUIDListBox.h"
-#include "DataEntryURLBox.h"
 
-class UUIDInfoBoxContents {
+
+struct my_uint24_t {
+  uint8_t hi;
+  uint16_t lo;
+};
+
+class DataEntryURLBoxContents {
  protected:
-  UUIDListBox u_list;
-  DataEntryURLBox de;
+  uint8_t vers;  //version number
+  my_uint24_t flag;  //flags
+  std::string loc;  //location (the url)
 
  public:
-  UUIDInfoBoxContents();
-  ~UUIDInfoBoxContents();
+  DataEntryURLBoxContents();
+  ~DataEntryURLBoxContents();
 
   uint64_t get_size() const noexcept {
-    return u_list.get_size() + de.get_size();
+    return 4 + loc.size() + 1;
+    //4 for ver and location + the size of the string + the null termination char
   }
 
 
-  bool operator==(const UUIDInfoBoxContents& other) const {
-    return (this->u_list == other.u_list) && (this->de == other.de);
+  bool operator==(const DataEntryURLBoxContents& other) const {
+    return std::tie(this->vers, this->flag, this->loc) ==
+           std::tie(other.vers, other.flag, other.loc);
   }
 
 
-  bool operator!=(const UUIDInfoBoxContents& other) const {
+  bool operator!=(const DataEntryURLBoxContents& other) const {
     return !this->operator==(other);
+  }
+
+  uint8_t get_version_number() const noexcept {
+    return vers;
+  }
+
+  my_uint24_t get_flag() const noexcept {
+    return flag;
+  }
+
+  const char* get_location() const noexcept {
+    return loc.c_str();
   }
 };
 
 
-class UUIDInfoDBox : public DBox {
+class DataEntryURLDBox : public DBox {
  public:
-  UUIDInfoDBox(const UUIDInfoBoxContents& contents)
-      : DBox(std::make_any<UUIDInfoBoxContents>(contents)) {
+  DataEntryURLDBox(const DataEntryURLBoxContents& contents)
+      : DBox(std::make_any<DataEntryURLBoxContents>(contents)) {
   }
 
 
-  UUIDInfoDBox(const UUIDInfoDBox& other)
-      : DBox(std::make_any<UUIDInfoBoxContents>(
-            std::any_cast<UUIDInfoBoxContents>(other.contents))) {
+  DataEntryURLDBox(const DataEntryURLDBox& other)
+      : DBox(std::make_any<DataEntryURLBoxContents>(
+            std::any_cast<DataEntryURLBoxContents>(other.contents))) {
   }
 
 
-  ~UUIDInfoDBox() = default;
+  ~DataEntryURLDBox() = default;
 
 
   uint64_t get_size() const noexcept override {
-    return std::any_cast<UUIDInfoBoxContents>(this->contents).get_size();
+    return std::any_cast<DataEntryURLBoxContents>(this->contents).get_size();
   }
 
 
-  UUIDInfoDBox* clone() const override {
-    return new UUIDInfoDBox(*this);
+  DataEntryURLDBox* clone() const override {
+    return new DataEntryURLDBox(*this);
   }
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    return (std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents()) ==
-            std::any_cast<UUIDInfoBoxContents>(other.get_ref_to_contents()));
+    return (
+        std::any_cast<DataEntryURLBoxContents>(this->get_ref_to_contents()) ==
+        std::any_cast<DataEntryURLBoxContents>(other.get_ref_to_contents()));
   }
 };
 
 
-class UUIDInfoBox : public Box {
+class DataEntryURLBox : public Box {
  public:
-  UUIDInfoBox(const UUIDInfoBoxContents& contents)
+  DataEntryURLBox(const DataEntryURLBoxContents& contents)
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::UUIDInfoBoxType)),
-            UUIDInfoDBox(contents)){};
-  ~UUIDInfoBox() = default;
+                DefinedBoxesTypes::DataEntryURLBoxType)),
+            DataEntryURLDBox(contents)){};
+  ~DataEntryURLBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__ */
+
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__ */
