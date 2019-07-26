@@ -43,10 +43,13 @@
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
 #include "FileTypeBox.h"
+#include "JpegPlenoFileTypeContents.h"
 #include "JpegPlenoCodestreamBox.h"
 #include "JpegPlenoSignatureBox.h"
 #include "JpegPlenoThumbnailBox.h"
 #include "IntellectualPropertyBox.h"
+#include "UUIDBox.h"
+#include "UUIDInfoBox.h"
 
 
 class JPLFile {
@@ -59,8 +62,8 @@ class JPLFile {
       jpeg_pleno_codestreams;
   std::optional<IntellectualPropertyBox> ipr_box;
   // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
-  // std::optional<std::vector<UUIDBox>> uuid_boxes;
-  // std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
+  std::optional<std::vector<UUIDBox>> uuid_boxes;
+  std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
  public:
   JPLFile();
   ~JPLFile();
