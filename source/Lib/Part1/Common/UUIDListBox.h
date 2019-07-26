@@ -31,87 +31,92 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBox.h
+/** \file     UUIDListBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
-#define JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_UUIDLISTBOX_H__
+#define JPLM_LIB_PART1_COMMON_UUIDLISTBOX_H__
 
 #include "Box.h"
 #include "DefinedBoxes.h"
 #include "UniversalUniqueIdentifier.h"
-#include "UUIDListBox.h"
 
-class UUIDInfoBoxContents {
+
+class UUIDListBoxContents {
  protected:
-  UUIDListBox u_list;
-  DataEntryURLBoxType de;
+  std::vector<UniversalUniqueIdentifier> id;
 
  public:
-  UUIDInfoBoxContents();
-  ~UUIDInfoBoxContents();
+  UUIDListBoxContents();
+  ~UUIDListBoxContents();
 
   uint64_t get_size() const noexcept {
-    return u_list.get_size() + de.get_size();
+    return 2+id.size()*16;
+    //2 for NU (Number of UUID) + 16 for each uuid on the list
   }
 
 
-  bool operator==(const UUIDInfoBoxContents& other) const {
-    return (this->u_list == other.u_list) && (this->de == other.de);
+  bool operator==(const UUIDListBoxContents& other) const {
+    return (this->id == other.id);
   }
 
 
-  bool operator!=(const UUIDInfoBoxContents& other) const {
+  bool operator!=(const UUIDListBoxContents& other) const {
     return !this->operator==(other);
   }
+
+  uint16_t get_nu() const noexcept {
+  	return id.size();
+  }
+
 };
 
 
-class UUIDInfoDBox : public DBox {
+class UUIDListDBox : public DBox {
  public:
-  UUIDInfoDBox(const UUIDInfoBoxContents& contents)
-      : DBox(std::make_any<UUIDInfoBoxContents>(contents)) {
+  UUIDListDBox(const UUIDListBoxContents& contents)
+      : DBox(std::make_any<UUIDListBoxContents>(contents)) {
   }
 
 
-  UUIDInfoDBox(const UUIDInfoDBox& other)
-      : DBox(std::make_any<UUIDInfoBoxContents>(
-            std::any_cast<UUIDInfoBoxContents>(other.contents))) {
+  UUIDListDBox(const UUIDListDBox& other)
+      : DBox(std::make_any<UUIDListBoxContents>(
+            std::any_cast<UUIDListBoxContents>(other.contents))) {
   }
 
 
-  ~UUIDInfoDBox() = default;
+  ~UUIDListDBox() = default;
 
 
   uint64_t get_size() const noexcept override {
-    return std::any_cast<UUIDInfoBoxContents>(this->contents).get_size();
+    return std::any_cast<UUIDListBoxContents>(this->contents).get_size();
   }
 
 
-  UUIDInfoDBox* clone() const override {
-    return new UUIDInfoDBox(*this);
+  UUIDListDBox* clone() const override {
+    return new UUIDListDBox(*this);
   }
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    return (std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents()) ==
-            std::any_cast<UUIDInfoBoxContents>(other.get_ref_to_contents()));
+    return (std::any_cast<UUIDListBoxContents>(this->get_ref_to_contents()) ==
+            std::any_cast<UUIDListBoxContents>(other.get_ref_to_contents()));
   }
 };
 
 
-class UUIDInfoBox : public Box {
+class UUIDListBox : public Box {
  public:
-  UUIDInfoBox(const UUIDInfoBoxContents& contents)
+  UUIDListBox(const UUIDListBoxContents& contents)
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::UUIDInfoBoxType)),
-            UUIDInfoDBox(contents)){};
-  ~UUIDInfoBox() = default;
+                DefinedBoxesTypes::UUIDListBoxType)),
+            UUIDListDBox(contents)){};
+  ~UUIDListBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDLISTBOX_H__ */
