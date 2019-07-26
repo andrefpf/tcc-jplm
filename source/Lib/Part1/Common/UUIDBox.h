@@ -54,8 +54,11 @@ class UUIDBoxContents {
   std::vector<uint8_t> data;
 
  public:
-  UUIDBoxContents();
-  ~UUIDBoxContents();
+  UUIDBoxContents() = default;
+
+
+  ~UUIDBoxContents() = default;
+
 
   uint64_t size() const noexcept {
     return id.size() + data.size() * sizeof(uint8_t);
@@ -69,6 +72,12 @@ class UUIDBoxContents {
 
   bool operator!=(const UUIDBoxContents& other) const {
     return !this->operator==(other);
+  }
+
+
+  void add_data(const std::vector<uint8_t> data_to_add) {
+    data.reserve(data_to_add.size());
+    data.insert(data.end(), data_to_add.begin(), data_to_add.end());
   }
 };
 
@@ -97,6 +106,7 @@ class UUIDDBox : public DBox {
   UUIDDBox* clone() const override {
     return new UUIDDBox(*this);
   }
+
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))

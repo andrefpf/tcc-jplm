@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UniversalUniqueIdentifierTests.h
+/** \file     UUIDBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -39,51 +39,28 @@
  */
 
 #include <iostream>
-#include "Lib/Part1/Common/UniversalUniqueIdentifier.h"
+#include "Lib/Part1/Common/UUIDBox.h"
 #include "gtest/gtest.h"
 
 
-TEST(UniversalUniqueIdentifierBasic, Initialization) {
-  EXPECT_NO_THROW(UniversalUniqueIdentifier());
+TEST(UUIDBoxBasic, Initialization) {
+  auto contents = UUIDBoxContents();
+  EXPECT_NO_THROW(auto box = UUIDBox(contents));
 }
 
 
-struct UniversalUniqueIdentifierFields : public testing::Test {
- protected:
-  std::unique_ptr<UniversalUniqueIdentifier> uuid;
-  my_uint48_t node = {1, 5819};
-  uint8_t clock_seq_low = 10;
-  uint8_t clock_seq_hi_and_reserved = 12;
-  uint16_t time_hi_and_version = 14;
-  uint16_t time_mid = 16;
-  uint32_t time_low = 18;
-
-
- public:
-  UniversalUniqueIdentifierFields() {
-    uuid = std::make_unique<UniversalUniqueIdentifier>(node, clock_seq_low,
-        clock_seq_hi_and_reserved, time_hi_and_version, time_mid, time_low);
-  }
-
-  ~UniversalUniqueIdentifierFields() = default;
-};
-
-
-TEST_F(UniversalUniqueIdentifierFields, HexStringHasTheCorrectNumberOfChars) {
-  EXPECT_EQ(uuid->to_hex_string().size(), 36);
+TEST(UUIDBoxBasic, HasTheCorrectSizeForOneUUIDWithNoData) {
+  auto uuid_box = UUIDBox(UUIDBoxContents());
+  EXPECT_EQ(uuid_box.size(), 8+UniversalUniqueIdentifier().size());
 }
 
 
-TEST_F(UniversalUniqueIdentifierFields, HexStringHasHyphensInTheRightPlaces) {
-  EXPECT_EQ(uuid->to_hex_string().at(8), '-');
-  EXPECT_EQ(uuid->to_hex_string().at(13), '-');
-  EXPECT_EQ(uuid->to_hex_string().at(18), '-');
-  EXPECT_EQ(uuid->to_hex_string().at(23), '-');
+TEST(UUIDBoxBasic, HasTheCorrectSizeForAddedData) {
+  auto uuid_box = UUIDBox(UUIDBoxContents());
+  auto size_before_add = uuid_box.size();
+  
+  EXPECT_EQ(uuid_box.size(), size_before_add+2);
 }
-
-
-// TEST_F
-//e7dca0b0-afb8-11e9-bd11-31bc71fe99d2
 
 
 int main(int argc, char *argv[]) {
