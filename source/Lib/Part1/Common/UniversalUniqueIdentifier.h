@@ -36,7 +36,7 @@ class UniversalUniqueIdentifier {
     return !this->operator==(other);
   }
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     return 16;
     //16 = 128 bits
   }

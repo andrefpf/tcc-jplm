@@ -56,8 +56,8 @@ class UUIDInfoBoxContents {
   UUIDInfoBoxContents();
   ~UUIDInfoBoxContents();
 
-  uint64_t get_size() const noexcept {
-    return u_list.get_size() + de.get_size();
+  uint64_t size() const noexcept {
+    return u_list.size() + de.size();
   }
 
 
@@ -88,8 +88,8 @@ class UUIDInfoDBox : public DBox {
   ~UUIDInfoDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<UUIDInfoBoxContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<UUIDInfoBoxContents>(this->contents).size();
   }
 
 

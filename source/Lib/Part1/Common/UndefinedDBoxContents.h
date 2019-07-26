@@ -52,7 +52,7 @@ class UndefinedDBoxContents {
   UndefinedDBoxContents();
   ~UndefinedDBoxContents();
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     return byte_array.size() * sizeof(uint8_t);
   }
 
@@ -82,8 +82,8 @@ class UndefinedDBox : public DBox {
   ~UndefinedDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<UndefinedDBoxContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<UndefinedDBoxContents>(this->contents).size();
   }
 
 

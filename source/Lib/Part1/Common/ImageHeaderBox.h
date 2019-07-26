@@ -72,7 +72,7 @@ class ImageHeaderContents {
   ImageHeaderContents();
   ~ImageHeaderContents();
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +
            sizeof(CoderTypeCUnderlyingType);
   }
@@ -107,8 +107,8 @@ class ImageHeaderDBox : public DBox {
   ~ImageHeaderDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<ImageHeaderContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<ImageHeaderContents>(this->contents).size();
   }
 
 

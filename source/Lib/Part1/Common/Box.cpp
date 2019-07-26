@@ -60,7 +60,7 @@ std::unique_ptr<DBox> Box::get_dbox() const noexcept {
 }
 
 
-std::uint64_t Box::get_size() const noexcept {
+std::uint64_t Box::size() const noexcept {
   return (this->xl_box) ? this->xl_box->get_value() : this->l_box.get_value();
 }
 

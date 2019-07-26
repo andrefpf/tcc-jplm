@@ -48,7 +48,7 @@
 class ICCProfile {
   //not implemented
  public:
-  uint64_t get_size() {
+  uint64_t size() {
     return 0;  //not implemented
   }
 };
@@ -72,13 +72,13 @@ class ColourSpecificationContents {
 
   ~ColourSpecificationContents();
 
-  uint64_t get_size() {
+  uint64_t size() {
     constexpr auto initial_size = 3 * sizeof(uint8_t);
     if (EnumCS) {
       return initial_size + sizeof(uint16_t);
     }
     if (profile) {
-      return initial_size + profile->get_size();
+      return initial_size + profile->size();
     }
     throw std::runtime_error(
         "Either EnumCS or ICCProfile must be present in "
@@ -113,9 +113,9 @@ class ColourSpecificationDBox : public DBox {
   ~ColourSpecificationDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
+  uint64_t size() const noexcept override {
     return std::any_cast<ColourSpecificationContents>(this->contents)
-        .get_size();
+        .size();
   }
 
 

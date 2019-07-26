@@ -62,7 +62,7 @@ class DataEntryURLBoxContents {
   DataEntryURLBoxContents();
   ~DataEntryURLBoxContents();
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     return 4 + loc.size() + 1;
     //4 for ver and location + the size of the string + the null termination char
   }
@@ -108,8 +108,8 @@ class DataEntryURLDBox : public DBox {
   ~DataEntryURLDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<DataEntryURLBoxContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<DataEntryURLBoxContents>(this->contents).size();
   }
 
 

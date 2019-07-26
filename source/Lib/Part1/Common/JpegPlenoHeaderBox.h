@@ -100,7 +100,7 @@ class JpegPlenoHeaderContents {
   }
 
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     constexpr auto size_of_n_lf_n_pc_n_ho = 3 * sizeof(uint32_t);
     return size_of_n_lf_n_pc_n_ho +
            ((get_n_lf() + get_n_pc() + get_n_ho()) * sizeof(uint64_t));
@@ -124,8 +124,8 @@ class JpegPlenoHeaderDBox : public DBox {
   ~JpegPlenoHeaderDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<JpegPlenoHeaderContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<JpegPlenoHeaderContents>(this->contents).size();
   }
 
 

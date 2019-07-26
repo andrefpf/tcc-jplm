@@ -59,7 +59,7 @@ class FileTypeContents {
   virtual ~FileTypeContents() {
   }
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     constexpr auto brand_and_minor_version_size = 2 * sizeof(uint32_t);
     return brand_and_minor_version_size + CL.size() * sizeof(uint32_t);
   }
@@ -134,8 +134,8 @@ class FileTypeDBox : public DBox {
   ~FileTypeDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<FileTypeContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<FileTypeContents>(this->contents).size();
   }
 
 

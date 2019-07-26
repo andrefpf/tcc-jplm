@@ -54,7 +54,7 @@ class UUIDListBoxContents {
   UUIDListBoxContents();
   ~UUIDListBoxContents();
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     return 2+id.size()*16;
     //2 for NU (Number of UUID) + 16 for each uuid on the list
   }
@@ -92,8 +92,8 @@ class UUIDListDBox : public DBox {
   ~UUIDListDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<UUIDListBoxContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<UUIDListBoxContents>(this->contents).size();
   }
 
 

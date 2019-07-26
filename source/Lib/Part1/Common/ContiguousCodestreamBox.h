@@ -48,7 +48,7 @@
 class ContiguousCodestreamContents {
 	//not implemented yet...
 public:
-	uint64_t get_size() const noexcept {
+	uint64_t size() const noexcept {
 		return 0;
 	}
 
@@ -79,8 +79,8 @@ class ContiguousCodestreamDBox : public DBox {
   ~ContiguousCodestreamDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<ContiguousCodestreamContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<ContiguousCodestreamContents>(this->contents).size();
   }
 
 

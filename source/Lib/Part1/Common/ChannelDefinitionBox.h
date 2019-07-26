@@ -75,7 +75,7 @@ class ChannelDefinitionContents {
   ChannelDefinitionContents();
   ~ChannelDefinitionContents();
 
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     //2 is from N (number of channel descriptions)
     //3 is from the 3 fields in ChannelDescription
     return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
@@ -107,8 +107,8 @@ class ChannelDefinitionDBox : public DBox {
   ~ChannelDefinitionDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<ChannelDefinitionContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<ChannelDefinitionContents>(this->contents).size();
   }
 
 

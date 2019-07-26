@@ -117,7 +117,7 @@ class DBox {
 
 
   virtual ~DBox(){};
-  virtual uint64_t get_size() const noexcept = 0;
+  virtual uint64_t size() const noexcept = 0;
 
   virtual DBox* clone() const = 0;
 
@@ -151,7 +151,7 @@ class CharArrayDBox : public DBox {
   ~CharArrayDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
+  uint64_t size() const noexcept override {
     return std::any_cast<std::vector<uint8_t>>(this->contents).size();
   }
 
@@ -173,7 +173,7 @@ class EmptyDBox : public DBox {
   EmptyDBox() = default;
   EmptyDBox(const EmptyDBox& other) = default;
   ~EmptyDBox() = default;
-  uint64_t get_size() const noexcept override {
+  uint64_t size() const noexcept override {
     return 0;
   }
 
@@ -206,7 +206,7 @@ class Box {
     //this means that the LBox will contain at least 8 bytes and thus
     //never use the reserved for ISO use values;
 
-    auto total_box_size = LBox_size + TBox_size + d_box.get_size();
+    auto total_box_size = LBox_size + TBox_size + d_box.size();
     //assuming that size fits in LBox (i.e., 32 bits)
 
     if (total_box_size > std::numeric_limits<uint32_t>::max()) {
@@ -221,7 +221,7 @@ class Box {
   ~Box() = default;
 
   std::variant<LBox, XLBox> get_lenght() const noexcept;
-  std::uint64_t get_size() const noexcept;
+  std::uint64_t size() const noexcept;
 
   LBox get_lbox() const noexcept;
   TBox get_tbox() const noexcept;

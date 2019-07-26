@@ -58,14 +58,14 @@ class JpegPlenoThumbnailContents {
   ContiguousCodestreamBox jpc2;
 
  public:
-  uint64_t get_size() const noexcept {
+  uint64_t size() const noexcept {
     auto sum_colr_sizes = [](uint64_t sum, const ColourSpecificationBox& val) {
-      return sum + val.get_size();
+      return sum + val.size();
     };
 
-    return ihdr.get_size() + bpcc.get_size() +
+    return ihdr.size() + bpcc.size() +
            std::accumulate(colr.begin(), colr.end(), 0, sum_colr_sizes) +
-           cdef.get_size() + jpc2.get_size();
+           cdef.size() + jpc2.size();
   }
 
 
@@ -98,8 +98,8 @@ class JpegPlenoThumbnailDBox : public DBox {
   ~JpegPlenoThumbnailDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<JpegPlenoThumbnailContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<JpegPlenoThumbnailContents>(this->contents).size();
   }
 
 

@@ -57,8 +57,8 @@ class UUIDBoxContents {
   UUIDBoxContents();
   ~UUIDBoxContents();
 
-  uint64_t get_size() const noexcept {
-    return id.get_size() + data.size() * sizeof(uint8_t);
+  uint64_t size() const noexcept {
+    return id.size() + data.size() * sizeof(uint8_t);
   }
 
 
@@ -89,8 +89,8 @@ class UUIDDBox : public DBox {
   ~UUIDDBox() = default;
 
 
-  uint64_t get_size() const noexcept override {
-    return std::any_cast<UUIDBoxContents>(this->contents).get_size();
+  uint64_t size() const noexcept override {
+    return std::any_cast<UUIDBoxContents>(this->contents).size();
   }
 
 
