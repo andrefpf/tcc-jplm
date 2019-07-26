@@ -101,6 +101,10 @@ class XLBox : public BoxDataHolder<uint64_t> {
 };
 
 
+class DBoxContents {
+  //for now this is only a helper class
+};
+
 //Box contents (probably DataBox)
 //what is this?
 class DBox {
@@ -134,6 +138,14 @@ class DBox {
   bool operator!=(const DBox& other) const {
     return !this->operator==(other);
   }
+
+  //using ptr to achieve return covariance
+  //for some reason DBoxContents does not
+  //give me a reference to contents
+  virtual DBoxContents* get_ptr_to_contents() { 
+    //should i check for other types?
+    return std::any_cast<DBoxContents*>(contents);
+  }
 };
 
 
@@ -165,6 +177,11 @@ class CharArrayDBox : public DBox {
   CharArrayDBox* clone() const override {
     return new CharArrayDBox(*this);
   }
+
+  virtual DBoxContents* get_ptr_to_contents() override { 
+    //should i check for other types?
+    return std::any_cast<DBoxContents*>(contents);
+  }
 };
 
 
@@ -186,6 +203,7 @@ class EmptyDBox : public DBox {
   EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
   }
+
 };
 
 
@@ -228,8 +246,7 @@ class Box {
   std::optional<XLBox> get_xlbox() const noexcept;
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
-  const DBox& get_ref_to_dbox() const noexcept;
-
+  DBox& get_ref_to_dbox() const noexcept;
   const std::any& get_ref_to_dbox_contents() const noexcept;
 
 

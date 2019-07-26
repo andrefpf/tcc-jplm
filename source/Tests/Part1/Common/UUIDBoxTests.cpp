@@ -58,7 +58,11 @@ TEST(UUIDBoxBasic, HasTheCorrectSizeForOneUUIDWithNoData) {
 TEST(UUIDBoxBasic, HasTheCorrectSizeForAddedData) {
   auto uuid_box = UUIDBox(UUIDBoxContents());
   auto size_before_add = uuid_box.size();
-  
+  std::cout << "before" << std::endl;
+  uuid_box.add_data({1,2});
+  std::cout << "after" << std::endl;
+  std::cout << uuid_box.size() << std::endl;
+  std::cout << "after 2 " << std::endl;
   EXPECT_EQ(uuid_box.size(), size_before_add+2);
 }
 
