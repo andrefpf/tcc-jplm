@@ -58,7 +58,7 @@ enum class CoderTypeC : uint8_t {
 typedef std::underlying_type<CoderTypeC>::type CoderTypeCUnderlyingType;
 
 
-class ImageHeaderContents {
+class ImageHeaderContents : public DBoxContents {
  protected:
   uint32_t height;
   uint32_t width;

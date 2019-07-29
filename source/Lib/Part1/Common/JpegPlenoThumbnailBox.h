@@ -49,7 +49,7 @@
 #include "ContiguousCodestreamBox.h"
 #include "ImageHeaderBox.h"
 
-class JpegPlenoThumbnailContents {
+class JpegPlenoThumbnailContents : public DBoxContents {
  protected:
   ImageHeaderBox ihdr;  //image header box
   BitsPerComponentBox bpcc;

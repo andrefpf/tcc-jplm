@@ -45,7 +45,7 @@
 #include "Box.h"
 #include "DefinedBoxes.h"
 
-class FileTypeContents {
+class FileTypeContents : public DBoxContents {
   uint32_t BR;  //brand
   uint32_t MinV;  //minor version
   std::vector<uint32_t> CL;

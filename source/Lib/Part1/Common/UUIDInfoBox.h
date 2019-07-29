@@ -47,7 +47,7 @@
 #include "UUIDListBox.h"
 #include "DataEntryURLBox.h"
 
-class UUIDInfoBoxContents {
+class UUIDInfoBoxContents : public DBoxContents {
  protected:
   UUIDListBox u_list;
   DataEntryURLBox de;

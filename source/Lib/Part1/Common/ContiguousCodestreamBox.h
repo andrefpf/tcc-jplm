@@ -45,7 +45,7 @@
 #include "Box.h"
 #include "DefinedBoxes.h"
 
-class ContiguousCodestreamContents {
+class ContiguousCodestreamContents : public DBoxContents {
 	//not implemented yet...
 public:
 	uint64_t size() const noexcept {

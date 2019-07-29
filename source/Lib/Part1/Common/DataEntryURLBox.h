@@ -60,7 +60,7 @@ struct my_uint24_t {
   }
 };
 
-class DataEntryURLBoxContents {
+class DataEntryURLBoxContents : public DBoxContents {
  protected:
   uint8_t vers;  //version number
   my_uint24_t flag;  //flags

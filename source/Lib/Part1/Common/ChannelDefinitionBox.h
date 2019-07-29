@@ -73,6 +73,8 @@ class ChannelDefinitionContents {
 
  public:
   ChannelDefinitionContents() = default;
+
+  
   ~ChannelDefinitionContents() = default;
 
   uint64_t size() const noexcept {
@@ -81,12 +83,20 @@ class ChannelDefinitionContents {
     return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
   }
 
+
   bool operator==(const ChannelDefinitionContents& other) const {
     return this->channel_descriptions == other.channel_descriptions;
   }
 
+
   bool operator!=(const ChannelDefinitionContents& other) const {
     return !this->operator==(other);
+  }
+
+
+  std::vector<uint8_t> get_bytes() const {
+    throw std::runtime_error(
+            "Not implemented yet (ChannelDefinitionContents.get_bytes).");
   }
 };
 

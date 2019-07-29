@@ -48,7 +48,7 @@
 //UUID
 
 
-class UUIDBoxContents {
+class UUIDBoxContents : public DBoxContents {
  protected:
   UniversalUniqueIdentifier id;
   std::vector<uint8_t> data;

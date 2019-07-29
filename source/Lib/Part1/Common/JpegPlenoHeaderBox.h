@@ -45,7 +45,7 @@
 #include "Box.h"
 #include "DefinedBoxes.h"
 
-class JpegPlenoHeaderContents {
+class JpegPlenoHeaderContents : public DBoxContents {
  protected:
   // uint32_t n_lf;
   // uint32_t n_pc;

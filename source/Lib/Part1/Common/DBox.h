@@ -43,11 +43,7 @@
 
 #include <any>
 #include <cstdint>
-#include <vector>
-
-class DBoxContents {
-  //for now this is only a helper class
-};
+#include "DBoxContents.h"
 
 //Box contents (probably DataBox)
 //what is this?

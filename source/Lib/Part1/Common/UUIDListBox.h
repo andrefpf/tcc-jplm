@@ -46,7 +46,7 @@
 #include "UniversalUniqueIdentifier.h"
 
 
-class UUIDListBoxContents {
+class UUIDListBoxContents : public DBoxContents {
  protected:
   std::vector<UniversalUniqueIdentifier> id;
 

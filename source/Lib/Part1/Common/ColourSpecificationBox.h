@@ -53,7 +53,7 @@ class ICCProfile {
   }
 };
 
-class ColourSpecificationContents {
+class ColourSpecificationContents : public DBoxContents {
  protected:
   uint8_t meth;  //specification method, shall be 1 or 2
   int8_t prec;  //precedence. Reserved for ISO use and value shall be 0;

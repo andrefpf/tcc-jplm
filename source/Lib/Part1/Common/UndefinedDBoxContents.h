@@ -44,7 +44,7 @@
 
 #include "Box.h"
 
-class UndefinedDBoxContents {
+class UndefinedDBoxContents : public DBoxContents {
  protected:
   std::vector<uint8_t> byte_array;
 
