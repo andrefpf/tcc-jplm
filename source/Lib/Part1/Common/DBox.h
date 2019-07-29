@@ -126,6 +126,7 @@ class CharArrayDBox : public DBox {
     //should i check for other types?
     return std::any_cast<DBoxContents*>(contents);
   }
+  
 };
 
 

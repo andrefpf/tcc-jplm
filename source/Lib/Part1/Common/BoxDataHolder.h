@@ -112,7 +112,6 @@ class BoxDataHolder {
 template<typename T>
 std::ostream& operator<<(
     std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
-  // stream << box_data_holder.get_value();
   auto bytes = box_data_holder.get_bytes();
   for(const auto& byte: bytes) {
     stream << byte;

@@ -39,66 +39,81 @@
  */
 
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include "Lib/Part1/Common/JpegPlenoSignatureBox.h"
 #include "gtest/gtest.h"
 
 
 TEST(JpegPlenoSignatureBoxBasic, Initialization) {
-	EXPECT_NO_THROW(JpegPlenoSignatureBox());
+  EXPECT_NO_THROW(JpegPlenoSignatureBox());
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, CorrectLBoxValue) {
-	auto pleno_signature_box = JpegPlenoSignatureBox();
-	EXPECT_EQ(pleno_signature_box.get_lbox().get_value(), 12);
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  EXPECT_EQ(pleno_signature_box.get_lbox().get_value(), 12);
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, XLBoxDoNotExist) {
-	auto pleno_signature_box = JpegPlenoSignatureBox();
-	EXPECT_FALSE(pleno_signature_box.get_xlbox());
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  EXPECT_FALSE(pleno_signature_box.get_xlbox());
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, LBoxValueNotOne) {
-	auto pleno_signature_box = JpegPlenoSignatureBox();
-	EXPECT_NE(pleno_signature_box.get_lbox().get_value(), 1);
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  EXPECT_NE(pleno_signature_box.get_lbox().get_value(), 1);
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, CorrectTBoxValue) {
-	auto pleno_signature_box = JpegPlenoSignatureBox();
-	EXPECT_EQ(pleno_signature_box.get_tbox().get_value(), 0x6a706c20);
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  EXPECT_EQ(pleno_signature_box.get_tbox().get_value(), 0x6a706c20);
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesHaveTheSameType) {
-	auto pleno_signature_box_a = JpegPlenoSignatureBox();
-	auto pleno_signature_box_b = JpegPlenoSignatureBox();
-	EXPECT_EQ(pleno_signature_box_a.get_tbox(), pleno_signature_box_b.get_tbox());
+  auto pleno_signature_box_a = JpegPlenoSignatureBox();
+  auto pleno_signature_box_b = JpegPlenoSignatureBox();
+  EXPECT_EQ(pleno_signature_box_a.get_tbox(), pleno_signature_box_b.get_tbox());
 }
 
 
 TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesAreEqual) {
-	auto pleno_signature_box_a = JpegPlenoSignatureBox();
-	auto pleno_signature_box_b = JpegPlenoSignatureBox();
-	EXPECT_EQ(pleno_signature_box_a, pleno_signature_box_b);
+  auto pleno_signature_box_a = JpegPlenoSignatureBox();
+  auto pleno_signature_box_b = JpegPlenoSignatureBox();
+  EXPECT_EQ(pleno_signature_box_a, pleno_signature_box_b);
 }
 
 TEST(JpegPlenoSignatureBoxBasic, CorrectDBoxValue) {
-	auto pleno_signature_box = JpegPlenoSignatureBox();
-	auto dbox = pleno_signature_box.get_dbox();
-	auto contents = dbox->get_ref_to_contents();
-	auto& vec = std::any_cast<std::vector<unsigned char>&>(contents);
-	EXPECT_EQ(vec.at(0), 0x0d);
-	EXPECT_EQ(vec.at(1), 0x0a);
-	EXPECT_EQ(vec.at(2), 0x87);
-	EXPECT_EQ(vec.at(3), 0x0a);
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  auto dbox = pleno_signature_box.get_dbox();
+  auto contents = dbox->get_ref_to_contents();
+  auto& vec = std::any_cast<std::vector<unsigned char>&>(contents);
+  EXPECT_EQ(vec.at(0), 0x0d);
+  EXPECT_EQ(vec.at(1), 0x0a);
+  EXPECT_EQ(vec.at(2), 0x87);
+  EXPECT_EQ(vec.at(3), 0x0a);
+}
+
+TEST(JpegPlenoSignatureBoxBasic, WriteToFile) {
+  namespace fs = std::filesystem;
+  auto path = std::string(std::string(fs::temp_directory_path()) +
+                          "/JpegPlenoSignatureBoxWriteToFile.test");
+  if (fs::exists(path)) {
+    fs::remove(path);
+  }
+  std::ofstream outfile(path.c_str(), std::ofstream::binary);
+  auto pleno_signature_box = JpegPlenoSignatureBox();
+  outfile << pleno_signature_box;
+  outfile.close();
 }
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
