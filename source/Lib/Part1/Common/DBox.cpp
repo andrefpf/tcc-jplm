@@ -31,40 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LBox.h
+/** \file     DBox.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-29
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_LBOX_H__
-#define JPLM_LIB_PART1_COMMON_LBOX_H__
+#include "DBox.h"
 
 
-#include "BoxDataHolder.h"
-
-class LBox : public BoxDataHolder<uint32_t> {
- public:
-  LBox() = default;
-
-
-  LBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
-  }
-
-
-  ~LBox() = default;
-
-
-  bool operator==(const LBox& other) const {
-    return this->is_equal(other);
-  }
-  
-
-  bool operator!=(const LBox& other) const {
-    return !operator==(other);
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_LBOX_H__ */
+// std::ostream& operator<<(std::ostream& stream, const DBox& d_box) {
+//   auto bytes = d_box.get_bytes();
+//   for (const auto& byte : bytes) {
+//     stream << static_cast<char>(byte);
+//   }
+//   return stream;
+// }

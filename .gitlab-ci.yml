@@ -10,7 +10,7 @@ before_script:
 build:
   stage: build
   script:
-    - mkdir build && cd build; cmake ..; make -j
+    - mkdir build && cd build; cmake ..; make
   artifacts:
     paths:
       - bin/*

@@ -61,35 +61,46 @@ class DBox {
 
 
   virtual ~DBox(){};
+
+
   virtual uint64_t size() const noexcept = 0;
 
+
   virtual DBox* clone() const = 0;
+
 
   const std::any& get_ref_to_contents() const {
     return contents;
   }
 
+
   virtual bool is_equal(const DBox& other) const = 0;
+
 
   bool operator==(const DBox& other) const {
     return this->is_equal(other);
   }
 
+
   bool operator!=(const DBox& other) const {
     return !this->operator==(other);
   }
 
-  //using ptr to achieve return covariance
-  //for some reason DBoxContents does not
-  //give me a reference to contents
-  virtual DBoxContents* get_ptr_to_contents() {
-    //should i check for other types?
-    return std::any_cast<DBoxContents*>(contents);
-  }
+  // //using ptr to achieve return covariance
+  // //for some reason DBoxContents does not
+  // //give me a reference to contents
+  // virtual DBoxContents* get_ptr_to_contents() {
+  //   //should i check for other types?
+  //   return std::any_cast<DBoxContents*>(contents);
+  // }
+
 
   virtual std::vector<uint8_t> get_bytes() const noexcept = 0;
 
+
+  // friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
 };
+
 
 
 class CharArrayDBox : public DBox {
@@ -98,10 +109,12 @@ class CharArrayDBox : public DBox {
       : DBox(std::make_any<std::vector<uint8_t>>(array)) {
   }
 
+
   CharArrayDBox(const CharArrayDBox& other)
       : DBox(std::make_any<std::vector<uint8_t>>(
             std::any_cast<std::vector<uint8_t>>(other.contents))) {
   }
+
 
   ~CharArrayDBox() = default;
 
@@ -110,6 +123,7 @@ class CharArrayDBox : public DBox {
     return std::any_cast<std::vector<uint8_t>>(this->contents).size();
   }
 
+
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
@@ -117,18 +131,22 @@ class CharArrayDBox : public DBox {
             std::any_cast<std::vector<uint8_t>>(other.get_ref_to_contents()));
   }
 
+
   CharArrayDBox* clone() const override {
     return new CharArrayDBox(*this);
   }
 
-  virtual DBoxContents* get_ptr_to_contents() override {
-    //should i check for other types?
-    return std::any_cast<DBoxContents*>(contents);
-  }
+
+  // virtual DBoxContents* get_ptr_to_contents() override {
+  //   //should i check for other types?
+  //   return std::any_cast<DBoxContents*>(contents);
+  // }
+
 
   virtual std::vector<uint8_t> get_bytes() const noexcept override {
     return std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents());
   }
+
 
 };
 
@@ -136,11 +154,18 @@ class CharArrayDBox : public DBox {
 class EmptyDBox : public DBox {
  public:
   EmptyDBox() = default;
+
+
   EmptyDBox(const EmptyDBox& other) = default;
+
+
   ~EmptyDBox() = default;
+
+
   uint64_t size() const noexcept override {
     return 0;
   }
+
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
@@ -148,13 +173,17 @@ class EmptyDBox : public DBox {
     return true;
   }
 
+
   EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
   }
 
+
   virtual std::vector<uint8_t> get_bytes() const noexcept override {
     return std::vector<uint8_t>();
   }
+
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_DBOX_H__ */
