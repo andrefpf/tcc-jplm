@@ -49,22 +49,7 @@
 #include <optional>
 #include <variant>
 #include <vector>
-#include "BoxDataHolder.h"
-
-class LBox : public BoxDataHolder<uint32_t> {
- public:
-  LBox() = default;
-  LBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
-  }
-  ~LBox() = default;
-  bool operator==(const LBox& other) const {
-    return this->is_equal(other);
-  }
-
-  bool operator!=(const LBox& other) const {
-    return !operator==(other);
-  }
-};
+#include "LBox.h"
 
 
 class TBox : public BoxDataHolder<uint32_t> {
