@@ -31,77 +31,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     XLBoxTests.cpp
- *  \brief    Test of XLBox.
+/** \file     CommonExceptions.h
+ *  \brief    Class that contains all exceptions that may be thrown by Part1/Common lib
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-29
  */
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include "Lib/Part1/Common/XLBox.h"
-#include "gtest/gtest.h"
+
+#ifndef JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__
+#define JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__
+
+#include <exception>
+
+namespace BoxExceptions {
 
 
-TEST(XLBoxBasicTest, XLBoxInitializationDoesNotThrow) {
-  EXPECT_NO_THROW(XLBox(42));
-}
-
-
-TEST(XLBoxBasicTest, XLBoxWriteToStringOStream) {
-  auto t_box = XLBox(42);
-  std::ostringstream string_stream;
-  string_stream << t_box.get_value();
-  EXPECT_EQ(string_stream.str(), "42");
-}
-
-
-TEST(XLBoxBasicTest, XLBoxWriteToBinaryOStream) {
-  namespace fs = std::filesystem;
-  auto path = std::string(std::string(fs::temp_directory_path()) +
-                          "/XLBoxWriteToBinaryOStream.test");
-  if (fs::exists(path)) {
-    fs::remove(path);
+class ValueNotAllowedException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "This value is not allowed by the expecification";
   }
-  std::ofstream outfile(path.c_str(), std::ofstream::binary);
-  auto t_box = XLBox(42);
-  outfile << t_box;
-  outfile.close();
+};
 
-  std::ifstream infile(path.c_str(), std::ofstream::binary);
-  uint64_t test;
-  infile.read(reinterpret_cast<char *>(&test), sizeof(uint64_t));
-
-  uint64_t reordered = test;
-
-  if constexpr (BinaryTools::using_little_endian()) {
-    reordered = test >> 56;
-    reordered |= ((test >> 48) & 0xFF) << 8;
-    reordered |= ((test >> 40) & 0xFF) << 16;
-    reordered |= ((test >> 32) & 0xFF) << 24;
-    reordered |= ((test >> 24) & 0xFF) << 32;
-    reordered |= ((test >> 16) & 0xFF) << 40;
-    reordered |= ((test >> 8) & 0xFF) << 48;
-    reordered |= (test & 0xFF) << 8;
-  }
-
-  EXPECT_EQ(reordered, 42);
 }
 
-
-TEST(XLBoxBasicTest, XLBoxContructionWithMinValueNotAllowedThrows) {
-	EXPECT_THROW(XLBox(0), BoxExceptions::ValueNotAllowedException);
-}
-
-
-TEST(XLBoxBasicTest, XLBoxContructionWithMaxValueNotAllowedThrows) {
-	EXPECT_THROW(XLBox(15), BoxExceptions::ValueNotAllowedException);
-}
-
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__ */

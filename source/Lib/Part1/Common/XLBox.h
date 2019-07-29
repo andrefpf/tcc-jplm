@@ -42,12 +42,16 @@
 #define JPLM_LIB_PART1_COMMON_XLBOX_H__
 
 #include "BoxDataHolder.h"
+#include "CommonExceptions.h"
 
 
 class XLBox : public BoxDataHolder<uint64_t> {
  public:
   XLBox() = default;
   XLBox(const uint64_t& value) : BoxDataHolder<uint64_t>(value) {
+  	if(value < 16) {
+  		throw BoxExceptions::ValueNotAllowedException();
+  	}
   }
   ~XLBox() = default;
 
