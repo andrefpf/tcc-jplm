@@ -93,11 +93,11 @@ class BoxDataHolder {
       return bytes;
     }
     bytes.reserve(n_bytes);
-    T mask = 0xFF;
-    T value_copy = value;
+    auto ptr_to_byte = reinterpret_cast<const uint8_t*>(&value);
+
     for(auto i=decltype(n_bytes){0}; i<n_bytes;++i) {
-      bytes.push_back(static_cast<uint8_t>(value_copy & mask));
-      value_copy>>=8;
+      bytes.push_back(*ptr_to_byte);
+      ++ptr_to_byte;
     }
 
     if constexpr (BinaryTools::using_little_endian()) {
