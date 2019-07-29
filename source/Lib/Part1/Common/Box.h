@@ -50,23 +50,9 @@
 #include <variant>
 #include <vector>
 #include "LBox.h"
+#include "TBox.h"
 
 
-class TBox : public BoxDataHolder<uint32_t> {
- public:
-  TBox() = default;
-  TBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
-  }
-  ~TBox() = default;
-
-  bool operator==(const TBox& other) const {
-    return this->is_equal(other);
-  }
-
-  bool operator!=(const TBox& other) const {
-    return !operator==(other);
-  }
-};
 
 
 class XLBox : public BoxDataHolder<uint64_t> {
