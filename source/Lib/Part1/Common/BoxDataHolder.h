@@ -42,6 +42,16 @@
 #define JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__
 
 #include <ostream>
+#include <vector>
+#include <algorithm>    // std::reverse
+
+namespace BinaryTools {
+  constexpr bool using_little_endian() {
+      if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
+        return true;
+      return false;
+    }  
+}
 
 template<typename T>
 class BoxDataHolder {
@@ -75,13 +85,38 @@ class BoxDataHolder {
     return false;
   }
 
+  std::vector<uint8_t> get_bytes() const noexcept {
+    auto n_bytes = sizeof(T); 
+    auto bytes = std::vector<uint8_t>();
+    if (n_bytes == 1) {
+      bytes.push_back(value);
+      return bytes;
+    }
+    bytes.reserve(n_bytes);
+    T mask = 0xFF;
+    T value_copy = value;
+    for(auto i=decltype(n_bytes){0}; i<n_bytes;++i) {
+      bytes.push_back(static_cast<uint8_t>(value_copy & mask));
+      value_copy>>=8;
+    }
+
+    if constexpr (BinaryTools::using_little_endian()) {
+      std::reverse(bytes.begin(), bytes.end());  
+    }
+    return bytes;
+  }
+
 };
 
 
 template<typename T>
 std::ostream& operator<<(
     std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
-  stream << box_data_holder.get_value();
+  // stream << box_data_holder.get_value();
+  auto bytes = box_data_holder.get_bytes();
+  for(const auto& byte: bytes) {
+    stream << byte;
+  }
   return stream;
 }
 

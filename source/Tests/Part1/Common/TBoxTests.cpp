@@ -38,13 +38,52 @@
  *  \date     2019-07-29
  */
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include "Lib/Part1/Common/TBox.h"
 #include "gtest/gtest.h"
 
 
 TEST(TBoxBasicTest, TBoxInitializationDoesNotThrow) {
-	EXPECT_NO_THROW(TBox(42));
+  EXPECT_NO_THROW(TBox(42));
+}
+
+
+TEST(TBoxBasicTest, TBoxWriteToStringOStream) {
+  auto t_box = TBox(42);
+  std::ostringstream string_stream;
+  string_stream << t_box.get_value();
+  EXPECT_EQ(string_stream.str(), "42");
+}
+
+
+TEST(TBoxBasicTest, TBoxWriteToBinaryOStream) {
+  namespace fs = std::filesystem;
+  auto path = std::string(std::string(fs::temp_directory_path()) +
+                          "/TBoxWriteToBinaryOStream.test");
+  if (fs::exists(path)) {
+    fs::remove(path);
+  }
+  std::ofstream outfile(path.c_str(), std::ofstream::binary);
+  auto t_box = TBox(42);
+  outfile << t_box;
+  outfile.close();
+
+  std::ifstream infile(path.c_str(), std::ofstream::binary);
+  uint32_t test;
+  infile.read(reinterpret_cast<char *>(&test), sizeof(uint32_t));
+
+  uint32_t reordered = test;
+
+  if constexpr (BinaryTools::using_little_endian()) {
+    reordered = test >> 24;
+    reordered |= ((test >> 8) & 0xFF00);
+    reordered |= ((test << 8) & 0xFF0000);
+    reordered |= (test & 0xFF) << 24;
+  }
+
+  EXPECT_EQ(reordered, 42);
 }
 
 

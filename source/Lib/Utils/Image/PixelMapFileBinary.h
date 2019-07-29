@@ -43,6 +43,7 @@
 
 #include "Lib/Utils/Image/PixelMapFile.h"
 
+//this must be better placed
 constexpr bool using_little_endian() {
   if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
     return true;
