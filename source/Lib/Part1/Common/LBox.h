@@ -39,8 +39,8 @@
  */
 
 
-#ifndef LBOX_H__
-#define LBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_LBOX_H__
+#define JPLM_LIB_PART1_COMMON_LBOX_H__
 
 
 #include "BoxDataHolder.h"
@@ -60,4 +60,4 @@ class LBox : public BoxDataHolder<uint32_t> {
   }
 };
 
-#endif /* end of include guard: LBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_LBOX_H__ */
