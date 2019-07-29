@@ -15,3 +15,4 @@ add_jplm_part1_common_lib_test(UniversalUniqueIdentifierTests UniversalUniqueIde
 add_jplm_part1_common_lib_test(UUIDBoxTests UUIDBox_tests UUIDBoxTests.cpp)
 add_jplm_part1_common_lib_test(LBoxTests lbox_tests LBoxTests.cpp)
 add_jplm_part1_common_lib_test(TBoxTests tbox_tests TBoxTests.cpp)
+add_jplm_part1_common_lib_test(XLBoxTests xlbox_tests XLBoxTests.cpp)
