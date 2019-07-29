@@ -90,6 +90,9 @@ class DBox {
     //should i check for other types?
     return std::any_cast<DBoxContents*>(contents);
   }
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept = 0;
+
 };
 
 
@@ -126,7 +129,11 @@ class CharArrayDBox : public DBox {
     //should i check for other types?
     return std::any_cast<DBoxContents*>(contents);
   }
-  
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents());
+  }
+
 };
 
 
@@ -147,6 +154,10 @@ class EmptyDBox : public DBox {
 
   EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
+  }
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::vector<uint8_t>();
   }
 };
 

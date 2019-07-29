@@ -116,11 +116,17 @@ class ImageHeaderDBox : public DBox {
     return new ImageHeaderDBox(*this);
   }
 
+  
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     return (std::any_cast<ImageHeaderContents>(this->get_ref_to_contents()) ==
             std::any_cast<ImageHeaderContents>(other.get_ref_to_contents()));
+  }
+
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<ImageHeaderContents>(this->get_ref_to_contents()).get_bytes();
   }
 };
 
@@ -131,6 +137,8 @@ class ImageHeaderBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::ImageHeaderBoxType)),
             contents){};
+
+
   ~ImageHeaderBox() = default;
 };
 

@@ -109,6 +109,12 @@ class UUIDListDBox : public DBox {
     return (std::any_cast<UUIDListBoxContents>(this->get_ref_to_contents()) ==
             std::any_cast<UUIDListBoxContents>(other.get_ref_to_contents()));
   }
+
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<UUIDListBoxContents>(this->get_ref_to_contents())
+        .get_bytes();
+  }
 };
 
 

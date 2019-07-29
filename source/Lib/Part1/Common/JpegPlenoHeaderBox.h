@@ -133,12 +133,19 @@ class JpegPlenoHeaderDBox : public DBox {
     return new JpegPlenoHeaderDBox(*this);
   }
 
+
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     return (
         std::any_cast<JpegPlenoHeaderContents>(this->get_ref_to_contents()) ==
         std::any_cast<JpegPlenoHeaderContents>(other.get_ref_to_contents()));
+  }
+
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<JpegPlenoHeaderContents>(this->get_ref_to_contents())
+        .get_bytes();
   }
 };
 
@@ -149,6 +156,8 @@ class JpegPlenoHeaderBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::JPEGPlenoHeaderBoxType)),
             contents){};
+
+
   ~JpegPlenoHeaderBox() = default;
 };
 

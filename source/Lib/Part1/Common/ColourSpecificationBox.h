@@ -66,11 +66,15 @@ class ColourSpecificationContents {
   ColourSpecificationContents(uint16_t EnumCS)
       : meth(1), prec(0), approx(0), EnumCS(EnumCS) {
   }
+
+
   ColourSpecificationContents(ICCProfile profile)
       : meth(2), prec(0), approx(0), profile(profile) {
   }
 
+
   ~ColourSpecificationContents();
+
 
   uint64_t size() {
     constexpr auto initial_size = 3 * sizeof(uint8_t);
@@ -85,11 +89,13 @@ class ColourSpecificationContents {
         "ColourSpecificationBox");
   }
 
+
   bool operator==(const ColourSpecificationContents& other) const {
     //! \todo Add ICCProfile if needed
     return std::tie(meth, prec, approx, EnumCS) ==
            std::tie(other.meth, other.prec, other.approx, other.EnumCS);
   }
+
 
   bool operator!=(const ColourSpecificationContents& other) const {
     return !this->operator==(other);
@@ -114,14 +120,14 @@ class ColourSpecificationDBox : public DBox {
 
 
   uint64_t size() const noexcept override {
-    return std::any_cast<ColourSpecificationContents>(this->contents)
-        .size();
+    return std::any_cast<ColourSpecificationContents>(this->contents).size();
   }
 
 
   ColourSpecificationDBox* clone() const override {
     return new ColourSpecificationDBox(*this);
   }
+
 
   bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
@@ -130,6 +136,13 @@ class ColourSpecificationDBox : public DBox {
                 this->get_ref_to_contents()) ==
             std::any_cast<ColourSpecificationContents>(
                 other.get_ref_to_contents()));
+  }
+
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<ColourSpecificationContents>(
+        this->get_ref_to_contents())
+        .get_bytes();
   }
 };
 
@@ -140,6 +153,8 @@ class ColourSpecificationBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::ColourSpecificationBoxType)),
             CharArrayDBox(bits_per_component_vector)){};
+
+
   ~ColourSpecificationBox() = default;
 };
 

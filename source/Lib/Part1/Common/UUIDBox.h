@@ -115,8 +115,15 @@ class UUIDDBox : public DBox {
             std::any_cast<UUIDBoxContents>(other.get_ref_to_contents()));
   }
 
+
   void add_data(const std::vector<uint8_t>& data) {
     std::any_cast<UUIDBoxContents&>(this->contents).add_data(data);
+  }
+
+
+  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+    return std::any_cast<UUIDBoxContents>(this->get_ref_to_contents())
+        .get_bytes();
   }
 };
 
@@ -127,7 +134,10 @@ class UUIDBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::UUIDBoxType)),
             UUIDDBox(contents)){};
+
+
   ~UUIDBox() = default;
+
 
   void add_data(const std::vector<uint8_t>& data) {
     static_cast<UUIDDBox&>(*this->d_box).add_data(data);
