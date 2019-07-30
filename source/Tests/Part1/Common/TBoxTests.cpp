@@ -73,17 +73,9 @@ TEST(TBoxBasicTest, TBoxWriteToBinaryOStream) {
   std::ifstream infile(path.c_str(), std::ofstream::binary);
   uint32_t test;
   infile.read(reinterpret_cast<char *>(&test), sizeof(uint32_t));
+  test=BinaryTools::ensure_machines_endianess(test);
 
-  uint32_t reordered = test;
-
-  if constexpr (BinaryTools::using_little_endian()) {
-    reordered = test >> 24;
-    reordered |= ((test >> 8) & 0xFF00);
-    reordered |= ((test << 8) & 0xFF0000);
-    reordered |= (test & 0xFF) << 24;
-  }
-
-  EXPECT_EQ(reordered, 42);
+  EXPECT_EQ(test, 42);
 }
 
 
