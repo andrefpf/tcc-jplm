@@ -114,7 +114,7 @@ struct JpegPlenoSignatureBoxToFile : public testing::Test {
   std::string write_to_file() {  //returns the filename
     namespace fs = std::filesystem;
     auto path = std::string(
-        std::string(fs::temp_directory_path()) + get_test_full_name());
+        std::string(fs::temp_directory_path())+std::string("/")+ get_test_full_name());
     if (fs::exists(path)) {
       fs::remove(path);
     }
@@ -133,11 +133,7 @@ TEST_F(JpegPlenoSignatureBoxToFile, WriteToFileCorrectSize) {
   std::ifstream infile(path.c_str(), std::ofstream::binary);
   uint32_t test;
   infile.read(reinterpret_cast<char*>(&test), sizeof(uint32_t));
-
-  if constexpr (BinaryTools::using_little_endian()) {
-    test = BinaryTools::swap_endianess(test);
-  }
-
+  test=BinaryTools::ensure_machines_endianess(test);
   EXPECT_EQ(test, 12);
 }
 

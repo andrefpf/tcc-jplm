@@ -44,7 +44,7 @@
 #include <ostream>
 #include <vector>
 #include <algorithm>    // std::reverse
-#include "Lib/Utils/BinaryTools.h"
+#include "BinaryTools.h"
 
 
 template<typename T>
@@ -72,12 +72,14 @@ class BoxDataHolder {
     this->value = value;
   }
 
+
   bool is_equal(const BoxDataHolder& other) const noexcept {
     if(this->value == other.value) {
       return true;
     }
     return false;
   }
+
 
   std::vector<uint8_t> get_bytes() const noexcept {
     auto n_bytes = sizeof(T); 
