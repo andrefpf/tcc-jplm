@@ -43,7 +43,6 @@
 
 #include <ostream>
 #include <vector>
-#include <algorithm>    // std::reverse
 #include "BinaryTools.h"
 
 
@@ -82,26 +81,9 @@ class BoxDataHolder {
 
 
   std::vector<uint8_t> get_bytes() const noexcept {
-    auto n_bytes = sizeof(T); 
-    auto bytes = std::vector<uint8_t>();
-    if (n_bytes == 1) {
-      bytes.push_back(value);
-      return bytes;
-    }
-    bytes.reserve(n_bytes);
-    auto ptr_to_byte = reinterpret_cast<const uint8_t*>(&value);
-
-    for(auto i=decltype(n_bytes){0}; i<n_bytes;++i) {
-      bytes.push_back(*ptr_to_byte);
-      ++ptr_to_byte;
-    }
-
-    if constexpr (BinaryTools::using_little_endian()) {
-      std::reverse(bytes.begin(), bytes.end());  
-    }
-    return bytes;
+    return BinaryTools::split_in_big_endian_bytes(value);
   }
-
+  
 };
 
 

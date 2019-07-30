@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-07-30 12:45:42
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-07-30 12:52:25
+* @Last Modified time: 2019-07-30 13:26:30
 */
 
 #include "BinaryTools.h"
