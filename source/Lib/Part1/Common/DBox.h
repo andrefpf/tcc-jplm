@@ -43,6 +43,7 @@
 
 #include <any>
 #include <cstdint>
+#include <iostream>
 #include "DBoxContents.h"
 
 //Box contents (probably DataBox)
@@ -77,28 +78,16 @@ class DBox {
   virtual bool is_equal(const DBox& other) const = 0;
 
 
-  bool operator==(const DBox& other) const {
-    return this->is_equal(other);
-  }
+  bool operator==(const DBox& other) const;
 
 
-  bool operator!=(const DBox& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const DBox& other) const;
 
-  // //using ptr to achieve return covariance
-  // //for some reason DBoxContents does not
-  // //give me a reference to contents
-  // virtual DBoxContents* get_ptr_to_contents() {
-  //   //should i check for other types?
-  //   return std::any_cast<DBoxContents*>(contents);
-  // }
-
-
+  
   virtual std::vector<uint8_t> get_bytes() const noexcept = 0;
+  
 
-
-  // friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
+  friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
 };
 
 

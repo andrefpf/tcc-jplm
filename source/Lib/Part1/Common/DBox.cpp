@@ -41,10 +41,19 @@
 #include "DBox.h"
 
 
-// std::ostream& operator<<(std::ostream& stream, const DBox& d_box) {
-//   auto bytes = d_box.get_bytes();
-//   for (const auto& byte : bytes) {
-//     stream << static_cast<char>(byte);
-//   }
-//   return stream;
-// }
+bool DBox::operator!=(const DBox& other) const {
+    return !this->operator==(other);
+  }
+
+bool DBox::operator==(const DBox& other) const {
+    return this->is_equal(other);
+  }
+
+
+std::ostream& operator<<(std::ostream& stream, const DBox& d_box) {
+  auto bytes = d_box.get_bytes();
+  for (const auto& byte : bytes) {
+    stream << byte;
+  }
+  return stream;
+}
