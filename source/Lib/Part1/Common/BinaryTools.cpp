@@ -2,10 +2,14 @@
 * @Author: Ismael Seidel
 * @Date:   2019-07-30 12:45:42
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-07-30 13:26:30
+* @Last Modified time: 2019-07-30 15:06:05
 */
 
 #include "BinaryTools.h"
+
+uint8_t BinaryTools::swap_endianess(const uint8_t in) {
+  return in;
+}
 
 
 uint16_t BinaryTools::swap_endianess(const uint16_t in) {
