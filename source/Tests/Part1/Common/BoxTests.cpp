@@ -88,6 +88,13 @@ TEST(BoxBasicTest, ExpectedBoxLenghtEqualSize) {
 }
 
 
+TEST(BoxBasicTest, ExpectedBoxLenghtTypeForSmallSizeBox) {
+	auto box = Box(TBox(0x00000000));
+	EXPECT_EQ(box.get_lenght().index(), 0);
+}
+//doing the other test would need too much memory
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -63,6 +63,25 @@ class UndefinedDBoxContents : public DBoxContents {
   bool operator!=(const UndefinedDBoxContents& other) const {
     return !this->operator==(other);
   }
+
+
+  void set_bytes(const std::vector<uint8_t>&& bytes) {
+    byte_array=std::move(bytes);
+  }
+
+  void set_bytes(const std::vector<uint8_t>& bytes) {
+    byte_array = bytes;
+  }
+
+
+  void add_bytes(const std::vector<uint8_t>& bytes) {
+    byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
+  }
+
+
+  std::vector<uint8_t> get_bytes() const noexcept {
+    return byte_array;
+  }
 };
 
 

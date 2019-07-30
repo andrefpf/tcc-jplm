@@ -73,21 +73,7 @@ TEST(XLBoxBasicTest, XLBoxWriteToBinaryOStream) {
   std::ifstream infile(path.c_str(), std::ofstream::binary);
   uint64_t test;
   infile.read(reinterpret_cast<char *>(&test), sizeof(uint64_t));
-
-  // uint64_t reordered = test;
-
   test = BinaryTools::ensure_machines_endianess(test);
-
-  // if constexpr (BinaryTools::using_little_endian()) {
-  //   reordered = test >> 56;
-  //   reordered |= ((test >> 48) & 0xFF) << 8;
-  //   reordered |= ((test >> 40) & 0xFF) << 16;
-  //   reordered |= ((test >> 32) & 0xFF) << 24;
-  //   reordered |= ((test >> 24) & 0xFF) << 32;
-  //   reordered |= ((test >> 16) & 0xFF) << 40;
-  //   reordered |= ((test >> 8) & 0xFF) << 48;
-  //   reordered |= (test & 0xFF) << 8;
-  // }
 
   EXPECT_EQ(test, 42);
 }
