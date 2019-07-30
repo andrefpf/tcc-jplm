@@ -58,6 +58,15 @@ std::vector<uint8_t> split_in_big_endian_bytes(const T& in) {
     return bytes;
 }
 
+
+template<typename T>
+std::vector<uint8_t>& append_big_endian_bytes(std::vector<uint8_t>& byte_list, const T& value) {
+	auto value_bytes = split_in_big_endian_bytes(value);
+	byte_list.insert(byte_list.end(), value_bytes.begin(), value_bytes.end());
+	return byte_list;
+}
+
+
 }  // namespace BinaryTools
 
 #endif /* end of include guard: BINARYTOOLS_H__ */

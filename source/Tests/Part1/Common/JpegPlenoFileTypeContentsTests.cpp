@@ -88,6 +88,62 @@ TEST(JpegPlenoFileTypeContentsBasics, CompatibleWithItsOwnBrand) {
 }
 
 
+TEST(JpegPlenoFileTypeContentsBasics, BytesSize) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  auto bytes = jpeg_pleno_file_type_contents.get_bytes();
+
+  EXPECT_EQ(bytes.size(), 12);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, BytesBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  auto bytes = jpeg_pleno_file_type_contents.get_bytes();
+
+  EXPECT_EQ(bytes.at(0), 0x6a);
+  EXPECT_EQ(bytes.at(1), 0x70);
+  EXPECT_EQ(bytes.at(2), 0x6c);
+  EXPECT_EQ(bytes.at(3), 0x20);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, BytesMinV) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  auto bytes = jpeg_pleno_file_type_contents.get_bytes();
+
+  //the value of this field shall be zero
+  EXPECT_EQ(bytes.at(4), 0x00);
+  EXPECT_EQ(bytes.at(5), 0x00);
+  EXPECT_EQ(bytes.at(6), 0x00);
+  EXPECT_EQ(bytes.at(7), 0x00);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, BytesCompatibility) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  auto bytes = jpeg_pleno_file_type_contents.get_bytes();
+
+  //for the standard constructor it adds 0x6a706c20 as compatible 
+  //right after MinV
+  EXPECT_EQ(bytes.at(8), 0x6a);
+  EXPECT_EQ(bytes.at(9), 0x70);
+  EXPECT_EQ(bytes.at(10), 0x6c);
+  EXPECT_EQ(bytes.at(11), 0x20);
+}
+
+
+TEST(JpegPlenoFileTypeContentsBasics, BytesCompatibleWithItsBrand) {
+  auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
+  auto bytes = jpeg_pleno_file_type_contents.get_bytes();
+
+  //for the standard constructor it adds 0x6a706c20 as compatible 
+  //right after MinV
+  EXPECT_EQ(bytes.at(0), bytes.at(8));
+  EXPECT_EQ(bytes.at(1), bytes.at(9));
+  EXPECT_EQ(bytes.at(2), bytes.at(10));
+  EXPECT_EQ(bytes.at(3), bytes.at(11));
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -99,6 +99,20 @@ class FileTypeContents : public DBoxContents {
   bool operator!=(const FileTypeContents& other) const noexcept {
     return !this->operator==(other);
   }
+
+
+  virtual std::vector<uint8_t> get_bytes() const override {
+    auto bytes = std::vector<uint8_t>();
+    bytes.reserve(this->size());
+
+    BinaryTools::append_big_endian_bytes(bytes, BR);
+    BinaryTools::append_big_endian_bytes(bytes, MinV);
+
+    for(const auto& compatible_code: CL) {
+      BinaryTools::append_big_endian_bytes(bytes, compatible_code);      
+    }
+    return bytes;
+  }
 };
 
 
