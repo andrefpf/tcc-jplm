@@ -44,14 +44,8 @@
 #include <ostream>
 #include <vector>
 #include <algorithm>    // std::reverse
+#include "Lib/Utils/BinaryTools.h"
 
-namespace BinaryTools {
-  constexpr bool using_little_endian() {
-      if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
-        return true;
-      return false;
-    }  
-}
 
 template<typename T>
 class BoxDataHolder {

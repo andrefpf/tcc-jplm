@@ -85,7 +85,7 @@ class DBox {
 
   
   virtual std::vector<uint8_t> get_bytes() const noexcept = 0;
-  
+
 
   friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
 };
@@ -124,13 +124,7 @@ class CharArrayDBox : public DBox {
   CharArrayDBox* clone() const override {
     return new CharArrayDBox(*this);
   }
-
-
-  // virtual DBoxContents* get_ptr_to_contents() override {
-  //   //should i check for other types?
-  //   return std::any_cast<DBoxContents*>(contents);
-  // }
-
+  
 
   virtual std::vector<uint8_t> get_bytes() const noexcept override {
     return std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents());

@@ -54,6 +54,8 @@ class UUIDInfoBoxContents : public DBoxContents {
 
  public:
   UUIDInfoBoxContents() = default;
+
+  
   ~UUIDInfoBoxContents() = default;
 
   uint64_t size() const noexcept {

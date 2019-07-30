@@ -112,6 +112,6 @@ std::ostream& operator<<(std::ostream& stream, const Box& box) {
   if (xlbox) {
     stream << xlbox.value();
   }
-  //stream << *box.get_dbox();
+  stream << *box.get_dbox();
   return stream;
 }

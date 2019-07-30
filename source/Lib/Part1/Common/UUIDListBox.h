@@ -124,6 +124,8 @@ class UUIDListBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::UUIDListBoxType)),
             UUIDListDBox(contents)){};
+
+      
   ~UUIDListBox() = default;
 };
 
