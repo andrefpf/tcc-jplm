@@ -42,6 +42,7 @@
 #define UNKNOWNBOXINTERPRETER_H__
 
 #include "Box.h"
+#include "DefinedBoxes.h"
 #include "UndefinedBox.h"
 
 namespace UnknownBoxInterpreter {

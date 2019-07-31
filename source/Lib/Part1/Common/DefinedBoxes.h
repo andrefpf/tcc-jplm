@@ -69,5 +69,14 @@ enum class DefinedBoxesTypes : uint32_t {
 typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
 
 
+namespace DefinedBoxes {
+
+  template<DefinedBoxesTypes type>
+  constexpr DefinedBoxesTypesUnderlyingType get_value() {
+    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
+  }
+
+}
+
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */

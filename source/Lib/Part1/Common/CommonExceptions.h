@@ -43,6 +43,7 @@
 #define JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__
 
 #include <exception>
+#include <string>
 
 namespace BoxExceptions {
 
@@ -54,6 +55,22 @@ class ValueNotAllowedException : public std::exception {
   }
 };
 
-}
+
+class UnableToInterpretBoxException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  UnableToInterpretBoxException(const uint32_t type_value)
+      : message(
+            std::string("Box with code") + std::to_string(type_value) +
+            std::string("is not known and thus I'm unable to interpret it.")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
+}  // namespace BoxExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__ */

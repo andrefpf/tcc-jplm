@@ -42,5 +42,20 @@
 
 std::unique_ptr<Box> UnknownBoxInterpreter::interpret_the_unknown(
     const UndefinedBox& unknown_box) {
+
+	using namespace DefinedBoxes;
+
+	auto type_code = unknown_box.get_tbox().get_value();
+
+	switch(type_code) {
+		case get_value<DefinedBoxesTypes::JPEGPlenoSignatureBoxType>(): {
+			break;
+		}
+		case get_value<DefinedBoxesTypes::FileTypeBoxType>(): {
+			break;
+		}
+		default: throw BoxExceptions::UnableToInterpretBoxException(type_code);
+	}
+
 	return std::make_unique<UndefinedBox>(unknown_box); //dummy
 }
