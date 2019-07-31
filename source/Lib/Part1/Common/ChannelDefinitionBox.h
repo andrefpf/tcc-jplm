@@ -94,7 +94,7 @@ class ChannelDefinitionContents {
   }
 
 
-  std::vector<uint8_t> get_bytes() const {
+  std::vector<std::byte> get_bytes() const {
     throw std::runtime_error(
             "Not implemented yet (ChannelDefinitionContents.get_bytes).");
   }
@@ -133,7 +133,7 @@ class ChannelDefinitionDBox : public DBox {
             std::any_cast<ChannelDefinitionContents>(other.get_ref_to_contents()));
   }
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
     return std::any_cast<ChannelDefinitionContents>(this->get_ref_to_contents()).get_bytes();
   }
 };

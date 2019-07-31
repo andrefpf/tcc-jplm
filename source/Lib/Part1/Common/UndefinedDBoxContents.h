@@ -46,14 +46,14 @@
 
 class UndefinedDBoxContents : public DBoxContents {
  protected:
-  std::vector<uint8_t> byte_array;
+  std::vector<std::byte> byte_array;
 
  public:
   UndefinedDBoxContents() = default;
   ~UndefinedDBoxContents() = default;
 
   uint64_t size() const noexcept {
-    return byte_array.size() * sizeof(uint8_t);
+    return byte_array.size();
   }
 
   bool operator==(const UndefinedDBoxContents& other) const {
@@ -65,21 +65,21 @@ class UndefinedDBoxContents : public DBoxContents {
   }
 
 
-  void set_bytes(const std::vector<uint8_t>&& bytes) {
+  void set_bytes(const std::vector<std::byte>&& bytes) {
     byte_array=std::move(bytes);
   }
 
-  void set_bytes(const std::vector<uint8_t>& bytes) {
+  void set_bytes(const std::vector<std::byte>& bytes) {
     byte_array = bytes;
   }
 
 
-  void add_bytes(const std::vector<uint8_t>& bytes) {
+  void add_bytes(const std::vector<std::byte>& bytes) {
     byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
   }
 
 
-  std::vector<uint8_t> get_bytes() const noexcept {
+  std::vector<std::byte> get_bytes() const noexcept {
     return byte_array;
   }
 };
@@ -118,7 +118,7 @@ class UndefinedDBox : public DBox {
   }
 
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
     return std::any_cast<UndefinedDBoxContents>(this->get_ref_to_contents())
         .get_bytes();
   }

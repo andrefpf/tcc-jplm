@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <cstddef>
 
 class DBoxContents {
   //for now this is only a helper class
@@ -10,7 +11,7 @@ class DBoxContents {
   DBoxContents() = default;
   ~DBoxContents() = default;
 
-  virtual std::vector<uint8_t> get_bytes() const {
+  virtual std::vector<std::byte> get_bytes() const {
     throw std::runtime_error(
         "Not implemented yet (ColourSpecificationContents.get_bytes).");
   }

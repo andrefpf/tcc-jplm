@@ -52,8 +52,11 @@ bool DBox::operator==(const DBox& other) const {
 
 std::ostream& operator<<(std::ostream& stream, const DBox& d_box) {
   auto bytes = d_box.get_bytes();
-  for (const auto& byte : bytes) {
-    stream << byte;
-  }
+  ///! \todo: check if this stream.write preserves the order of bytes...
+  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); 
+  ///! \todo: check if possible to combine Dbox << with BoxDataHolder <<
+  // for (const auto& byte : bytes) {
+  //   stream << static_cast<uint8_t>(byte);
+  // }
   return stream;
 }

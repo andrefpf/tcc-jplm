@@ -100,10 +100,10 @@ TEST(JpegPlenoFileTypeContentsBasics, BytesBrand) {
   auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
   auto bytes = jpeg_pleno_file_type_contents.get_bytes();
 
-  EXPECT_EQ(bytes.at(0), 0x6a);
-  EXPECT_EQ(bytes.at(1), 0x70);
-  EXPECT_EQ(bytes.at(2), 0x6c);
-  EXPECT_EQ(bytes.at(3), 0x20);
+  EXPECT_EQ(bytes.at(0), std::byte{0x6a});
+  EXPECT_EQ(bytes.at(1), std::byte{0x70});
+  EXPECT_EQ(bytes.at(2), std::byte{0x6c});
+  EXPECT_EQ(bytes.at(3), std::byte{0x20});
 }
 
 
@@ -112,10 +112,10 @@ TEST(JpegPlenoFileTypeContentsBasics, BytesMinV) {
   auto bytes = jpeg_pleno_file_type_contents.get_bytes();
 
   //the value of this field shall be zero
-  EXPECT_EQ(bytes.at(4), 0x00);
-  EXPECT_EQ(bytes.at(5), 0x00);
-  EXPECT_EQ(bytes.at(6), 0x00);
-  EXPECT_EQ(bytes.at(7), 0x00);
+  EXPECT_EQ(bytes.at(4), std::byte{0x00});
+  EXPECT_EQ(bytes.at(5), std::byte{0x00});
+  EXPECT_EQ(bytes.at(6), std::byte{0x00});
+  EXPECT_EQ(bytes.at(7), std::byte{0x00});
 }
 
 
@@ -125,10 +125,10 @@ TEST(JpegPlenoFileTypeContentsBasics, BytesCompatibility) {
 
   //for the standard constructor it adds 0x6a706c20 as compatible 
   //right after MinV
-  EXPECT_EQ(bytes.at(8), 0x6a);
-  EXPECT_EQ(bytes.at(9), 0x70);
-  EXPECT_EQ(bytes.at(10), 0x6c);
-  EXPECT_EQ(bytes.at(11), 0x20);
+  EXPECT_EQ(bytes.at(8), std::byte{0x6a});
+  EXPECT_EQ(bytes.at(9), std::byte{0x70});
+  EXPECT_EQ(bytes.at(10), std::byte{0x6c});
+  EXPECT_EQ(bytes.at(11), std::byte{0x20});
 }
 
 

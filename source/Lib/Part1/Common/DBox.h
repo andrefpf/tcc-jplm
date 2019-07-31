@@ -84,7 +84,7 @@ class DBox {
   bool operator!=(const DBox& other) const;
 
   
-  virtual std::vector<uint8_t> get_bytes() const noexcept = 0;
+  virtual std::vector<std::byte> get_bytes() const noexcept = 0;
 
 
   friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
@@ -126,8 +126,13 @@ class CharArrayDBox : public DBox {
   }
   
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
-    return std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents());
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+    for(const auto& value: std::any_cast<std::vector<uint8_t>>(this->get_ref_to_contents())) {
+      bytes.emplace_back(std::byte{value});
+    }
+    return bytes;
   }
 
 
@@ -162,8 +167,8 @@ class EmptyDBox : public DBox {
   }
 
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
-    return std::vector<uint8_t>();
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    return std::vector<std::byte>();
   }
 
 

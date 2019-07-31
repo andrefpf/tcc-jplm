@@ -101,8 +101,8 @@ class FileTypeContents : public DBoxContents {
   }
 
 
-  virtual std::vector<uint8_t> get_bytes() const override {
-    auto bytes = std::vector<uint8_t>();
+  virtual std::vector<std::byte> get_bytes() const override {
+    auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
 
     BinaryTools::append_big_endian_bytes(bytes, BR);
@@ -148,7 +148,7 @@ class FileTypeDBox : public DBox {
   }
 
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
     return std::any_cast<FileTypeContents>(this->get_ref_to_contents()).get_bytes();
   }
 };

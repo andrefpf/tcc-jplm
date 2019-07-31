@@ -125,7 +125,7 @@ class ImageHeaderDBox : public DBox {
   }
 
 
-  virtual std::vector<uint8_t> get_bytes() const noexcept override {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
     return std::any_cast<ImageHeaderContents>(this->get_ref_to_contents()).get_bytes();
   }
 };

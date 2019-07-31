@@ -80,7 +80,7 @@ class BoxDataHolder {
   }
 
 
-  std::vector<uint8_t> get_bytes() const noexcept {
+  std::vector<std::byte> get_bytes() const noexcept {
     return BinaryTools::split_in_big_endian_bytes(value);
   }
   
@@ -91,9 +91,10 @@ template<typename T>
 std::ostream& operator<<(
     std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
   auto bytes = box_data_holder.get_bytes();
-  for(const auto& byte: bytes) {
-    stream << byte;
-  }
+  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); 
+  // for(const auto& byte: bytes) {
+  //   stream << byte;
+  // }
   return stream;
 }
 
