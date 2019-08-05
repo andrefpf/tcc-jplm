@@ -43,19 +43,19 @@
 #define JPLM_LIB_PART1_COMMON_BOX_H__
 
 
+#include <any>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <variant>
-#include <any>
+#include "DBox.h"
+#include "EmptyDBox.h"
 #include "LBox.h"
 #include "TBox.h"
 #include "XLBox.h"
-#include "DBox.h"
-
 
 class Box {
-  // A Box contains: 
+  // A Box contains:
   //LBox (required) 4-byte big-endian usigned integer: uint32_t
   //TBox (required) 4-byte big-endian usigned integer: uint32_t
   //XLBox (optional) if LBox.value = 1, 8-byte big-endian usigned integer: uint64_t
@@ -65,24 +65,38 @@ class Box {
   TBox t_box;
   // std::optional<XLBox> xl_box; //kept here just for illustration
   std::unique_ptr<DBox> d_box;
-
   Box() = delete;
 
  public:
   Box(TBox t_box, const DBox& d_box = EmptyDBox())
       : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
   }
+
+
   ~Box() = default;
 
+
   std::variant<LBox, XLBox> get_lenght() const noexcept;
+
+
   std::uint64_t size() const noexcept;
 
+
   LBox get_lbox() const noexcept;
+
+
   TBox get_tbox() const noexcept;
+
+
   std::optional<XLBox> get_xlbox() const noexcept;
+
+
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
+
   DBox& get_ref_to_dbox() const noexcept;
+
+
   const std::any& get_ref_to_dbox_contents() const noexcept;
 
 
@@ -125,8 +139,6 @@ class Box {
   bool operator!=(const Box& other) const {
     return !this->operator==(other);
   }
-
-
 };
 
 
