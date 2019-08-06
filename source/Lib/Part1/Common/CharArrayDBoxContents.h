@@ -48,7 +48,7 @@ class CharArrayDBoxContents : public InMemoryDBoxContents {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const CharArrayDBoxContents&>(other);
-    return this->chars == cast_other.chars;
+    return *this == cast_other;
   }
 
 

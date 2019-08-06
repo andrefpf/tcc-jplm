@@ -45,6 +45,7 @@ bool DBox::operator!=(const DBox& other) const {
     return !this->operator==(other);
   }
 
+
 bool DBox::operator==(const DBox& other) const {
     return this->is_equal(other);
   }

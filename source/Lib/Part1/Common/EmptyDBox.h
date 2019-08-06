@@ -20,11 +20,6 @@ class EmptyDBox : public DBox {
   ~EmptyDBox() = default;
 
 
-  uint64_t size() const noexcept override {
-    return 0;
-  }
-
-
   EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
   }
