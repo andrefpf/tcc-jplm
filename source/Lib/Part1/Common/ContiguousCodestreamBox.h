@@ -45,65 +45,6 @@
 #include "Box.h"
 #include "DefinedBoxes.h"
 
-class ContiguousCodestreamContents : public DBoxContents {
-	//not implemented yet...
-public:
-	uint64_t size() const noexcept {
-		return 0;
-	}
-
-
-  bool operator==(const ContiguousCodestreamContents& ) const {
-    //! \todo Implement this class :)
-    return true; 
-  }
-
-
-  bool operator!=(const ContiguousCodestreamContents& other) const {
-    return !this->operator==(other);
-  }
-};
-
-
-class ContiguousCodestreamDBox : public DBox {
- public:
-  ContiguousCodestreamDBox(const ContiguousCodestreamContents& contents)
-      : DBox(std::make_any<ContiguousCodestreamContents>(contents)) {
-  }
-
-
-  ContiguousCodestreamDBox(const ContiguousCodestreamDBox& other)
-      : DBox(std::make_any<ContiguousCodestreamContents>(
-            std::any_cast<ContiguousCodestreamContents>(other.contents))) {
-  }
-
-
-  ~ContiguousCodestreamDBox() = default;
-
-
-  uint64_t size() const noexcept override {
-    return std::any_cast<ContiguousCodestreamContents>(this->contents).size();
-  }
-
-
-  ContiguousCodestreamDBox* clone() const override {
-    return new ContiguousCodestreamDBox(*this);
-  }
-
-
-  bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return (std::any_cast<ContiguousCodestreamContents>(this->get_ref_to_contents()) ==
-            std::any_cast<ContiguousCodestreamContents>(other.get_ref_to_contents()));
-  }
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::any_cast<ContiguousCodestreamDBox>(this->get_ref_to_contents()).get_bytes();
-  }
-};
-
 
 class ContiguousCodestreamBox : public Box {
  public:
