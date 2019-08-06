@@ -51,5 +51,5 @@ bool DBox::operator==(const DBox& other) const {
 
 
 std::ostream& operator<<(std::ostream& stream, const DBox& d_box) {
-  return d_box.contents->write_to(stream);
+  return d_box.contents->write_to(stream); //needed to call this way to allow for polimorfism
 }

@@ -16,7 +16,7 @@ class InMemoryDBoxContents : public DBoxContents {
 
   virtual std::vector<std::byte> get_bytes() const {
     throw std::runtime_error(
-        "Not implemented yet (ColourSpecificationContents.get_bytes).");
+        "Not implemented yet (get_bytes).");
   }
 
 

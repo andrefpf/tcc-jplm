@@ -91,10 +91,7 @@ template<typename T>
 std::ostream& operator<<(
     std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
   auto bytes = box_data_holder.get_bytes();
-  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size()); 
-  // for(const auto& byte: bytes) {
-  //   stream << byte;
-  // }
+  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
   return stream;
 }
 
