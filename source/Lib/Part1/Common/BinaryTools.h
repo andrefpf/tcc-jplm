@@ -9,6 +9,19 @@
 
 namespace BinaryTools {
 
+struct uint24_t {
+  uint8_t hi;
+  uint16_t lo;
+
+  bool operator==(const uint24_t& other) const {
+    return (this->hi == other.hi) &&  (this->lo == other.lo);
+  }
+
+   bool operator!=(const uint24_t& other) const {
+    return !this->operator==(other);
+  }
+};
+
 constexpr bool using_little_endian() {
   if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
     return true;

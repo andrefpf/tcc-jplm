@@ -52,6 +52,16 @@ class CharArrayDBoxContents : public InMemoryDBoxContents {
   }
 
 
+  bool operator==(const CharArrayDBoxContents& other) const {
+    return this->chars == other.chars;
+  }
+
+
+  bool operator!=(const CharArrayDBoxContents& other) const {
+    return !this->operator==(other);
+  }
+
+
   virtual std::vector<std::byte> get_bytes() const noexcept override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());

@@ -1,8 +1,8 @@
 #ifndef CONTIGUOUSCODESTREAMDBOX_H__
 #define CONTIGUOUSCODESTREAMDBOX_H__
 
-#include "DBox.h"
 #include "ContiguousCodestreamContents.h"
+#include "DBox.h"
 
 class ContiguousCodestreamDBox : public DBox {
  public:
@@ -12,7 +12,8 @@ class ContiguousCodestreamDBox : public DBox {
 
 
   ContiguousCodestreamDBox(const ContiguousCodestreamDBox& other)
-      : DBox(std::make_unique<ContiguousCodestreamContents>(other.get_ref_to_contents())) {
+      : DBox(std::make_unique<ContiguousCodestreamContents>(
+            other.get_ref_to_contents())) {
   }
 
 
