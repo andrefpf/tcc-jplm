@@ -23,10 +23,10 @@ class ChannelDefinitionContents : public InMemoryDBoxContents {
 
 
   virtual bool is_equal(const DBoxContents& other) const override {
-  	 if (typeid(*this) != typeid(other))
+  	if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const ChannelDefinitionContents&>(other);
-    return this->channel_descriptions == cast_other.channel_descriptions;
+    return *this == cast_other;
   }
 
 
