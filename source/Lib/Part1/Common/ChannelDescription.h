@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <tuple> //std::tie
 
 
 enum class ChannelType : uint16_t {
@@ -25,6 +26,17 @@ class ChannelDescription {
   uint16_t cn;  //channel index;
   uint16_t typ;  //channel type;
   uint16_t asoc;  //channel association;
+
+ public:
+  bool operator==(const ChannelDescription& other) const {
+    return std::tie(cn, typ, asoc) == std::tie(other.cn, other.typ, other.asoc);
+  }
+
+
+  bool operator!=(const ChannelDescription& other) const {
+    return !this->operator==(other);
+  }
+
 };
 
 #endif /* end of include guard: CHANNELDESCRIPTION_H__ */
