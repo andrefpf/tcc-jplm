@@ -56,6 +56,12 @@ TEST(JPLFileBasicTest, JPLFileHasValidSignatureBox) {
 }
 
 
+TEST(JPLFileBasicTest, JPLFileIsCompatibleWithPleno) {
+	auto jpl_file = JPLFile();
+	EXPECT_TRUE(jpl_file.get_file_type_box().is_the_file_compatible_with(0x6a706c20));
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
