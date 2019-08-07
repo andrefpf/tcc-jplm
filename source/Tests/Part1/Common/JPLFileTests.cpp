@@ -50,6 +50,12 @@ TEST(JPLFileBasicTest, JPLFileInitializationDoesNotThrow) {
 }
 
 
+TEST(JPLFileBasicTest, JPLFileHasValidSignatureBox) {
+	auto jpl_file = JPLFile();
+	EXPECT_EQ(jpl_file.get_jpeg_pleno_signature_box(), JpegPlenoSignatureBox());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -64,7 +64,7 @@ class IntellectualPropertyBox : public Box {
   }
 
 
-  ~IntellectualPropertyBox();
+  virtual ~IntellectualPropertyBox() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_INTELLECTUALPROPERTYBOX_H__ */
