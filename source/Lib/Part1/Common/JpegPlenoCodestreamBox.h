@@ -41,19 +41,27 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
 
-//the ideia is to be the base for 
+//the ideia is to be the base for
 // JpegPlenoLightFieldBox
 // JpegPlenoPointCloudBox
 // JpegPlenoHologramBox
-// 
+//
 
 #include "Box.h"
 
-class JpegPlenoCodestreamBox : public Box
-{
-public:
-	JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box) : Box(type_box, data_box) {}
-	virtual ~JpegPlenoCodestreamBox() = default;
+class JpegPlenoCodestreamBox : public Box {
+ public:
+  JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box)
+      : Box(type_box, data_box) {
+  }
+
+
+  JpegPlenoCodestreamBox(const JpegPlenoCodestreamBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+  
+
+  virtual ~JpegPlenoCodestreamBox() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__ */

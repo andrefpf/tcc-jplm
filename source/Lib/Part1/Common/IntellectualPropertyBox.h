@@ -59,7 +59,11 @@ class IntellectualPropertyBox : public Box {
                 DefinedBoxesTypes::IntellectualPropertyBoxType)),
             UndefinedDBox(content)){};
 
-      
+  IntellectualPropertyBox(const IntellectualPropertyBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+
+
   ~IntellectualPropertyBox();
 };
 

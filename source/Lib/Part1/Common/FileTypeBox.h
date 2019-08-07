@@ -55,6 +55,11 @@ class FileTypeBox : public Box {
             FileTypeDBox(contents)){};
 
 
+  FileTypeBox(const FileTypeBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+  
+
   ~FileTypeBox() = default;
 };
 

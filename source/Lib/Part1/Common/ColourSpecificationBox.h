@@ -54,7 +54,9 @@ class ColourSpecificationBox : public Box {
             ColourSpecificationDBox(color_specification_contents)){};
 
 
-  
+  ColourSpecificationBox(const ColourSpecificationBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
 
 
   ~ColourSpecificationBox() = default;

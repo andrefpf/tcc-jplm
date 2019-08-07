@@ -55,6 +55,11 @@ class UUIDBox : public Box {
             UUIDDBox(contents)){};
 
 
+  UUIDBox(const UUIDBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+  
+
   ~UUIDBox() = default;
 
 
