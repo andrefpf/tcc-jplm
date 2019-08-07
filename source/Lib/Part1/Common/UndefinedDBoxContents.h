@@ -42,23 +42,62 @@
 #ifndef JPLM_LIB_PART1_COMMON_UNDEFINEDDBOXCONTENTS_H__
 #define JPLM_LIB_PART1_COMMON_UNDEFINEDDBOXCONTENTS_H__
 
-#include "Box.h"
+#include "InMemoryDBoxContents.h"
 
-class UndefinedDBoxContents : public DBoxContents {
+
+class UndefinedDBoxContents : public InMemoryDBoxContents {
  protected:
   std::vector<std::byte> byte_array;
 
  public:
+  UndefinedDBoxContents(const std::vector<std::byte>& byte_array)
+      : byte_array(byte_array) {
+  }
+
+
+  UndefinedDBoxContents(std::vector<std::byte>&& byte_array)
+      : byte_array(std::move(byte_array)) {
+  }
+
+
+  UndefinedDBoxContents(const UndefinedDBoxContents& other)
+      : byte_array(other.byte_array) {
+  }
+
+
+  UndefinedDBoxContents(UndefinedDBoxContents&& other)
+      : byte_array(std::move(other.byte_array)) {
+  }
+
+
   UndefinedDBoxContents() = default;
+
+
+  virtual UndefinedDBoxContents* clone() const override {
+    return new UndefinedDBoxContents(*this);
+  }
+
+
+  virtual bool is_equal(const DBoxContents& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UndefinedDBoxContents&>(other);
+    return *this == cast_other;
+  }
+
+
   ~UndefinedDBoxContents() = default;
 
-  uint64_t size() const noexcept {
+
+  uint64_t size() const noexcept override {
     return byte_array.size();
   }
+
 
   bool operator==(const UndefinedDBoxContents& other) const {
     return this->byte_array == other.byte_array;
   }
+
 
   bool operator!=(const UndefinedDBoxContents& other) const {
     return !this->operator==(other);
@@ -66,8 +105,9 @@ class UndefinedDBoxContents : public DBoxContents {
 
 
   void set_bytes(const std::vector<std::byte>&& bytes) {
-    byte_array=std::move(bytes);
+    byte_array = std::move(bytes);
   }
+
 
   void set_bytes(const std::vector<std::byte>& bytes) {
     byte_array = bytes;
@@ -79,48 +119,8 @@ class UndefinedDBoxContents : public DBoxContents {
   }
 
 
-  std::vector<std::byte> get_bytes() const noexcept {
-    return byte_array;
-  }
-};
-
-
-class UndefinedDBox : public DBox {
- public:
-  UndefinedDBox(const UndefinedDBoxContents& contents)
-      : DBox(std::make_any<UndefinedDBoxContents>(contents)) {
-  }
-
-
-  UndefinedDBox(const UndefinedDBox& other)
-      : DBox(std::make_any<UndefinedDBoxContents>(
-            std::any_cast<UndefinedDBoxContents>(other.contents))) {
-  }
-
-
-  ~UndefinedDBox() = default;
-
-
-  uint64_t size() const noexcept override {
-    return std::any_cast<UndefinedDBoxContents>(this->contents).size();
-  }
-
-
-  UndefinedDBox* clone() const override {
-    return new UndefinedDBox(*this);
-  }
-
-  bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return (std::any_cast<UndefinedDBoxContents>(this->get_ref_to_contents()) ==
-            std::any_cast<UndefinedDBoxContents>(other.get_ref_to_contents()));
-  }
-
-
   virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::any_cast<UndefinedDBoxContents>(this->get_ref_to_contents())
-        .get_bytes();
+    return byte_array;
   }
 };
 
