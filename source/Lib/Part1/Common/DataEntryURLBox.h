@@ -55,6 +55,11 @@ class DataEntryURLBox : public Box {
             DataEntryURLDBox(contents)){};
 
 
+  DataEntryURLBox(const DataEntryURLBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+
+
   ~DataEntryURLBox() = default;
 };
 

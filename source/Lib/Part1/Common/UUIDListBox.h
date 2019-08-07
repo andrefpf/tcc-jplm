@@ -51,11 +51,11 @@ class UUIDListBoxContents : public DBoxContents {
   std::vector<UniversalUniqueIdentifier> id;
 
  public:
-  UUIDListBoxContents();
-  ~UUIDListBoxContents();
+  UUIDListBoxContents() = default;
+  ~UUIDListBoxContents() = default;
 
   uint64_t size() const noexcept {
-    return 2+id.size()*16;
+    return 2 + id.size() * 16;
     //2 for NU (Number of UUID) + 16 for each uuid on the list
   }
 
@@ -71,51 +71,29 @@ class UUIDListBoxContents : public DBoxContents {
 
 
   uint16_t get_nu() const noexcept {
-  	return id.size();
+    return id.size();
   }
-
-
-  
 };
 
 
 class UUIDListDBox : public DBox {
  public:
   UUIDListDBox(const UUIDListBoxContents& contents)
-      : DBox(std::make_any<UUIDListBoxContents>(contents)) {
+      : DBox(std::make_unique<UUIDListBoxContents>(contents)) {
   }
 
 
   UUIDListDBox(const UUIDListDBox& other)
-      : DBox(std::make_any<UUIDListBoxContents>(
-            std::any_cast<UUIDListBoxContents>(other.contents))) {
+      : DBox(std::make_unique<UUIDListBoxContents>(
+            other.get_ref_to_contents())) {
   }
 
 
   ~UUIDListDBox() = default;
 
 
-  uint64_t size() const noexcept override {
-    return std::any_cast<UUIDListBoxContents>(this->contents).size();
-  }
-
-
   UUIDListDBox* clone() const override {
     return new UUIDListDBox(*this);
-  }
-
-
-  bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return (std::any_cast<UUIDListBoxContents>(this->get_ref_to_contents()) ==
-            std::any_cast<UUIDListBoxContents>(other.get_ref_to_contents()));
-  }
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::any_cast<UUIDListBoxContents>(this->get_ref_to_contents())
-        .get_bytes();
   }
 };
 
@@ -127,7 +105,9 @@ class UUIDListBox : public Box {
                 DefinedBoxesTypes::UUIDListBoxType)),
             UUIDListDBox(contents)){};
 
-      
+  UUIDListBox(const UUIDListBox& other) : Box(TBox(other.t_box), *other.d_box) {
+  }
+
   ~UUIDListBox() = default;
 };
 

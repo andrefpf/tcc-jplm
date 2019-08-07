@@ -43,78 +43,7 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
-#include "UniversalUniqueIdentifier.h"
-#include "UUIDListBox.h"
-#include "DataEntryURLBox.h"
-
-class UUIDInfoBoxContents : public DBoxContents {
- protected:
-  UUIDListBox u_list;
-  DataEntryURLBox de;
-
- public:
-  UUIDInfoBoxContents() = default;
-
-  
-  ~UUIDInfoBoxContents() = default;
-
-  uint64_t size() const noexcept {
-    return u_list.size() + de.size();
-  }
-
-
-  bool operator==(const UUIDInfoBoxContents& other) const {
-    return (this->u_list == other.u_list) && (this->de == other.de);
-  }
-
-
-  bool operator!=(const UUIDInfoBoxContents& other) const {
-    return !this->operator==(other);
-  }
-};
-
-
-class UUIDInfoDBox : public DBox {
- public:
-  UUIDInfoDBox(const UUIDInfoBoxContents& contents)
-      : DBox(std::make_any<UUIDInfoBoxContents>(contents)) {
-  }
-
-
-  UUIDInfoDBox(const UUIDInfoDBox& other)
-      : DBox(std::make_any<UUIDInfoBoxContents>(
-            std::any_cast<UUIDInfoBoxContents>(other.contents))) {
-  }
-
-
-  ~UUIDInfoDBox() = default;
-
-
-  uint64_t size() const noexcept override {
-    return std::any_cast<UUIDInfoBoxContents>(this->contents).size();
-  }
-
-
-  UUIDInfoDBox* clone() const override {
-    return new UUIDInfoDBox(*this);
-  }
-
-
-  bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return (std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents()) ==
-            std::any_cast<UUIDInfoBoxContents>(other.get_ref_to_contents()));
-  }
-  
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::any_cast<UUIDInfoBoxContents>(this->get_ref_to_contents())
-        .get_bytes();
-  }
-
-
-};
+#include "UUIDInfoDBox.h"
 
 
 class UUIDInfoBox : public Box {
