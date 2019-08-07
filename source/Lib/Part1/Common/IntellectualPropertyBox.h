@@ -44,7 +44,7 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
-#include "UndefinedDBoxContents.h"
+#include "UndefinedDBox.h"
 
 class IntellectualPropertyBox : public Box {
  public:
