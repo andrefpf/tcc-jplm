@@ -1,10 +1,10 @@
 #ifndef FILETYPECONTENTS_H__
 #define FILETYPECONTENTS_H__
 
-#include "InMemoryDBoxContents.h"
-#include <algorithm> //std::find
-#include <tuple> //std::tie
+#include <algorithm>  //std::find
+#include <tuple>  //std::tie
 #include "BinaryTools.h"
+#include "InMemoryDBoxContents.h"
 
 class FileTypeContents : public InMemoryDBoxContents {
   uint32_t BR;  //brand
@@ -13,15 +13,32 @@ class FileTypeContents : public InMemoryDBoxContents {
 
  public:
   FileTypeContents(uint32_t brand, uint32_t minor_version,
-      std::vector<uint32_t> compatibility_list)
-      : BR(brand), MinV(minor_version), CL(compatibility_list){};
+      const std::vector<uint32_t>& compatibility_list)
+      : BR(brand), MinV(minor_version), CL(compatibility_list) {
+  }
+
+
+  FileTypeContents(uint32_t brand, uint32_t minor_version,
+      std::vector<uint32_t>&& compatibility_list)
+      : BR(brand), MinV(minor_version), CL(std::move(compatibility_list)) {
+  }
+
+
+  FileTypeContents(const FileTypeContents& other)
+      : BR(other.BR), MinV(other.MinV), CL(other.CL) {
+  }
+
+
+  FileTypeContents(FileTypeContents&& other)
+      : BR(other.BR), MinV(other.MinV), CL(std::move(other.CL)) {
+  }
 
 
   virtual ~FileTypeContents() = default;
 
 
   virtual FileTypeContents* clone() const override {
-  	return new FileTypeContents(*this);
+    return new FileTypeContents(*this);
   }
 
 
@@ -90,8 +107,8 @@ class FileTypeContents : public InMemoryDBoxContents {
     BinaryTools::append_big_endian_bytes(bytes, BR);
     BinaryTools::append_big_endian_bytes(bytes, MinV);
 
-    for(const auto& compatible_code: CL) {
-      BinaryTools::append_big_endian_bytes(bytes, compatible_code);      
+    for (const auto& compatible_code : CL) {
+      BinaryTools::append_big_endian_bytes(bytes, compatible_code);
     }
     return bytes;
   }
