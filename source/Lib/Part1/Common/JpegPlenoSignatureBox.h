@@ -43,6 +43,7 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
+#include "CharArrayDBox.h"
 
 class JpegPlenoSignatureBox : public Box {
  public:
