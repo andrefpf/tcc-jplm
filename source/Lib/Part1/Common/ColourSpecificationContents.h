@@ -4,6 +4,7 @@
 #include <optional>
 #include <tuple>  //std::tie
 #include "InMemoryDBoxContents.h"
+#include <assert.h>
 
 class ICCProfile {
   //not implemented
@@ -42,15 +43,11 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
 
   virtual uint64_t size() const noexcept override {
     constexpr auto initial_size = 3 * sizeof(uint8_t);
-    if (EnumCS) {
-      return initial_size + sizeof(uint16_t);
-    }
     if (profile) {
       return initial_size + profile->size();
     }
-    throw std::runtime_error(
-        "Either EnumCS or ICCProfile must be present in "
-        "ColourSpecificationBox");
+    assert(EnumCS);
+    return initial_size + sizeof(uint16_t);
   }
 
 

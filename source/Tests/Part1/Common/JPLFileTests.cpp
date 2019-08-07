@@ -45,8 +45,8 @@
 #include "gtest/gtest.h"
 
 
-TEST(XLBoxBasicTest, XLBoxInitializationDoesNotThrow) {
-  // EXPECT_NO_THROW(XLBox(42));
+TEST(JPLFileBasicTest, JPLFileInitializationDoesNotThrow) {
+	EXPECT_NO_THROW(JPLFile());
 }
 
 
