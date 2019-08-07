@@ -15,6 +15,7 @@ class InFileDBoxContents : public DBoxContents {
       : DBoxContents(), filename(filename),
         file(filename.c_str(), std::ios::in | std::ios::out) {
   }
+  
 
   InFileDBoxContents(const InFileDBoxContents& other)
       : DBoxContents(), filename(other.filename),

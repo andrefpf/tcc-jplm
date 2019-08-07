@@ -17,6 +17,11 @@ class EmptyDBox : public DBox {
   EmptyDBox(EmptyDBox&& other) : DBox(std::move(other)) {};
 
 
+  virtual const DBoxContents& get_ref_to_contents() const override {
+    return static_cast<const DBoxContents&>(*contents);
+  }
+  
+
   ~EmptyDBox() = default;
 
 

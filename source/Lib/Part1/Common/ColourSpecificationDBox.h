@@ -15,6 +15,12 @@ class ColourSpecificationDBox : public DBox {
       : DBox(std::make_unique<ColourSpecificationContents>(other.get_ref_to_contents())) {
   }
 
+
+  virtual const ColourSpecificationContents& get_ref_to_contents() const override {
+    return static_cast<const ColourSpecificationContents&>(*contents);
+  }
+
+
   ~ColourSpecificationDBox() = default;
 
 

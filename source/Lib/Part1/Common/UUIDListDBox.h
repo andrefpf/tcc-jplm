@@ -17,6 +17,11 @@ class UUIDListDBox : public DBox {
   }
 
 
+  virtual const UUIDListBoxContents& get_ref_to_contents() const override {
+    return static_cast<const UUIDListBoxContents&>(*contents);
+  }
+
+
   ~UUIDListDBox() = default;
 
 

@@ -52,10 +52,14 @@ class IntellectualPropertyBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::IntellectualPropertyBoxType)),
             UndefinedDBox(UndefinedDBoxContents())){};
+
+
   IntellectualPropertyBox(const UndefinedDBoxContents& content)
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::IntellectualPropertyBoxType)),
             UndefinedDBox(content)){};
+
+      
   ~IntellectualPropertyBox();
 };
 

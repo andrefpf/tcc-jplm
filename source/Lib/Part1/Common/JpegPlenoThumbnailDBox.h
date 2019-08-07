@@ -18,6 +18,11 @@ class JpegPlenoThumbnailDBox : public DBox {
   }
 
 
+  virtual const JpegPlenoThumbnailContents& get_ref_to_contents() const override {
+    return static_cast<const JpegPlenoThumbnailContents&>(*contents);
+  }
+
+
   ~JpegPlenoThumbnailDBox() = default;
 
 

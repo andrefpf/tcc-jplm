@@ -11,10 +11,14 @@ class ChannelDefinitionDBox : public DBox {
   }
 
 
-  //check to make sure this works (creating a unique ptr from a reference of base class)
   ChannelDefinitionDBox(const ChannelDefinitionDBox& other)
       : DBox(std::make_unique<ChannelDefinitionContents>(
             other.get_ref_to_contents())) {
+  }
+
+
+  virtual const ChannelDefinitionContents& get_ref_to_contents() const override {
+    return static_cast<const ChannelDefinitionContents&>(*contents);
   }
 
 

@@ -17,6 +17,11 @@ class ImageHeaderDBox : public DBox {
   }
 
 
+  virtual const ImageHeaderContents& get_ref_to_contents() const override {
+    return static_cast<const ImageHeaderContents&>(*contents);
+  }
+  
+
   ~ImageHeaderDBox() = default;
 
 

@@ -17,6 +17,11 @@ class DataEntryURLDBox : public DBox {
   }
 
 
+  virtual const DataEntryURLBoxContents& get_ref_to_contents() const override {
+    return static_cast<const DataEntryURLBoxContents&>(*contents);
+  }
+
+
   ~DataEntryURLDBox() = default;
 
 

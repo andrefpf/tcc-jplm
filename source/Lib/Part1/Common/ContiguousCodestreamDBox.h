@@ -17,6 +17,11 @@ class ContiguousCodestreamDBox : public DBox {
   }
 
 
+  virtual const ContiguousCodestreamContents& get_ref_to_contents() const override {
+    return static_cast<const ContiguousCodestreamContents&>(*contents);
+  }
+
+
   ~ContiguousCodestreamDBox() = default;
 
 
