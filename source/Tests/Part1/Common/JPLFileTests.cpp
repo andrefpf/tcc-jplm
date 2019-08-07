@@ -31,55 +31,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFile.h
- *  \brief    
+/** \file     JPLFileTests.cpp
+ *  \brief    Tests of JPLFile.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-08-07
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_JPLFILE_H__
-#define JPLM_LIB_PART1_COMMON_JPLFILE_H__
-
-#include "FileTypeBox.h"
-#include "JpegPlenoFileTypeContents.h"
-#include "JpegPlenoCodestreamBox.h"
-#include "JpegPlenoSignatureBox.h"
-#include "JpegPlenoThumbnailBox.h"
-#include "IntellectualPropertyBox.h"
-#include "UUIDBox.h"
-#include "UUIDInfoBox.h"
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include "Lib/Part1/Common/JPLFile.h"
+#include "gtest/gtest.h"
 
 
-class JPLFile {
- protected:
-  JpegPlenoSignatureBox jpeg_pleno_signature_box;
-  JpegPlenoFileTypeContents file_type_box;  //this is the FileTypeBox
-  // std::optional<XMLBoxWithCatalog> xml_box_with_catalog;
-  std::optional<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
-  std::optional<std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>>
-      jpeg_pleno_codestreams;
-  std::optional<IntellectualPropertyBox> ipr_box;
-  // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
-  std::optional<std::vector<UUIDBox>> uuid_boxes;
-  std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
- public:
-  JPLFile() = default;
-  ~JPLFile() = default;
+TEST(XLBoxBasicTest, XLBoxInitializationDoesNotThrow) {
+  // EXPECT_NO_THROW(XLBox(42));
+}
 
-  JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& ) { //thumbail_box
-    // jpeg_pleno_thumbnail_box. = thumbail_box;
-    return *this;
-  }
 
-  JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
-    return jpeg_pleno_signature_box;
-  }
-
-  JpegPlenoFileTypeContents get_file_type_box() const noexcept {
-    return file_type_box;
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLFILE_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

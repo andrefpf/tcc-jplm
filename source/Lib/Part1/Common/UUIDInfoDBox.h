@@ -7,13 +7,17 @@
 class UUIDInfoDBox : public DBox {
  public:
   UUIDInfoDBox(const UUIDInfoBoxContents& contents)
-      : DBox(std::make_any<UUIDInfoBoxContents>(contents)) {
+      : DBox(std::make_unique<UUIDInfoBoxContents>(contents)) {
   }
 
 
   UUIDInfoDBox(const UUIDInfoDBox& other)
-      : DBox(std::make_any<UUIDInfoBoxContents>(
-            std::any_cast<UUIDInfoBoxContents>(other.contents))) {
+      : DBox(std::make_unique<UUIDInfoBoxContents>(other.get_ref_to_contents())) {
+  }
+
+
+  virtual const UUIDInfoBoxContents& get_ref_to_contents() const override {
+    return static_cast<const UUIDInfoBoxContents&>(*contents);
   }
 
 
