@@ -43,59 +43,7 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
-#include "UniversalUniqueIdentifier.h"
-
-
-class UUIDListBoxContents : public DBoxContents {
- protected:
-  std::vector<UniversalUniqueIdentifier> id;
-
- public:
-  UUIDListBoxContents() = default;
-  ~UUIDListBoxContents() = default;
-
-  uint64_t size() const noexcept {
-    return 2 + id.size() * 16;
-    //2 for NU (Number of UUID) + 16 for each uuid on the list
-  }
-
-
-  bool operator==(const UUIDListBoxContents& other) const {
-    return (this->id == other.id);
-  }
-
-
-  bool operator!=(const UUIDListBoxContents& other) const {
-    return !this->operator==(other);
-  }
-
-
-  uint16_t get_nu() const noexcept {
-    return id.size();
-  }
-};
-
-
-class UUIDListDBox : public DBox {
- public:
-  UUIDListDBox(const UUIDListBoxContents& contents)
-      : DBox(std::make_unique<UUIDListBoxContents>(contents)) {
-  }
-
-
-  UUIDListDBox(const UUIDListDBox& other)
-      : DBox(std::make_unique<UUIDListBoxContents>(
-            other.get_ref_to_contents())) {
-  }
-
-
-  ~UUIDListDBox() = default;
-
-
-  UUIDListDBox* clone() const override {
-    return new UUIDListDBox(*this);
-  }
-};
+#include "UUIDListDBox.h"
 
 
 class UUIDListBox : public Box {
