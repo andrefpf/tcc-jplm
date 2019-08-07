@@ -52,6 +52,13 @@ class ChannelDefinitionBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::ChannelDefinitionBoxType)),
             ChannelDefinitionDBox(contents)){};
+
+
+  ChannelDefinitionBox(const ChannelDefinitionBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+  
+
   ~ChannelDefinitionBox() = default;
 };
 

@@ -43,6 +43,7 @@
 #define JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__
 
 #include "Box.h"
+#include "ContiguousCodestreamDBox.h"
 #include "DefinedBoxes.h"
 
 
@@ -52,6 +53,13 @@ class ContiguousCodestreamBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::ContiguousCodestreamBoxType)),
             ContiguousCodestreamDBox(contents)){};
+
+
+  ContiguousCodestreamBox(const ContiguousCodestreamBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+
+
   ~ContiguousCodestreamBox() = default;
 };
 

@@ -51,7 +51,13 @@ class ImageHeaderBox : public Box {
   ImageHeaderBox(const ImageHeaderDBox& contents)
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::ImageHeaderBoxType)),
-            contents){};
+            contents) {
+  }
+  
+
+  ImageHeaderBox(const ImageHeaderBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
 
 
   ~ImageHeaderBox() = default;

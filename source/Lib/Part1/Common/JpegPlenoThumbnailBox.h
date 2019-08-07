@@ -41,86 +41,9 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOTHUMBNAILBOX_H__
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOTHUMBNAILBOX_H__
 
-#include <algorithm>
-#include <numeric>
-#include "BitsPerComponentBox.h"
-#include "ChannelDefinitionBox.h"
-#include "ColourSpecificationBox.h"
-#include "ContiguousCodestreamBox.h"
-#include "ImageHeaderBox.h"
-
-class JpegPlenoThumbnailContents : public DBoxContents {
- protected:
-  ImageHeaderBox ihdr;  //image header box
-  BitsPerComponentBox bpcc;
-  std::vector<ColourSpecificationBox> colr;
-  ChannelDefinitionBox cdef;
-  ContiguousCodestreamBox jpc2;
-
- public:
-  uint64_t size() const noexcept {
-    auto sum_colr_sizes = [](uint64_t sum, const ColourSpecificationBox& val) {
-      return sum + val.size();
-    };
-
-    return ihdr.size() + bpcc.size() +
-           std::accumulate(colr.begin(), colr.end(), 0, sum_colr_sizes) +
-           cdef.size() + jpc2.size();
-  }
-
-
-  bool operator==(const JpegPlenoThumbnailContents& other) const {
-    return std::tie(
-               this->ihdr, this->bpcc, this->colr, this->cdef, this->jpc2) ==
-           std::tie(other.ihdr, other.bpcc, other.colr, other.cdef, other.jpc2);
-  }
-
-
-  bool operator!=(const JpegPlenoThumbnailContents& other) const {
-    return !this->operator==(other);
-  }
-};
-
-
-class JpegPlenoThumbnailDBox : public DBox {
- public:
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailContents& contents)
-      : DBox(std::make_any<JpegPlenoThumbnailContents>(contents)) {
-  }
-
-
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailDBox& other)
-      : DBox(std::make_any<JpegPlenoThumbnailContents>(
-            std::any_cast<JpegPlenoThumbnailContents>(other.contents))) {
-  }
-
-
-  ~JpegPlenoThumbnailDBox() = default;
-
-
-  uint64_t size() const noexcept override {
-    return std::any_cast<JpegPlenoThumbnailContents>(this->contents).size();
-  }
-
-
-  JpegPlenoThumbnailDBox* clone() const override {
-    return new JpegPlenoThumbnailDBox(*this);
-  }
-
-
-  bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return (std::any_cast<JpegPlenoThumbnailContents>(this->get_ref_to_contents()) ==
-            std::any_cast<JpegPlenoThumbnailContents>(other.get_ref_to_contents()));
-  }
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::any_cast<JpegPlenoThumbnailContents>(this->get_ref_to_contents())
-        .get_bytes();
-  }
-};
+#include "Box.h"
+#include "DefinedBoxes.h"
+#include "JpegPlenoThumbnailDBox.h"
 
 
 class JpegPlenoThumbnailBox : public Box {

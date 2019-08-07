@@ -43,6 +43,7 @@
 
 #include "Box.h"
 #include "DefinedBoxes.h"
+#include "CharArrayDBox.h"
 
 class BitsPerComponentBox : public Box {
  public:
@@ -50,6 +51,13 @@ class BitsPerComponentBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::BitsPerComponentBoxType)),
             CharArrayDBox(bits_per_component_vector)){};
+
+
+  BitsPerComponentBox(const BitsPerComponentBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+
+
   ~BitsPerComponentBox() = default;
 };
 
