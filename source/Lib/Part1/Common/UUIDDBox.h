@@ -29,10 +29,8 @@ class UUIDDBox : public DBox {
   }
 
 
-  void add_data(const std::vector<uint8_t>&) {  //data
-    ///! \todo implement
-    // this.contents->
-    // std::any_cast<UUIDBoxContents&>(this->contents).add_data(data);
+  void add_data(const std::vector<uint8_t>& data) {
+    static_cast<UUIDBoxContents&>(*contents).add_data(data);
   }
 };
 
