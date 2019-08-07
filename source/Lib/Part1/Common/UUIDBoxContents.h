@@ -15,11 +15,24 @@ class UUIDBoxContents : public InMemoryDBoxContents {
   UUIDBoxContents() = default;
 
 
-  ~UUIDBoxContents() = default;
+  virtual UUIDBoxContents* clone() const override {
+    return new UUIDBoxContents(*this);
+  }
+
+
+  virtual ~UUIDBoxContents() = default;
 
 
   virtual uint64_t size() const noexcept override {
     return id.size() + data.size() * sizeof(uint8_t);
+  }
+
+
+  virtual bool is_equal(const DBoxContents& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UUIDBoxContents&>(other);
+    return *this == cast_other;
   }
 
 

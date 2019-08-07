@@ -40,6 +40,7 @@
 
 #include <iostream>
 #include "Lib/Part1/Common/DBox.h"
+#include "Lib/Part1/Common/EmptyDBox.h"
 #include "gtest/gtest.h"
 
 

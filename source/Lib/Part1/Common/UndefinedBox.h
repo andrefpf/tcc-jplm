@@ -2,12 +2,17 @@
 #define UNDEFINEDBOX_H__
 
 #include "Box.h"
-#include "UndefinedDBoxContents.h"
+#include "UndefinedDBox.h"
 
 class UndefinedBox : public Box {
  public:
   UndefinedBox(const TBox& type, const UndefinedDBoxContents& contents)
       : Box(type, UndefinedDBox(contents)) {
+  }
+
+
+  UndefinedBox(const UndefinedBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
   }
 
 

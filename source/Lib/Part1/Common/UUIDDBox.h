@@ -1,8 +1,8 @@
 #ifndef UUIDDBOX_H__
 #define UUIDDBOX_H__
 
-#include "UUIDBoxContents.h"
 #include "DBox.h"
+#include "UUIDBoxContents.h"
 
 class UUIDDBox : public DBox {
  public:
@@ -16,6 +16,11 @@ class UUIDDBox : public DBox {
   }
 
 
+  virtual const UUIDBoxContents& get_ref_to_contents() const override {
+    return static_cast<const UUIDBoxContents&>(*contents);
+  }
+
+
   ~UUIDDBox() = default;
 
 
@@ -24,12 +29,11 @@ class UUIDDBox : public DBox {
   }
 
 
-  void add_data(const std::vector<uint8_t>& ) { //data
+  void add_data(const std::vector<uint8_t>&) {  //data
     ///! \todo implement
     // this.contents->
     // std::any_cast<UUIDBoxContents&>(this->contents).add_data(data);
   }
-
 };
 
 #endif /* end of include guard: UUIDDBOX_H__ */

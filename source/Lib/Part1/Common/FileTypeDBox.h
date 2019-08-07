@@ -19,6 +19,11 @@ class FileTypeDBox : public DBox {
   virtual ~FileTypeDBox() = default;
 
 
+  virtual const FileTypeContents& get_ref_to_contents() const override {
+    return static_cast<const FileTypeContents&>(*contents);
+  }
+
+
   FileTypeDBox* clone() const override {
     return new FileTypeDBox(*this);
   }

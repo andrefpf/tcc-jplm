@@ -93,7 +93,7 @@ DBox& Box::get_ref_to_dbox() const noexcept {
 }
 
 
-const std::any& Box::get_ref_to_dbox_contents() const noexcept {
+const DBoxContents& Box::get_ref_to_dbox_contents() const noexcept {
   return this->d_box->get_ref_to_contents();
 }
 

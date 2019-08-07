@@ -43,7 +43,6 @@
 #define JPLM_LIB_PART1_COMMON_BOX_H__
 
 
-#include <any>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -97,7 +96,7 @@ class Box {
   DBox& get_ref_to_dbox() const noexcept;
 
 
-  const std::any& get_ref_to_dbox_contents() const noexcept;
+  const DBoxContents& get_ref_to_dbox_contents() const noexcept;
 
 
   bool has_same_type(const Box& other) const noexcept {

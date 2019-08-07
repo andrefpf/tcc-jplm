@@ -62,7 +62,7 @@ struct FileTypeBoxContents : public testing::Test {
   }
 
   const FileTypeContents& get_content_of_file() {
-    return std::any_cast<const FileTypeContents&>(file_type_box->get_ref_to_dbox_contents());
+    return dynamic_cast<const FileTypeContents&>(file_type_box->get_ref_to_dbox_contents());
   }
 };
 

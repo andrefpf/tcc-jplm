@@ -17,6 +17,11 @@ class UndefinedDBox : public DBox {
   }
 
 
+  virtual const UndefinedDBoxContents& get_ref_to_contents() const override {
+    return static_cast<const UndefinedDBoxContents&>(*contents);
+  }
+
+
   virtual ~UndefinedDBox() = default;
 
 

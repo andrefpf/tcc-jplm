@@ -21,6 +21,11 @@ class CharArrayDBox : public DBox {
   }
 
 
+  virtual const CharArrayDBoxContents& get_ref_to_contents() const override {
+    return static_cast<const CharArrayDBoxContents&>(*contents);
+  }
+  
+
   ~CharArrayDBox() = default;
 
 

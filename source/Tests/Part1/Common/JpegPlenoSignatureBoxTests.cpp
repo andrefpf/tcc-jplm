@@ -101,8 +101,8 @@ TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesAreEqual) {
 TEST(JpegPlenoSignatureBoxBasic, CorrectDBoxValue) {
   auto pleno_signature_box = JpegPlenoSignatureBox();
   auto dbox = pleno_signature_box.get_dbox();
-  auto contents = dbox->get_ref_to_contents();
-  auto& vec = std::any_cast<std::vector<unsigned char>&>(contents);
+  const auto& contents = dynamic_cast<const CharArrayDBoxContents&>(dbox->get_ref_to_contents());
+  const auto& vec= contents.get_const_ref_to_vector();
   EXPECT_EQ(vec.at(0), 0x0d);
   EXPECT_EQ(vec.at(1), 0x0a);
   EXPECT_EQ(vec.at(2), 0x87);

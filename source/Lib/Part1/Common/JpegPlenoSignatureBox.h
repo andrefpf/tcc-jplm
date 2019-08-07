@@ -53,11 +53,13 @@ class JpegPlenoSignatureBox : public Box {
                 DefinedBoxesTypes::JPEGPlenoSignatureBoxType)),
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
 
+
   JpegPlenoSignatureBox(const JpegPlenoSignatureBox& ) //other is not even used...
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::JPEGPlenoSignatureBoxType)),
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
   }
+  
 
   ~JpegPlenoSignatureBox() = default;
 };
