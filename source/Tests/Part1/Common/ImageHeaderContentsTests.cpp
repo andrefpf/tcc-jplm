@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:28:59
+* @Last Modified time: 2019-08-12 14:32:06
 */
 
 
@@ -36,33 +36,46 @@ TEST_F(
 }
 
 
-TEST_F(
-    ImageHeaderContentsFixture, ImageHeaderContentsHasHeight) {
-	EXPECT_EQ(image_header_contents->get_height(), height);
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasHeight) {
+  EXPECT_EQ(image_header_contents->get_height(), height);
 }
 
 
-TEST_F(
-    ImageHeaderContentsFixture, ImageHeaderContentsHasWidth) {
-	EXPECT_EQ(image_header_contents->get_width(), width);
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasWidth) {
+  EXPECT_EQ(image_header_contents->get_width(), width);
 }
 
 
-TEST_F(
-    ImageHeaderContentsFixture, ImageHeaderContentsHasNumberOfChanels) {
-	EXPECT_EQ(image_header_contents->get_nc(), number_of_channels);
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasNumberOfChannels) {
+  EXPECT_EQ(image_header_contents->get_nc(), number_of_channels);
 }
 
 
-TEST_F(
-    ImageHeaderContentsFixture, ImageHeaderContentsHasBpc) {
-	EXPECT_EQ(image_header_contents->get_bpc(), bits_per_component);
+TEST_F(ImageHeaderContentsFixture,
+    ImageHeaderContentsHasNumberOfChannelsInterface) {
+  EXPECT_EQ(
+      image_header_contents->get_number_of_channels(), number_of_channels);
 }
 
 
-TEST_F(
-    ImageHeaderContentsFixture, ImageHeaderContentsHasCoderType) {
-	EXPECT_EQ(image_header_contents->get_c(), coder_type);
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasBpc) {
+  EXPECT_EQ(image_header_contents->get_bpc(), bits_per_component);
+}
+
+
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasBpcInterface) {
+  EXPECT_EQ(
+      image_header_contents->get_bits_per_component(), bits_per_component);
+}
+
+
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasCoderType) {
+  EXPECT_EQ(image_header_contents->get_c(), coder_type);
+}
+
+
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasCoderTypeInterface) {
+  EXPECT_EQ(image_header_contents->get_coder_type(), coder_type);
 }
 
 

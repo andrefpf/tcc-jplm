@@ -56,13 +56,28 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
+  uint16_t get_number_of_channels() const noexcept {
+    return get_nc();
+  }
+
+
   uint8_t get_bpc() const noexcept {
     return bpc;
   }
 
 
+  uint8_t get_bits_per_component() const noexcept {
+    return get_bpc();
+  }
+
+
   CoderTypeC get_c() const noexcept {
     return c;
+  }
+
+
+  CoderTypeC get_coder_type() const noexcept {
+    return get_c();
   }
 
 
