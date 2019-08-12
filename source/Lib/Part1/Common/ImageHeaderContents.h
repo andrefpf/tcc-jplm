@@ -46,6 +46,16 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
+  uint32_t get_width() const noexcept {
+    return width;
+  }
+
+
+  uint8_t get_bpc() const noexcept {
+    return bpc;
+  }
+
+
   virtual ImageHeaderContents* clone() const override {
     return new ImageHeaderContents(*this);
   }
