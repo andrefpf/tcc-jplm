@@ -35,8 +35,8 @@ class ImageHeaderContents : public InMemoryDBoxContents {
       : height(height), width(width), nc(number_of_channels),
         bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
     //should width, height and bpc be checked against 0?
-    if ((height == 0) || (width == 0) || (bpc == 0)) {
-      throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, bpc);
+    if ((height == 0) || (width == 0) || (nc == 0) || (bpc == 0)) {
+      throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, nc, bpc);
     }
   }
 

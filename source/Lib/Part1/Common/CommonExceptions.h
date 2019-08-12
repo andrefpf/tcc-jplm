@@ -81,17 +81,19 @@ class InvalidSizeException : public std::exception {
   std::string message;
 
  public:
-  InvalidSizeException(const uint32_t height, const uint32_t width, const uint32_t bpc)
-      : message(
-            std::string("ImageHeaderBox has invalid size: height = ") + std::to_string(height) +
-            std::string("; width = ")+ std::to_string(width) +
-            std::string("; bpc = ")+ std::to_string(bpc)) {
+  InvalidSizeException(const uint32_t height, const uint32_t width,
+      const uint32_t nc, const uint32_t bpc)
+      : message(std::string("ImageHeaderBox has invalid size: height = ") +
+                std::to_string(height) + std::string("; width = ") +
+                std::to_string(width) + std::string("; nc = ") +
+                std::to_string(nc) + std::string("; bpc = ") +
+                std::to_string(bpc)) {
   }
   const char* what() const noexcept override {
     return message.c_str();
-  } 
+  }
 };
 
-}
+}  // namespace ImageHeaderBoxExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__ */

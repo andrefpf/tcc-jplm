@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:54:41
+* @Last Modified time: 2019-08-12 14:58:18
 */
 
 
@@ -27,6 +27,38 @@ struct ImageHeaderContentsFixture : public testing::Test {
   }
   ~ImageHeaderContentsFixture() = default;
 };
+
+
+TEST_F(ImageHeaderContentsFixture,
+    ImageHeaderContentsInitializationWithZeroHeightThrows) {
+  EXPECT_THROW(ImageHeaderContents(0, width, number_of_channels,
+                   bits_per_component, coder_type, UnkC, IPR),
+      ImageHeaderBoxExceptions::InvalidSizeException);
+}
+
+
+TEST_F(ImageHeaderContentsFixture,
+    ImageHeaderContentsInitializationWithZeroWidthThrows) {
+  EXPECT_THROW(ImageHeaderContents(height, 0, number_of_channels,
+                   bits_per_component, coder_type, UnkC, IPR),
+      ImageHeaderBoxExceptions::InvalidSizeException);
+}
+
+
+TEST_F(ImageHeaderContentsFixture,
+    ImageHeaderContentsInitializationWithZeroNumberOfChannelsThrows) {
+  EXPECT_THROW(ImageHeaderContents(
+                   height, width, 0, bits_per_component, coder_type, UnkC, IPR),
+      ImageHeaderBoxExceptions::InvalidSizeException);
+}
+
+
+TEST_F(ImageHeaderContentsFixture,
+    ImageHeaderContentsInitializationWithZeroNumberOfBPCThrows) {
+  EXPECT_THROW(ImageHeaderContents(
+                   height, width, number_of_channels, 0, coder_type, UnkC, IPR),
+      ImageHeaderBoxExceptions::InvalidSizeException);
+}
 
 
 TEST_F(
@@ -84,7 +116,8 @@ TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsUnknownColorCheck) {
 }
 
 
-TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsIntellectualPropertyCheck) {
+TEST_F(
+    ImageHeaderContentsFixture, ImageHeaderContentsIntellectualPropertyCheck) {
   EXPECT_FALSE(image_header_contents->has_intellectual_property());
 }
 
