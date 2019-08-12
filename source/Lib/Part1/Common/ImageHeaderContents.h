@@ -3,6 +3,7 @@
 
 #include <tuple>  //std::tie
 #include "InMemoryDBoxContents.h"
+#include "CommonExceptions.h"
 
 enum class CoderTypeC : uint8_t {
   JPEG_2000 = 0,
@@ -28,7 +29,16 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   uint8_t IPR;
 
  public:
-  ImageHeaderContents() = default;
+  ImageHeaderContents(uint32_t height, uint32_t width,
+      uint16_t number_of_channels, uint8_t bits_per_component,
+      CoderTypeC coder_type, uint8_t UnkC, uint8_t IPR)
+      : height(height), width(width), nc(number_of_channels),
+        bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
+          //should width, height and bpc be checked against 0?
+          if((height == 0) || (width == 0) || (bpc == 0)) {
+            throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, bpc);
+          }
+  }
 
 
   virtual ImageHeaderContents* clone() const override {

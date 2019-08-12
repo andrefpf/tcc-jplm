@@ -62,7 +62,11 @@ TEST(JPLFileBasicTest, JPLFileIsCompatibleWithPleno) {
 }
 
 
-
+TEST(JPLFileBasicTest, JPLFileCanHoldAThumbnailBox) {
+	auto jpl_file = JPLFile();
+	// jpl_file.add_thumbnail_box(JpegPlenoThumbnailBox(JpegPlenoThumbnailContents()));
+	// EXPECT_TRUE(jpl_file.has_thumbnail());
+}
 
 
 int main(int argc, char *argv[]) {

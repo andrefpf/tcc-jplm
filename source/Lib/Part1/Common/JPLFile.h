@@ -77,6 +77,11 @@ class JPLFile {
   }
 
 
+  bool has_thumbnail() const noexcept {
+    return jpeg_pleno_thumbnail_box.has_value();
+  }
+  
+
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
     return jpeg_pleno_signature_box;
   }
