@@ -9,24 +9,26 @@
 
 class ManagedStream {
  protected:
-  std::fstream& ref_to_stream;
+  std::ifstream& ref_to_stream;
+  uint64_t initial_pos;
+  uint64_t final_pos;
 
  public:
   ManagedStream(
-      std::fstream& ref_to_stream, uint64_t initial_pos, uint64_t final_pos);
-  ManagedStream(std::fstream& ref_to_stream, uint64_t max_offset);
+      std::ifstream& ref_to_stream, uint64_t initial_pos, uint64_t final_pos);
+  ManagedStream(std::ifstream& ref_to_stream, uint64_t max_offset);
 
   ManagedStream get_sub_managed_stream(
       uint64_t initial_pos, uint64_t final_pos);
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
-  void get_current_pos() const noexcept;
+  uint64_t get_current_pos() const noexcept;
   std::byte get_byte();
 
   template<int N>
   std::vector<std::byte> get_bytes();
 
-  ~ManagedStream();
+  ~ManagedStream() = default;
 };
 
 #endif /* end of include guard: MANAGEDSTREAM_H__ */
