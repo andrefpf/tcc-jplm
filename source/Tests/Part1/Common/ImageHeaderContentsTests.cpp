@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:25:19
+* @Last Modified time: 2019-08-12 14:26:19
 */
 
 
@@ -45,6 +45,12 @@ TEST_F(
 TEST_F(
     ImageHeaderContentsFixture, ImageHeaderContentsHasWidth) {
 	EXPECT_EQ(image_header_contents->get_width(), width);
+}
+
+
+TEST_F(
+    ImageHeaderContentsFixture, ImageHeaderContentsHasNumberOfChanels) {
+	EXPECT_EQ(image_header_contents->get_nc(), number_of_channels);
 }
 
 

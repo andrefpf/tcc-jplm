@@ -51,6 +51,11 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
+  uint16_t get_nc() const noexcept {
+    return nc;
+  }
+
+
   uint8_t get_bpc() const noexcept {
     return bpc;
   }
