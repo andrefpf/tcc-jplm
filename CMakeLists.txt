@@ -68,6 +68,7 @@ add_executable(jpl-decoder-bin
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 
@@ -75,6 +76,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 
 enable_testing()
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/)
