@@ -54,6 +54,41 @@ TEST(ManagedStreamBasics, ManagedStreamDoesNotTestForEOFDuringConstruction) {
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamRewindGoesToInitialLocation) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+
+	auto managed_stream = ManagedStream(if_stream, 10000);
+	auto position_before = if_stream.tellg();
+	managed_stream.rewind();
+	auto position_after = if_stream.tellg();
+	EXPECT_EQ(position_before, position_after);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamRewindGoesToFinalLocation) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+
+	auto managed_stream = ManagedStream(if_stream, 2);
+
+	
+
+	managed_stream.forward();
+	auto position_after = if_stream.tellg();
+	EXPECT_EQ(position_after, 2);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamThrowsIfPassedEOFInForward) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+	auto managed_stream = ManagedStream(if_stream, 10000);
+
+	EXPECT_THROW(managed_stream.forward(),ManagedStreamExceptions::TryingToAccessBeyondEOFException);	
+}
+
+
+
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

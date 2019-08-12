@@ -23,6 +23,15 @@ class OverflowOfInitialPositionException : public std::exception {
   }
 };
 
+
+
+class TryingToAccessBeyondEOFException : public std::exception {
+public:
+	const char* what() const noexcept override {
+    return "ManagedStream tried to access data after EOF";
+  }	
+};
+
 }  // namespace ManagedStreamExceptions
 
 #endif /* end of include guard: UTILS_STREAM_COMMONEXCEPTIONS_H__ */

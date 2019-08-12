@@ -10,8 +10,8 @@
 class ManagedStream {
  protected:
   std::ifstream& ref_to_stream;
-  uint64_t initial_pos;
-  uint64_t final_pos;
+  const uint64_t initial_pos;
+  const uint64_t final_pos;
 
  public:
   ManagedStream(
@@ -23,10 +23,20 @@ class ManagedStream {
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
   uint64_t get_current_pos() const noexcept;
-  std::byte get_byte();
+
+
+  void rewind(); //! places the stream at initial position
+
+
+  void forward(); //! places the stream at final position
+
 
   template<int N>
   std::vector<std::byte> get_bytes();
+
+  std::byte get_byte() {
+  	return get_bytes<1>()[0];
+  }
 
   ~ManagedStream() = default;
 };
