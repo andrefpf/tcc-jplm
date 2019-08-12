@@ -81,8 +81,6 @@ class DBox {
   virtual DBox* clone() const = 0;
 
 
-  ///! \todo this could be refactored to the derived classes, so they would return 
-  ///   the derived type type
   virtual const DBoxContents& get_ref_to_contents() const {
     return *contents;
   }
