@@ -61,6 +61,11 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
+  CoderTypeC get_c() const noexcept {
+    return c;
+  }
+
+
   virtual ImageHeaderContents* clone() const override {
     return new ImageHeaderContents(*this);
   }
