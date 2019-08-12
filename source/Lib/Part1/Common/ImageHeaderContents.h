@@ -2,8 +2,8 @@
 #define IMAGEHEADERCONTENTS_H__
 
 #include <tuple>  //std::tie
-#include "InMemoryDBoxContents.h"
 #include "CommonExceptions.h"
+#include "InMemoryDBoxContents.h"
 
 enum class CoderTypeC : uint8_t {
   JPEG_2000 = 0,
@@ -22,11 +22,11 @@ class ImageHeaderContents : public InMemoryDBoxContents {
  protected:
   uint32_t height;
   uint32_t width;
-  uint16_t nc;
-  uint8_t bpc;
-  CoderTypeC c;
-  uint8_t UnkC;
-  uint8_t IPR;
+  uint16_t nc;  //! Number of components
+  uint8_t bpc;  //! Bits per component
+  CoderTypeC c;  //! Compression type
+  uint8_t UnkC;  //! Colourspace Unknown
+  uint8_t IPR;  //! Intellectual Property
 
  public:
   ImageHeaderContents(uint32_t height, uint32_t width,
@@ -34,10 +34,10 @@ class ImageHeaderContents : public InMemoryDBoxContents {
       CoderTypeC coder_type, uint8_t UnkC, uint8_t IPR)
       : height(height), width(width), nc(number_of_channels),
         bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
-          //should width, height and bpc be checked against 0?
-          if((height == 0) || (width == 0) || (bpc == 0)) {
-            throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, bpc);
-          }
+    //should width, height and bpc be checked against 0?
+    if ((height == 0) || (width == 0) || (bpc == 0)) {
+      throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, bpc);
+    }
   }
 
 
@@ -78,6 +78,26 @@ class ImageHeaderContents : public InMemoryDBoxContents {
 
   CoderTypeC get_coder_type() const noexcept {
     return get_c();
+  }
+
+
+  bool has_known_color_space() const noexcept {
+    if (UnkC == 0) {  // 0, if the colourspace of the image is known
+      return true;
+    }
+    //! \todo Check if should throw exception when value is not 0 or 1
+    // Values other than 0 and 1 are reserved for ISO use
+    return false;
+  }
+
+
+  bool has_intellectual_property() const noexcept {
+    if(UnkC == 0) {
+      return false;
+    } //1
+    return true;
+    //! \todo Check if should throw exception when value is not 0 or 1
+     // Other values are reserved for ISO use
   }
 
 

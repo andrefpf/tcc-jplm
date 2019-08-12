@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:32:06
+* @Last Modified time: 2019-08-12 14:54:41
 */
 
 
@@ -76,6 +76,16 @@ TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasCoderType) {
 
 TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsHasCoderTypeInterface) {
   EXPECT_EQ(image_header_contents->get_coder_type(), coder_type);
+}
+
+
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsUnknownColorCheck) {
+  EXPECT_TRUE(image_header_contents->has_known_color_space());
+}
+
+
+TEST_F(ImageHeaderContentsFixture, ImageHeaderContentsIntellectualPropertyCheck) {
+  EXPECT_FALSE(image_header_contents->has_intellectual_property());
 }
 
 
