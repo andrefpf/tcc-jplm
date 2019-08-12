@@ -29,6 +29,26 @@ class JpegPlenoThumbnailDBox : public DBox {
   JpegPlenoThumbnailDBox* clone() const override {
     return new JpegPlenoThumbnailDBox(*this);
   }
+
+
+  friend void swap(JpegPlenoThumbnailDBox& thumbnail_a, JpegPlenoThumbnailDBox& thumbnail_b) {
+    using std::swap;
+
+    swap(thumbnail_a.contents, thumbnail_b.contents);
+  }
+
+
+  JpegPlenoThumbnailDBox& operator=(const JpegPlenoThumbnailDBox& other) {
+    if(&other == this)
+      return *this;
+
+    JpegPlenoThumbnailDBox temp{other};
+    swap(*this, temp);
+
+    return *this;
+
+  }
+
 };
 
 #endif /* end of include guard: JPEGPLENOTHUMBNAILDBOX_H__ */

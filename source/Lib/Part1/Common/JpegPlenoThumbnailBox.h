@@ -52,7 +52,34 @@ class JpegPlenoThumbnailBox : public Box {
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::JPEGPlenoThumbnailBoxType)),
             contents){};
+
+  
   ~JpegPlenoThumbnailBox() = default;
+
+  
+  JpegPlenoThumbnailBox(const JpegPlenoThumbnailBox& other)
+      : Box(TBox(other.t_box), *other.d_box) {
+  }
+
+
+  friend void swap(JpegPlenoThumbnailBox& thumbnail_a, JpegPlenoThumbnailBox& thumbnail_b) {
+    using std::swap;
+
+    //swap(thumbnail_a.t_box, thumbnail_b.t_box); unecessary, both will have the same data
+    swap(thumbnail_a.d_box, thumbnail_b.d_box);
+  }
+
+
+  JpegPlenoThumbnailBox& operator=(const JpegPlenoThumbnailBox& other) {
+    if(&other == this)
+      return *this;
+
+    JpegPlenoThumbnailBox temp{other};
+    swap(*this, temp);
+
+    return *this;
+
+  }
 };
 
 

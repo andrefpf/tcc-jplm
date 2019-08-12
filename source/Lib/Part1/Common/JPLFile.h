@@ -66,16 +66,21 @@ class JPLFile {
   std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
  public:
   JPLFile() = default;
+
+
   ~JPLFile() = default;
 
-  JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& ) { //thumbail_box
-    // jpeg_pleno_thumbnail_box. = thumbail_box;
+
+  JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& thumbail_box) { //thumbail_box
+    jpeg_pleno_thumbnail_box = thumbail_box;
     return *this;
   }
+
 
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
     return jpeg_pleno_signature_box;
   }
+
 
   JpegPlenoFileTypeContents get_file_type_box() const noexcept {
     return file_type_box;
