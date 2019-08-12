@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:14:36
+* @Last Modified time: 2019-08-12 14:18:29
 */
 
 
@@ -38,7 +38,7 @@ TEST_F(
 
 TEST_F(
     ImageHeaderContentsFixture, ImageHeaderContentsHasHeight) {
-	// EXPECT_EQ(ImageHeaderContents->get_height(), height);
+	EXPECT_EQ(image_header_contents->get_height(), height);
 }
 
 

@@ -41,6 +41,11 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
+  uint32_t get_height() const noexcept {
+    return height;
+  }
+
+
   virtual ImageHeaderContents* clone() const override {
     return new ImageHeaderContents(*this);
   }
