@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 19:10:42
+* @Last Modified time: 2019-08-12 19:13:05
 */
 
 #include "ManagedStream.h"
@@ -12,7 +12,9 @@ ManagedStream::ManagedStream(
     std::ifstream& ref_to_stream, uint64_t initial_pos, uint64_t final_pos)
     : ref_to_stream(ref_to_stream), initial_pos(initial_pos),
       final_pos(final_pos) {
-  // if(!if_stream.is_open()) std::cout << "not open..." << std::endl;
+  if(!ref_to_stream.is_open()){
+  	throw ManagedStreamExceptions::ClosedStreamException();
+  }
   auto offset = static_cast<int64_t>(initial_pos);
   if (ref_to_stream.tellg() != offset) {
     if (offset < 0) {

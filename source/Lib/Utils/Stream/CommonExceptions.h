@@ -32,6 +32,15 @@ public:
   }	
 };
 
+
+class ClosedStreamException : public std::exception {
+public:
+	const char* what() const noexcept override {
+    return "ManagedStream needs an open stream in constructor";
+  }	
+};
+
+
 }  // namespace ManagedStreamExceptions
 
 #endif /* end of include guard: UTILS_STREAM_COMMONEXCEPTIONS_H__ */

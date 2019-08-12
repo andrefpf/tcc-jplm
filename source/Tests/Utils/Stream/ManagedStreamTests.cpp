@@ -70,7 +70,7 @@ TEST(ManagedStreamBasics, ManagedStreamRewindGoesToFinalLocation) {
 
 	auto managed_stream = ManagedStream(if_stream, 2);
 
-	
+
 
 	managed_stream.forward();
 	auto position_after = if_stream.tellg();
@@ -86,7 +86,10 @@ TEST(ManagedStreamBasics, ManagedStreamThrowsIfPassedEOFInForward) {
 }
 
 
-
+TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {
+	std::ifstream if_stream;
+	EXPECT_THROW(ManagedStream(if_stream, 2), ManagedStreamExceptions::ClosedStreamException);	
+}
 
 
 int main(int argc, char *argv[]) {
