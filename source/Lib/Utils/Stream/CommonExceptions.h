@@ -23,6 +23,25 @@ class OverflowOfInitialPositionException : public std::exception {
   }
 };
 
+class FinalPositioSmallerThanInitialException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  FinalPositioSmallerThanInitialException(
+      uint64_t initial_position, uint64_t final_position)
+      : message(
+            std::string("Final position is smaller than initial position ") +
+            std::to_string(initial_position) + std::string(" > ") +
+            std::to_string(final_position) +
+            std::string(
+                ". However, final position must be larger than initial.")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
 
 class OutOfBoundsException : public std::exception {
  protected:

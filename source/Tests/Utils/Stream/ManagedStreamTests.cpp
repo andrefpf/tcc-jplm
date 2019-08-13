@@ -99,6 +99,15 @@ TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {
 
 
 TEST(ManagedStreamBasics,
+    ManagedStreamThrowsIfConstructedWithFinalPositionSmallerThanInitial) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  EXPECT_THROW(ManagedStream(if_stream, 10, 5),
+      ManagedStreamExceptions::FinalPositioSmallerThanInitialException);
+}
+
+
+TEST(ManagedStreamBasics,
     ManagedStreamIfConstructedWithEqualInitialAndFinalPosition) {
   std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
@@ -217,7 +226,8 @@ TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalAfterMaximumThrows) {
 }
 
 
-TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurThrowsIfBefore) {
+TEST(ManagedStreamBasics,
+    ManagedStreamSeekInsideIntervalRelativeToCurThrowsIfBefore) {
   std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 1, 10);
@@ -236,8 +246,7 @@ TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCur) {
 
   if_stream.seekg(0, std::ios_base::beg);
 
-  EXPECT_EQ(managed_stream.seek(10, std::ios_base::cur).get_current_pos(),
-     10);
+  EXPECT_EQ(managed_stream.seek(10, std::ios_base::cur).get_current_pos(), 10);
 }
 
 
@@ -248,12 +257,12 @@ TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurSeek0) {
 
   if_stream.seekg(10, std::ios_base::beg);
 
-  EXPECT_EQ(managed_stream.seek(0, std::ios_base::cur).get_current_pos(),
-     10);
+  EXPECT_EQ(managed_stream.seek(0, std::ios_base::cur).get_current_pos(), 10);
 }
 
 
-TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurThrowsAfter) {
+TEST(ManagedStreamBasics,
+    ManagedStreamSeekInsideIntervalRelativeToCurThrowsAfter) {
   std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 1, 10);

@@ -28,6 +28,9 @@ class ManagedStream {
   bool index_is_valid(uint64_t index) const noexcept;
 
 
+  bool is_valid() const noexcept;
+  
+
   uint64_t get_current_pos() const noexcept;
 
 

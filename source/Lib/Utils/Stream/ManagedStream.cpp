@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:47:16
+* @Last Modified time: 2019-08-13 14:56:19
 */
 
 #include "ManagedStream.h"
@@ -15,9 +15,13 @@ ManagedStream::ManagedStream(
   if (!ref_to_stream.is_open()) {
     throw ManagedStreamExceptions::ClosedStreamException();
   }
-  if (initial_pos == final_pos) {
-    throw ManagedStreamExceptions::
-        InvalidEqualInitialAndFinalPositionException();
+  if (initial_pos >= final_pos) {
+    if (initial_pos == final_pos) {
+      throw ManagedStreamExceptions::
+          InvalidEqualInitialAndFinalPositionException();
+    }
+    throw ManagedStreamExceptions::FinalPositioSmallerThanInitialException(
+        initial_pos, final_pos);
   }
   auto offset = static_cast<int64_t>(initial_pos);
   if (ref_to_stream.tellg() != offset) {
