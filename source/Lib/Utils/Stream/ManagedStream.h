@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+#include <iostream>
 #include <vector>
 #include "CommonExceptions.h"
 
@@ -37,7 +38,8 @@ class ManagedStream {
 
 
   ManagedStream& seek(int64_t offset,
-      const std::ios_base::seekdir relative_to=std::ios_base::beg);  //! place the stream at
+      const std::ios_base::seekdir relative_to =
+          std::ios_base::beg);  //! place the stream at
 
 
   template<size_t N>

@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:13:41
+* @Last Modified time: 2019-08-13 14:33:46
 */
 
 #include "ManagedStream.h"

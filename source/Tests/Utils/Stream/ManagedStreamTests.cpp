@@ -185,15 +185,35 @@ TEST(ManagedStreamBasics, ManagedStreamCanSeekInsideIntervalMinimum) {
   EXPECT_EQ(managed_stream.seek(0).get_current_pos(), current_position);
 }
 
+TEST(ManagedStreamBasics, ManagedStreamCanSeekInsideIntervalMaximum) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  uint64_t offset = 10;
+  auto managed_stream = ManagedStream(if_stream, 0, offset);
+  auto current_position = static_cast<int64_t>(if_stream.tellg());
 
-TEST(ManagedStreamBasics,
-    ManagedStreamCanSeekInsideIntervalBeforeMinimumThrows) {
+  EXPECT_EQ(
+      managed_stream.seek(10).get_current_pos(), current_position + offset);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalBeforeMinimumThrows) {
   std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 0, 10);
 
   EXPECT_THROW(managed_stream.seek(-1).get_current_pos(),
       ManagedStreamExceptions::SeekBeforeInitialPositionException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalAfterMaximumThrows) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+
+  EXPECT_THROW(managed_stream.seek(11).get_current_pos(),
+      ManagedStreamExceptions::SeekAfterFinalPositionException);
 }
 
 
