@@ -25,11 +25,8 @@ class ManagedStream {
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
 
-  bool index_is_valid(uint64_t index) const noexcept;
-
-
   bool is_valid() const noexcept;
-  
+  bool is_valid(uint64_t index) const noexcept;
 
   uint64_t get_current_pos() const noexcept;
 

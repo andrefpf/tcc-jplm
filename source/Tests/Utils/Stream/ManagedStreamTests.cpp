@@ -294,6 +294,33 @@ TEST(ManagedStreamBasics, ManagedStreamTellPositionEqualsCurrentPosition) {
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamIsValidAfterConstruction) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+
+  EXPECT_TRUE(managed_stream.is_valid());
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamIsValidAfterConstructionSeekToNearEnd) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+  if_stream.seekg(9, std::ios_base::beg);
+  EXPECT_TRUE(managed_stream.is_valid());
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamIsNotValidAfterSeekBeyondEnd) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+  if_stream.seekg(10, std::ios_base::beg);
+  EXPECT_FALSE(managed_stream.is_valid());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

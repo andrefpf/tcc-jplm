@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:56:19
+* @Last Modified time: 2019-08-13 14:59:54
 */
 
 #include "ManagedStream.h"
@@ -41,7 +41,7 @@ ManagedStream::ManagedStream(std::ifstream& ref_to_stream, uint64_t max_offset)
 }
 
 
-bool ManagedStream::index_is_valid(uint64_t index) const noexcept {
+bool ManagedStream::is_valid(uint64_t index) const noexcept {
   if ((index < initial_pos) || (index >= final_pos)) {
     return false;
   }
@@ -49,10 +49,17 @@ bool ManagedStream::index_is_valid(uint64_t index) const noexcept {
 }
 
 
+//in this context, is_valid means that there is more bytes to be readed
+bool ManagedStream::is_valid() const noexcept {
+  return is_valid(tell());
+}
+
+
+
 //this sets the stream to the begining of the sub managed stream
 ManagedStream ManagedStream::get_sub_managed_stream(
     uint64_t initial_pos, uint64_t final_pos) {
-  if (!index_is_valid(initial_pos) || (final_pos > this->final_pos)) {
+  if (!is_valid(initial_pos) || (final_pos > this->final_pos)) {
     throw ManagedStreamExceptions::InvalidIndexForSubManagedStreamException(
         initial_pos, final_pos, this->initial_pos, this->final_pos);
   }
@@ -70,6 +77,9 @@ ManagedStream& ManagedStream::rewind() {
   ref_to_stream.seekg(static_cast<int64_t>(initial_pos), std::ios_base::beg);
   return *this;
 }
+
+
+
 
 
 ManagedStream& ManagedStream::forward() {
