@@ -46,10 +46,41 @@ class OutOfBoundsException : public std::exception {
 };
 
 
+class InvalidIndexForSubManagedStreamException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  InvalidIndexForSubManagedStreamException(uint64_t initial_position_sub,
+      uint64_t final_position_sub, uint64_t initial_position_current,
+      uint64_t final_position_current)
+      : message(std::string("Invalid index for sub managed stream. Position "
+                            "range available: [") +
+                std::to_string(initial_position_current) + std::string(", ") +
+                std::to_string(final_position_current) +
+                std::string("[ . Tried: [") +
+                std::to_string(initial_position_sub) + std::string(", ") +
+                std::to_string(final_position_sub) + std::string("[")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
+
+class UnknownSeekDirectionException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Unknown seek direction";
+  }
+};
+
+
 class InvalidEqualInitialAndFinalPositionException : public std::exception {
  public:
   const char* what() const noexcept override {
-    return "ManagedStream Initial and Final position must be different in constructor";
+    return "ManagedStream Initial and Final position must be different in "
+           "constructor";
   }
 };
 

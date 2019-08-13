@@ -30,10 +30,14 @@ class ManagedStream {
   uint64_t get_current_pos() const noexcept;
 
 
-  void rewind();  //! places the stream at initial position
+  ManagedStream& rewind();  //! places the stream at initial position
 
 
-  void forward();  //! places the stream at final position
+  ManagedStream& forward();  //! places the stream at final position
+
+
+  ManagedStream& seek(int64_t offset,
+      const std::ios_base::seekdir relative_to=std::ios_base::beg);  //! place the stream at
 
 
   template<size_t N>

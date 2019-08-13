@@ -116,6 +116,24 @@ TEST(ManagedStreamBasics, ManagedStreamIfConstructedWithZeroOffset) {
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamCanProvideASubmanagedStream) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1);
+  EXPECT_NO_THROW(managed_stream.get_sub_managed_stream(1));
+}
+
+
+TEST(ManagedStreamBasics,
+    ManagedStreamSubmanagedStreamThrowsIfLargerThenSource) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1);
+  EXPECT_THROW(managed_stream.get_sub_managed_stream(2),
+      ManagedStreamExceptions::InvalidIndexForSubManagedStreamException);
+}
+
+
 TEST(ManagedStreamBasics, ManagedStreamCanProvideAByte) {
   std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
@@ -155,6 +173,16 @@ TEST(ManagedStreamBasics,
   if_stream.seekg(0, std::ios_base::beg);
   EXPECT_THROW(
       managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamCanSeekInsideIntervalMinimum) {
+	 std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+  auto current_position=static_cast<int64_t>(if_stream.tellg());
+  
+  EXPECT_EQ(managed_stream.seek(0).get_current_pos(), current_position);
 }
 
 
