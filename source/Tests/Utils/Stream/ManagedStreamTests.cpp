@@ -92,6 +92,14 @@ TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamCanProvideAByte) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+	auto managed_stream = ManagedStream(if_stream, 1);
+
+	EXPECT_NO_THROW(managed_stream.get_byte());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

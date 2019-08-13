@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <fstream>
 #include <vector>
+#include <array>
 #include "CommonExceptions.h"
 
 class ManagedStream {
@@ -32,7 +33,12 @@ class ManagedStream {
 
 
   template<int N>
-  std::vector<std::byte> get_bytes();
+  std::vector<std::byte> get_bytes() {
+  	std::array<std::byte, N> temp_array;
+  	ref_to_stream.read(reinterpret_cast<char*>(temp_array.data()), N);
+  	return {std::begin(temp_array), std::end(temp_array)};
+  }
+  
 
   std::byte get_byte() {
   	return get_bytes<1>()[0];
