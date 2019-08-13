@@ -202,7 +202,7 @@ TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalBeforeMinimumThrows) {
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 0, 10);
 
-  EXPECT_THROW(managed_stream.seek(-1).get_current_pos(),
+  EXPECT_THROW(managed_stream.seek(-1),
       ManagedStreamExceptions::SeekBeforeInitialPositionException);
 }
 
@@ -212,8 +212,76 @@ TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalAfterMaximumThrows) {
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 0, 10);
 
-  EXPECT_THROW(managed_stream.seek(11).get_current_pos(),
+  EXPECT_THROW(managed_stream.seek(11),
       ManagedStreamExceptions::SeekAfterFinalPositionException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurThrowsIfBefore) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1, 10);
+
+  if_stream.seekg(0, std::ios_base::beg);
+
+  EXPECT_THROW(managed_stream.seek(0, std::ios_base::cur),
+      ManagedStreamExceptions::SeekBeforeInitialPositionException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCur) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1, 10);
+
+  if_stream.seekg(0, std::ios_base::beg);
+
+  EXPECT_EQ(managed_stream.seek(10, std::ios_base::cur).get_current_pos(),
+     10);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurSeek0) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1, 10);
+
+  if_stream.seekg(10, std::ios_base::beg);
+
+  EXPECT_EQ(managed_stream.seek(0, std::ios_base::cur).get_current_pos(),
+     10);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamSeekInsideIntervalRelativeToCurThrowsAfter) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1, 10);
+
+  if_stream.seekg(10, std::ios_base::beg);
+
+  EXPECT_THROW(managed_stream.seek(1, std::ios_base::cur),
+      ManagedStreamExceptions::SeekAfterFinalPositionException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamCanTellPosition) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+
+  auto position = if_stream.tellg();
+
+  EXPECT_EQ(managed_stream.tell(), position);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamTellPositionEqualsCurrentPosition) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+
+  EXPECT_EQ(managed_stream.tell(), managed_stream.get_current_pos());
 }
 
 

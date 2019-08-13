@@ -41,6 +41,8 @@ class ManagedStream {
       const std::ios_base::seekdir relative_to =
           std::ios_base::beg);  //! place the stream at
 
+  uint64_t tell() const noexcept;
+
 
   template<size_t N>
   std::vector<std::byte> get_bytes() {

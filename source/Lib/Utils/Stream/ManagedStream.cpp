@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:33:46
+* @Last Modified time: 2019-08-13 14:47:16
 */
 
 #include "ManagedStream.h"
@@ -107,6 +107,11 @@ ManagedStream& ManagedStream::seek(
       throw ManagedStreamExceptions::UnknownSeekDirectionException();
   }
   return *this;
+}
+
+
+uint64_t ManagedStream::tell() const noexcept {
+  return get_current_pos();
 }
 
 
