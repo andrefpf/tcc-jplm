@@ -23,6 +23,10 @@ class ManagedStream {
       uint64_t initial_pos, uint64_t final_pos);
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
+
+  bool index_is_valid(uint64_t index) const noexcept;
+
+
   uint64_t get_current_pos() const noexcept;
 
 
@@ -34,8 +38,9 @@ class ManagedStream {
 
   template<size_t N>
   std::vector<std::byte> get_bytes() {
-  	auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
-    if ((current_position < initial_pos) || (current_position + N > final_pos)) {
+    auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
+    if ((current_position < initial_pos) ||
+        (current_position + N > final_pos)) {
       throw ManagedStreamExceptions::OutOfBoundsException(
           N, initial_pos, final_pos, current_position);
     }

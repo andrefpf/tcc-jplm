@@ -38,89 +38,123 @@
  *  \date     2019-08-12
  */
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
-#include <fstream> 
+
 
 std::string resources_path = "../resources";
 
 
 TEST(ManagedStreamBasics, ManagedStreamDoesNotTestForEOFDuringConstruction) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
 
-	EXPECT_NO_THROW(ManagedStream(if_stream, 10000));
+  EXPECT_NO_THROW(ManagedStream(if_stream, 10000));
 }
 
 
 TEST(ManagedStreamBasics, ManagedStreamRewindGoesToInitialLocation) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
 
-	auto managed_stream = ManagedStream(if_stream, 10000);
-	auto position_before = if_stream.tellg();
-	managed_stream.rewind();
-	auto position_after = if_stream.tellg();
-	EXPECT_EQ(position_before, position_after);
+  auto managed_stream = ManagedStream(if_stream, 10000);
+  auto position_before = if_stream.tellg();
+  managed_stream.rewind();
+  auto position_after = if_stream.tellg();
+  EXPECT_EQ(position_before, position_after);
 }
 
 
 TEST(ManagedStreamBasics, ManagedStreamRewindGoesToFinalLocation) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
 
-	auto managed_stream = ManagedStream(if_stream, 2);
+  auto managed_stream = ManagedStream(if_stream, 2);
 
 
-
-	managed_stream.forward();
-	auto position_after = if_stream.tellg();
-	EXPECT_EQ(position_after, 2);
+  managed_stream.forward();
+  auto position_after = if_stream.tellg();
+  EXPECT_EQ(position_after, 2);
 }
 
 
 TEST(ManagedStreamBasics, ManagedStreamThrowsIfPassedEOFInForward) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
-	auto managed_stream = ManagedStream(if_stream, 10000);
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 10000);
 
-	EXPECT_THROW(managed_stream.forward(),ManagedStreamExceptions::TryingToAccessBeyondEOFException);	
+  EXPECT_THROW(managed_stream.forward(),
+      ManagedStreamExceptions::TryingToAccessBeyondEOFException);
 }
 
 
 TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {
-	std::ifstream if_stream;
-	EXPECT_THROW(ManagedStream(if_stream, 2), ManagedStreamExceptions::ClosedStreamException);	
+  std::ifstream if_stream;
+  EXPECT_THROW(ManagedStream(if_stream, 2),
+      ManagedStreamExceptions::ClosedStreamException);
+}
+
+
+TEST(ManagedStreamBasics,
+    ManagedStreamIfConstructedWithEqualInitialAndFinalPosition) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  uint64_t initial_and_final = 5;
+  EXPECT_THROW(ManagedStream(if_stream, initial_and_final, initial_and_final),
+      ManagedStreamExceptions::InvalidEqualInitialAndFinalPositionException);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamIfConstructedWithZeroOffset) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  EXPECT_THROW(ManagedStream(if_stream, 0),
+      ManagedStreamExceptions::InvalidEqualInitialAndFinalPositionException);
 }
 
 
 TEST(ManagedStreamBasics, ManagedStreamCanProvideAByte) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
-	auto managed_stream = ManagedStream(if_stream, 1);
-	EXPECT_NO_THROW(managed_stream.get_byte());
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1);
+  EXPECT_NO_THROW(managed_stream.get_byte());
 }
 
 
-TEST(ManagedStreamBasics, ManagedStreamProvidingAByteChangesBy1ThePositionOfIfStream) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
-	auto managed_stream = ManagedStream(if_stream, 1);
-	auto initial_stream_position = if_stream.tellg();
-	[[maybe_unused]] auto byte = managed_stream.get_byte();
-	EXPECT_EQ(static_cast<int64_t>(if_stream.tellg()), static_cast<int64_t>(initial_stream_position)+1);
+TEST(ManagedStreamBasics,
+    ManagedStreamProvidingAByteChangesBy1ThePositionOfIfStream) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1);
+  auto initial_stream_position = if_stream.tellg();
+  [[maybe_unused]] auto byte = managed_stream.get_byte();
+  EXPECT_EQ(static_cast<int64_t>(if_stream.tellg()),
+      static_cast<int64_t>(initial_stream_position) + 1);
 }
 
 
-TEST(ManagedStreamBasics, ManagedStreamTryingToReadAByteAfterLimitedEndThrowsException) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
-	auto managed_stream = ManagedStream(if_stream, 1);
-	[[maybe_unused]] auto byte = managed_stream.get_byte();
-	EXPECT_THROW(managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
+TEST(ManagedStreamBasics,
+    ManagedStreamTryingToReadAByteAfterLimitedEndThrowsException) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 1);
+  [[maybe_unused]] auto byte = managed_stream.get_byte();
+  EXPECT_THROW(
+      managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
 }
 
 
-TEST(ManagedStreamBasics, ManagedStreamTryingToReadAByteBeforeLimitedBegginingThrowsException) {
-	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
-	auto managed_stream = ManagedStream(if_stream, 5, 10);
-	if_stream.seekg(0, std::ios_base::beg);
-	EXPECT_THROW(managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
+TEST(ManagedStreamBasics,
+    ManagedStreamTryingToReadAByteBeforeLimitedBegginingThrowsException) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 5, 10);
+  if_stream.seekg(0, std::ios_base::beg);
+  EXPECT_THROW(
+      managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
 }
 
 
