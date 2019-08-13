@@ -23,7 +23,24 @@ class OverflowOfInitialPositionException : public std::exception {
   }
 };
 
+class OutOfBoundsException : public std::exception {
+ protected:
+  std::string message;
 
+ public:
+  OutOfBoundsException(size_t n_bytes, uint64_t initial_position, uint64_t final_position, uint64_t current_position)
+      : message(
+            std::string("Out of bounfs exception. Tried to access ")+std::to_string(n_bytes)+
+            std::string("byte(s) from position ") + 
+            std::to_string(current_position) +
+            std::string(". However, this object only is permited to access between  ") +
+            std::to_string(initial_position) + std::string(" to ") +
+            std::to_string(final_position)) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
 
 class TryingToAccessBeyondEOFException : public std::exception {
 public:

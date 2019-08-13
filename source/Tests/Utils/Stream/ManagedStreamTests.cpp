@@ -95,8 +95,24 @@ TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {
 TEST(ManagedStreamBasics, ManagedStreamCanProvideAByte) {
 	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
 	auto managed_stream = ManagedStream(if_stream, 1);
-
 	EXPECT_NO_THROW(managed_stream.get_byte());
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamProvidingAByteChangesBy1ThePositionOfIfStream) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+	auto managed_stream = ManagedStream(if_stream, 1);
+	auto initial_stream_position = if_stream.tellg();
+	[[maybe_unused]] auto byte = managed_stream.get_byte();
+	EXPECT_EQ(static_cast<int64_t>(if_stream.tellg()), static_cast<int64_t>(initial_stream_position)+1);
+}
+
+
+TEST(ManagedStreamBasics, ManagedStreamTryingToReadAByteAfterLimitedEndThrowsException) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+	auto managed_stream = ManagedStream(if_stream, 1);
+	[[maybe_unused]] auto byte = managed_stream.get_byte();
+	EXPECT_THROW(managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
 }
 
 
