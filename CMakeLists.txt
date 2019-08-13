@@ -37,7 +37,33 @@ include_directories(source)
 
 #setting up the doxygen documentation build
 # option(BUILD_DOC "Build documentation" ON)
-option(BUILD_DOC "Build documentation" ON)
+option(BUILD_DOC "Build documentation" OFF)
+
+
+add_executable(jpl-encoder-bin
+        source/App/Encoder/jpl-encoder.cpp
+        CMakeLists.txt)
+
+add_executable(jpl-decoder-bin
+        source/App/Decoder/jpl-decoder.cpp
+        CMakeLists.txt)
+
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
+# add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
+
+
+
+enable_testing()
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/)
+
 
 if(BUILD_DOC)
   find_package(Doxygen)
@@ -57,26 +83,3 @@ if(BUILD_DOC)
     message("Doxygen must be installed to generate the documentation.")
   endif (DOXYGEN_FOUND)
 endif(BUILD_DOC)
-
-add_executable(jpl-encoder-bin
-        source/App/Encoder/jpl-encoder.cpp
-        CMakeLists.txt)
-
-add_executable(jpl-decoder-bin
-        source/App/Decoder/jpl-decoder.cpp
-        CMakeLists.txt)
-
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
-
-
-
-enable_testing()
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/)

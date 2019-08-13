@@ -42,8 +42,10 @@
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
 
 #include "Box.h"
-#include "DefinedBoxes.h"
 #include "CharArrayDBox.h"
+#include "DefinedBoxes.h"
+#include "Lib/Common/Boxes/BoxToParserRegistry.h"
+#include "Lib/Utils/Stream/ManagedStream.h"
 
 class JpegPlenoSignatureBox : public Box {
  public:
@@ -54,14 +56,24 @@ class JpegPlenoSignatureBox : public Box {
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
 
 
-  JpegPlenoSignatureBox(const JpegPlenoSignatureBox& ) //other is not even used...
+  JpegPlenoSignatureBox(
+      const JpegPlenoSignatureBox&)  //other is not even used...
       : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
                 DefinedBoxesTypes::JPEGPlenoSignatureBoxType)),
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
   }
-  
+
 
   ~JpegPlenoSignatureBox() = default;
 };
+
+
+namespace JpegPlenoSignature {
+std::unique_ptr<Box> parse_jpeg_pleno_signature(ManagedStream& managed_stream) {
+  managed_stream.forward();
+  return std::make_unique<JpegPlenoSignatureBox>();
+}
+}  // namespace JpegPlenoSignature
+
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__ */
