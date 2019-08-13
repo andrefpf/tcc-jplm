@@ -177,12 +177,23 @@ TEST(ManagedStreamBasics,
 
 
 TEST(ManagedStreamBasics, ManagedStreamCanSeekInsideIntervalMinimum) {
-	 std::ifstream if_stream(
+  std::ifstream if_stream(
       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 0, 10);
-  auto current_position=static_cast<int64_t>(if_stream.tellg());
-  
+  auto current_position = static_cast<int64_t>(if_stream.tellg());
+
   EXPECT_EQ(managed_stream.seek(0).get_current_pos(), current_position);
+}
+
+
+TEST(ManagedStreamBasics,
+    ManagedStreamCanSeekInsideIntervalBeforeMinimumThrows) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 0, 10);
+
+  EXPECT_THROW(managed_stream.seek(-1).get_current_pos(),
+      ManagedStreamExceptions::SeekBeforeInitialPositionException);
 }
 
 

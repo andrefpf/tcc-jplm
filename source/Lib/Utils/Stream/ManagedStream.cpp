@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:06:46
+* @Last Modified time: 2019-08-13 14:13:41
 */
 
 #include "ManagedStream.h"
@@ -82,10 +82,24 @@ ManagedStream& ManagedStream::seek(
     int64_t offset, const std::ios_base::seekdir relative_to) {
   switch (relative_to) {
     case std::ios_base::beg: {
-      ref_to_stream.seekg(initial_pos + offset, std::ios_base::beg);
+      if (offset < 0) {
+        throw ManagedStreamExceptions::SeekBeforeInitialPositionException();
+      }
+      auto seek_to_pos = initial_pos + offset;
+      if (seek_to_pos > final_pos) {
+        throw ManagedStreamExceptions::SeekAfterFinalPositionException();
+      }
+      ref_to_stream.seekg(seek_to_pos, std::ios_base::beg);
       break;
     }
     case std::ios_base::cur: {
+      auto current_position = static_cast<int64_t>(ref_to_stream.tellg());
+      if (current_position + offset < static_cast<int64_t>(initial_pos)) {
+        throw ManagedStreamExceptions::SeekBeforeInitialPositionException();
+      }
+      if (current_position + offset > static_cast<int64_t>(final_pos)) {
+        throw ManagedStreamExceptions::SeekAfterFinalPositionException();
+      }
       ref_to_stream.seekg(offset, std::ios_base::cur);
       break;
     }

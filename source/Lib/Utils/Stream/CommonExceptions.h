@@ -68,6 +68,22 @@ class InvalidIndexForSubManagedStreamException : public std::exception {
 };
 
 
+class SeekBeforeInitialPositionException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to seek to a point before the initial position.";
+  }
+};
+
+
+class SeekAfterFinalPositionException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to seek to a point after the final position.";
+  }
+};
+
+
 class UnknownSeekDirectionException : public std::exception {
  public:
   const char* what() const noexcept override {
