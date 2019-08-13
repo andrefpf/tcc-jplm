@@ -116,6 +116,14 @@ TEST(ManagedStreamBasics, ManagedStreamTryingToReadAByteAfterLimitedEndThrowsExc
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamTryingToReadAByteBeforeLimitedBegginingThrowsException) {
+	std::ifstream if_stream(resources_path+"/rgb_pattern/pattern.ppm", std::ifstream::binary);
+	auto managed_stream = ManagedStream(if_stream, 5, 10);
+	if_stream.seekg(0, std::ios_base::beg);
+	EXPECT_THROW(managed_stream.get_byte(), ManagedStreamExceptions::OutOfBoundsException);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

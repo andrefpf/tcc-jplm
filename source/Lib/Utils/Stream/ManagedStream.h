@@ -34,9 +34,10 @@ class ManagedStream {
 
   template<size_t N>
   std::vector<std::byte> get_bytes() {
-    if (static_cast<size_t>(ref_to_stream.tellg()) + N > final_pos) {
+  	auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
+    if ((current_position < initial_pos) || (current_position + N > final_pos)) {
       throw ManagedStreamExceptions::OutOfBoundsException(
-          N, initial_pos, final_pos, ref_to_stream.tellg());
+          N, initial_pos, final_pos, current_position);
     }
 
     std::array<std::byte, N> temp_array;
