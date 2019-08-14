@@ -7,7 +7,7 @@
 #include <memory>
 #include "Lib/Part1/Common/Box.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
-#include "JpegPlenoSignatureBoxParser.h"
+#include "Lib/Part1/Decoder/JpegPlenoSignatureBoxParser.h"
 
 class BoxParser
 {
@@ -24,7 +24,7 @@ public:
 	static std::map<uint32_t, std::function<ParsedBox(ManagedStream&)>>& get_ref_to_parser_map();
 
 	
-	ParsedBox parse(uint32_t t_box_code);
+	ParsedBox parse(uint32_t t_box_code, ManagedStream& managed_stream);
 
 	
 	template<class ParserClass> 

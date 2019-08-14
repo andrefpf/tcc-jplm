@@ -1,2 +1,2 @@
-set(COMMON_BOXES_SOURCES BoxParser.cpp JpegPlenoSignatureBoxParser.cpp)
+set(COMMON_BOXES_SOURCES BoxParser.cpp)
 add_library(jplm_common_boxes ${COMMON_BOXES_SOURCES})
