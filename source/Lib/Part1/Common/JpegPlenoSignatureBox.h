@@ -46,18 +46,18 @@
 #include "DefinedBoxes.h"
 
 class JpegPlenoSignatureBox : public Box {
+ constexpr static auto id =  static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::JPEGPlenoSignatureBoxType);
  public:
   //t_box d_box
   JpegPlenoSignatureBox()
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::JPEGPlenoSignatureBoxType)),
+      : Box(TBox(id),
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
 
 
   JpegPlenoSignatureBox(
       const JpegPlenoSignatureBox&)  //other is not even used...
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::JPEGPlenoSignatureBoxType)),
+      : Box(TBox(id),
             CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
   }
 
