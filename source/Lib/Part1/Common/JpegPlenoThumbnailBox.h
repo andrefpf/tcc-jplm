@@ -48,21 +48,24 @@
 
 class JpegPlenoThumbnailBox : public Box {
  public:
-  JpegPlenoThumbnailBox(const JpegPlenoThumbnailDBox& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::JPEGPlenoThumbnailBoxType)),
-            contents){};
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::JPEGPlenoThumbnailBoxType);
 
-  
+
+  JpegPlenoThumbnailBox(const JpegPlenoThumbnailDBox& contents)
+      : Box(TBox(id), contents){};
+
+
   ~JpegPlenoThumbnailBox() = default;
 
-  
+
   JpegPlenoThumbnailBox(const JpegPlenoThumbnailBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+      : Box(TBox(id), *other.d_box) {
   }
 
 
-  friend void swap(JpegPlenoThumbnailBox& thumbnail_a, JpegPlenoThumbnailBox& thumbnail_b) {
+  friend void swap(
+      JpegPlenoThumbnailBox& thumbnail_a, JpegPlenoThumbnailBox& thumbnail_b) {
     using std::swap;
 
     //swap(thumbnail_a.t_box, thumbnail_b.t_box); unecessary, both will have the same data
@@ -71,14 +74,13 @@ class JpegPlenoThumbnailBox : public Box {
 
 
   JpegPlenoThumbnailBox& operator=(const JpegPlenoThumbnailBox& other) {
-    if(&other == this)
+    if (&other == this)
       return *this;
 
     JpegPlenoThumbnailBox temp{other};
     swap(*this, temp);
 
     return *this;
-
   }
 };
 

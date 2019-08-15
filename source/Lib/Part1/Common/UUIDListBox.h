@@ -48,13 +48,17 @@
 
 class UUIDListBox : public Box {
  public:
-  UUIDListBox(const UUIDListBoxContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::UUIDListBoxType)),
-            UUIDListDBox(contents)){};
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::UUIDListBoxType);
 
-  UUIDListBox(const UUIDListBox& other) : Box(TBox(other.t_box), *other.d_box) {
+
+  UUIDListBox(const UUIDListBoxContents& contents)
+      : Box(TBox(id), UUIDListDBox(contents)){};
+
+
+  UUIDListBox(const UUIDListBox& other) : Box(TBox(id), *other.d_box) {
   }
+
 
   ~UUIDListBox() = default;
 };

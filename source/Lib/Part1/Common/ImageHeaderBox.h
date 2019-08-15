@@ -48,15 +48,15 @@
 
 class ImageHeaderBox : public Box {
  public:
-  ImageHeaderBox(const ImageHeaderDBox& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::ImageHeaderBoxType)),
-            contents) {
-  }
-  
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::ImageHeaderBoxType);
 
-  ImageHeaderBox(const ImageHeaderBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+
+  ImageHeaderBox(const ImageHeaderDBox& contents) : Box(TBox(id), contents) {
+  }
+
+
+  ImageHeaderBox(const ImageHeaderBox& other) : Box(TBox(id), *other.d_box) {
   }
 
 

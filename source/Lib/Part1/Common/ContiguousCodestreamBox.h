@@ -49,14 +49,15 @@
 
 class ContiguousCodestreamBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::ContiguousCodestreamBoxType);
+
   ContiguousCodestreamBox(const ContiguousCodestreamContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::ContiguousCodestreamBoxType)),
-            ContiguousCodestreamDBox(contents)){};
+      : Box(TBox(id), ContiguousCodestreamDBox(contents)){};
 
 
   ContiguousCodestreamBox(const ContiguousCodestreamBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+      : Box(TBox(id), *other.d_box) {
   }
 
 

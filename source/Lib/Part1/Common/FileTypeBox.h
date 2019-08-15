@@ -49,16 +49,17 @@
 
 class FileTypeBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::FileTypeBoxType);
+
+
   FileTypeBox(const FileTypeContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::FileTypeBoxType)),
-            FileTypeDBox(contents)){};
+      : Box(TBox(id), FileTypeDBox(contents)){};
 
 
-  FileTypeBox(const FileTypeBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+  FileTypeBox(const FileTypeBox& other) : Box(TBox(id), *other.d_box) {
   }
-  
+
 
   ~FileTypeBox() = default;
 };

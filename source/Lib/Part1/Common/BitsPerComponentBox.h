@@ -47,9 +47,11 @@
 
 class BitsPerComponentBox : public Box {
  public:
+  constexpr static auto id =  static_cast<DefinedBoxesTypesUnderlyingType>(
+                DefinedBoxesTypes::BitsPerComponentBoxType);
+
   BitsPerComponentBox(const std::vector<uint8_t>& bits_per_component_vector)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::BitsPerComponentBoxType)),
+      : Box(TBox(id),
             CharArrayDBox(bits_per_component_vector)){};
 
 

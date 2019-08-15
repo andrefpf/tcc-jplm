@@ -49,14 +49,17 @@
 
 class DataEntryURLBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::DataEntryURLBoxType);
+  
+
   DataEntryURLBox(const DataEntryURLBoxContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::DataEntryURLBoxType)),
+      : Box(TBox(id),
             DataEntryURLDBox(contents)){};
 
 
   DataEntryURLBox(const DataEntryURLBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+      : Box(TBox(id), *other.d_box) {
   }
 
 

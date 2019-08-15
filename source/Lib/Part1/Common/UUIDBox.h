@@ -46,19 +46,19 @@
 #include "UUIDDBox.h"
 
 
-
 class UUIDBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::UUIDBoxType);
+
+
   UUIDBox(const UUIDBoxContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::UUIDBoxType)),
-            UUIDDBox(contents)){};
+      : Box(TBox(id), UUIDDBox(contents)){};
 
 
-  UUIDBox(const UUIDBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+  UUIDBox(const UUIDBox& other) : Box(TBox(id), *other.d_box) {
   }
-  
+
 
   ~UUIDBox() = default;
 

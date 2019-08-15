@@ -48,19 +48,20 @@
 
 class IntellectualPropertyBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::IntellectualPropertyBoxType);
+
+
   IntellectualPropertyBox()
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::IntellectualPropertyBoxType)),
-            UndefinedDBox(UndefinedDBoxContents())){};
+      : Box(TBox(id), UndefinedDBox(UndefinedDBoxContents())){};
 
 
   IntellectualPropertyBox(const UndefinedDBoxContents& content)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::IntellectualPropertyBoxType)),
-            UndefinedDBox(content)){};
+      : Box(TBox(id), UndefinedDBox(content)){};
+
 
   IntellectualPropertyBox(const IntellectualPropertyBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+      : Box(TBox(id), *other.d_box) {
   }
 
 

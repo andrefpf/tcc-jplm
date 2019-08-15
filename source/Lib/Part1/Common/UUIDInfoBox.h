@@ -48,16 +48,17 @@
 
 class UUIDInfoBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::UUIDInfoBoxType);
+
+
   UUIDInfoBox(const UUIDInfoBoxContents& contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::UUIDInfoBoxType)),
-            UUIDInfoDBox(contents)){};
+      : Box(TBox(id), UUIDInfoDBox(contents)){};
 
 
-  UUIDInfoBox(const UUIDInfoBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+  UUIDInfoBox(const UUIDInfoBox& other) : Box(TBox(id), *other.d_box) {
   }
-  
+
 
   ~UUIDInfoBox() = default;
 };

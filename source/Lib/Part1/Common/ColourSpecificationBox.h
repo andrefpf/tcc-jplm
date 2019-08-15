@@ -48,14 +48,17 @@
 
 class ColourSpecificationBox : public Box {
  public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::ColourSpecificationBoxType);
+
+
   ColourSpecificationBox(const ColourSpecificationContents& color_specification_contents)
-      : Box(TBox(static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::ColourSpecificationBoxType)),
+      : Box(TBox(id),
             ColourSpecificationDBox(color_specification_contents)){};
 
 
   ColourSpecificationBox(const ColourSpecificationBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+      : Box(TBox(id), *other.d_box) {
   }
 
 

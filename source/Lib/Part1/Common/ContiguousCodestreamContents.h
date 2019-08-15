@@ -15,6 +15,7 @@ class ContiguousCodestreamContents : public InMemoryDBoxContents {
     return new ContiguousCodestreamContents(*this);
   }
 
+
   virtual bool is_equal(const DBoxContents& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
