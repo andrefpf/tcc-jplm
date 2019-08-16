@@ -2,41 +2,50 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-15 17:03:23
+* @Last Modified time: 2019-08-16 11:20:46
 */
 
 #include "BoxParserRegistry.h"
 
 
-
 BoxParserRegistry& BoxParserRegistry::get_instance() {
-	static BoxParserRegistry instance;
-	return instance;
+  static BoxParserRegistry instance;
+  return instance;
 }
 
 
-std::map<uint32_t, std::function<BoxParserRegistry::ParsedBox(ManagedStream&)>>&
+std::map<uint32_t, BoxParserRegistry::ParsingFunction>&
 BoxParserRegistry::get_ref_to_parser_map() {
-  static std::map<uint32_t, std::function<ParsedBox(ManagedStream&)>>
-      parser_map;
+  static std::map<uint32_t, BoxParserRegistry::ParsingFunction> parser_map;
   return parser_map;
 }
 
 
-BoxParserRegistry::ParsedBox BoxParserRegistry::parse(uint32_t t_box_code, ManagedStream& managed_stream) {
+// auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
+BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
+    ManagedStream& managed_stream) {
+  auto box_parser_helper = BoxParserHelperBase(managed_stream);
+  return parse(box_parser_helper);
+}
+
+
+BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
+    BoxParserHelperBase& box_parser_helper) {
   auto& map = BoxParserRegistry::get_ref_to_parser_map();
-  std::cout << "Tried to parse a box " << t_box_code << std::endl;
-  if (auto it = map.find(t_box_code); it != map.end()) {
-    std::cout << "found parsing method for id 0x" << std::hex << std::setfill('0') << std::setw(8) << t_box_code << std::dec << std::endl;
-    return it->second(managed_stream);
+  if (auto it = map.find(box_parser_helper.get_t_box_value());
+      it != map.end()) {
+    std::cout << "found parsing method for id 0x" << std::hex
+              << std::setfill('0') << std::setw(8)
+              << box_parser_helper.get_t_box_value() << std::dec << std::endl;
+    return it->second(box_parser_helper);
   }
-  std::cout << "not found " << t_box_code << std::endl;
+  std::cout << "not found " << box_parser_helper.get_t_box_value() << std::endl;
   return nullptr;
 }
 
 
 void BoxParserRegistry::register_known_parsers() {
-	//add here known parsers
+  //add here known parsers
   using namespace JPLMBoxParser;
   register_parser<JpegPlenoSignatureBoxParser>();
 }

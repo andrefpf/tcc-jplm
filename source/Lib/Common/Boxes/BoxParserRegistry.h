@@ -13,6 +13,7 @@
 
 class BoxParserRegistry {
   using ParsedBox = std::optional<std::unique_ptr<Box>>;
+  using ParsingFunction = std::function<ParsedBox(BoxParserHelperBase&)>;
 
  private:
   void register_known_parsers();
@@ -25,11 +26,20 @@ class BoxParserRegistry {
   static BoxParserRegistry& get_instance();
 
 
-  static std::map<uint32_t, std::function<ParsedBox(ManagedStream&)>>&
+  static std::map<uint32_t, ParsingFunction>&
   get_ref_to_parser_map();
 
 
-  ParsedBox parse(uint32_t t_box_code, ManagedStream& managed_stream);
+  ParsedBox parse(ManagedStream& managed_stream);
+
+  template<class ParsingBox>
+  ParsedBox parse(ManagedStream& managed_stream) {
+  	auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
+  	return parse(box_parser_helper);
+  }
+
+
+  ParsedBox parse(BoxParserHelperBase& box_parser_helper);
 
 
   template<class ParserClass>
