@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-13 14:59:54
+* @Last Modified time: 2019-08-16 11:58:26
 */
 
 #include "ManagedStream.h"
@@ -79,9 +79,6 @@ ManagedStream& ManagedStream::rewind() {
 }
 
 
-
-
-
 ManagedStream& ManagedStream::forward() {
   ref_to_stream.seekg(static_cast<int64_t>(final_pos), std::ios_base::beg);
   ref_to_stream.peek();
@@ -131,4 +128,8 @@ uint64_t ManagedStream::tell() const noexcept {
 
 uint64_t ManagedStream::get_current_pos() const noexcept {
   return ref_to_stream.tellg();
+}
+
+uint64_t ManagedStream::get_length() const noexcept {
+  return final_pos-initial_pos;
 }

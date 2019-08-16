@@ -6,12 +6,13 @@
 #include "Lib/Part1/Common/DefinedBoxes.h"
 #include "Lib/Part1/Common/JpegPlenoSignatureBox.h"
 #include "BoxParserHelper.h"
+#include <optional>
 
 namespace JPLMBoxParser {
 class JpegPlenoSignatureBoxParser {
  public:
   using ParsingBox = JpegPlenoSignatureBox;
-  static std::optional<std::unique_ptr<Box>> parse(
+  static std::unique_ptr<Box> parse(
       BoxParserHelperBase& box_parser_helper);  //box parser helper
 };
 }  // namespace JPLMBoxParser

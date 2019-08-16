@@ -12,30 +12,36 @@
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 class BoxParserRegistry {
-  using ParsedBox = std::optional<std::unique_ptr<Box>>;
+  using ParsedBox = std::unique_ptr<Box>;
   using ParsingFunction = std::function<ParsedBox(BoxParserHelperBase&)>;
 
  private:
   void register_known_parsers();
+
+  
   BoxParserRegistry() {
     register_known_parsers();
   }
+
+
   ~BoxParserRegistry() = default;
 
  public:
   static BoxParserRegistry& get_instance();
 
 
-  static std::map<uint32_t, ParsingFunction>&
-  get_ref_to_parser_map();
+  static std::map<uint32_t, ParsingFunction>& get_ref_to_parser_map();
 
 
   ParsedBox parse(ManagedStream& managed_stream);
 
+
+  //this method could return the actual parsing type unique_ptr
   template<class ParsingBox>
   ParsedBox parse(ManagedStream& managed_stream) {
-  	auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
-  	return parse(box_parser_helper);
+    auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
+
+    return parse(box_parser_helper);
   }
 
 
@@ -47,8 +53,8 @@ class BoxParserRegistry {
     auto& map = BoxParserRegistry::get_ref_to_parser_map();
     const auto id = ParserClass::ParsingBox::id;
     auto parsing_function = ParserClass::parse;
-    std::cout << "Registered 0x" << std::hex << std::setfill('0') << std::setw(8)
-              << id << std::endl;
+    std::cout << "Registered 0x" << std::hex << std::setfill('0')
+              << std::setw(8) << id << std::endl;
     map[id] = parsing_function;
   }
 };

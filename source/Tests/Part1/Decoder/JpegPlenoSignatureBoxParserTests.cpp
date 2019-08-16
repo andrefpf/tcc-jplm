@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 13:21:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-16 11:28:00
+* @Last Modified time: 2019-08-16 19:25:15
 */
 
 #include <fstream>
@@ -27,12 +27,12 @@ int main(int argc, char *argv[]) {
       resources_path + "/boxes/signature_box.bin", std::ifstream::binary);
   auto managed_stream = ManagedStream(if_stream, 100);
 
-  std::optional<std::unique_ptr<Box>> box =
+
+  auto box =
       BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
           managed_stream);
 
-
-  // BoxParserRegistry::get_instance().parse(0x000020, managed_stream);
+  std::cout << box->size() << std::endl;
 
   BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
       managed_stream);

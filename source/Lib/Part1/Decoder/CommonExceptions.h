@@ -31,4 +31,17 @@ class WrongTBoxValueException : public std::exception {
 };
 }  // namespace BoxParserExceptions
 
+
+namespace JpegPlenoSignatureBoxParserExceptions {
+  class InvalidJpegPlenoSignatureBox : public std::exception
+  {
+  public:
+    InvalidJpegPlenoSignatureBox() = default;
+
+    const char* what() const noexcept override {
+      return "Invalid content (D_BOX) in Jpeg Pleno signature box";
+    }
+  };
+}
+
 #endif /* end of include guard: JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__ */

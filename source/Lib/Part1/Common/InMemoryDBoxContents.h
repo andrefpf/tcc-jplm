@@ -10,8 +10,7 @@ class InMemoryDBoxContents : public DBoxContents {
   InMemoryDBoxContents() = default;
 
 
-  virtual ~InMemoryDBoxContents() {
-  }
+  virtual ~InMemoryDBoxContents() = default;
 
 
   virtual std::vector<std::byte> get_bytes() const {
@@ -20,7 +19,7 @@ class InMemoryDBoxContents : public DBoxContents {
   }
 
 
-  virtual std::ostream& write_to(std::ostream& stream) const final;
+  std::ostream& write_to(std::ostream& stream) const final;
 };
 
 

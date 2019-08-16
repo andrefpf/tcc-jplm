@@ -321,6 +321,15 @@ TEST(ManagedStreamBasics, ManagedStreamIsNotValidAfterSeekBeyondEnd) {
 }
 
 
+TEST(ManagedStreamBasics, ManagedStreamGetsTheSize) {
+  std::ifstream if_stream(
+      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+  auto managed_stream = ManagedStream(if_stream, 2, 10);
+
+  EXPECT_EQ(managed_stream.get_length(), 8);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

@@ -63,6 +63,10 @@ class ManagedStream {
     return get_bytes<1>()[0];
   }
 
+
+  uint64_t get_length() const noexcept;
+
+
   ~ManagedStream() = default;
 };
 

@@ -41,25 +41,35 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
 
+#include <vector>
 #include "Box.h"
 #include "CharArrayDBox.h"
 #include "DefinedBoxes.h"
 
 class JpegPlenoSignatureBox : public Box {
  public:
- constexpr static auto id =  static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::JPEGPlenoSignatureBoxType);
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::JPEGPlenoSignatureBoxType);
 
 
   JpegPlenoSignatureBox()
-      : Box(TBox(id),
-            CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
+      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
 
 
   JpegPlenoSignatureBox(
       const JpegPlenoSignatureBox&)  //other is not even used...
-      : Box(TBox(id),
-            CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
+      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
+  }
+
+
+  bool is_valid(const std::vector<std::byte>& bytes) const noexcept {
+    if (bytes.size() == 4) {
+      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
+          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
