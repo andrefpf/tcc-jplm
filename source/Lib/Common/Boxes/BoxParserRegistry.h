@@ -38,10 +38,13 @@ class BoxParserRegistry {
 
   //this method could return the actual parsing type unique_ptr
   template<class ParsingBox>
-  ParsedBox parse(ManagedStream& managed_stream) {
+  std::unique_ptr<ParsingBox> parse(ManagedStream& managed_stream) {
     auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
-
-    return parse(box_parser_helper);
+    auto parsed_box = parse(box_parser_helper);
+    if (parsed_box) { //i.e., the unique_ptr is not null
+    	return std::unique_ptr<ParsingBox>(static_cast<ParsingBox*>(parsed_box.release()));
+    }
+    return nullptr;
   }
 
 
