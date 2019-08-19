@@ -9,3 +9,4 @@ function(add_jplm_part1_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 endfunction()
 
 add_jplm_part1_decoder_lib_test(JpegPlenoSignatureBoxParserTests jpeg_pleno_signature_box_parser_tests JpegPlenoSignatureBoxParserTests.cpp)
+add_jplm_part1_decoder_lib_test(FileTypeBoxParserTests file_type_box_parser_tests FileTypeBoxParserTests.cpp)

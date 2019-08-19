@@ -9,6 +9,7 @@
 #include <memory>
 #include "Lib/Part1/Common/Box.h"
 #include "Lib/Part1/Decoder/JpegPlenoSignatureBoxParser.h"
+#include "Lib/Part1/Decoder/FileTypeBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 class BoxParserRegistry {
@@ -36,12 +37,13 @@ class BoxParserRegistry {
   ParsedBox parse(ManagedStream& managed_stream);
 
 
-  //this method could return the actual parsing type unique_ptr
   template<class ParsingBox>
   std::unique_ptr<ParsingBox> parse(ManagedStream& managed_stream) {
     auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
+    // std::cout << "here!!!";
     auto parsed_box = parse(box_parser_helper);
     if (parsed_box) { //i.e., the unique_ptr is not null
+    	// std::cout << "not null\n";
     	return std::unique_ptr<ParsingBox>(static_cast<ParsingBox*>(parsed_box.release()));
     }
     return nullptr;
@@ -56,8 +58,8 @@ class BoxParserRegistry {
     auto& map = BoxParserRegistry::get_ref_to_parser_map();
     const auto id = ParserClass::ParsingBox::id;
     auto parsing_function = ParserClass::parse;
-    std::cout << "Registered 0x" << std::hex << std::setfill('0')
-              << std::setw(8) << id << std::endl;
+    // std::cout << "Registered 0x" << std::hex << std::setfill('0')
+    //           << std::setw(8) << id << std::endl;
     map[id] = parsing_function;
   }
 };

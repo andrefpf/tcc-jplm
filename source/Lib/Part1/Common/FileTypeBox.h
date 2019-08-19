@@ -61,6 +61,14 @@ class FileTypeBox : public Box {
   }
 
 
+  template<class OtherBox>
+  bool is_compatible_with() {
+    return dynamic_cast<const FileTypeContents&>(
+        this->get_ref_to_dbox_contents())
+        .is_the_file_compatible_with(OtherBox::id);
+  }
+
+
   ~FileTypeBox() = default;
 };
 

@@ -76,6 +76,14 @@ class BoxParserHelperBase {
   }
 
 
+  template<typename T>
+  T get_next() {
+    using namespace BinaryTools;
+    return get_value_from_big_endian_byte_vector<T>(
+        managed_stream.get_bytes<sizeof(T)>());
+  }
+
+
   virtual ~BoxParserHelperBase() = default;
 };
 
@@ -93,6 +101,7 @@ class BoxParserHelper : public BoxParserHelperBase {
 
  public:
   BoxParserHelper(ManagedStream& stream) : BoxParserHelperBase(stream) {
+    check_t_box_value();
   }
 
 

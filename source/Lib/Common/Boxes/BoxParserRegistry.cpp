@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-16 11:20:46
+* @Last Modified time: 2019-08-19 15:52:08
 */
 
 #include "BoxParserRegistry.h"
@@ -34,12 +34,11 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
   auto& map = BoxParserRegistry::get_ref_to_parser_map();
   if (auto it = map.find(box_parser_helper.get_t_box_value());
       it != map.end()) {
-    std::cout << "found parsing method for id 0x" << std::hex
-              << std::setfill('0') << std::setw(8)
-              << box_parser_helper.get_t_box_value() << std::dec << std::endl;
+    // std::cout << "found parsing method for id 0x" << std::hex
+    //           << std::setfill('0') << std::setw(8)
+    //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     return it->second(box_parser_helper);
   }
-  std::cout << "not found " << box_parser_helper.get_t_box_value() << std::endl;
   return nullptr;
 }
 
@@ -48,4 +47,6 @@ void BoxParserRegistry::register_known_parsers() {
   //add here known parsers
   using namespace JPLMBoxParser;
   register_parser<JpegPlenoSignatureBoxParser>();
+  register_parser<FileTypeBoxParser>();
+  
 }
