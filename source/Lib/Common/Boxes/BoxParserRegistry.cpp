@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-19 15:52:08
+* @Last Modified time: 2019-08-19 17:35:26
 */
 
 #include "BoxParserRegistry.h"
@@ -23,20 +23,20 @@ BoxParserRegistry::get_ref_to_parser_map() {
 
 // auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
-    ManagedStream& managed_stream) {
+    ManagedStream& managed_stream) const {
   auto box_parser_helper = BoxParserHelperBase(managed_stream);
   return parse(box_parser_helper);
 }
 
 
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
-    BoxParserHelperBase& box_parser_helper) {
+    BoxParserHelperBase& box_parser_helper) const {
   auto& map = BoxParserRegistry::get_ref_to_parser_map();
   if (auto it = map.find(box_parser_helper.get_t_box_value());
       it != map.end()) {
-    // std::cout << "found parsing method for id 0x" << std::hex
-    //           << std::setfill('0') << std::setw(8)
-    //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
+    std::cout << "found parsing method for id 0x" << std::hex
+              << std::setfill('0') << std::setw(8)
+              << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     return it->second(box_parser_helper);
   }
   return nullptr;

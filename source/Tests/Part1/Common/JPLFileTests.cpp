@@ -46,26 +46,30 @@
 
 
 TEST(JPLFileBasicTest, JPLFileInitializationDoesNotThrow) {
-	EXPECT_NO_THROW(JPLFile());
+  auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents());
+  EXPECT_NO_THROW(auto jpl_file = JPLFile(file_type_box));
 }
 
 
 TEST(JPLFileBasicTest, JPLFileHasValidSignatureBox) {
-	auto jpl_file = JPLFile();
-	EXPECT_EQ(jpl_file.get_jpeg_pleno_signature_box(), JpegPlenoSignatureBox());
+  auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents());
+  auto jpl_file = JPLFile(file_type_box);
+  EXPECT_EQ(jpl_file.get_jpeg_pleno_signature_box(), JpegPlenoSignatureBox());
 }
 
 
 TEST(JPLFileBasicTest, JPLFileIsCompatibleWithPleno) {
-	auto jpl_file = JPLFile();
-	EXPECT_TRUE(jpl_file.get_file_type_box().is_the_file_compatible_with(0x6a706c20));
+  auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents());
+  auto jpl_file = JPLFile(file_type_box);
+  EXPECT_TRUE(jpl_file.get_file_type_box().is_compatible_with<0x6a706c20>());
 }
 
 
 TEST(JPLFileBasicTest, JPLFileCanHoldAThumbnailBox) {
-	auto jpl_file = JPLFile();
-	// jpl_file.add_thumbnail_box(JpegPlenoThumbnailBox(JpegPlenoThumbnailContents()));
-	// EXPECT_TRUE(jpl_file.has_thumbnail());
+  auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents());
+  auto jpl_file = JPLFile(file_type_box);
+  // jpl_file.add_thumbnail_box(JpegPlenoThumbnailBox(JpegPlenoThumbnailContents()));
+  // EXPECT_TRUE(jpl_file.has_thumbnail());
 }
 
 

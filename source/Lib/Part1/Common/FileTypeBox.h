@@ -61,11 +61,19 @@ class FileTypeBox : public Box {
   }
 
 
-  template<class OtherBox>
+  template<uint32_t id_of_other_codec>
   bool is_compatible_with() {
     return dynamic_cast<const FileTypeContents&>(
         this->get_ref_to_dbox_contents())
-        .is_the_file_compatible_with(OtherBox::id);
+        .is_the_file_compatible_with(id_of_other_codec);
+  }
+
+  template<class OtherBox>
+  bool is_compatible_with() {
+    return is_compatible_with<OtherBox::id>();
+    // dynamic_cast<const FileTypeContents&>(
+    //     this->get_ref_to_dbox_contents())
+    //     .is_the_file_compatible_with(OtherBox::id);
   }
 
 

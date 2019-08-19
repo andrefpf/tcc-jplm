@@ -10,38 +10,38 @@ namespace BoxParserExceptions {
 
 class WrongTBoxValueException : public std::exception {
  protected:
-  const uint32_t readed_type;
-  const uint32_t expected_type;
+  // const uint32_t readed_type;
+  // const uint32_t expected_type;
+  // const char* xuxu = "xuxu";
+  std::string message;
 
  public:
   WrongTBoxValueException(
-      const uint32_t readed_type, const uint32_t expected_type)
-      : readed_type(readed_type), expected_type(expected_type) {
-  }
-
-
-  const char* what() const noexcept override {
+      const uint32_t readed_type, const uint32_t expected_type) {
     auto string_stream = std::stringstream();
     string_stream << "Error parsing box. Expected T_BOX value: 0x" << std::hex
                   << std::setfill('0') << std::setw(8) << expected_type
                   << ". Obtained T_BOX value: 0x" << readed_type << std::dec
                   << std::endl;
-    return string_stream.str().c_str();
+    message = string_stream.str();
+  }
+
+  const char* what() const noexcept override {
+    return message.c_str();
   }
 };
 }  // namespace BoxParserExceptions
 
 
 namespace JpegPlenoSignatureBoxParserExceptions {
-  class InvalidJpegPlenoSignatureBox : public std::exception
-  {
-  public:
-    InvalidJpegPlenoSignatureBox() = default;
+class InvalidJpegPlenoSignatureBox : public std::exception {
+ public:
+  InvalidJpegPlenoSignatureBox() = default;
 
-    const char* what() const noexcept override {
-      return "Invalid content (D_BOX) in Jpeg Pleno signature box";
-    }
-  };
-}
+  const char* what() const noexcept override {
+    return "Invalid content (D_BOX) in Jpeg Pleno signature box";
+  }
+};
+}  // namespace JpegPlenoSignatureBoxParserExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__ */

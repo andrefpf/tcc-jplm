@@ -43,19 +43,19 @@
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
 #include "FileTypeBox.h"
-#include "JpegPlenoFileTypeContents.h"
+#include "IntellectualPropertyBox.h"
 #include "JpegPlenoCodestreamBox.h"
+#include "JpegPlenoFileTypeContents.h"
 #include "JpegPlenoSignatureBox.h"
 #include "JpegPlenoThumbnailBox.h"
-#include "IntellectualPropertyBox.h"
 #include "UUIDBox.h"
 #include "UUIDInfoBox.h"
 
 
 class JPLFile {
  protected:
-  JpegPlenoSignatureBox jpeg_pleno_signature_box;
-  JpegPlenoFileTypeContents file_type_box;  //this is the FileTypeBox
+  std::unique_ptr<JpegPlenoSignatureBox> jpeg_pleno_signature_box;
+  std::unique_ptr<FileTypeBox> file_type_box;  //this is the FileTypeBox
   // std::optional<XMLBoxWithCatalog> xml_box_with_catalog;
   std::optional<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
   std::optional<std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>>
@@ -64,14 +64,41 @@ class JPLFile {
   // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
   std::optional<std::vector<UUIDBox>> uuid_boxes;
   std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
+
  public:
-  JPLFile() = default;
+  JPLFile(const FileTypeBox& file_type_box)
+      : file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
+  }
 
 
-  ~JPLFile() = default;
+  JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box,
+      const FileTypeBox& file_type_box)
+      : jpeg_pleno_signature_box(
+            std::make_unique<JpegPlenoSignatureBox>(jpeg_pleno_signature_box)),
+        file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
+  }
 
 
-  JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& thumbail_box) { //thumbail_box
+  JPLFile(JpegPlenoSignatureBox&& jpeg_pleno_signature_box,
+      FileTypeBox&& file_type_box)
+      : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>(
+            std::move(jpeg_pleno_signature_box))),
+        file_type_box(std::make_unique<FileTypeBox>(std::move(file_type_box))) {
+  }
+
+
+  JPLFile(std::unique_ptr<JpegPlenoSignatureBox>&& jpeg_pleno_signature_box,
+      std::unique_ptr<FileTypeBox>&& file_type_box)
+      : jpeg_pleno_signature_box(std::move(jpeg_pleno_signature_box)),
+        file_type_box(std::move(file_type_box)) {
+  }
+
+
+  virtual ~JPLFile() = default;
+
+
+  JPLFile& add_thumbnail_box(
+      const JpegPlenoThumbnailBox& thumbail_box) {  //thumbail_box
     jpeg_pleno_thumbnail_box = thumbail_box;
     return *this;
   }
@@ -80,15 +107,15 @@ class JPLFile {
   bool has_thumbnail() const noexcept {
     return jpeg_pleno_thumbnail_box.has_value();
   }
-  
+
 
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
-    return jpeg_pleno_signature_box;
+    return *jpeg_pleno_signature_box;
   }
 
 
-  JpegPlenoFileTypeContents get_file_type_box() const noexcept {
-    return file_type_box;
+  FileTypeBox get_file_type_box() const noexcept {
+    return *file_type_box;
   }
 };
 
