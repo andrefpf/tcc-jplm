@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-19 16:20:08
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-20 14:25:30
+* @Last Modified time: 2019-08-20 14:58:24
 */
 
 
@@ -37,10 +37,18 @@ TEST(BasicTest, ThrowsIfNotBegginingWithJSignatureBox) {
 }
 
 
+TEST(BasicTest, ThrowsIfMoreThanOneFileTypeBox) {
+  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
+                   resources_path +
+                   "/boxes/signature_and_two_file_type_boxes.bin"),
+      JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException);
+}
+
+
 TEST(BasicTest, ThrowsIfNotCompatibleWithPleno) {
   EXPECT_THROW(auto jpl_file = JPLFileFromStream(
                    resources_path +
-                   "/boxes/signature_and_incompatible_fily_type_box.bin"),
+                   "/boxes/signature_and_incompatible_file_type_box.bin"),
       JPLFileFromStreamExceptions::JpegPlenoNotInCompatibilityListException);
 }
 

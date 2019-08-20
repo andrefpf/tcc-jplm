@@ -19,6 +19,36 @@ class JPLFileParser {
   ManagedStream managed_stream;
   std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
   std::unique_ptr<FileTypeBox> temp_file_type;
+  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
+
+  auto decode_boxes() {
+    uint64_t decoded_boxes = 0;
+    while (this->managed_stream.is_valid()) {
+      auto managed_substream = managed_stream.get_sub_managed_stream(
+          file_size - managed_stream.tell());
+      auto decoded_box = parser.parse(managed_substream);
+      decoded_boxes++;
+      auto id = decoded_box->get_tbox().get_value();
+      if (auto it = temp_decoded_boxes.find(id);
+          it == temp_decoded_boxes.end()) {
+        temp_decoded_boxes[id] =
+            std::vector<std::unique_ptr<Box>>();  //std::move(decoded_box)
+      }
+      temp_decoded_boxes[id].push_back(std::move(decoded_box));
+    }
+    std::cout << "No more boxes to decode" << std::endl;
+    return decoded_boxes;
+  }
+
+
+  auto get_signature_box() {
+    return std::move(temp_signature);
+  }
+
+
+  auto get_file_type_box() {
+    return std::move(temp_file_type);
+  }
 
  public:
   JPLFileParser(const std::string& filename)
@@ -36,42 +66,39 @@ class JPLFileParser {
     temp_file_type = std::move(parser.parse<FileTypeBox>(managed_substream));
   }
 
-
-  auto get_signature_box() {
-    return std::move(temp_signature);
-  }
-
-
-  auto get_file_type_box() {
-    return std::move(temp_file_type);
-  }
-
-
   virtual ~JPLFileParser() = default;
 };
 
 
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
  protected:
-  uint64_t decoded_boxes = 0;
+  uint64_t decoded_boxes = 2; //it has at least decoded the signature and file type...
+
+  void check_boxes_constraints() {
+  	 if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
+          it != temp_decoded_boxes.end()) {
+  	 	throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
+  	 }
+  }
+
+  void populate_jpl_fields() {
+
+  }
 
  public:
   JPLFileFromStream(const std::string& filename)
       : JPLFileParser(filename), JPLFile(JPLFileParser::get_signature_box(),
                                      JPLFileParser::get_file_type_box()) {
-    if(!this->file_type_box->is_compatible_with<JpegPlenoSignatureBox>()) {
-    	throw JPLFileFromStreamExceptions::JpegPlenoNotInCompatibilityListException();
+    if (!this->file_type_box->is_compatible_with<JpegPlenoSignatureBox>()) {
+      throw JPLFileFromStreamExceptions::
+          JpegPlenoNotInCompatibilityListException();
     }
 
     this->managed_stream.seek(12 + 20);
-    decoded_boxes += 2;
+    decoded_boxes += decode_boxes();
+    check_boxes_constraints();
+    populate_jpl_fields();
     // std::move(*(this->parser.parse<XMLBoxWithCatalog>()));
-
-    while (this->managed_stream.is_valid()) {
-      std::cout << "Got another box..." << std::endl;
-      decoded_boxes++;
-    }
-    std::cout << "No more boxes to decode" << std::endl;
   }
 
 

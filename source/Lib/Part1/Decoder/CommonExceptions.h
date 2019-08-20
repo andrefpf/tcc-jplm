@@ -70,6 +70,16 @@ class JpegPlenoNotInCompatibilityListException : public std::exception {
   }
 };
 
+
+class MoreThanOneFileTypeBoxException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "This JPL file has more than one File Type Box. The standard "
+           "defines that only one must be present in the bitstream.";
+  }
+};
+
+
 }  // namespace JPLFileFromStreamExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__ */
