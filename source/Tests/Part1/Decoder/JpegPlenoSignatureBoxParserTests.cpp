@@ -2,9 +2,10 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 13:21:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-16 19:38:51
+* @Last Modified time: 2019-08-20 15:14:05
 */
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,8 +13,38 @@
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
 
-
 std::string resources_path = "../resources";
+
+
+TEST(BasicTest, ParseWithoutThrowIfCorrectBox) {
+  auto filename = std::string(resources_path + "/boxes/signature_box.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+  auto managed_stream =
+      ManagedStream(if_stream, std::filesystem::file_size(filename));
+  EXPECT_NO_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
+        managed_stream));
+}
+
+
+TEST(BasicTest, ThrowsIfParsingIncorrectBoxType) {
+  auto filename = std::string(resources_path + "/boxes/file_type_box.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+  auto managed_stream =
+      ManagedStream(if_stream, std::filesystem::file_size(filename));
+  EXPECT_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
+        managed_stream), BoxParserExceptions::WrongTBoxValueException);
+}
+
+
+TEST(BasicTest, ThrowsIfSignatureBoxDataIsCorrupted) {
+  auto filename = std::string(resources_path + "/boxes/signature_box_invalid_dbox.bin");
+  //there is one bit fliped...
+  std::ifstream if_stream(filename, std::ifstream::binary);
+  auto managed_stream =
+      ManagedStream(if_stream, std::filesystem::file_size(filename));
+  EXPECT_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
+        managed_stream), JpegPlenoSignatureBoxParserExceptions::InvalidJpegPlenoSignatureBox);
+}
 
 
 int main(int argc, char *argv[]) {
@@ -22,21 +53,6 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     resources_path = std::string(argv[1]);
   }
-
-  std::ifstream if_stream(
-      resources_path + "/boxes/signature_box.bin", std::ifstream::binary);
-  auto managed_stream = ManagedStream(if_stream, 100);
-
-  std::cout << if_stream.tellg() << std::endl;
-  auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
-      managed_stream);
-  std::cout << if_stream.tellg() << std::endl;
-  std::cout << box->size() << std::endl;
-
-  BoxParserRegistry::get_instance().parse(managed_stream);
-
-
-  std::cout << "Main" << std::endl;
 
   return RUN_ALL_TESTS();
 }

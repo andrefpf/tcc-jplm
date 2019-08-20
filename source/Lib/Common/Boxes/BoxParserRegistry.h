@@ -39,8 +39,8 @@ class BoxParserRegistry {
 
   template<class ParsingBox>
   std::unique_ptr<ParsingBox> parse(ManagedStream& managed_stream) const {
-  	std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
-  	std::cout << typeid(ParsingBox).name() << std::endl;
+  	// std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
+  	// std::cout << typeid(ParsingBox).name() << std::endl;
     auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
     // std::cout << "here!!!";
     auto parsed_box = parse(box_parser_helper);
