@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-19 16:20:08
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-19 17:22:01
+* @Last Modified time: 2019-08-20 14:25:30
 */
 
 
@@ -16,6 +16,34 @@
 
 std::string resources_path = "../resources";
 
+TEST(BasicTest, TwoBoxesDecodedInSimplestFile) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/signature_and_file_type_box.bin");
+  EXPECT_EQ(jpl_file.get_number_of_decoded_boxes(), 2);
+}
+
+
+TEST(BasicTest, ThrowsIfFileIsSmallerThan20Bytes) {
+  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
+                   resources_path + "/boxes/signature_box.bin"),
+      JPLFileFromStreamExceptions::InvalidTooSmallFileException);
+}
+
+
+TEST(BasicTest, ThrowsIfNotBegginingWithJSignatureBox) {
+  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
+                   resources_path + "/boxes/file_type_and_signature.bin"),
+      BoxParserExceptions::WrongTBoxValueException);
+}
+
+
+TEST(BasicTest, ThrowsIfNotCompatibleWithPleno) {
+  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
+                   resources_path +
+                   "/boxes/signature_and_incompatible_fily_type_box.bin"),
+      JPLFileFromStreamExceptions::JpegPlenoNotInCompatibilityListException);
+}
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
@@ -23,8 +51,6 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     resources_path = std::string(argv[1]);
   }
-
-  auto jpl_file = JPLFileFromStream(resources_path + "/boxes/signature_and_file_type_box.bin");
 
   return RUN_ALL_TESTS();
 }

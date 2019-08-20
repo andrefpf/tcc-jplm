@@ -44,4 +44,32 @@ class InvalidJpegPlenoSignatureBox : public std::exception {
 };
 }  // namespace JpegPlenoSignatureBoxParserExceptions
 
+
+namespace JPLFileFromStreamExceptions {
+class InvalidTooSmallFileException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  InvalidTooSmallFileException(const uint64_t filesize)
+      : message(std::string("Error, jpl file is too small (only ") +
+                std::to_string(filesize) +
+                std::string(" bytes). Expecting at least 20 bytes.")) {
+  }
+
+
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
+class JpegPlenoNotInCompatibilityListException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Jpeg Pleno was not found in compatibility list.";
+  }
+};
+
+}  // namespace JPLFileFromStreamExceptions
+
 #endif /* end of include guard: JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__ */
