@@ -31,52 +31,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
+/** \file     UniversalUniqueIdentifierTests.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-07-26
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-
-#include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
-
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
-};
+#include <iostream>
+#include "source/Lib/Common/Boxes/Generic/UniversalUniqueIdentifier.h"
+#include "gtest/gtest.h"
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
-
-
-namespace DefinedBoxes {
-
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
-  }
-
+TEST(UniversalUniqueIdentifierBasic, Initialization) {
+  EXPECT_NO_THROW(UniversalUniqueIdentifier());
 }
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+struct UniversalUniqueIdentifierFields : public testing::Test {
+ protected:
+  std::unique_ptr<UniversalUniqueIdentifier> uuid;
+  my_uint48_t node = {1, 5819};
+  uint8_t clock_seq_low = 10;
+  uint8_t clock_seq_hi_and_reserved = 12;
+  uint16_t time_hi_and_version = 14;
+  uint16_t time_mid = 16;
+  uint32_t time_low = 18;
+
+
+ public:
+  UniversalUniqueIdentifierFields() {
+    uuid = std::make_unique<UniversalUniqueIdentifier>(node, clock_seq_low,
+        clock_seq_hi_and_reserved, time_hi_and_version, time_mid, time_low);
+  }
+
+  ~UniversalUniqueIdentifierFields() = default;
+};
+
+
+TEST_F(UniversalUniqueIdentifierFields, HexStringHasTheCorrectNumberOfChars) {
+  EXPECT_EQ(uuid->to_hex_string().size(), 36);
+}
+
+
+TEST_F(UniversalUniqueIdentifierFields, HexStringHasHyphensInTheRightPlaces) {
+  EXPECT_EQ(uuid->to_hex_string().at(8), '-');
+  EXPECT_EQ(uuid->to_hex_string().at(13), '-');
+  EXPECT_EQ(uuid->to_hex_string().at(18), '-');
+  EXPECT_EQ(uuid->to_hex_string().at(23), '-');
+}
+
+
+// TEST_F
+//e7dca0b0-afb8-11e9-bd11-31bc71fe99d2
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

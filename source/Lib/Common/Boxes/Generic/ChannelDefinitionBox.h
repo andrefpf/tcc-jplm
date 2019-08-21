@@ -31,52 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
+/** \file     ChannelDefinitionBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
+#define JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
 
 #include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
-
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
-};
+#include "ChannelDefinitionDBox.h"
+#include "source/Lib/Part1/Common/DefinedBoxes.h"
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
+class ChannelDefinitionBox : public Box {
+ public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::ChannelDefinitionBoxType);
 
 
-namespace DefinedBoxes {
+  ChannelDefinitionBox(const ChannelDefinitionContents& contents)
+      : Box(TBox(id), ChannelDefinitionDBox(contents)){};
 
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
+
+  ChannelDefinitionBox(const ChannelDefinitionBox& other)
+      : Box(TBox(id), *other.d_box) {
   }
 
-}
 
+  ~ChannelDefinitionBox() = default;
+};
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__ */

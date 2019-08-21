@@ -31,52 +31,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
- *  \brief    
+/** \file     XLBoxTests.cpp
+ *  \brief    Test of XLBox.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-07-29
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-
-#include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
-
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
-};
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include "source/Lib/Common/Boxes/XLBox.h"
+#include "gtest/gtest.h"
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
-
-
-namespace DefinedBoxes {
-
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
-  }
-
+TEST(XLBoxBasicTest, XLBoxInitializationDoesNotThrow) {
+  EXPECT_NO_THROW(XLBox(42));
 }
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+TEST(XLBoxBasicTest, XLBoxWriteToStringOStream) {
+  auto t_box = XLBox(42);
+  std::ostringstream string_stream;
+  string_stream << t_box.get_value();
+  EXPECT_EQ(string_stream.str(), "42");
+}
+
+
+TEST(XLBoxBasicTest, XLBoxWriteToBinaryOStream) {
+  namespace fs = std::filesystem;
+  auto path = std::string(std::string(fs::temp_directory_path()) +
+                          "/XLBoxWriteToBinaryOStream.test");
+  if (fs::exists(path)) {
+    fs::remove(path);
+  }
+  std::ofstream outfile(path.c_str(), std::ofstream::binary);
+  auto t_box = XLBox(42);
+  outfile << t_box;
+  outfile.close();
+
+  std::ifstream infile(path.c_str(), std::ofstream::binary);
+  uint64_t test;
+  infile.read(reinterpret_cast<char *>(&test), sizeof(uint64_t));
+  test = BinaryTools::ensure_machines_endianess(test);
+
+  EXPECT_EQ(test, 42);
+}
+
+
+TEST(XLBoxBasicTest, XLBoxContructionWithMinValueNotAllowedThrows) {
+	EXPECT_THROW(XLBox(0), BoxExceptions::ValueNotAllowedException);
+}
+
+
+TEST(XLBoxBasicTest, XLBoxContructionWithMaxValueNotAllowedThrows) {
+	EXPECT_THROW(XLBox(15), BoxExceptions::ValueNotAllowedException);
+}
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

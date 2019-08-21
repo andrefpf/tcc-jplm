@@ -31,52 +31,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
+/** \file     JpegPlenoSignatureBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-07-23
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
+#define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
 
+#include <vector>
 #include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
+#include "source/Lib/Common/Boxes/Generic/CharArrayDBox.h"
+#include "source/Lib/Part1/Common/DefinedBoxes.h"
 
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
+class JpegPlenoSignatureBox : public Box {
+ public:
+  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
+      DefinedBoxesTypes::JPEGPlenoSignatureBoxType);
+
+
+  JpegPlenoSignatureBox()
+      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
+
+
+  JpegPlenoSignatureBox(
+      const JpegPlenoSignatureBox&)  //other is not even used...
+      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
+  }
+
+
+  bool is_valid(const std::vector<std::byte>& bytes) const noexcept {
+    if (bytes.size() == 4) {
+      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
+          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  ~JpegPlenoSignatureBox() = default;
 };
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
-
-
-namespace DefinedBoxes {
-
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
-  }
-
-}
-
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__ */

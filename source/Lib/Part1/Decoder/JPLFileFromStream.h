@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Lib/Common/Boxes/BoxParserRegistry.h"
+#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part1/Common/JPLFile.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 

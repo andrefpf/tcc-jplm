@@ -31,52 +31,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxesTypes.h
+/** \file     FileTypeBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
-
-enum class DefinedBoxesTypes : uint32_t {
-  JPEGPlenoSignatureBoxType =   0x6A706C20,
-  FileTypeBoxType =             0x66747970,
-  JPEGPlenoThumbnailBoxType =   0x6A707468,
-  JPEGPlenoHeaderBoxType =      0x6A706C68,
-  JPEGPlenoLightFieldBoxType =  0x6A706C66,
-  JPEGPlenoPointCloudBoxType =  0x6A707063,
-  JPEGPlenoHologramBoxType =    0x6A70686F,
-  ImageHeaderBoxType =          0x69686472, //this is from jpeg2000 part 2 (extensions)  
-  BitsPerComponentBoxType =     0x62706363, //this is from jpeg2000 part 1  
-  ColourSpecificationBoxType =  0x636F6C72, //this is from jpeg2000 part 1  
-  ChannelDefinitionBoxType =    0x63646566, //this is from jpeg2000 part 1  
-  ContiguousCodestreamBoxType = 0x6A703263, //this is from jpeg2000 part 1  
-  IntellectualPropertyBoxType = 0x6A703269, //this is from jpeg2000 part 1 
-  UUIDBoxType =                 0x75756964, //this is from jpeg2000 part 1 
-  UUIDInfoBoxType =             0x75696E66, //this is from jpeg2000 part 1 
-  UUIDListBoxType =             0x756C7374, //this is from jpeg2000 part 1 
-  DataEntryURLBoxType =         0x75726C20, //this is from jpeg2000 part 1 
-};
+#include <iostream>
+#include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
+#include "gtest/gtest.h"
 
 
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
-
-
-namespace DefinedBoxes {
-
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
-  }
-
+TEST(FileTypeBoxBasic, InitializationDoesNotThrow) {
+  EXPECT_NO_THROW(
+      auto file_type_box = FileTypeBox(FileTypeContents(0,0,{})));
 }
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+struct FileTypeBoxContents : public testing::Test {
+ protected:
+  uint32_t brand = 0x0042;
+  uint32_t minor_version=25;
+  std::unique_ptr<FileTypeBox> file_type_box;
+  FileTypeBoxContents() {
+    // view.get_im
+    file_type_box = std::make_unique<FileTypeBox>(FileTypeContents(brand, minor_version, {0x0004}));
+  }
+
+  const FileTypeContents& get_content_of_file() {
+    return dynamic_cast<const FileTypeContents&>(file_type_box->get_ref_to_dbox_contents());
+  }
+};
+
+
+TEST_F(FileTypeBoxContents, HoldsInitializedBrand) {
+  EXPECT_EQ(get_content_of_file().get_brand(), brand);
+}
+
+
+TEST_F(FileTypeBoxContents, HoldsInitializedMinorVersion) {
+  EXPECT_EQ(get_content_of_file().get_minor_version(), minor_version);
+}
+
+
+TEST_F(FileTypeBoxContents, HasCorrectSizeAfterCast) {
+  EXPECT_EQ(get_content_of_file().size(), 4+4+4);
+}
+
+
+TEST_F(FileTypeBoxContents, CompatibilityCheckFailsForStdNotDedinedInCompatibilityList) {
+  EXPECT_FALSE(get_content_of_file().is_the_file_compatible_with(0x0002));
+}
+
+
+TEST_F(FileTypeBoxContents, CompatibilityCheckSucceedsForStdDedinedInCompatibilityList) {
+  EXPECT_TRUE(get_content_of_file().is_the_file_compatible_with(0x0004));
+}
+
+
+TEST_F(FileTypeBoxContents, FileTypeBoxHasCorrectSize) {
+  EXPECT_EQ(file_type_box->size(), get_content_of_file().size()+4+4);
+}
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Lib/Common/Boxes/BoxParserRegistry.h"
+#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
 
