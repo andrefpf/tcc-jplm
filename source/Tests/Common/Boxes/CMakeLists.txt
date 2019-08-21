@@ -1,0 +1,13 @@
+function(add_jplm_part1_common_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
+	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_part1_common)
+	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME} "${CMAKE_HOME_DIRECTORY}/resources")
+endfunction()
+
+add_jplm_part1_common_lib_test(BoxTests box_tests BoxTests.cpp)
+add_jplm_part1_common_lib_test(BoxDataHolderTests boxdataholder_tests BoxDataHolderTests.cpp)
+add_jplm_part1_common_lib_test(LBoxTests lbox_tests LBoxTests.cpp)
+add_jplm_part1_common_lib_test(TBoxTests tbox_tests TBoxTests.cpp)
+add_jplm_part1_common_lib_test(XLBoxTests xlbox_tests Generic/XLBoxTests.cpp)
+add_jplm_part1_common_lib_test(DBoxTests dbox_tests DBoxTests.cpp)

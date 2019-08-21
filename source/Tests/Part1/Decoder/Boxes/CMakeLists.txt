@@ -1,4 +1,4 @@
-function(add_jplm_part1_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
+function(add_jplm_part1_boxes_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_boxes_part1_decoder)
@@ -6,4 +6,5 @@ function(add_jplm_part1_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME} "${CMAKE_HOME_DIRECTORY}/resources")
 endfunction()
 
-add_jplm_part1_decoder_lib_test(JPLFileFromStreamTests jpl_file_from_stream_tests JPLFileFromStreamTests.cpp)
+add_jplm_part1_boxes_decoder_lib_test(JpegPlenoSignatureBoxParserTests jpeg_pleno_signature_box_parser_tests JpegPlenoSignatureBoxParserTests.cpp)
+add_jplm_part1_boxes_decoder_lib_test(FileTypeBoxParserTests file_type_box_parser_tests FileTypeBoxParserTests.cpp)
