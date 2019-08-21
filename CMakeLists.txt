@@ -51,9 +51,18 @@ add_executable(jpl-decoder-bin
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
+
+add_library(jplm_boxes_decoding)
+target_link_libraries(jplm_boxes_decoding jplm_common_boxes_parsers jplm_common_boxes)
+
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
+add_library(jplm_boxes_part1_decoder)
+target_link_libraries(jplm_boxes_part1_decoder jplm_boxes_decoding jplm_part1_boxes_decoder)
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 
 

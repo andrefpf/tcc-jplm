@@ -17,7 +17,6 @@ add_jplm_part1_common_lib_test(TBoxTests tbox_tests ../../Common/Boxes/TBoxTests
 add_jplm_part1_common_lib_test(XLBoxTests xlbox_tests ../../Common/Boxes/Generic/XLBoxTests.cpp)
 add_jplm_part1_common_lib_test(DBoxTests dbox_tests ../../Common/Boxes/DBoxTests.cpp)
 add_jplm_part1_common_lib_test(BinaryToolsTests binary_tools_tests BinaryToolsTests.cpp)
-add_jplm_part1_common_lib_test(UnkownBoxInterpreterTests unknown_box_interpreter_tests ../../Common/Boxes/Generic/UnkownBoxInterpreterTests.cpp)
 add_jplm_part1_common_lib_test(ImageHeaderContentsTests image_header_contents_tests ../../Common/Boxes/Generic/ImageHeaderContentsTests.cpp)
 add_jplm_part1_common_lib_test(ImageHeaderBoxTests image_header_box_tests ../../Common/Boxes/Generic/ImageHeaderBoxTests.cpp)
 add_jplm_part1_common_lib_test(JPLFileTests jpl_file_tests JPLFileTests.cpp)

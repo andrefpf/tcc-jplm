@@ -1,2 +1,2 @@
-set(COMMON_BOXES_SOURCES BoxParserRegistry.cpp)
-add_library(jplm_common_boxes ${COMMON_BOXES_SOURCES})
+set(COMMON_BOXES_PARSERS_SOURCES BoxParserRegistry.cpp)
+add_library(jplm_common_boxes_parsers ${COMMON_BOXES_PARSERS_SOURCES})
