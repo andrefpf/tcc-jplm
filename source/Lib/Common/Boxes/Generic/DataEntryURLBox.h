@@ -42,24 +42,22 @@
 #ifndef JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__
 #define JPLM_LIB_PART1_COMMON_DATAENTRYURLBOX_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
 #include "DataEntryURLDBox.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Common/DefinedBoxes.h"
 
 
 class DataEntryURLBox : public Box {
  public:
   constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
       DefinedBoxesTypes::DataEntryURLBoxType);
-  
+
 
   DataEntryURLBox(const DataEntryURLBoxContents& contents)
-      : Box(TBox(id),
-            DataEntryURLDBox(contents)){};
+      : Box(TBox(id), DataEntryURLDBox(contents)){};
 
 
-  DataEntryURLBox(const DataEntryURLBox& other)
-      : Box(TBox(id), *other.d_box) {
+  DataEntryURLBox(const DataEntryURLBox& other) : Box(TBox(id), *other.d_box) {
   }
 
 

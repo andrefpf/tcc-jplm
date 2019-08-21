@@ -1,9 +1,9 @@
 #ifndef DATAENTRYURLBOXCONTENTS_H__
 #define DATAENTRYURLBOXCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include <tuple> //std::tie
-#include "source/Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Part1/Common/BinaryTools.h"
 
 class DataEntryURLBoxContents : public InMemoryDBoxContents {
  protected:

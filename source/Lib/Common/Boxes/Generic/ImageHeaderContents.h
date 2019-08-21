@@ -2,8 +2,8 @@
 #define IMAGEHEADERCONTENTS_H__
 
 #include <tuple>  //std::tie
-#include "source/Lib/Part1/Common/CommonExceptions.h"
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Part1/Common/CommonExceptions.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 enum class CoderTypeC : uint8_t {
   JPEG_2000 = 0,

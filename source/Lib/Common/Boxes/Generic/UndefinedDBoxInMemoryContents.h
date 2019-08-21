@@ -1,7 +1,7 @@
 #ifndef UNDEFINEDDBOXINMEMORYCONTENTS_H__
 #define UNDEFINEDDBOXINMEMORYCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
  public:

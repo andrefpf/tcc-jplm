@@ -1,7 +1,7 @@
 #ifndef UNDEFINEDBOX_H__
 #define UNDEFINEDBOX_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/Box.h"
 #include "UndefinedDBox.h"
 
 class UndefinedBox : public Box {

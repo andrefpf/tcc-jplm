@@ -1,7 +1,7 @@
 #ifndef UUIDDBOX_H__
 #define UUIDDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 #include "UUIDBoxContents.h"
 
 class UUIDDBox : public DBox {

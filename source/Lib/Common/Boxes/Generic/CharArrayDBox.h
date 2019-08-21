@@ -2,7 +2,7 @@
 #define CHARARRAYDBOX_H__
 
 #include "CharArrayDBoxContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class CharArrayDBox : public DBox {
  public:

@@ -2,7 +2,7 @@
 #define CONTIGUOUSCODESTREAMDBOX_H__
 
 #include "ContiguousCodestreamContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class ContiguousCodestreamDBox : public DBox {
  public:

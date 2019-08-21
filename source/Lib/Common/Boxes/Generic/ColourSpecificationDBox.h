@@ -1,7 +1,7 @@
 #ifndef COLOURSPECIFICATIONDBOX_H__
 #define COLOURSPECIFICATIONDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 #include "ColourSpecificationContents.h"
 
 class ColourSpecificationDBox : public DBox {

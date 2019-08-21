@@ -1,7 +1,7 @@
 #ifndef CONTIGUOUSCODESTREAMCONTENTS_H__
 #define CONTIGUOUSCODESTREAMCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 class ContiguousCodestreamContents : public InMemoryDBoxContents {
   //not implemented yet...

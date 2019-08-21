@@ -1,7 +1,7 @@
 #ifndef DATAENTRYURLDBOX_H__
 #define DATAENTRYURLDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 #include "DataEntryURLBoxContents.h"
 
 class DataEntryURLDBox : public DBox {

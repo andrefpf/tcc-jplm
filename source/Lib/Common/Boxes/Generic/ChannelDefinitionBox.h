@@ -41,9 +41,9 @@
 #ifndef JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
 #define JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
 #include "ChannelDefinitionDBox.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Common/DefinedBoxes.h"
 
 
 class ChannelDefinitionBox : public Box {

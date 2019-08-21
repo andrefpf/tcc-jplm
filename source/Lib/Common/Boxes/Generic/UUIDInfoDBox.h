@@ -2,7 +2,7 @@
 #define UUIDINFODBOX_H__
 
 #include "UUIDInfoBoxContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class UUIDInfoDBox : public DBox {
  public:

@@ -42,7 +42,7 @@
 #ifndef JPLM_LIB_PART1_COMMON_UNDEFINEDDBOXCONTENTS_H__
 #define JPLM_LIB_PART1_COMMON_UNDEFINEDDBOXCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 
 class UndefinedDBoxContents : public InMemoryDBoxContents {

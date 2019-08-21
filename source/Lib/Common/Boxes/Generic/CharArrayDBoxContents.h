@@ -1,7 +1,7 @@
 #ifndef CHARARRAYDBOXCONTENTS_H__
 #define CHARARRAYDBOXCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 class CharArrayDBoxContents : public InMemoryDBoxContents {
  protected:

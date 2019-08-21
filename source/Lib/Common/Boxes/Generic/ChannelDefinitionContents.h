@@ -1,7 +1,7 @@
 #ifndef CHANNELDEFINITIONCONTENTS_H__
 #define CHANNELDEFINITIONCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "ChannelDescription.h"
 
 

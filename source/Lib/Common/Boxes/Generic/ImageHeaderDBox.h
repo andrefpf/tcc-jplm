@@ -1,7 +1,7 @@
 #ifndef IMAGEHEADERDBOX_H__
 #define IMAGEHEADERDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 #include "ImageHeaderContents.h"
 
 class ImageHeaderDBox : public DBox {

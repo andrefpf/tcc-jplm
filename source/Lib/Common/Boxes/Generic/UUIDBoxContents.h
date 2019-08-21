@@ -3,7 +3,7 @@
 
 //UUID
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "UniversalUniqueIdentifier.h"
 
 class UUIDBoxContents : public InMemoryDBoxContents {

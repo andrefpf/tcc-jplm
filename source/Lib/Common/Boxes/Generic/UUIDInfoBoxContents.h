@@ -3,7 +3,7 @@
 
 
 #include "DataEntryURLBox.h"
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "UUIDListBox.h"
 #include "UniversalUniqueIdentifier.h"
 

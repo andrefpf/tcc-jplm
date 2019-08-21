@@ -1,7 +1,7 @@
 #ifndef CHANNELDEFINITIONDBOX_H__
 #define CHANNELDEFINITIONDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 #include "ChannelDefinitionContents.h"
 
 class ChannelDefinitionDBox : public DBox {

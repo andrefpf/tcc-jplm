@@ -42,8 +42,8 @@
 #define JPLM_LIB_PART1_COMMON_COLOURSPECIFICATIONBOX_H__
 
 #include <stdexcept>
-#include "source/Lib/Common/Boxes/Box.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Common/DefinedBoxes.h"
 #include "ColourSpecificationDBox.h"
 
 class ColourSpecificationBox : public Box {

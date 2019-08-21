@@ -2,7 +2,7 @@
 #define UUIDLISTDBOX_H__
 
 #include "UUIDListBoxContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class UUIDListDBox : public DBox {
  public:
