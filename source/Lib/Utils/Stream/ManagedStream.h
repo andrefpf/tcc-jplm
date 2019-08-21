@@ -11,7 +11,7 @@
 
 class ManagedStream {
  protected:
-  std::ifstream& ref_to_stream;
+  std::ifstream& ref_to_stream; //it may be a good idea to change for a weak ptr
   const uint64_t initial_pos;
   const uint64_t final_pos;
 
