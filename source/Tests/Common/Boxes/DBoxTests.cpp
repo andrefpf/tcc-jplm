@@ -39,8 +39,8 @@
  */
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/DBox.h"
-#include "source/Lib/Common/Boxes/Generic/EmptyDBox.h"
+#include "Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/EmptyDBox.h"
 #include "gtest/gtest.h"
 
 

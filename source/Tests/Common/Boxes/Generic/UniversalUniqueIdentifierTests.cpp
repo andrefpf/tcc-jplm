@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/Generic/UniversalUniqueIdentifier.h"
+#include "Lib/Common/Boxes/Generic/UniversalUniqueIdentifier.h"
 #include "gtest/gtest.h"
 
 

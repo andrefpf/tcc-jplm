@@ -1,7 +1,7 @@
 #ifndef EMPTYDBOX_H__
 #define EMPTYDBOX_H__
 
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "DBox.h"
 #include "EmptyDBoxContents.h"
 
 

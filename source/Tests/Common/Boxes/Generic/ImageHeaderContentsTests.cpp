@@ -2,11 +2,11 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-12 14:58:18
+* @Last Modified time: 2019-08-21 15:11:54
 */
 
 
-#include "source/Lib/Common/Boxes/Generic/ImageHeaderContents.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "gtest/gtest.h"
 
 

@@ -42,8 +42,8 @@
 #define JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__
 
 #include <algorithm>
-#include "source/Lib/Common/Boxes/Box.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Common/DefinedBoxes.h"
 #include "FileTypeDBox.h"
 
 
@@ -71,9 +71,6 @@ class FileTypeBox : public Box {
   template<class OtherBox>
   bool is_compatible_with() {
     return is_compatible_with<OtherBox::id>();
-    // dynamic_cast<const FileTypeContents&>(
-    //     this->get_ref_to_dbox_contents())
-    //     .is_the_file_compatible_with(OtherBox::id);
   }
 
 

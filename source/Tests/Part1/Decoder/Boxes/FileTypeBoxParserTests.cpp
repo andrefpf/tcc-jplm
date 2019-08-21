@@ -2,13 +2,13 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 13:21:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-19 15:57:11
+* @Last Modified time: 2019-08-21 15:12:14
 */
 
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
 

@@ -7,9 +7,9 @@
 #include <iostream>
 #include <map>
 #include <memory>
-#include "source/Lib/Common/Boxes/Box.h"
-#include "source/Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
-#include "source/Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
+#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
+#include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 class BoxParserRegistry {

@@ -40,8 +40,8 @@
 
 
 #include <iostream>
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
 #include "gtest/gtest.h"
 
 

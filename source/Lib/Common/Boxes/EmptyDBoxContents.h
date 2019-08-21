@@ -1,7 +1,7 @@
 #ifndef EMPTYDBOXCONTENTS_H__
 #define EMPTYDBOXCONTENTS_H__
 
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "InMemoryDBoxContents.h"
 
 class EmptyDBoxContents : public InMemoryDBoxContents {
  public:

@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/BoxDataHolder.h"
+#include "Lib/Common/Boxes/BoxDataHolder.h"
 #include "gtest/gtest.h"
 
 

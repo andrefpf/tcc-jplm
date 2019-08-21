@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/Generic/UUIDBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDBox.h"
 #include "gtest/gtest.h"
 
 

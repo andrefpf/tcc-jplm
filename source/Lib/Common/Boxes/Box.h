@@ -48,7 +48,7 @@
 #include <optional>
 #include <variant>
 #include "DBox.h"
-#include "source/Lib/Common/Boxes/Generic/EmptyDBox.h"
+#include "EmptyDBox.h"
 #include "LBox.h"
 #include "TBox.h"
 #include "XLBox.h"
