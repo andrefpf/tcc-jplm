@@ -4,18 +4,8 @@
 #include <tuple>  //std::tie
 #include "Lib/Part1/Common/CommonExceptions.h"
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "CompressionTypeImage.h"
 
-enum class CoderTypeC : uint8_t {
-  JPEG_2000 = 0,
-  JPEG = 1,
-  JPEG_LS = 2,
-  JPEG_XT = 3,
-  JPEG_XR = 4,
-  JPEG_XS = 5
-};
-
-
-typedef std::underlying_type<CoderTypeC>::type CoderTypeCUnderlyingType;
 
 
 class ImageHeaderContents : public InMemoryDBoxContents {
@@ -24,14 +14,14 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   uint32_t width;
   uint16_t nc;  //! Number of components
   uint8_t bpc;  //! Bits per component
-  CoderTypeC c;  //! Compression type
+  CompressionTypeImage c;  //! Compression type
   uint8_t UnkC;  //! Colourspace Unknown
   uint8_t IPR;  //! Intellectual Property
 
  public:
   ImageHeaderContents(uint32_t height, uint32_t width,
       uint16_t number_of_channels, uint8_t bits_per_component,
-      CoderTypeC coder_type, uint8_t UnkC, uint8_t IPR)
+      CompressionTypeImage coder_type, uint8_t UnkC, uint8_t IPR)
       : height(height), width(width), nc(number_of_channels),
         bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
     //should width, height and bpc be checked against 0?
@@ -71,12 +61,12 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
-  CoderTypeC get_c() const noexcept {
+  CompressionTypeImage get_c() const noexcept {
     return c;
   }
 
 
-  CoderTypeC get_coder_type() const noexcept {
+  CompressionTypeImage get_coder_type() const noexcept {
     return get_c();
   }
 
@@ -111,7 +101,7 @@ class ImageHeaderContents : public InMemoryDBoxContents {
 
   virtual uint64_t size() const noexcept override {
     return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +
-           sizeof(CoderTypeCUnderlyingType);
+           sizeof(compression_type_data);
   }
 
 

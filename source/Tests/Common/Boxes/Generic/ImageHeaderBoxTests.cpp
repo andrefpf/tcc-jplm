@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:47:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-21 15:11:58
+* @Last Modified time: 2019-08-22 17:33:21
 */
 
 #include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
@@ -14,7 +14,7 @@ TEST(ImageHeaderBoxBasicTest, ImageHeaderBoxInitializationDoesNotThrow) {
   uint32_t width = 1920;
   uint16_t number_of_channels = 3;
   uint8_t bits_per_component = 10;
-  CoderTypeC coder_type = CoderTypeC::JPEG_2000;
+  CompressionTypeImage coder_type = CompressionTypeImage::JPEG_2000;
   uint8_t UnkC = 0;
   uint8_t IPR = 0;
 

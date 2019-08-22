@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:56:21
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-21 15:11:54
+* @Last Modified time: 2019-08-22 17:33:47
 */
 
 
@@ -15,7 +15,7 @@ struct ImageHeaderContentsFixture : public testing::Test {
   uint32_t width = 1920;
   uint16_t number_of_channels = 3;
   uint8_t bits_per_component = 10;
-  CoderTypeC coder_type = CoderTypeC::JPEG_2000;
+  CompressionTypeImage coder_type = CompressionTypeImage::JPEG_2000;
   uint8_t UnkC = 0;
   uint8_t IPR = 0;
   std::unique_ptr<ImageHeaderContents> image_header_contents;
