@@ -62,8 +62,8 @@ class JPLFile {
       jpeg_pleno_codestreams;
   std::optional<IntellectualPropertyBox> ipr_box;
   // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
-  std::optional<std::vector<UUIDBox>> uuid_boxes;
-  std::optional<std::vector<UUIDInfoBox>> uuid_info_boxes;
+  std::optional<std::vector<std::unique_ptr<UUIDBox>>> uuid_boxes;
+  std::optional<std::vector<std::unique_ptr<UUIDInfoBox>>> uuid_info_boxes;
 
  public:
   JPLFile(const FileTypeBox& file_type_box)
@@ -127,6 +127,33 @@ class JPLFile {
 
 std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
+  // if(xml_box_with_catalog) {
+  //   os << xml_box_with_catalog;
+  // }
+  if (jpl_file.jpeg_pleno_thumbnail_box) {
+    os << (*jpl_file.jpeg_pleno_thumbnail_box);
+  }
+  if (jpl_file.jpeg_pleno_codestreams) {
+    const auto& codestreams = *(jpl_file.jpeg_pleno_codestreams);
+    for (const auto& codestream : codestreams) {
+      os << *codestream;
+    }
+  }
+  if (jpl_file.ipr_box) {
+    os << (*jpl_file.ipr_box);
+  }
+  if (jpl_file.uuid_boxes) {
+    const auto& uuid_boxes = *(jpl_file.uuid_boxes);
+    for (const auto& uuid_box : uuid_boxes) {
+      os << *uuid_box;
+    }
+  }
+  if (jpl_file.uuid_info_boxes) {
+    const auto& uuid_info_boxes = *(jpl_file.uuid_info_boxes);
+    for (const auto& uuid_info_boxe : uuid_info_boxes) {
+      os << *uuid_info_boxe;
+    }
+  }
   return os;
 }
 
