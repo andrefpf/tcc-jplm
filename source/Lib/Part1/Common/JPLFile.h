@@ -42,14 +42,14 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPLFILE_H__
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
-#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
 #include "source/Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
+#include "source/Lib/Common/Boxes/Generic/UUIDBox.h"
+#include "source/Lib/Common/Boxes/Generic/UUIDInfoBox.h"
+#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDInfoBox.h"
 
 
 class JPLFile {
@@ -67,12 +67,15 @@ class JPLFile {
 
  public:
   JPLFile(const FileTypeBox& file_type_box)
-      : file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
+      : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>()),
+        file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
   }
 
 
-  JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box,
-      const FileTypeBox& file_type_box)
+  JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box =
+              JpegPlenoSignatureBox(),
+      const FileTypeBox& file_type_box = FileTypeBox(
+          JpegPlenoFileTypeContents()))
       : jpeg_pleno_signature_box(
             std::make_unique<JpegPlenoSignatureBox>(jpeg_pleno_signature_box)),
         file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
@@ -117,6 +120,14 @@ class JPLFile {
   FileTypeBox get_file_type_box() const noexcept {
     return *file_type_box;
   }
+
+  friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
 };
+
+
+std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
+  os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
+  return os;
+}
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLFILE_H__ */

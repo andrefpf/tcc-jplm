@@ -76,6 +76,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/Boxes/Generic/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Encoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/)
 
