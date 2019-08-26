@@ -72,6 +72,34 @@ TEST(BasicTests, NoZeroU) {
 }
 
 
+TEST(BasicTests, gets_T) {
+	auto lf_header_contents = LightFieldHeaderContents({42, 1, 2, 3},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_light_field_dimension().get_t(), 42);
+}
+
+
+TEST(BasicTests, gets_S) {
+	auto lf_header_contents = LightFieldHeaderContents({1, 42, 2, 3},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_light_field_dimension().get_s(), 42);
+}
+
+
+TEST(BasicTests, gets_V) {
+	auto lf_header_contents = LightFieldHeaderContents({1, 2, 42, 3},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_light_field_dimension().get_v(), 42);
+}
+
+
+TEST(BasicTests, gets_U) {
+	auto lf_header_contents = LightFieldHeaderContents({1, 2, 3, 42},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_light_field_dimension().get_u(), 42);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
