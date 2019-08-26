@@ -99,7 +99,7 @@ class InvalidZeroHeightException : public std::exception {
 class InvalidZeroBppException : public std::exception {
   public:
   const char* what() const noexcept override {
-    return "The view height was set to zero but it cannot be zero";
+    return "The bpp was set to zero but it cannot be zero";
   }
 };
 
