@@ -7,10 +7,10 @@
 #include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
 #include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
 #include "LightFieldHeaderBox.h"
 
-class JpegPlenoLightFieldHeaderContents : public InMemoryDBoxContents {
+class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
  protected:
   std::unique_ptr<LightFieldHeaderBox> lhdr;  //light_field_header_box
   std::unique_ptr<BitsPerComponentBox>
@@ -94,33 +94,22 @@ class JpegPlenoLightFieldHeaderContents : public InMemoryDBoxContents {
     return !this->operator==(other);
   }
 
-
-  virtual std::vector<std::byte> get_bytes() const override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    //   auto lhdr_bytes = lhdr->get_ref_to_dbox_contents.get_bytes
-    //   byte_list.insert(bytes.end(), lhdr_bytes.begin(), lhdr_bytes.end());
-
-    //   if(bpcc) {
-    // auto bpc_bytes = lhdr->get_bytes();
-    //   	byte_list.insert(bytes.end(), bpc_bytes.begin(), bpc_bytes.end());
-    //   }
-
-    //   for (const auto& colour_specification_box : colr) {
-    //   	auto colour_specification_bytes = lhdr->get_bytes();
-    //   	byte_list.insert(bytes.end(), colour_specification_bytes.begin(), colour_specification_bytes.end());
-    //   }
-
-    //   if(cdef) {
-    // auto cdef_bytes = lhdr->get_bytes();
-    //   	byte_list.insert(bytes.end(), cdef_bytes.begin(), cdef_bytes.end());
-    //   }
-
-    return bytes;
-  }
-
   virtual ~JpegPlenoLightFieldHeaderContents() = default;
+
+
+  std::ostream& write_to(std::ostream& stream) const final {
+  	stream << *lhdr;
+  	if(bpcc) {
+  		stream << *bpcc;
+  	}
+	for (const auto& colour_specification_box : colr) {
+      stream << *colour_specification_box;
+    }
+    if(cdef) {
+  		stream << *cdef;
+  	}
+  	return stream;
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDHEADERCONTENTS_H__ */
