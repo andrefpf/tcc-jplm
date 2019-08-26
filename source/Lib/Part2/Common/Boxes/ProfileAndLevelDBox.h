@@ -7,13 +7,13 @@
 class ProfileAndLevelDBox : public DBox {
  public:
   ProfileAndLevelDBox(const ProfileAndLevelContents& contents)
-      : DBox(std::make_unique<ProfileAndLevelContents>(contents)) {
+      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(contents))) {
   }
 
 
   ProfileAndLevelDBox(const ProfileAndLevelDBox& other)
-      : DBox(std::make_unique<ProfileAndLevelContents>(
-            other.get_ref_to_contents())) {
+      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(
+                  other.get_ref_to_contents()))) {
   }
 
 

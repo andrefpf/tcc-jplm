@@ -15,6 +15,27 @@ class ProfileAndLevelContents : public InMemoryDBoxContents {
       : ppih(ppih), plev(plev) {
   }
 
+
+  auto get_profile_of_the_codestream() const noexcept {
+    return ppih;
+  }
+
+
+  auto get_level_of_the_codestream() const noexcept {
+    return plev;
+  }
+
+
+  auto get_ppih() const noexcept {
+    return get_profile_of_the_codestream();
+  }
+
+
+  auto get_plev() const noexcept {
+    return get_level_of_the_codestream();
+  }
+
+
   virtual ~ProfileAndLevelContents() = default;
 
 
