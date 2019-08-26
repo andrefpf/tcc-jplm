@@ -44,13 +44,11 @@
 
 #include "Lib/Common/Boxes/Box.h"
 #include "ContiguousCodestreamDBox.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
 
 
 class ContiguousCodestreamBox : public Box {
  public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::ContiguousCodestreamBoxType);
+  constexpr static uint32_t id = 0x6A703263;
 
   ContiguousCodestreamBox(const ContiguousCodestreamContents& contents)
       : Box(TBox(id), ContiguousCodestreamDBox(contents)){};

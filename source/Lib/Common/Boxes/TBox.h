@@ -43,10 +43,13 @@
 
 #include "BoxDataHolder.h"
 
-class TBox : public BoxDataHolder<uint32_t> {
+using t_box_id_type = uint32_t;
+
+class TBox : public BoxDataHolder<t_box_id_type> {
  public:
+
   TBox() = default;
-  TBox(const uint32_t& value) : BoxDataHolder<uint32_t>(value) {
+  TBox(const t_box_id_type& value) : BoxDataHolder<t_box_id_type>(value) {
   }
   ~TBox() = default;
 
