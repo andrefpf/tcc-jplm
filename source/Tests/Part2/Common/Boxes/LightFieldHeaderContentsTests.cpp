@@ -45,7 +45,30 @@
 
 
 TEST(BasicTests, NoZeroT) {
-	
+  EXPECT_THROW(auto lf_header_contents = LightFieldHeaderContents({0, 1, 2, 3},
+                   3, 8, CompressionTypeLightField::transform_mode),
+      LightfieldDimensionExceptions::InvalidZeroDimensionException);
+}
+
+
+TEST(BasicTests, NoZeroS) {
+  EXPECT_THROW(auto lf_header_contents = LightFieldHeaderContents({1, 0, 2, 3},
+                   3, 8, CompressionTypeLightField::transform_mode),
+      LightfieldDimensionExceptions::InvalidZeroDimensionException);
+}
+
+
+TEST(BasicTests, NoZeroV) {
+  EXPECT_THROW(auto lf_header_contents = LightFieldHeaderContents({1, 2, 0, 3},
+                   3, 8, CompressionTypeLightField::transform_mode),
+      LightfieldDimensionExceptions::InvalidZeroDimensionException);
+}
+
+
+TEST(BasicTests, NoZeroU) {
+  EXPECT_THROW(auto lf_header_contents = LightFieldHeaderContents({1, 2, 3, 0},
+                   3, 8, CompressionTypeLightField::transform_mode),
+      LightfieldDimensionExceptions::InvalidZeroDimensionException);
 }
 
 
