@@ -11,7 +11,7 @@ class LightFieldHeaderBox : public Box {
   constexpr static uint32_t id = 0x6c686472;
 
 
-  LightFieldHeaderBox(const LightFieldHeaderContents& contents)
+  LightFieldHeaderBox(const LightFieldHeaderCotngents& contents)
       : Box(TBox(id), LightFieldHeaderDBox(contents)) {
   }
 

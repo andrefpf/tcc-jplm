@@ -5,7 +5,7 @@
 #include "CompressionTypeLightField.h"
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "Lib/Part1/Common/BinaryTools.h"
-
+#include "Lib/Part2/Common/LightfieldDimension.h"
 
 using colour_space_unknown_flag_type = uint8_t;
 
@@ -27,24 +27,59 @@ enum class IntelectualPropertyFlag : intelectual_property_flag_type {
 
 class LightFieldHeaderContents : public InMemoryDBoxContents {
  protected:
-  uint32_t rows;  //T number of rows of the subaperture view array
-  uint32_t columns;  //S number of columns of the subaperture view array
-  uint32_t height;  //V subaperture view height
-  uint32_t width;  //U subaperture view width
+  // uint32_t rows;  //T number of rows of the subaperture view array
+  // uint32_t columns;  //S number of columns of the subaperture view array
+  // uint32_t height;  //V subaperture view height
+  // uint32_t width;  //U subaperture view width
+  LightfieldDimension<uint32_t> light_field_dimension;
   uint16_t nc;  // number of components
   uint8_t bpc;  // bits per component
   CompressionTypeLightField c;  // compression type (i.e., the mode)
   ColourSpaceUnknownFlag unkc;  //
   IntelectualPropertyFlag ipr;  //
  public:
-  LightFieldHeaderContents(uint32_t rows, uint32_t columns, uint32_t height,
-      uint32_t width, uint16_t nc, uint8_t bpc, CompressionTypeLightField c,
-      ColourSpaceUnknownFlag unkc, IntelectualPropertyFlag ipr)
-      : rows(rows), columns(columns), height(height), width(width), nc(nc),
-        bpc(bpc), c(c), unkc(unkc), ipr(ipr) {
+  LightFieldHeaderContents(
+      const LightfieldDimension<uint32_t>& light_field_dimension, uint16_t nc,
+      uint8_t bpc, CompressionTypeLightField c,
+      ColourSpaceUnknownFlag unkc = ColourSpaceUnknownFlag::known,
+      IntelectualPropertyFlag ipr =
+          IntelectualPropertyFlag::has_no_rights_information)
+      : light_field_dimension(light_field_dimension), nc(nc), bpc(bpc), c(c),
+        unkc(unkc), ipr(ipr) {
   }
 
+
+  LightFieldHeaderContents(uint32_t rows, uint32_t columns, uint32_t height,
+      uint32_t width, uint16_t nc, uint8_t bpc, CompressionTypeLightField c,
+      ColourSpaceUnknownFlag unkc = ColourSpaceUnknownFlag::known,
+      IntelectualPropertyFlag ipr =
+          IntelectualPropertyFlag::has_no_rights_information)
+      : LightFieldHeaderContents(
+            {rows, columns, height, width}, nc, bpc, c, unkc, ipr) {
+  }
+
+
   virtual ~LightFieldHeaderContents() = default;
+
+
+  auto get_light_field_dimension() const noexcept {
+    return light_field_dimension;
+  }
+
+
+  auto get_compression_type() const noexcept {
+    return c;
+  }
+
+
+  auto get_color_space_unknown_flag() const noexcept {
+    return unkc;
+  }
+
+
+  auto get_intelectual_property_flag() const noexcept {
+    return ipr;
+  }
 
 
   virtual LightFieldHeaderContents* clone() const override {
@@ -67,10 +102,10 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
 
 
   bool operator==(const LightFieldHeaderContents& other) const noexcept {
-    return (std::tie(this->rows, this->columns, this->height, this->width,
-                this->nc, this->bpc, this->c, this->unkc, this->ipr) ==
-            std::tie(other.rows, other.columns, other.height, other.width,
-                other.nc, other.bpc, other.c, other.unkc, other.ipr));
+    return (std::tie(this->light_field_dimension, this->nc, this->bpc, this->c,
+                this->unkc, this->ipr) == std::tie(other.light_field_dimension,
+                                              other.nc, other.bpc, other.c,
+                                              other.unkc, other.ipr));
   }
 
 
@@ -82,6 +117,8 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
   virtual std::vector<std::byte> get_bytes() const override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
+
+    const auto& [rows, columns, height, width] = light_field_dimension;
 
     BinaryTools::append_big_endian_bytes(bytes, rows);
     BinaryTools::append_big_endian_bytes(bytes, columns);
@@ -99,6 +136,6 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
 
     return bytes;
   }
-}
+};
 
 #endif /* end of include guard: LIGHTFIELDHEADERCONTENTS_H__ */
