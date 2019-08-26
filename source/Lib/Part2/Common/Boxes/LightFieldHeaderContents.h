@@ -34,6 +34,7 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
   LightfieldDimension<uint32_t> light_field_dimension;
   uint16_t nc;  // number of components
   uint8_t bpc;  // bits per component
+  //! \todo bits per component has a different synthax
   CompressionTypeLightField c;  // compression type (i.e., the mode)
   ColourSpaceUnknownFlag unkc;  //
   IntelectualPropertyFlag ipr;  //
@@ -98,7 +99,7 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
 
 
   uint64_t size() const noexcept override {
-    return 2 * sizeof(uint16_t);
+    return 4 * sizeof(uint32_t) + sizeof(uint16_t) + 4 * sizeof(uint8_t);
   }
 
 

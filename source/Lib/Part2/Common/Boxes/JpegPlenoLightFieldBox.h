@@ -31,47 +31,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoCodestreamBox.h
+/** \file     JpegPlenoLightFieldBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
 
-//the ideia is to be the base for
-// JpegPlenoLightFieldBox
-// JpegPlenoPointCloudBox
-// JpegPlenoHologramBox
-//
+#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
+#define JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
+#include "JpegPlenoLightFieldDBox.h"
+#include "JpegPlenoLightFieldContents.h"
 
-class JpegPlenoCodestreamBox : public Box {
+
+//this must be moved to Part2/Common
+
+class JpegPlenoLightFieldBox : public JpegPlenoCodestreamBox {
  public:
-  JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box)
-      : Box(type_box, data_box) {
+  constexpr static uint32_t id = 0x6a706c66;
+
+
+  JpegPlenoLightFieldBox(const JpegPlenoLightFieldContents& contents)
+      : JpegPlenoCodestreamBox(TBox(id), JpegPlenoLightFieldDBox(contents)) {
   }
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, DBox&& data_box)
-      : Box(type_box, std::move(data_box)) {
+  JpegPlenoLightFieldBox(JpegPlenoLightFieldContents&& contents)
+      : JpegPlenoCodestreamBox(
+            TBox(id), std::move(JpegPlenoLightFieldDBox(std::move(contents)))) {
   }
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, std::unique_ptr<DBox>&& data_box)
-      : Box(type_box, std::move(data_box)) {
+  JpegPlenoLightFieldBox(const JpegPlenoLightFieldBox& other)
+      : JpegPlenoCodestreamBox(TBox(id), *other.d_box) {
   }
 
 
-  JpegPlenoCodestreamBox(const JpegPlenoCodestreamBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
-  }
-
-
-  virtual ~JpegPlenoCodestreamBox() = default;
+  ~JpegPlenoLightFieldBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__ */
+
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__ */

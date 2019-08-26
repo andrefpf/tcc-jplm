@@ -2,7 +2,7 @@
 #define LIGHTFIELDHEADERDBOX_H__
 
 #include "LightFieldHeaderContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 
 class LightfieldHeaderDBox : public DBox {

@@ -31,29 +31,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldBox.h
+/** \file     JpegPlenoLightFieldContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-08-26
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
-
-#include "JpegPlenoCodestreamBox.h"
+#ifndef JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__
+#define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__
 
 
-//this must be moved to Part2/Common
+#include <tuple>  //std::tie
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
 
-class JpegPlenoLightFieldBox : public JpegPlenoCodestreamBox
-{
-public:
-	JpegPlenoLightFieldBox();
-	~JpegPlenoLightFieldBox();
-	
+class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
+ public:
+  JpegPlenoLightFieldContents() {
+  }
+
+
+  virtual ~JpegPlenoLightFieldContents() = default;
+
+
+  virtual JpegPlenoLightFieldContents* clone() const override {
+    return new JpegPlenoLightFieldContents(*this);
+  }
+
+
+  uint64_t size() const noexcept override {
+    return 2 * sizeof(uint16_t);
+  }
+
+
+  virtual bool is_equal(const DBoxContents& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other =
+        dynamic_cast<const JpegPlenoLightFieldContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  bool operator==(const JpegPlenoLightFieldContents& other) const noexcept {
+    //! \todo implement here
+    return false;
+  }
+
+
+  bool operator!=(const JpegPlenoLightFieldContents& other) const noexcept {
+    return !this->operator==(other);
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+
+    //! \todo implement here
+
+    return bytes;
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOLIGHTFIELDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__ */

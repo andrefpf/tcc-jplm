@@ -31,47 +31,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoCodestreamBox.h
+/** \file     JpegPlenoLightFieldDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-08-26
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
 
-//the ideia is to be the base for
-// JpegPlenoLightFieldBox
-// JpegPlenoPointCloudBox
-// JpegPlenoHologramBox
-//
+#ifndef JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDDBOX_H__
+#define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDDBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
+#include "JpegPlenoLightFieldContents.h"
+#include "Lib/Common/Boxes/DBox.h"
 
-class JpegPlenoCodestreamBox : public Box {
+
+class JpegPlenoLightFieldDBox : public DBox {
  public:
-  JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box)
-      : Box(type_box, data_box) {
+  JpegPlenoLightFieldDBox(const JpegPlenoLightFieldContents& contents)
+      : DBox(std::make_unique<JpegPlenoLightFieldContents>(contents)) {
   }
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, DBox&& data_box)
-      : Box(type_box, std::move(data_box)) {
+  JpegPlenoLightFieldDBox(std::unique_ptr<JpegPlenoLightFieldContents>&& contents)
+      : DBox(std::move(contents)) {
   }
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, std::unique_ptr<DBox>&& data_box)
-      : Box(type_box, std::move(data_box)) {
+  JpegPlenoLightFieldDBox(const JpegPlenoLightFieldDBox& other)
+      : DBox(std::make_unique<JpegPlenoLightFieldContents>(
+            other.get_ref_to_contents())) {
   }
 
 
-  JpegPlenoCodestreamBox(const JpegPlenoCodestreamBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+  virtual ~JpegPlenoLightFieldDBox() = default;
+
+
+  virtual const JpegPlenoLightFieldContents& get_ref_to_contents()
+      const override {
+    return static_cast<const JpegPlenoLightFieldContents&>(*contents);
   }
 
 
-  virtual ~JpegPlenoCodestreamBox() = default;
+  JpegPlenoLightFieldDBox* clone() const override {
+    return new JpegPlenoLightFieldDBox(*this);
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDDBOX_H__ */

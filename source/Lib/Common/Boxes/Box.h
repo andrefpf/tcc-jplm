@@ -72,6 +72,11 @@ class Box {
   }
 
 
+  Box(TBox t_box, std::unique_ptr<DBox>&& d_box)
+      : t_box(t_box), d_box(std::move(d_box)) {
+  }
+
+
   ~Box() = default;
 
 

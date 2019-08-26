@@ -31,47 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoCodestreamBox.h
+/** \file     JpegPlenoLightFieldBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-08-26
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
 
-//the ideia is to be the base for
-// JpegPlenoLightFieldBox
-// JpegPlenoPointCloudBox
-// JpegPlenoHologramBox
-//
-
-#include "Lib/Common/Boxes/Box.h"
-
-class JpegPlenoCodestreamBox : public Box {
- public:
-  JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box)
-      : Box(type_box, data_box) {
-  }
+#include <iostream>
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
+#include "gtest/gtest.h"
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, DBox&& data_box)
-      : Box(type_box, std::move(data_box)) {
-  }
-
-
-  JpegPlenoCodestreamBox(const TBox& type_box, std::unique_ptr<DBox>&& data_box)
-      : Box(type_box, std::move(data_box)) {
-  }
-
-
-  JpegPlenoCodestreamBox(const JpegPlenoCodestreamBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
-  }
-
-
-  virtual ~JpegPlenoCodestreamBox() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
