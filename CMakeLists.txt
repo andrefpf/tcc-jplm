@@ -13,7 +13,10 @@ project(jplm)
 set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_DIR})
+
 
 #configuring the compiler
 set(CMAKE_CXX_STANDARD 17)
@@ -65,7 +68,8 @@ target_link_libraries(jplm_boxes_part1_decoder jplm_boxes_decoding jplm_part1_bo
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 
-
+add_library(jplm_part2_common_boxes)
+target_link_libraries(jplm_part2_common_boxes jplm_common_boxes jplm_part2_common)
 
 enable_testing()
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
