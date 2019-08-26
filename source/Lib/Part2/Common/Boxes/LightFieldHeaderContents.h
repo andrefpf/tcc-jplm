@@ -1,5 +1,5 @@
-#ifndef LIGHTFIELDHEADERCONTENTS_H__
-#define LIGHTFIELDHEADERCONTENTS_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERCONTENTS_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERCONTENTS_H__
 
 #include <tuple>  //std::tie
 #include "CompressionTypeLightField.h"
@@ -149,4 +149,4 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: LIGHTFIELDHEADERCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERCONTENTS_H__ */

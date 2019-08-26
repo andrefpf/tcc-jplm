@@ -70,7 +70,7 @@ class DBox {
   }
 
 
-  virtual ~DBox(){};
+  virtual ~DBox() = default;
 
 
   virtual uint64_t size() {

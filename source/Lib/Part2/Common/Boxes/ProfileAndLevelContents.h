@@ -1,5 +1,5 @@
-#ifndef PROFILEANDLEVELCONTENTS_H__
-#define PROFILEANDLEVELCONTENTS_H__
+#ifndef JPLM_LIB_PART2_COMMON_PROFILEANDLEVELCONTENTS_H__
+#define JPLM_LIB_PART2_COMMON_PROFILEANDLEVELCONTENTS_H__
 
 
 #include <tuple>  //std::tie
@@ -55,6 +55,6 @@ class ProfileAndLevelContents : public InMemoryDBoxContents {
     BinaryTools::append_big_endian_bytes(bytes, plev);
     return bytes;
   }
-}
+};
 
-#endif /* end of include guard: PROFILEANDLEVELCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_PROFILEANDLEVELCONTENTS_H__ */

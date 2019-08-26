@@ -42,13 +42,26 @@
 #define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__
 
 
+#include <memory>
 #include <tuple>  //std::tie
+#include <vector>
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-
+#include "ProfileAndLevelBox.h"
 
 class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
+ protected:
+  std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;
+  // std::unique_ptr<JpegPlenoHeaderBox> jpeg_pleno_header_box;
+  // std::optional<std::unique_ptr<ContiguousCodestreamBlock>> contiguous_codestream_box;
+
  public:
-  JpegPlenoLightFieldContents() {
+  JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box)
+      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(profile_and_level_box)) {
+  }
+
+
+  JpegPlenoLightFieldContents(const JpegPlenoLightFieldContents& other)
+      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(*(other.profile_and_level_box))) {
   }
 
 
@@ -61,7 +74,10 @@ class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
 
 
   uint64_t size() const noexcept override {
-    return 2 * sizeof(uint16_t);
+    uint64_t required_boxes_size =
+        profile_and_level_box->size(); // + jpeg_pleno_header_box->size();
+
+    return required_boxes_size;
   }
 
 

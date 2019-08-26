@@ -1,5 +1,5 @@
-#ifndef LIGHTFIELDHEADERBOX_H__
-#define LIGHTFIELDHEADERBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERBOX_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERBOX_H__
 
 
 #include "Lib/Common/Boxes/Box.h"
@@ -11,7 +11,7 @@ class LightFieldHeaderBox : public Box {
   constexpr static uint32_t id = 0x6c686472;
 
 
-  LightFieldHeaderBox(const LightFieldHeaderCotngents& contents)
+  LightFieldHeaderBox(const LightFieldHeaderContents& contents)
       : Box(TBox(id), LightFieldHeaderDBox(contents)) {
   }
 
@@ -24,4 +24,4 @@ class LightFieldHeaderBox : public Box {
   ~LightFieldHeaderBox() = default;
 };
 
-#endif /* end of include guard: LIGHTFIELDHEADERBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERBOX_H__ */

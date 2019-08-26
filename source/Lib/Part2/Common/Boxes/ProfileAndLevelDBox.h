@@ -1,5 +1,5 @@
-#ifndef PROFILEANDLEVELDBOX_H__
-#define PROFILEANDLEVELDBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_PROFILEANDLEVELDBOX_H__
+#define JPLM_LIB_PART2_COMMON_PROFILEANDLEVELDBOX_H__
 
 #include "ProfileAndLevelContents.h"
 #include "source/Lib/Common/Boxes/DBox.h"
@@ -30,4 +30,4 @@ class ProfileAndLevelDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: PROFILEANDLEVELDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_PROFILEANDLEVELDBOX_H__ */

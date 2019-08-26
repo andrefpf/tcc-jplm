@@ -1,5 +1,5 @@
-#ifndef COMPRESSIONTYPELIGHTFIELD_H__
-#define COMPRESSIONTYPELIGHTFIELD_H__
+#ifndef JPLM_LIB_PART2_COMMON_COMPRESSIONTYPELIGHTFIELD_H__
+#define JPLM_LIB_PART2_COMMON_COMPRESSIONTYPELIGHTFIELD_H__
 
 #include "Lib/Common/Boxes/Generic/CompressionType.h"
 
@@ -9,4 +9,4 @@ enum class CompressionTypeLightField : compression_type_data {
 	//all other values are reserved for ISO use
 };
 
-#endif /* end of include guard: COMPRESSIONTYPELIGHTFIELD_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_COMPRESSIONTYPELIGHTFIELD_H__ */

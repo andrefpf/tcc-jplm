@@ -1,24 +1,24 @@
-#ifndef LIGHTFIELDHEADERDBOX_H__
-#define LIGHTFIELDHEADERDBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__
 
-#include "LightFieldHeaderContents.h"
 #include "Lib/Common/Boxes/DBox.h"
+#include "LightFieldHeaderContents.h"
 
 
-class LightfieldHeaderDBox : public DBox {
+class LightFieldHeaderDBox : public DBox {
  public:
-  LightfieldHeaderDBox(const LightFieldHeaderContents& contents)
-      : DBox(std::make_unique<LightFieldHeaderContents>(contents)) {
+  LightFieldHeaderDBox(const LightFieldHeaderContents& contents)
+      : DBox(std::move(std::make_unique<LightFieldHeaderContents>(contents))) {
   }
 
 
-  LightfieldHeaderDBox(const LightfieldHeaderDBox& other)
-      : DBox(std::make_unique<LightFieldHeaderContents>(
-            other.get_ref_to_contents())) {
+  LightFieldHeaderDBox(const LightFieldHeaderDBox& other)
+      : DBox(std::move(std::make_unique<LightFieldHeaderContents>(
+            other.get_ref_to_contents()))) {
   }
 
 
-  virtual ~LightfieldHeaderDBox() = default;
+  virtual ~LightFieldHeaderDBox() = default;
 
 
   virtual const LightFieldHeaderContents& get_ref_to_contents() const override {
@@ -26,10 +26,10 @@ class LightfieldHeaderDBox : public DBox {
   }
 
 
-  LightfieldHeaderDBox* clone() const override {
-    return new LightfieldHeaderDBox(*this);
+  LightFieldHeaderDBox* clone() const override {
+    return new LightFieldHeaderDBox(*this);
   }
 };
 
 
-#endif /* end of include guard: LIGHTFIELDHEADERDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__ */

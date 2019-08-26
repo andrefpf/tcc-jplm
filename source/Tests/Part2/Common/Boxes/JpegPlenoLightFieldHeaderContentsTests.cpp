@@ -31,47 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldBox.h
+/** \file     JpegPlenoLightFieldHeaderContentsTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-08-26
  */
 
 
-#ifndef JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
-#define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDBOX_H__
-
-#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "JpegPlenoLightFieldDBox.h"
-#include "JpegPlenoLightFieldContents.h"
+#include <iostream>
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
+#include "gtest/gtest.h"
 
 
-//this must be moved to Part2/Common
-
-class JpegPlenoLightFieldBox : public JpegPlenoCodestreamBox {
- public:
-  constexpr static uint32_t id = 0x6a706c66;
-
-
-  JpegPlenoLightFieldBox(const JpegPlenoLightFieldContents& contents)
-      : JpegPlenoCodestreamBox(TBox(id), JpegPlenoLightFieldDBox(contents)) {
-  }
-
-
-  JpegPlenoLightFieldBox(JpegPlenoLightFieldContents&& contents)
-      : JpegPlenoCodestreamBox(
-            TBox(id), std::move(JpegPlenoLightFieldDBox(std::move(contents)))) {
-  }
-
-
-  JpegPlenoLightFieldBox(const JpegPlenoLightFieldBox& other)
-      : JpegPlenoCodestreamBox(TBox(id), *other.d_box) {
-  }
-
-
-  ~JpegPlenoLightFieldBox() = default;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDBOX_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
