@@ -112,6 +112,6 @@ std::ostream& operator<<(std::ostream& stream, const Box& box) {
   if (xlbox) {
     stream << xlbox.value();
   }
-  stream << *box.get_dbox();
+  stream << box.get_ref_to_dbox(); //should avoid copying
   return stream;
 }
