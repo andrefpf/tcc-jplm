@@ -88,6 +88,12 @@ TEST(BasicTests, LevelIsPlev) {
 }
 
 
+TEST(BasicTests, Has4Bytes) {
+  auto profile_and_level_contents = ProfileAndLevelContents(0, 0);
+  EXPECT_EQ(profile_and_level_contents.size(), 4);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

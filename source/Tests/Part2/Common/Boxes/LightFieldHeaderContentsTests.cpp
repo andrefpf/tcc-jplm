@@ -114,9 +114,11 @@ TEST(BasicTests, gets_nc) {
 }
 
 
-// get_number_of_components
-// get_bits_per_component
-
+TEST(BasicTests, Has39Bytes) {
+  auto lf_header_contents = LightFieldHeaderContents({1, 2, 3, 42},
+    3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.size(), 22);
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

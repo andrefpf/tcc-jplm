@@ -9,7 +9,7 @@
 class LightFieldHeaderBox : public Box {
  public:
   constexpr static uint32_t id = 0x6c686472;
-
+  //! \todo: how to check for contradictory information between the LightFieldHeaderBox and the first codestream?
 
   LightFieldHeaderBox(const LightFieldHeaderContents& contents)
       : Box(TBox(id), LightFieldHeaderDBox(contents)) {
