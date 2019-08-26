@@ -62,6 +62,16 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
   virtual ~LightFieldHeaderContents() = default;
 
 
+  auto get_number_of_components() const noexcept {
+    return nc;
+  }
+
+
+  auto get_bits_per_component() const noexcept {
+    return bpc;
+  }
+
+
   auto get_light_field_dimension() const noexcept {
     return light_field_dimension;
   }

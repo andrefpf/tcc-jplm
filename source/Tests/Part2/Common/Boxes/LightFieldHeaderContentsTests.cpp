@@ -100,6 +100,24 @@ TEST(BasicTests, gets_U) {
 }
 
 
+TEST(BasicTests, gets_bpc) {
+	auto lf_header_contents = LightFieldHeaderContents({1, 2, 3, 42},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_bits_per_component(), 8);
+}
+
+
+TEST(BasicTests, gets_nc) {
+	auto lf_header_contents = LightFieldHeaderContents({1, 2, 3, 42},
+		3, 8, CompressionTypeLightField::transform_mode);
+  EXPECT_EQ(lf_header_contents.get_number_of_components(), 3);
+}
+
+
+// get_number_of_components
+// get_bits_per_component
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
