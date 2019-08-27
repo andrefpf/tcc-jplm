@@ -39,10 +39,45 @@
  */
 
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "gtest/gtest.h"
 
+
+TEST(BasicTest, Initialization) {
+  auto lf_header_contents = LightFieldHeaderContents(
+      {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
+  auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
+  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+  colr.emplace_back(std::make_unique<ColourSpecificationBox>());
+  auto jpeg_pleno_light_field_header_contents =
+      JpegPlenoLightFieldHeaderContents(lf_header_contents, colr);
+
+  auto jpeg_pleno_light_field_header_box =
+      std::make_unique<JpegPlenoLightFieldHeaderBox>(
+          jpeg_pleno_light_field_header_contents);
+  auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
+      11, 12);  // not sure which values to use...
+
+
+  auto jpeg_pleno_light_field_contents =
+      JpegPlenoLightFieldContents(std::move(profile_and_level_box),
+          std::move(jpeg_pleno_light_field_header_box));
+
+
+  auto jpeg_pleno_light_field_box = JpegPlenoLightFieldBox(std::move(jpeg_pleno_light_field_contents));
+
+  std::string output_filename = "/home/iseidel/tempJpegPlenoLightFieldBox.bin";
+  std::ofstream of_stream;
+  of_stream.open(output_filename, std::ofstream::binary);
+
+  of_stream << jpeg_pleno_light_field_box;
+
+  // EXPECT_NO_THROW();
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

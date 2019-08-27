@@ -47,15 +47,16 @@
 #include <vector>
 #include "JpegPlenoLightFieldHeaderBox.h"
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "ProfileAndLevelBox.h"
 
-class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
+class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
  protected:
   std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
   //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
   std::unique_ptr<JpegPlenoLightFieldHeaderBox>
       jpeg_pleno_light_field_header_box;  //required
-  // std::optional<std::unique_ptr<ContiguousCodestreamBlock>> contiguous_codestream_box;
+  std::unique_ptr<ContiguousCodestreamBox> contiguous_codestream_box; //optional
 
  public:
   JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
@@ -136,13 +137,9 @@ class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
   }
 
 
-  virtual std::vector<std::byte> get_bytes() const override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    //! \todo implement here
-
-    return bytes;
+  std::ostream& write_to(std::ostream& stream) const final {
+    stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
+    return stream;
   }
 };
 
