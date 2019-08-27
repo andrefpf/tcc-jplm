@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-27 18:09:53
+* @Last Modified time: 2019-08-27 18:53:40
 */
 
 #include "BoxParserRegistry.h"
@@ -51,5 +51,5 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<FileTypeBoxParser>();
   // Part 2:
   register_parser<ProfileAndLevelBoxParser>();
-  
+  register_parser<LightFieldHeaderBoxParser>();
 }

@@ -21,6 +21,12 @@ class LightFieldHeaderBox : public Box {
   }
 
 
+  const LightFieldHeaderContents& get_const_ref_to_contents() const {
+    return dynamic_cast<const LightFieldHeaderContents&>(
+        this->get_ref_to_dbox_contents());
+  }
+
+
   ~LightFieldHeaderBox() = default;
 };
 

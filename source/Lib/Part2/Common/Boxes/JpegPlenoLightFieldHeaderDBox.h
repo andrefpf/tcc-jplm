@@ -1,12 +1,13 @@
 #ifndef JPEGPLENOLIGHTFIELDHEADERDBOX_H__
 #define JPEGPLENOLIGHTFIELDHEADERDBOX_H__
 
-#include "Lib/Common/Boxes/DBox.h"
 #include "JpegPlenoLightFieldHeaderContents.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class JpegPlenoLightFieldHeaderDBox : public DBox {
  public:
-  JpegPlenoLightFieldHeaderDBox(const JpegPlenoLightFieldHeaderContents& contents)
+  JpegPlenoLightFieldHeaderDBox(
+      const JpegPlenoLightFieldHeaderContents& contents)
       : DBox(std::make_unique<JpegPlenoLightFieldHeaderContents>(contents)) {
   }
 
@@ -17,7 +18,20 @@ class JpegPlenoLightFieldHeaderDBox : public DBox {
   }
 
 
-  virtual const JpegPlenoLightFieldHeaderContents& get_ref_to_contents() const override {
+  JpegPlenoLightFieldHeaderDBox(JpegPlenoLightFieldHeaderContents&& contents)
+      : DBox(std::make_unique<JpegPlenoLightFieldHeaderContents>(
+            std::move(contents))) {
+  }
+
+
+  JpegPlenoLightFieldHeaderDBox(
+      std::unique_ptr<JpegPlenoLightFieldHeaderContents>&& contents)
+      : DBox(std::move(contents)) {
+  }
+
+
+  virtual const JpegPlenoLightFieldHeaderContents& get_ref_to_contents()
+      const override {
     return static_cast<const JpegPlenoLightFieldHeaderContents&>(*contents);
   }
 

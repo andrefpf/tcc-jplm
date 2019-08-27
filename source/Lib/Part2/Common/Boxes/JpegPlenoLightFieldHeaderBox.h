@@ -52,8 +52,18 @@ class JpegPlenoLightFieldHeaderBox : public Box {
 
   JpegPlenoLightFieldHeaderBox(
       const JpegPlenoLightFieldHeaderContents& contents)
-      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(contents)){
-      }
+      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(contents)) {
+  }
+
+
+  JpegPlenoLightFieldHeaderBox(JpegPlenoLightFieldHeaderContents&& contents)
+      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(std::move(contents))) {
+  }
+
+
+  JpegPlenoLightFieldHeaderBox(std::unique_ptr<JpegPlenoLightFieldHeaderContents>&& contents)
+      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(std::move(contents))) {
+  }
 
 
   JpegPlenoLightFieldHeaderBox(const JpegPlenoLightFieldHeaderBox& other)

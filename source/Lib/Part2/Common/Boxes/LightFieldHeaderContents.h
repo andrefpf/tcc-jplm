@@ -9,7 +9,7 @@
 
 using colour_space_unknown_flag_type = uint8_t;
 
-enum class ColourSpaceUnknownFlag : uint8_t {
+enum class ColourSpaceUnknownFlag : colour_space_unknown_flag_type {
   known =
       0,  //the colour space is known and correctly specified in the Colourspace Specification boxes
   unknown = 1,  //the colour space is unknown
