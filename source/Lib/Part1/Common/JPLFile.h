@@ -58,8 +58,8 @@ class JPLFile {
   std::unique_ptr<FileTypeBox> file_type_box;  //this is the FileTypeBox
   // std::optional<XMLBoxWithCatalog> xml_box_with_catalog;
   std::optional<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
-  std::optional<std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>>
-      jpeg_pleno_codestreams;
+  std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>
+      jpeg_pleno_codestreams;  //optional
   std::optional<IntellectualPropertyBox> ipr_box;
   // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
   std::optional<std::vector<std::unique_ptr<UUIDBox>>> uuid_boxes;
@@ -100,6 +100,13 @@ class JPLFile {
   virtual ~JPLFile() = default;
 
 
+  JPLFile& add_codestream_box(
+      std::unique_ptr<JpegPlenoCodestreamBox>&& codestream_box) {
+    jpeg_pleno_codestreams.emplace_back(std::move(codestream_box));
+    return *this;
+  }
+
+
   JPLFile& add_thumbnail_box(
       const JpegPlenoThumbnailBox& thumbail_box) {  //thumbail_box
     jpeg_pleno_thumbnail_box = thumbail_box;
@@ -133,11 +140,8 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   if (jpl_file.jpeg_pleno_thumbnail_box) {
     os << (*jpl_file.jpeg_pleno_thumbnail_box);
   }
-  if (jpl_file.jpeg_pleno_codestreams) {
-    const auto& codestreams = *(jpl_file.jpeg_pleno_codestreams);
-    for (const auto& codestream : codestreams) {
-      os << *codestream;
-    }
+  for (const auto& codestream : jpl_file.jpeg_pleno_codestreams) {
+    os << *codestream;
   }
   if (jpl_file.ipr_box) {
     os << (*jpl_file.ipr_box);

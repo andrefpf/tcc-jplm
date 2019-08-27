@@ -31,11 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldBoxTests.cpp
+/** \file     JPLFileTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-26
+ *  \date     2019-08-27
  */
 
 
@@ -43,6 +43,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include "Lib/Part1/Common/JPLFile.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "gtest/gtest.h"
 
@@ -67,8 +68,22 @@ TEST(BasicTest, Initialization) {
       JpegPlenoLightFieldContents(std::move(profile_and_level_box),
           std::move(jpeg_pleno_light_field_header_box));
 
-  EXPECT_NO_THROW(auto jpeg_pleno_light_field_box = JpegPlenoLightFieldBox(std::move(jpeg_pleno_light_field_contents)));
+
+  auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(std::move(jpeg_pleno_light_field_contents));
+
+  auto jpl_file = JPLFile();
+  jpl_file.add_codestream_box(std::move(jpeg_pleno_light_field_box));
+
+  std::string output_filename = "~/tempJPLFile.bin";
+  std::ofstream of_stream;
+  of_stream.open(output_filename, std::ofstream::binary);
+
+  of_stream << jpl_file;
+
+  // EXPECT_NO_THROW();
 }
+
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -139,6 +139,9 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
 
   std::ostream& write_to(std::ostream& stream) const final {
     stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
+    if(contiguous_codestream_box) {
+      stream << *contiguous_codestream_box;
+    }
     return stream;
   }
 };
