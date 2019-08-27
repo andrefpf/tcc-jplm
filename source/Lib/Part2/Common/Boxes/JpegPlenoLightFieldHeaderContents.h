@@ -36,6 +36,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
     }
   }
 
+
   JpegPlenoLightFieldHeaderContents(const LightFieldHeaderBox& lhdr,
       const BitsPerComponentBox& bpcc,
       const std::vector<std::unique_ptr<ColourSpecificationBox>>& colr)
@@ -51,6 +52,25 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
           std::make_unique<ColourSpecificationBox>(*colour_specification_box));
     }
   }
+
+
+  //! \todo check make_unique docs to see the behaviour if called passing nullptr
+  JpegPlenoLightFieldHeaderContents(
+      const JpegPlenoLightFieldHeaderContents& other)
+      : lhdr(std::make_unique<LightFieldHeaderBox>(*(other.lhdr))),
+        bpcc(std::make_unique<BitsPerComponentBox>(*(other.bpcc))),
+        cdef(std::make_unique<ChannelDefinitionBox>(*(other.cdef))) {
+    for (const auto& colour_specification_box : other.colr) {
+      this->colr.push_back(
+          std::make_unique<ColourSpecificationBox>(*colour_specification_box));
+    }
+  }
+
+
+  virtual JpegPlenoLightFieldHeaderContents* clone() const override {
+    return new JpegPlenoLightFieldHeaderContents(*this);
+  }
+
 
   uint64_t size() const noexcept override {
     auto size = lhdr->size();
@@ -98,17 +118,17 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
 
 
   std::ostream& write_to(std::ostream& stream) const final {
-  	stream << *lhdr;
-  	if(bpcc) {
-  		stream << *bpcc;
-  	}
-	for (const auto& colour_specification_box : colr) {
+    stream << *lhdr;
+    if (bpcc) {
+      stream << *bpcc;
+    }
+    for (const auto& colour_specification_box : colr) {
       stream << *colour_specification_box;
     }
-    if(cdef) {
-  		stream << *cdef;
-  	}
-  	return stream;
+    if (cdef) {
+      stream << *cdef;
+    }
+    return stream;
   }
 };
 

@@ -6,7 +6,7 @@
 
 
 class Code {
-public:
+ public:
   virtual uint64_t size() const noexcept = 0;
   virtual Code* clone() const = 0;
 
@@ -23,15 +23,18 @@ class ContiguousCodestreamContents : public SuperBoxDBoxContents {
   std::unique_ptr<Code> code;
 
  public:
-  ContiguousCodestreamContents(const Code& code) : code(std::unique_ptr<Code>(code.clone())) {
-  }
-
-  
-  ContiguousCodestreamContents(std::unique_ptr<Code>&& code) : code(std::move(code)) {
+  ContiguousCodestreamContents(const Code& code)
+      : code(std::unique_ptr<Code>(code.clone())) {
   }
 
 
-  ContiguousCodestreamContents(const ContiguousCodestreamContents& other) : code(std::unique_ptr<Code>(other.code->clone())) {
+  ContiguousCodestreamContents(std::unique_ptr<Code>&& code)
+      : code(std::move(code)) {
+  }
+
+
+  ContiguousCodestreamContents(const ContiguousCodestreamContents& other)
+      : code(std::unique_ptr<Code>(other.code->clone())) {
   }
 
 
@@ -68,7 +71,6 @@ class ContiguousCodestreamContents : public SuperBoxDBoxContents {
     stream << *code;
     return stream;
   }
-
 };
 
 #endif /* end of include guard: CONTIGUOUSCODESTREAMCONTENTS_H__ */
