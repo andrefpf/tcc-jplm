@@ -39,13 +39,34 @@
  */
 
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
 #include "gtest/gtest.h"
 
 
 TEST(BasicTest, Initialization) {
-	// auto jpeg_pleno_light_field_contents = 
+  auto lf_header_contents = LightFieldHeaderContents(
+      {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
+  auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
+  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+  colr.emplace_back(std::make_unique<ColourSpecificationBox>());
+  auto jpeg_pleno_light_field_header_contents =
+      JpegPlenoLightFieldHeaderContents(lf_header_contents, colr);
+
+  auto jpeg_pleno_light_field_header_box =
+      std::make_unique<JpegPlenoLightFieldHeaderBox>(
+          jpeg_pleno_light_field_header_contents);
+  auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
+      11, 12);  // not sure which values to use...
+
+  EXPECT_NO_THROW(auto jpeg_pleno_light_field_contents =
+        JpegPlenoLightFieldContents(std::move(profile_and_level_box),
+            std::move(jpeg_pleno_light_field_header_box)));
+
+  // EXPECT_NO_THROW();
 }
 
 

@@ -45,23 +45,58 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
+#include "JpegPlenoLightFieldHeaderBox.h"
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "ProfileAndLevelBox.h"
 
 class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
  protected:
-  std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;
-  // std::unique_ptr<JpegPlenoHeaderBox> jpeg_pleno_header_box;
+  std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
+  //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
+  std::unique_ptr<JpegPlenoLightFieldHeaderBox>
+      jpeg_pleno_light_field_header_box;  //required
   // std::optional<std::unique_ptr<ContiguousCodestreamBlock>> contiguous_codestream_box;
 
  public:
-  JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box)
-      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(profile_and_level_box)) {
+  JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
+      const JpegPlenoLightFieldHeaderBox& jpeg_pleno_light_field_header_box)
+      : profile_and_level_box(
+            std::make_unique<ProfileAndLevelBox>(profile_and_level_box)),
+        jpeg_pleno_light_field_header_box(
+            std::make_unique<JpegPlenoLightFieldHeaderBox>(
+                jpeg_pleno_light_field_header_box)) {
   }
 
 
+  /**
+   * \brief      Constructs the object from lvalue refs
+   *
+   * \param      profile_and_level_box              The profile and level box
+   * \param      jpeg_pleno_light_field_header_box  The jpeg pleno light field header box
+   */
+  JpegPlenoLightFieldContents(
+      std::unique_ptr<ProfileAndLevelBox>&& profile_and_level_box,
+      std::unique_ptr<JpegPlenoLightFieldHeaderBox>&&
+          jpeg_pleno_light_field_header_box)
+      : profile_and_level_box(std::move(profile_and_level_box)),
+        jpeg_pleno_light_field_header_box(
+            std::move(jpeg_pleno_light_field_header_box)) {
+  }
+
+
+  /**
+   * \brief      Copy constructor of JpegPlenoLightFieldContents
+   *
+   * \param[in]  other  The other JpegPlenoLightFieldContents
+   * 
+   * profile_and_level_box and jpeg_pleno_light_field_header_box are required fields and thus should not be nullptr
+   */
   JpegPlenoLightFieldContents(const JpegPlenoLightFieldContents& other)
-      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(*(other.profile_and_level_box))) {
+      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(
+            *(other.profile_and_level_box))),
+        jpeg_pleno_light_field_header_box(
+            std::make_unique<JpegPlenoLightFieldHeaderBox>(
+                *(other.jpeg_pleno_light_field_header_box))) {
   }
 
 
@@ -74,8 +109,8 @@ class JpegPlenoLightFieldContents : public InMemoryDBoxContents {
 
 
   uint64_t size() const noexcept override {
-    uint64_t required_boxes_size =
-        profile_and_level_box->size(); // + jpeg_pleno_header_box->size();
+    uint64_t required_boxes_size = profile_and_level_box->size() +
+                                   jpeg_pleno_light_field_header_box->size();
 
     return required_boxes_size;
   }

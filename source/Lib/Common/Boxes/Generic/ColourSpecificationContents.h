@@ -114,7 +114,15 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
     return !this->operator==(other);
   }
 
-
+  /**
+   * \brief      Gets the bytes of this content to put in a stream.
+   * 
+   * \warning There is a narrowing conversion taking place. 
+   * The standard defines prec as int8. However, it also defines this as 0.
+   * The GCC warning was silenced using a #pragma, since this is an expected behaviour
+   * 
+   * \return     The bytes.
+   */
   virtual std::vector<std::byte> get_bytes() const noexcept override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
@@ -122,7 +130,7 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
     bytes.emplace_back(std::byte{meth});
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnarrowing"
-    //! \warning There is a narrowing conversion taking place. The standard defines prec as int8. However, it also defines this as 0.
+
     bytes.emplace_back(std::byte{prec});
 #pragma GCC diagnostic pop
 
