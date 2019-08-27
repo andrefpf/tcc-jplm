@@ -10,6 +10,7 @@
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
+#include "Lib/Part2/Decoder/Boxes/ProfileAndLevelBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 class BoxParserRegistry {

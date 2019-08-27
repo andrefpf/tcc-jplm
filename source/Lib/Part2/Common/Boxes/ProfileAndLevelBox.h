@@ -25,6 +25,13 @@ class ProfileAndLevelBox : public Box {
       : Box(TBox(id), *other.d_box) {
   }
 
+
+  const ProfileAndLevelContents& get_const_ref_to_contents() const {
+    return dynamic_cast<const ProfileAndLevelContents&>(
+        this->get_ref_to_dbox_contents());
+  }
+
+
   ~ProfileAndLevelBox() = default;
 };
 
