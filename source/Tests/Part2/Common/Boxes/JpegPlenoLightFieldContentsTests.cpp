@@ -44,6 +44,11 @@
 #include "gtest/gtest.h"
 
 
+TEST(BasicTest, Initialization) {
+	// auto jpeg_pleno_light_field_contents = 
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -54,12 +54,11 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
   }
 
 
-  //! \todo check make_unique docs to see the behaviour if called passing nullptr
   JpegPlenoLightFieldHeaderContents(
       const JpegPlenoLightFieldHeaderContents& other)
       : lhdr(std::make_unique<LightFieldHeaderBox>(*(other.lhdr))),
-        bpcc(std::make_unique<BitsPerComponentBox>(*(other.bpcc))),
-        cdef(std::make_unique<ChannelDefinitionBox>(*(other.cdef))) {
+        bpcc(other.bpcc ? std::make_unique<BitsPerComponentBox>(*(other.bpcc)) : nullptr),
+        cdef(other.cdef ? std::make_unique<ChannelDefinitionBox>(*(other.cdef)): nullptr) {
     for (const auto& colour_specification_box : other.colr) {
       this->colr.push_back(
           std::make_unique<ColourSpecificationBox>(*colour_specification_box));

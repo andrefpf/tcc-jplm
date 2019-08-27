@@ -39,9 +39,24 @@
  */
 
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
 #include "gtest/gtest.h"
+
+TEST(BasicTest, Initialization) {
+  auto lf_header_contents = LightFieldHeaderContents(
+      {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
+  auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
+  // auto colour_specification_box = ColourSpecificationBox();
+  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+  colr.emplace_back(std::make_unique<ColourSpecificationBox>());
+  EXPECT_NO_THROW(
+      auto jpeg_pleno_light_field_header_contents =
+          JpegPlenoLightFieldHeaderContents(lf_header_contents, colr));
+}
 
 
 int main(int argc, char *argv[]) {

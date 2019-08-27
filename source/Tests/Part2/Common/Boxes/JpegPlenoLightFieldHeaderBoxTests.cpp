@@ -39,12 +39,36 @@
  */
 
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <string>
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
 #include "gtest/gtest.h"
 
+
 TEST(BasicTests, HasCorrectId) {
 	EXPECT_EQ(JpegPlenoLightFieldHeaderBox::id, 0x6a706c68);
+}
+
+
+TEST(BasicTest, Initialization2) {
+  auto lf_header_contents = LightFieldHeaderContents(
+      {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
+  auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
+  // auto colour_specification_box = ColourSpecificationBox();
+  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+  colr.emplace_back(std::make_unique<ColourSpecificationBox>());
+  auto jpeg_pleno_light_field_header_contents =
+      JpegPlenoLightFieldHeaderContents(lf_header_contents, colr);
+
+  auto jpeg_pleno_light_field_header_box = JpegPlenoLightFieldHeaderBox(jpeg_pleno_light_field_header_contents);
+
+  std::string filename = "~/tempHeader.bin";
+  std::ofstream of_stream;
+  of_stream.open(filename, std::ofstream::binary);
+
+  of_stream << jpeg_pleno_light_field_header_box;
 }
 
 

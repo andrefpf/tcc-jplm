@@ -52,7 +52,8 @@ class JpegPlenoLightFieldHeaderBox : public Box {
 
   JpegPlenoLightFieldHeaderBox(
       const JpegPlenoLightFieldHeaderContents& contents)
-      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(contents)){};
+      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(contents)){
+      }
 
 
   JpegPlenoLightFieldHeaderBox(const JpegPlenoLightFieldHeaderBox& other)

@@ -48,11 +48,10 @@
 
 class ColourSpecificationBox : public Box {
  public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::ColourSpecificationBoxType);
+  constexpr static t_box_id_type id = 0x636F6C72;
 
-
-  ColourSpecificationBox(const ColourSpecificationContents& color_specification_contents)
+  // The standard contents is with meth 1 and rgb image
+  ColourSpecificationBox(const ColourSpecificationContents& color_specification_contents = ColourSpecificationContents())
       : Box(TBox(id),
             ColourSpecificationDBox(color_specification_contents)){};
 
