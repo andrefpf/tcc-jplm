@@ -67,6 +67,7 @@ add_library(jplm_boxes_part1_decoder)
 target_link_libraries(jplm_boxes_part1_decoder jplm_boxes_decoding jplm_part1_boxes_decoder)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
 
 add_library(jplm_part2_common_boxes)
 target_link_libraries(jplm_part2_common_boxes jplm_common_boxes jplm_part2_common)
@@ -84,6 +85,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Encoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/Boxes)
+# add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/Boxes)
 
 
 if(BUILD_DOC)

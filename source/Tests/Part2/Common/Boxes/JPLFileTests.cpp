@@ -54,12 +54,16 @@ TEST(BasicTest, Initialization) {
   auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
   std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
   colr.emplace_back(std::make_unique<ColourSpecificationBox>());
+
   auto jpeg_pleno_light_field_header_contents =
       JpegPlenoLightFieldHeaderContents(lf_header_contents, colr);
+
 
   auto jpeg_pleno_light_field_header_box =
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
           jpeg_pleno_light_field_header_contents);
+
+
   auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
       11, 12);  // not sure which values to use...
 
@@ -69,7 +73,8 @@ TEST(BasicTest, Initialization) {
           std::move(jpeg_pleno_light_field_header_box));
 
 
-  auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(std::move(jpeg_pleno_light_field_contents));
+  auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(
+      std::move(jpeg_pleno_light_field_contents));
 
   auto jpl_file = JPLFile();
   jpl_file.add_codestream_box(std::move(jpeg_pleno_light_field_box));
@@ -82,7 +87,6 @@ TEST(BasicTest, Initialization) {
 
   // EXPECT_NO_THROW();
 }
-
 
 
 int main(int argc, char *argv[]) {
