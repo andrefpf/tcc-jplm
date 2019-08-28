@@ -65,6 +65,12 @@ class JpegPlenoLightFieldBox : public JpegPlenoCodestreamBox {
   }
 
 
+  JpegPlenoLightFieldBox(std::unique_ptr<JpegPlenoLightFieldContents>&& contents)
+      : JpegPlenoCodestreamBox(
+            TBox(id), std::move(JpegPlenoLightFieldDBox(std::move(contents)))) {
+  }
+
+
   JpegPlenoLightFieldBox(const JpegPlenoLightFieldBox& other)
       : JpegPlenoCodestreamBox(TBox(id), *other.d_box) {
   }

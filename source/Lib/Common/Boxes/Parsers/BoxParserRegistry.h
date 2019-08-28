@@ -11,6 +11,7 @@
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
+#include "Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldHeaderBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/LightFieldHeaderBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/ProfileAndLevelBoxParser.h"

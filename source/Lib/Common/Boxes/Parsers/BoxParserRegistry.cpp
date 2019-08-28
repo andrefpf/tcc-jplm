@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 14:31:08
+* @Last Modified time: 2019-08-28 16:46:18
 */
 
 #include "BoxParserRegistry.h"
@@ -40,7 +40,8 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     return it->second(box_parser_helper);
   }
   //not found a parser... should go to the end of the managed stream
-  box_parser_helper.get_data_stream().forward(); //a compliant decoder should ignore unknown boxes
+  box_parser_helper.get_data_stream()
+      .forward();  //a compliant decoder should ignore unknown boxes
   return nullptr;
 }
 
@@ -56,5 +57,6 @@ void BoxParserRegistry::register_known_parsers() {
   // Part 2:
   register_parser<ProfileAndLevelBoxParser>();
   register_parser<LightFieldHeaderBoxParser>();
-  register_parser<JpegPlenoLightFieldHeaderBoxParser>();  
+  register_parser<JpegPlenoLightFieldHeaderBoxParser>();
+  register_parser<JpegPlenoLightFieldBoxParser>();
 }

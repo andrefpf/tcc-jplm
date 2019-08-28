@@ -46,8 +46,8 @@
 #include <tuple>  //std::tie
 #include <vector>
 #include "JpegPlenoLightFieldHeaderBox.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "ProfileAndLevelBox.h"
 
 class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
@@ -56,7 +56,8 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
   std::unique_ptr<JpegPlenoLightFieldHeaderBox>
       jpeg_pleno_light_field_header_box;  //required
-  std::unique_ptr<ContiguousCodestreamBox> contiguous_codestream_box; //optional
+  std::unique_ptr<ContiguousCodestreamBox>
+      contiguous_codestream_box;  //optional
 
  public:
   JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
@@ -97,7 +98,12 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
             *(other.profile_and_level_box))),
         jpeg_pleno_light_field_header_box(
             std::make_unique<JpegPlenoLightFieldHeaderBox>(
-                *(other.jpeg_pleno_light_field_header_box))) {
+                *(other.jpeg_pleno_light_field_header_box))),
+        contiguous_codestream_box(
+            other.contiguous_codestream_box
+                ? std::make_unique<ContiguousCodestreamBox>(
+                      *(other.contiguous_codestream_box))
+                : nullptr) {
   }
 
 
@@ -139,7 +145,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
 
   std::ostream& write_to(std::ostream& stream) const final {
     stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
-    if(contiguous_codestream_box) {
+    if (contiguous_codestream_box) {
       stream << *contiguous_codestream_box;
     }
     return stream;
