@@ -71,6 +71,12 @@ class JpegPlenoLightFieldHeaderBox : public Box {
   }
 
 
+  const JpegPlenoLightFieldHeaderContents& get_const_ref_to_contents() const {
+    return dynamic_cast<const JpegPlenoLightFieldHeaderContents&>(
+        this->get_ref_to_dbox_contents());
+  }
+
+
   ~JpegPlenoLightFieldHeaderBox() = default;
 };
 

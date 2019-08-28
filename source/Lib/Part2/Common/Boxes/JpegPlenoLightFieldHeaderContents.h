@@ -37,6 +37,52 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
   }
 
 
+  const auto& get_const_ref_to_lhdr() const noexcept {
+    return *lhdr;
+  }
+
+
+  const auto& get_const_ref_to_bpcc() const {
+    if (!bpcc) {
+      //! \todo throw exception
+    }
+    return *bpcc;
+  }
+
+
+  std::optional<BitsPerComponentBox> get_copy_of_bits_per_component_box() const {
+    if(bpcc)
+      return *bpcc;
+    return std::nullopt;
+  }
+
+
+  const auto& get_const_ref_to_cdef() const {
+    if (!cdef) {
+      //! \todo throw exception
+    }
+    return *cdef;
+  }
+
+
+  std::optional<ChannelDefinitionBox> get_copy_of_channel_definition_box() const {
+    if(cdef)
+      return *cdef;
+    return std::nullopt;
+  }
+
+
+  std::vector<ColourSpecificationBox> get_copy_of_colour_specification_boxes()
+      const {
+    auto ret_vector = std::vector<ColourSpecificationBox>();
+    ret_vector.reserve(colr.size());
+    for (const auto& colour_specification_box : colr) {
+      ret_vector.emplace_back(*colour_specification_box);
+    }
+    return ret_vector;
+  }
+
+
   JpegPlenoLightFieldHeaderContents(const LightFieldHeaderBox& lhdr,
       const BitsPerComponentBox& bpcc,
       const std::vector<std::unique_ptr<ColourSpecificationBox>>& colr)
@@ -74,10 +120,8 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
       std::unique_ptr<BitsPerComponentBox>&& bpcc,
       std::vector<std::unique_ptr<ColourSpecificationBox>>&& colr,
       std::unique_ptr<ChannelDefinitionBox>&& cdef = nullptr)
-      : lhdr(std::move(lhdr)),
-        bpcc(bpcc ? std::move(bpcc) : nullptr),
-        colr(std::move(colr)),
-        cdef(cdef ? std::move(cdef) : nullptr) {
+      : lhdr(std::move(lhdr)), bpcc(bpcc ? std::move(bpcc) : nullptr),
+        colr(std::move(colr)), cdef(cdef ? std::move(cdef) : nullptr) {
   }
 
 
