@@ -31,7 +31,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
     }
     this->colr.reserve(number_of_colour_specification_boxes);
     for (const auto& colour_specification_box : colr) {
-      this->colr.push_back(
+      this->colr.emplace_back(
           std::make_unique<ColourSpecificationBox>(*colour_specification_box));
     }
   }
@@ -48,7 +48,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
     }
     this->colr.reserve(number_of_colour_specification_boxes);
     for (const auto& colour_specification_box : colr) {
-      this->colr.push_back(
+      this->colr.emplace_back(
           std::make_unique<ColourSpecificationBox>(*colour_specification_box));
     }
   }
@@ -57,12 +57,27 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
   JpegPlenoLightFieldHeaderContents(
       const JpegPlenoLightFieldHeaderContents& other)
       : lhdr(std::make_unique<LightFieldHeaderBox>(*(other.lhdr))),
-        bpcc(other.bpcc ? std::make_unique<BitsPerComponentBox>(*(other.bpcc)) : nullptr),
-        cdef(other.cdef ? std::make_unique<ChannelDefinitionBox>(*(other.cdef)): nullptr) {
+        bpcc(other.bpcc ? std::make_unique<BitsPerComponentBox>(*(other.bpcc))
+                        : nullptr),
+        cdef(other.cdef ? std::make_unique<ChannelDefinitionBox>(*(other.cdef))
+                        : nullptr) {
+    auto number_of_colour_specification_boxes = other.colr.size();
+    this->colr.reserve(number_of_colour_specification_boxes);
     for (const auto& colour_specification_box : other.colr) {
-      this->colr.push_back(
+      this->colr.emplace_back(
           std::make_unique<ColourSpecificationBox>(*colour_specification_box));
     }
+  }
+
+
+  JpegPlenoLightFieldHeaderContents(std::unique_ptr<LightFieldHeaderBox>&& lhdr,
+      std::unique_ptr<BitsPerComponentBox>&& bpcc,
+      std::vector<std::unique_ptr<ColourSpecificationBox>>&& colr,
+      std::unique_ptr<ChannelDefinitionBox>&& cdef = nullptr)
+      : lhdr(std::move(lhdr)),
+        bpcc(bpcc ? std::move(bpcc) : nullptr),
+        colr(std::move(colr)),
+        cdef(cdef ? std::move(cdef) : nullptr) {
   }
 
 
