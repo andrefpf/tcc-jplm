@@ -24,9 +24,10 @@ class JPLFileParser {
   auto decode_boxes() {
     uint64_t decoded_boxes = 0;
     while (this->managed_stream.is_valid()) {
-      auto managed_substream = managed_stream.get_sub_managed_stream(
-          file_size - managed_stream.tell());
-      auto decoded_box = parser.parse(managed_substream);
+      // auto managed_substream = managed_stream.get_sub_managed_stream(
+      //     file_size - managed_stream.tell());
+      // auto decoded_box = parser.parse(std::move(managed_substream));
+      auto decoded_box = parser.parse(managed_stream.get_remaining_sub_managed_stream());
       decoded_boxes++;
       auto id = decoded_box->get_tbox().get_value();
       if (auto it = temp_decoded_boxes.find(id);
@@ -60,10 +61,10 @@ class JPLFileParser {
           file_size);
     }
     temp_signature =
-        std::move(parser.parse<JpegPlenoSignatureBox>(managed_stream));
-    auto managed_substream = managed_stream.get_sub_managed_stream(
-        file_size - managed_stream.tell());
-    temp_file_type = std::move(parser.parse<FileTypeBox>(managed_substream));
+        std::move(parser.parse<JpegPlenoSignatureBox>(managed_stream.get_remaining_sub_managed_stream()));
+    // auto managed_substream = managed_stream.get_sub_managed_stream(
+    //     file_size - managed_stream.tell());
+    temp_file_type = std::move(parser.parse<FileTypeBox>(managed_stream.get_remaining_sub_managed_stream()));
   }
 
   virtual ~JPLFileParser() = default;

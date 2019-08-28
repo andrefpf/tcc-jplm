@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 13:21:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-21 15:12:10
+* @Last Modified time: 2019-08-28 14:39:00
 */
 
 #include <filesystem>
@@ -22,7 +22,7 @@ TEST(BasicTest, ParseWithoutThrowIfCorrectBox) {
   auto managed_stream =
       ManagedStream(if_stream, std::filesystem::file_size(filename));
   EXPECT_NO_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
-        managed_stream));
+        std::move(managed_stream)));
 }
 
 
@@ -32,7 +32,7 @@ TEST(BasicTest, ThrowsIfParsingIncorrectBoxType) {
   auto managed_stream =
       ManagedStream(if_stream, std::filesystem::file_size(filename));
   EXPECT_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
-        managed_stream), BoxParserExceptions::WrongTBoxValueException);
+        std::move(managed_stream)), BoxParserExceptions::WrongTBoxValueException);
 }
 
 
@@ -43,7 +43,7 @@ TEST(BasicTest, ThrowsIfSignatureBoxDataIsCorrupted) {
   auto managed_stream =
       ManagedStream(if_stream, std::filesystem::file_size(filename));
   EXPECT_THROW(auto box = BoxParserRegistry::get_instance().parse<JpegPlenoSignatureBox>(
-        managed_stream), JpegPlenoSignatureBoxParserExceptions::InvalidJpegPlenoSignatureBox);
+        std::move(managed_stream)), JpegPlenoSignatureBoxParserExceptions::InvalidJpegPlenoSignatureBox);
 }
 
 

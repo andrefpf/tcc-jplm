@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-27 17:41:52
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-27 19:19:48
+* @Last Modified time: 2019-08-28 14:43:39
 */
 
 
@@ -26,9 +26,9 @@ TEST(BasicTest, ReadsAllDataFromStream) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
-  EXPECT_EQ(managed_stream.tell(), 30);
+  EXPECT_EQ(if_stream.tellg(), 30);
 }
 
 
@@ -40,7 +40,7 @@ TEST(BasicTest, ContainsCorrectT) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -58,7 +58,7 @@ TEST(BasicTest, ContainsCorrectS) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -76,7 +76,7 @@ TEST(BasicTest, ContainsCorrectV) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -94,7 +94,7 @@ TEST(BasicTest, ContainsCorrectU) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -112,7 +112,7 @@ TEST(BasicTest, ContainsCorrectNC) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -129,7 +129,7 @@ TEST(BasicTest, ContainsCorrectBPC) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -146,7 +146,7 @@ TEST(BasicTest, ContainsCorrectCompressionType) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -164,7 +164,7 @@ TEST(BasicTest, ContainsCorrectUnkc) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();
@@ -182,7 +182,7 @@ TEST(BasicTest, ContainsCorrectIpr) {
   auto managed_stream = ManagedStream(if_stream, 30);
 
   auto box = BoxParserRegistry::get_instance().parse<LightFieldHeaderBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
       box->get_const_ref_to_contents();

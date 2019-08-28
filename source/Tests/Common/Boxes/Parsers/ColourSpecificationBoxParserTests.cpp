@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 11:12:30
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 11:32:07
+* @Last Modified time: 2019-08-28 14:36:50
 */
 
 #include <fstream>
@@ -24,9 +24,9 @@ TEST(BasicTest, ReadsAllDataFromStream) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
-  EXPECT_EQ(managed_stream.tell(), 15);
+  EXPECT_EQ(if_stream.tellg(), 15);
 }
 
 
@@ -37,7 +37,7 @@ TEST(BasicTest, MethodIs1) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
       box->get_const_ref_to_contents();
@@ -53,7 +53,7 @@ TEST(BasicTest, PrecedenceIs0) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
       box->get_const_ref_to_contents();
@@ -69,7 +69,7 @@ TEST(BasicTest, ApproximationIs0) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
       box->get_const_ref_to_contents();
@@ -86,7 +86,7 @@ TEST(BasicTest, EnumCSIsAvailable) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
       box->get_const_ref_to_contents();
@@ -103,7 +103,7 @@ TEST(BasicTest, EnumCSIssRGB) {
   auto managed_stream = ManagedStream(if_stream, 15);
 
   auto box = BoxParserRegistry::get_instance().parse<ColourSpecificationBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
       box->get_const_ref_to_contents();

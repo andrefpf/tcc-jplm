@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 14:11:23
+* @Last Modified time: 2019-08-28 14:31:08
 */
 
 #include "BoxParserRegistry.h"
@@ -23,7 +23,7 @@ BoxParserRegistry::get_ref_to_parser_map() {
 
 // auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
-    ManagedStream& managed_stream) const {
+    ManagedStream&& managed_stream) const {
   auto box_parser_helper = BoxParserHelperBase(managed_stream);
   return parse(box_parser_helper);
 }

@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-27 17:41:52
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-27 18:07:55
+* @Last Modified time: 2019-08-28 14:43:05
 */
 
 
@@ -25,9 +25,9 @@ TEST(BasicTest, ReadsAllDataFromStream) {
   auto managed_stream = ManagedStream(if_stream, 12);
 
   auto box = BoxParserRegistry::get_instance().parse<ProfileAndLevelBox>(
-      managed_stream);
+      std::move(managed_stream));
 
-  EXPECT_EQ(managed_stream.tell(), 12);
+  EXPECT_EQ(if_stream.tellg(), 12);
 }
 
 
@@ -38,7 +38,7 @@ TEST(BasicTest, ContainsCorrectProfile) {
   auto managed_stream = ManagedStream(if_stream, 12);
 
   auto box = BoxParserRegistry::get_instance().parse<ProfileAndLevelBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& profile_and_level_contents = box->get_const_ref_to_contents();
 
@@ -53,7 +53,7 @@ TEST(BasicTest, ContainsCorrectLevel) {
   auto managed_stream = ManagedStream(if_stream, 12);
 
   auto box = BoxParserRegistry::get_instance().parse<ProfileAndLevelBox>(
-      managed_stream);
+      std::move(managed_stream));
 
   const auto& profile_and_level_contents = box->get_const_ref_to_contents();
 

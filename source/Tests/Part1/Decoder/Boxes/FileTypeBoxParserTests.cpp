@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 13:21:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-21 15:12:14
+* @Last Modified time: 2019-08-28 14:37:58
 */
 
 #include <fstream>
@@ -21,7 +21,7 @@ TEST(BasicFileTypeBoxTest, ThrowsIfWrongBox) {
   auto managed_stream = ManagedStream(if_stream, 20);
 
  EXPECT_THROW(BoxParserRegistry::get_instance().parse<FileTypeBox>(
-       managed_stream), BoxParserExceptions::WrongTBoxValueException);
+       std::move(managed_stream)), BoxParserExceptions::WrongTBoxValueException);
 }
 
 
@@ -31,7 +31,7 @@ TEST(BasicFileTypeBoxTest, ReadsAllDataFromStream) {
   auto managed_stream = ManagedStream(if_stream, 20);
 
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
-       managed_stream);
+       std::move(managed_stream));
 
   EXPECT_EQ(managed_stream.tell(), 20);
 }
@@ -43,9 +43,9 @@ TEST(BasicFileTypeBoxTest, ReadsOnlyTheAmountDefinedInLBoxDataFromStream) {
   auto managed_stream = ManagedStream(if_stream, 50);
 
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
-       managed_stream);
+       std::move(managed_stream));
 
-  EXPECT_EQ(managed_stream.tell(), 20);
+  EXPECT_EQ(if_stream.tellg(), 20);
 }
 
 
@@ -55,7 +55,7 @@ TEST(BasicFileTypeBoxTest, IdentifiesCompatibilityList) {
   auto managed_stream = ManagedStream(if_stream, 20);
 
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
-       managed_stream);
+       std::move(managed_stream));
 
   EXPECT_TRUE(box->is_compatible_with<JpegPlenoSignatureBox>());
 }
@@ -67,7 +67,7 @@ TEST(BasicFileTypeBoxTest, IdentifiesIfNotInCompatibilityList) {
   auto managed_stream = ManagedStream(if_stream, 20);
 
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
-       managed_stream);
+       std::move(managed_stream));
 
   EXPECT_FALSE(box->is_compatible_with<JpegPlenoSignatureBox>());
 }
