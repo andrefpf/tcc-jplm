@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <optional>
 #include <tuple>  //std::tie
+#include <variant>
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "Lib/Part1/Common/BinaryTools.h"
 
@@ -66,17 +67,58 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
   // Input Profile class as defined in ICC.1:1998-09.
 
  public:
-  ColourSpecificationContents(EnumCS enum_cs = EnumCS::sRGB)
-      : meth(1), prec(0), approx(0), enum_cs(enum_cs) {
-  }
-
-
   ColourSpecificationContents(ICCProfile profile)
       : meth(2), prec(0), approx(0), profile(profile) {
   }
 
 
+  ColourSpecificationContents(uint8_t meth = 1, int8_t prec = 0,
+      uint8_t approx = 0,
+      std::variant<EnumCS, ICCProfile> color_spec = EnumCS::sRGB)
+      : meth(meth), prec(prec), approx(approx),
+        enum_cs((meth == 1) ? std::optional<EnumCS>(std::get<0>(color_spec))
+                            : std::nullopt),
+        profile((meth == 2) ? std::optional<ICCProfile>(std::get<1>(color_spec))
+                            : std::nullopt) {
+  }
+
+
   virtual ~ColourSpecificationContents() = default;
+
+
+  auto get_meth() const noexcept {
+    return meth;
+  }
+
+
+  auto get_specification_method() const noexcept {
+    return get_meth();
+  }
+
+
+  auto get_prec() const noexcept {
+    return prec;
+  }
+
+
+  auto get_precedence() const noexcept {
+    return get_prec();
+  }
+
+
+  auto get_approx() const noexcept {
+    return approx;
+  }
+
+
+  auto get_colour_space_approximation() const noexcept {
+    return get_approx();
+  }
+
+
+  auto get_colour_space_from_enum() const {
+    return enum_cs;
+  }
 
 
   virtual ColourSpecificationContents* clone() const override {

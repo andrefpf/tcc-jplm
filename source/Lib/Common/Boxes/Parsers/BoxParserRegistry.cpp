@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-27 18:53:40
+* @Last Modified time: 2019-08-28 10:36:32
 */
 
 #include "BoxParserRegistry.h"
@@ -46,6 +46,8 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
 void BoxParserRegistry::register_known_parsers() {
   //add here known parsers
   using namespace JPLMBoxParser;
+  // Common:
+  register_parser<ColourSpecificationBoxParser>();
   // Part 1:
   register_parser<JpegPlenoSignatureBoxParser>();
   register_parser<FileTypeBoxParser>();

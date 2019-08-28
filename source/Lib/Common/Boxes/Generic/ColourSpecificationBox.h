@@ -42,24 +42,30 @@
 #define JPLM_LIB_PART1_COMMON_COLOURSPECIFICATIONBOX_H__
 
 #include <stdexcept>
+#include "ColourSpecificationDBox.h"
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"
-#include "ColourSpecificationDBox.h"
 
 class ColourSpecificationBox : public Box {
  public:
   constexpr static t_box_id_type id = 0x636F6C72;
 
   // The standard contents is with meth 1 and rgb image
-  ColourSpecificationBox(const ColourSpecificationContents& color_specification_contents = ColourSpecificationContents())
-      : Box(TBox(id),
-            ColourSpecificationDBox(color_specification_contents)){};
+  ColourSpecificationBox(
+      const ColourSpecificationContents& color_specification_contents =
+          ColourSpecificationContents())
+      : Box(TBox(id), ColourSpecificationDBox(color_specification_contents)){};
 
 
   ColourSpecificationBox(const ColourSpecificationBox& other)
       : Box(TBox(id), *other.d_box) {
   }
 
+
+  const ColourSpecificationContents& get_const_ref_to_contents() const {
+    return dynamic_cast<const ColourSpecificationContents&>(
+        this->get_ref_to_dbox_contents());
+  }
 
   ~ColourSpecificationBox() = default;
 };

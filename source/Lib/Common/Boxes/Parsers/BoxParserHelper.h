@@ -76,6 +76,11 @@ class BoxParserHelperBase {
   }
 
 
+  ManagedStream get_remaining_stream() {
+    return managed_stream.get_remaining_sub_managed_stream();
+  }
+
+
   template<typename T>
   T get_next() {
     using namespace BinaryTools;

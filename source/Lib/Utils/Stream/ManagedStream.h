@@ -25,6 +25,9 @@ class ManagedStream {
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
 
+  ManagedStream get_remaining_sub_managed_stream();
+
+
   bool is_valid() const noexcept;
   bool is_valid(uint64_t index) const noexcept;
 

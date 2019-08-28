@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/ProfileAndLevelBoxParser.h"

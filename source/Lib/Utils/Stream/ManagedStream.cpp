@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-16 11:58:26
+* @Last Modified time: 2019-08-28 11:01:35
 */
 
 #include "ManagedStream.h"
@@ -55,7 +55,6 @@ bool ManagedStream::is_valid() const noexcept {
 }
 
 
-
 //this sets the stream to the begining of the sub managed stream
 ManagedStream ManagedStream::get_sub_managed_stream(
     uint64_t initial_pos, uint64_t final_pos) {
@@ -70,6 +69,11 @@ ManagedStream ManagedStream::get_sub_managed_stream(
 ManagedStream ManagedStream::get_sub_managed_stream(uint64_t max_offset) {
   return get_sub_managed_stream(ref_to_stream.tellg(),
       static_cast<uint64_t>(ref_to_stream.tellg()) + max_offset);
+}
+
+
+ManagedStream ManagedStream::get_remaining_sub_managed_stream() {
+  return get_sub_managed_stream(this->get_length() - this->tell());
 }
 
 
@@ -131,5 +135,5 @@ uint64_t ManagedStream::get_current_pos() const noexcept {
 }
 
 uint64_t ManagedStream::get_length() const noexcept {
-  return final_pos-initial_pos;
+  return final_pos - initial_pos;
 }
