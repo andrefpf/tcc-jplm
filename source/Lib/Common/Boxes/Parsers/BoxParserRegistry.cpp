@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 10:36:32
+* @Last Modified time: 2019-08-28 13:06:12
 */
 
 #include "BoxParserRegistry.h"
@@ -54,4 +54,5 @@ void BoxParserRegistry::register_known_parsers() {
   // Part 2:
   register_parser<ProfileAndLevelBoxParser>();
   register_parser<LightFieldHeaderBoxParser>();
+  register_parser<JpegPlenoLightFieldHeaderBoxParser>();  
 }

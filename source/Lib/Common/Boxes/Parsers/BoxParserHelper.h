@@ -4,6 +4,7 @@
 #include "CommonExceptions.h"
 #include "Lib/Part1/Common/BinaryTools.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
+// #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 
 class BoxParserHelperBase {
  protected:
@@ -89,6 +90,32 @@ class BoxParserHelperBase {
   }
 
 
+  // template<class BoxToParse> 
+  // std::unique_ptr<BoxToParse> get_next_box() {
+  //     auto managed_substream = managed_stream.get_remaining_sub_managed_stream();
+  //     auto box_parser_helper = BoxParserHelperBase(managed_substream);
+  //     if(!box_parser_helper.is_a_box_with_id(BoxToParse::id)) {
+  //       managed_substream.rewind();
+  //       return nullptr;
+  //     }
+  //     return BoxParserRegistry::get_instance().parse<BoxToParse>(managed_substream);
+  // }
+
+  // template<class NextParsingBox>
+  // bool is_next_a_box() {
+  //   auto current_pos = managed_stream.get_current_pos();
+  //   if(!managed_stream.is_valid(current_pos+8)) {
+  //     return false;
+  //   }
+
+  // }
+  bool is_a_box_with_id(const uint32_t id) {
+    if (this->get_t_box_value() == id)
+      return true;
+    return false;
+  }
+
+
   virtual ~BoxParserHelperBase() = default;
 };
 
@@ -97,7 +124,7 @@ template<class ParsingBox>
 class BoxParserHelper : public BoxParserHelperBase {
  protected:
   void check_t_box_value() {
-    if (this->t_box_value_in_stream != ParsingBox::id) {
+    if(!this->is_a_box_with_id(ParsingBox::id)) {
       throw BoxParserExceptions::WrongTBoxValueException(
           this->t_box_value_in_stream, ParsingBox::id);
     }
