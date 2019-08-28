@@ -4,7 +4,7 @@
 #include "CommonExceptions.h"
 #include "Lib/Part1/Common/BinaryTools.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
-// #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+
 
 class BoxParserHelperBase {
  protected:
@@ -79,6 +79,11 @@ class BoxParserHelperBase {
 
   ManagedStream get_remaining_stream() {
     return managed_stream.get_remaining_sub_managed_stream();
+  }
+
+
+  bool has_data_available() const noexcept {
+    return managed_stream.is_valid();
   }
 
 

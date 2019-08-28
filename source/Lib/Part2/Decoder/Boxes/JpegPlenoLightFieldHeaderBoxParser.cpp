@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 13:04:04
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 14:47:38
+* @Last Modified time: 2019-08-28 15:25:45
 */
 
 #include "JpegPlenoLightFieldHeaderBoxParser.h"
@@ -20,7 +20,7 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
 
   std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
 
-  while (true) {
+  while (box_parser_helper.has_data_available()) {
     auto colour_specification_box =
         box_parser.parse<ColourSpecificationBox, false>(
             box_parser_helper.get_remaining_stream());
@@ -31,19 +31,24 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     }
   }
 
+
   if (colr.size() == 0) {
     //! \todo throw (at least one colour specification box must be present)
   }
 
-  auto channel_definition_box = box_parser.parse<ChannelDefinitionBox, false>(
-      box_parser_helper.get_remaining_stream());
+  auto channel_definition_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<ChannelDefinitionBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;
 
   auto light_field_header_contents =
       std::make_unique<JpegPlenoLightFieldHeaderContents>(
           std::move(light_field_header_box), std::move(bits_per_component_box),
           std::move(colr), std::move(channel_definition_box));
 
-  auto jpeg_pleno_light_field_header_box = std::make_unique<JpegPlenoLightFieldHeaderBox>(
-      std::move(light_field_header_contents));
+  auto jpeg_pleno_light_field_header_box =
+      std::make_unique<JpegPlenoLightFieldHeaderBox>(
+          std::move(light_field_header_contents));
   return jpeg_pleno_light_field_header_box;
 }
