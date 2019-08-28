@@ -120,7 +120,7 @@ class BoxParserHelperBase {
 };
 
 
-template<class ParsingBox>
+template<class ParsingBox, bool required=true>
 class BoxParserHelper : public BoxParserHelperBase {
  protected:
   void check_t_box_value() {
@@ -133,7 +133,9 @@ class BoxParserHelper : public BoxParserHelperBase {
 
  public:
   BoxParserHelper(ManagedStream& stream) : BoxParserHelperBase(stream) {
-    check_t_box_value();
+    if constexpr (required) {
+      check_t_box_value();
+    }
   }
 
 

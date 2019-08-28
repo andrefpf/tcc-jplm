@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 13:06:12
+* @Last Modified time: 2019-08-28 14:11:23
 */
 
 #include "BoxParserRegistry.h"
@@ -39,6 +39,8 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     return it->second(box_parser_helper);
   }
+  //not found a parser... should go to the end of the managed stream
+  box_parser_helper.get_data_stream().forward(); //a compliant decoder should ignore unknown boxes
   return nullptr;
 }
 

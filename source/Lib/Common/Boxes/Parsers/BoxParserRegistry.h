@@ -9,11 +9,11 @@
 #include <memory>
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
-#include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
-#include "Lib/Part2/Decoder/Boxes/ProfileAndLevelBoxParser.h"
-#include "Lib/Part2/Decoder/Boxes/LightFieldHeaderBoxParser.h"
+#include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldHeaderBoxParser.h"
+#include "Lib/Part2/Decoder/Boxes/LightFieldHeaderBoxParser.h"
+#include "Lib/Part2/Decoder/Boxes/ProfileAndLevelBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 class BoxParserRegistry {
@@ -23,7 +23,7 @@ class BoxParserRegistry {
  private:
   void register_known_parsers();
 
-  
+
   BoxParserRegistry() {
     register_known_parsers();
   }
@@ -41,22 +41,32 @@ class BoxParserRegistry {
   ParsedBox parse(ManagedStream& managed_stream) const;
 
 
-  template<class ParsingBox>
+  template<class ParsingBox, bool required = true>
   std::unique_ptr<ParsingBox> parse(ManagedStream& managed_stream) const {
-  	// std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
-  	// std::cout << typeid(ParsingBox).name() << std::endl;
-    auto box_parser_helper = BoxParserHelper<ParsingBox>(managed_stream);
+    // std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
+    // std::cout << typeid(ParsingBox).name() << std::endl;
+    auto box_parser_helper =
+        BoxParserHelper<ParsingBox, required>(managed_stream);
+    if constexpr (!required) {
+      if (!box_parser_helper.is_a_box_with_id(ParsingBox::id)) {
+        //this means that the current box being read is not of the type ParsingBox
+        //therefore, it can rewind the stream to allow for a next box to read again the l and t boxes
+        managed_stream.rewind();
+        return nullptr;
+      }
+    }
     // std::cout << "here!!!";
     auto parsed_box = parse(box_parser_helper);
-    if (parsed_box) { //i.e., the unique_ptr is not null
-    	// std::cout << "not null\n";
-    	return std::unique_ptr<ParsingBox>(static_cast<ParsingBox*>(parsed_box.release()));
+    if (parsed_box) {  //i.e., the unique_ptr is not null
+      // std::cout << "not null\n";
+      return std::unique_ptr<ParsingBox>(
+          static_cast<ParsingBox*>(parsed_box.release()));
     }
     return nullptr;
   }
 
 
-  ParsedBox parse(BoxParserHelperBase& box_parser_helper) const ;
+  ParsedBox parse(BoxParserHelperBase& box_parser_helper) const;
 
 
   template<class ParserClass>
