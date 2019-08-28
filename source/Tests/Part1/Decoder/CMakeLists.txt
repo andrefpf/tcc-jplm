@@ -6,4 +6,4 @@ function(add_jplm_part1_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME} "${CMAKE_HOME_DIRECTORY}/resources")
 endfunction()
 
-add_jplm_part1_decoder_lib_test(JPLFileFromStreamTests jpl_file_from_stream_tests JPLFileFromStreamTests.cpp)
+add_jplm_part1_decoder_lib_test(JPLFileFromStreamTests jpl_file_from_stream_part1_tests JPLFileFromStreamTests.cpp)

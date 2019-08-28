@@ -5,9 +5,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part1/Common/JPLFile.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
+#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 
 
 class JPLFileParser {
@@ -27,7 +27,8 @@ class JPLFileParser {
       // auto managed_substream = managed_stream.get_sub_managed_stream(
       //     file_size - managed_stream.tell());
       // auto decoded_box = parser.parse(std::move(managed_substream));
-      auto decoded_box = parser.parse(managed_stream.get_remaining_sub_managed_stream());
+      auto decoded_box =
+          parser.parse(managed_stream.get_remaining_sub_managed_stream());
       decoded_boxes++;
       auto id = decoded_box->get_tbox().get_value();
       if (auto it = temp_decoded_boxes.find(id);
@@ -35,9 +36,8 @@ class JPLFileParser {
         temp_decoded_boxes[id] =
             std::vector<std::unique_ptr<Box>>();  //std::move(decoded_box)
       }
-      temp_decoded_boxes[id].push_back(std::move(decoded_box));
+      temp_decoded_boxes[id].emplace_back(std::move(decoded_box));
     }
-    std::cout << "No more boxes to decode" << std::endl;
     return decoded_boxes;
   }
 
@@ -51,6 +51,7 @@ class JPLFileParser {
     return std::move(temp_file_type);
   }
 
+
  public:
   JPLFileParser(const std::string& filename)
       : filename(filename), file_size(std::filesystem::file_size(filename)),
@@ -60,30 +61,37 @@ class JPLFileParser {
       throw JPLFileFromStreamExceptions::InvalidTooSmallFileException(
           file_size);
     }
-    temp_signature =
-        std::move(parser.parse<JpegPlenoSignatureBox>(managed_stream.get_remaining_sub_managed_stream()));
-    // auto managed_substream = managed_stream.get_sub_managed_stream(
-    //     file_size - managed_stream.tell());
-    temp_file_type = std::move(parser.parse<FileTypeBox>(managed_stream.get_remaining_sub_managed_stream()));
+    temp_signature = parser.parse<JpegPlenoSignatureBox>(
+        managed_stream.get_remaining_sub_managed_stream());
+    temp_file_type = parser.parse<FileTypeBox>(
+        managed_stream.get_remaining_sub_managed_stream());
   }
 
-  virtual ~JPLFileParser() = default;
+
+  virtual ~JPLFileParser() {
+    //! \todo check why it is needed to release the remaining ptrs in the map
+    for (auto& something : temp_decoded_boxes) {
+      for (auto& ptr : something.second) {
+        ptr.release();
+      }
+    }
+  }
 };
 
 
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
  protected:
-  uint64_t decoded_boxes = 2; //it has at least decoded the signature and file type...
+  uint64_t decoded_boxes =
+      2;  //it has at least decoded the signature and file type...
 
   void check_boxes_constraints() {
-  	 if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
-          it != temp_decoded_boxes.end()) {
-  	 	throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
-  	 }
+    if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
+        it != temp_decoded_boxes.end()) {
+      throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
+    }
   }
 
   void populate_jpl_fields() {
-
   }
 
  public:
