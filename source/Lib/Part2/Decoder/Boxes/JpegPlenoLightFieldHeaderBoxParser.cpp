@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 13:04:04
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 15:25:45
+* @Last Modified time: 2019-08-28 20:00:58
 */
 
 #include "JpegPlenoLightFieldHeaderBoxParser.h"
@@ -11,7 +11,7 @@
 std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   auto& box_parser = BoxParserRegistry::get_instance();
-
+  
   auto light_field_header_box = box_parser.parse<LightFieldHeaderBox>(
       box_parser_helper.get_remaining_stream());
 

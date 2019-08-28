@@ -87,6 +87,11 @@ class BoxParserHelperBase {
   }
 
 
+  auto tell() const noexcept {
+    return managed_stream.tell();
+  }
+
+
   template<typename T>
   T get_next() {
     using namespace BinaryTools;

@@ -45,6 +45,7 @@ class BoxParserRegistry {
   template<class ParsingBox, bool required = true>
   std::unique_ptr<ParsingBox> parse(ManagedStream&& managed_stream) const {
     // std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
+    // std::cout << "ManagedStream is limited to: " << managed_stream.get_length() << std::endl;
     // std::cout << typeid(ParsingBox).name() << std::endl;
     auto box_parser_helper =
         BoxParserHelper<ParsingBox, required>(managed_stream);
@@ -56,10 +57,8 @@ class BoxParserRegistry {
         return nullptr;
       }
     }
-    // std::cout << "here!!!";
     auto parsed_box = parse(box_parser_helper);
     if (parsed_box) {  //i.e., the unique_ptr is not null
-      // std::cout << "not null\n";
       return std::unique_ptr<ParsingBox>(
           static_cast<ParsingBox*>(parsed_box.release()));
     }

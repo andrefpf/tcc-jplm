@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 11:01:35
+* @Last Modified time: 2019-08-28 19:55:12
 */
 
 #include "ManagedStream.h"
@@ -73,7 +73,8 @@ ManagedStream ManagedStream::get_sub_managed_stream(uint64_t max_offset) {
 
 
 ManagedStream ManagedStream::get_remaining_sub_managed_stream() {
-  return get_sub_managed_stream(this->get_length() - this->tell());
+  // return get_sub_managed_stream(this->get_length() - (initial_pos+this->tell()));
+  return get_sub_managed_stream(ref_to_stream.tellg(), this->final_pos);
 }
 
 

@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 16:46:18
+* @Last Modified time: 2019-08-28 20:02:39
 */
 
 #include "BoxParserRegistry.h"
@@ -37,6 +37,7 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     // std::cout << "found parsing method for id 0x" << std::hex
     //           << std::setfill('0') << std::setw(8)
     //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
+    // std::cout << "Before parsing: " << box_parser_helper.
     return it->second(box_parser_helper);
   }
   //not found a parser... should go to the end of the managed stream

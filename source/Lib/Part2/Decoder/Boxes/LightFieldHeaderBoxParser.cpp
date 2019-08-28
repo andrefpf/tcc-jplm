@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-27 18:41:10
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-27 18:52:28
+* @Last Modified time: 2019-08-28 19:59:44
 */
 
 #include "LightFieldHeaderBoxParser.h"
