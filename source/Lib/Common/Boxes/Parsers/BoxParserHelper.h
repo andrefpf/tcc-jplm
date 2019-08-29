@@ -8,7 +8,7 @@
 
 class BoxParserHelperBase {
  protected:
-  ManagedStream& managed_stream;
+  ManagedStream managed_stream;
   uint64_t length;
   uint32_t t_box_value_in_stream;
   bool has_xl_field = false;
@@ -38,6 +38,13 @@ class BoxParserHelperBase {
   }
 
 
+  BoxParserHelperBase(ManagedStream& stream, uint64_t lenght, uint32_t t_box_value_in_stream, bool has_xl_field)
+      : managed_stream(stream.get_sub_managed_stream(lenght)), length(lenght),
+        t_box_value_in_stream(t_box_value_in_stream), has_xl_field(has_xl_field) {
+          managed_stream.seek(get_non_data_lenght());
+  }
+
+
  public:
   BoxParserHelperBase(ManagedStream& stream)
       : managed_stream(stream), length(get_l_box_value_from_stream()),
@@ -45,6 +52,12 @@ class BoxParserHelperBase {
     if (length == 1) {
       length = get_xl_box_value_from_stream();
     }
+  }
+
+
+  BoxParserHelperBase get_helper_with_protected_range() {
+    managed_stream.rewind();
+    return BoxParserHelperBase(managed_stream, length, t_box_value_in_stream, has_xl_field);
   }
 
 
@@ -65,6 +78,7 @@ class BoxParserHelperBase {
     }
     return non_data_length;
   }
+
 
   uint64_t get_data_lenght() const noexcept {
     return get_length() - get_non_data_lenght();

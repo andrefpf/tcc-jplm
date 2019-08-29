@@ -50,6 +50,7 @@ class BoxParserRegistry {
     // std::cout << typeid(ParsingBox).name() << std::endl;
     auto box_parser_helper =
         BoxParserHelper<ParsingBox, required>(managed_stream);
+    std::cout << "created helper here <>" << std::endl;
     if constexpr (!required) {
       if (!box_parser_helper.is_a_box_with_id(ParsingBox::id)) {
         //this means that the current box being read is not of the type ParsingBox

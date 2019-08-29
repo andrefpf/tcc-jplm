@@ -25,8 +25,15 @@ class ManagedStream {
       uint64_t initial_pos, uint64_t final_pos);
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
 
-
   ManagedStream get_remaining_sub_managed_stream();
+
+  auto get_initial_pos() const noexcept {
+    return initial_pos;
+  }
+
+  auto get_final_pos() const noexcept {
+    return final_pos;
+  }
 
 
   bool is_valid() const noexcept;

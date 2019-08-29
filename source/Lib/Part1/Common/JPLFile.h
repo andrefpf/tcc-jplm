@@ -119,6 +119,21 @@ class JPLFile {
   }
 
 
+  bool has_codestream() const noexcept {
+    return jpeg_pleno_codestreams.size() > 0;
+  }
+
+
+  auto number_of_codestreams() const noexcept {
+    return jpeg_pleno_codestreams.size();
+  }
+
+
+  const auto& get_reference_to_codestreams() const noexcept {
+    return jpeg_pleno_codestreams;
+  }
+
+
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
     return *jpeg_pleno_signature_box;
   }

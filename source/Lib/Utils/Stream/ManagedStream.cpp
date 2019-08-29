@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 19:55:12
+* @Last Modified time: 2019-08-29 19:29:34
 */
 
 #include "ManagedStream.h"
@@ -32,6 +32,7 @@ ManagedStream::ManagedStream(
     //this guarantees that the stream is at the begining
     ref_to_stream.seekg(offset, std::ios_base::beg);
   }
+  std::cout << "created managed stream [" << initial_pos << ", " << final_pos << "[" << std::endl;
 }
 
 
@@ -66,6 +67,7 @@ ManagedStream ManagedStream::get_sub_managed_stream(
 }
 
 
+// gets a managed stream starding at the current pos with offset max_offset
 ManagedStream ManagedStream::get_sub_managed_stream(uint64_t max_offset) {
   return get_sub_managed_stream(ref_to_stream.tellg(),
       static_cast<uint64_t>(ref_to_stream.tellg()) + max_offset);
@@ -83,13 +85,15 @@ ManagedStream& ManagedStream::rewind() {
   return *this;
 }
 
+//! \todo check if it is necessary to perform some check in the eof (perhaps when getting data...)
+// ref_to_stream.peek();
+// if (ref_to_stream.eof()) {
+//   throw ManagedStreamExceptions::TryingToAccessBeyondEOFException();
+// }
+// 
 
 ManagedStream& ManagedStream::forward() {
   ref_to_stream.seekg(static_cast<int64_t>(final_pos), std::ios_base::beg);
-  ref_to_stream.peek();
-  if (ref_to_stream.eof()) {
-    throw ManagedStreamExceptions::TryingToAccessBeyondEOFException();
-  }
   return *this;
 }
 

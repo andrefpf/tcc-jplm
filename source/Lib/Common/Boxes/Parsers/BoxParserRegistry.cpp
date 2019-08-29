@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-29 11:14:29
+* @Last Modified time: 2019-08-29 19:45:34
 */
 
 #include "BoxParserRegistry.h"
@@ -25,6 +25,7 @@ BoxParserRegistry::get_ref_to_parser_map() {
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     ManagedStream&& managed_stream) const {
   auto box_parser_helper = BoxParserHelperBase(managed_stream);
+  std::cout << "called parser " << std::endl;
   return parse(box_parser_helper);
 }
 
@@ -38,7 +39,9 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     //           << std::setfill('0') << std::setw(8)
     //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     // std::cout << "Before parsing: " << box_parser_helper.
-    return it->second(box_parser_helper);
+    // here i need to limit the access
+    auto box_parser_helper_with_protected_range = box_parser_helper.get_helper_with_protected_range();
+    return it->second(box_parser_helper_with_protected_range);
   }
   //not found a parser... should go to the end of the managed stream
   box_parser_helper.get_data_stream()

@@ -80,15 +80,15 @@ TEST(ManagedStreamBasics, ManagedStreamRewindGoesToFinalLocation) {
   EXPECT_EQ(position_after, 2);
 }
 
+//! \todo Check to see if the ManagedStreamThrowsIfPassedEOFInForward test (or similar) is necessary
+// TEST(ManagedStreamBasics, ManagedStreamThrowsIfPassedEOFInForward) {
+//   std::ifstream if_stream(
+//       resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
+//   auto managed_stream = ManagedStream(if_stream, 10000);
 
-TEST(ManagedStreamBasics, ManagedStreamThrowsIfPassedEOFInForward) {
-  std::ifstream if_stream(
-      resources_path + "/rgb_pattern/pattern.ppm", std::ifstream::binary);
-  auto managed_stream = ManagedStream(if_stream, 10000);
-
-  EXPECT_THROW(managed_stream.forward(),
-      ManagedStreamExceptions::TryingToAccessBeyondEOFException);
-}
+//   EXPECT_THROW(managed_stream.forward(),
+//       ManagedStreamExceptions::TryingToAccessBeyondEOFException);
+// }
 
 
 TEST(ManagedStreamBasics, ManagedStreamThrowsIfConstructedWithClosedStream) {

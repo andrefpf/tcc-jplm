@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 20:10:17
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 20:21:54
+* @Last Modified time: 2019-08-29 18:30:22
 */
 
 /*
@@ -23,13 +23,55 @@
 
 std::string resources_path = "../resources";
 
-TEST(BasicTest, TwoBoxesDecodedInSimplestFile) {
-  auto jpl_file = JPLFileFromStream(
-      resources_path + "/boxes/jpl_file_lightfield_with_no_codestream.bin");
-  EXPECT_EQ(jpl_file.get_number_of_decoded_boxes(), 3);
+TEST(BasicTest, ParsingWithoutThrowingWhenHavingPlenoLFBoxButNoCodestream) {
+  EXPECT_NO_THROW(auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_no_codestream.bin")); 
 }
 
 
+TEST(BasicTest, ParsingWithoutThrowingWhenHavingPlenoLFBoxWithSimpleCodestream) {
+  EXPECT_NO_THROW(auto jpl_file = JPLFileFromStream(
+       resources_path + "/boxes/jpl_file_lightfield_with_simple_codestream.bin")); 
+}
+
+
+TEST(BasicTest, ThreeBoxesDecodedInFileWithPlenoLFBox) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_no_codestream.bin");
+  EXPECT_EQ(jpl_file.get_number_of_decoded_boxes(), 3); 
+  // the 3 boxes are: signature, file header and jpeg pleno light field box
+}
+
+
+TEST(BasicTest, ThreeBoxesDecodedInFileWithPlenoLFBoxWithSimpleCodestream) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_simple_codestream.bin");
+  EXPECT_EQ(jpl_file.get_number_of_decoded_boxes(), 3); 
+  // the 3 boxes are: signature, file header and jpeg pleno light field box
+}
+
+
+TEST(BasicTest, OneCodestreamDecodedInFileWithPlenoLFBoxWithSimpleCodestream) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_simple_codestream.bin");
+  EXPECT_EQ(jpl_file.number_of_codestreams(), 1); 
+}
+
+
+TEST(BasicTest, OneCodestreamDecodedInFileWithPlenoLFBoxButNoCodestream) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_no_codestream.bin");
+  EXPECT_EQ(jpl_file.number_of_codestreams(),1); 
+  // in this case the codestream is the jpeg pleno light field box (possible nomenclature problem)
+}
+
+
+TEST(BasicTest, TwoCodestreamsDecodedInFileWithPlenoLFBoxWithTwoSimpleCodestreams) {
+  auto jpl_file = JPLFileFromStream(
+      resources_path + "/boxes/jpl_file_lightfield_with_two_simple_codestreams.bin");
+  EXPECT_EQ(jpl_file.number_of_codestreams(),2); 
+  // in this case the codestream is the jpeg pleno light field box (possible nomenclature problem)
+}
 
 
 int main(int argc, char *argv[]) {
