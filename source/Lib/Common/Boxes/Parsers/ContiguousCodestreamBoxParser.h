@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"

@@ -42,8 +42,8 @@
 #ifndef JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__
 #define JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
 #include "ContiguousCodestreamDBox.h"
+#include "Lib/Common/Boxes/Box.h"
 
 
 class ContiguousCodestreamBox : public Box {
@@ -51,11 +51,30 @@ class ContiguousCodestreamBox : public Box {
   constexpr static uint32_t id = 0x6A703263;
 
   ContiguousCodestreamBox(const ContiguousCodestreamContents& contents)
-      : Box(TBox(id), ContiguousCodestreamDBox(contents)){};
+      : Box(TBox(id), ContiguousCodestreamDBox(contents)) {
+  }
+
+
+  ContiguousCodestreamBox(const ContiguousCodestreamCode& code)
+      : Box(TBox(id),
+            ContiguousCodestreamDBox(ContiguousCodestreamContents(code))) {
+  }
+
+
+  ContiguousCodestreamBox(std::unique_ptr<ContiguousCodestreamCode>&& code)
+      : Box(TBox(id),
+            std::make_unique<ContiguousCodestreamDBox>(std::move(code))) {
+  }
 
 
   ContiguousCodestreamBox(const ContiguousCodestreamBox& other)
       : Box(TBox(id), *other.d_box) {
+  }
+
+
+  const ContiguousCodestreamContents& get_const_ref_to_contents() const {
+    return dynamic_cast<const ContiguousCodestreamContents&>(
+        this->get_ref_to_dbox_contents());
   }
 
 

@@ -11,7 +11,8 @@
 
 class ManagedStream {
  protected:
-  std::ifstream& ref_to_stream; //it may be a good idea to change for a weak ptr
+  std::ifstream&
+      ref_to_stream;  //it may be a good idea to change for a weak ptr
   const uint64_t initial_pos;
   const uint64_t final_pos;
 
@@ -47,18 +48,30 @@ class ManagedStream {
   uint64_t tell() const noexcept;
 
 
-  template<size_t N>
-  std::vector<std::byte> get_bytes() {
+  void dynamic_assert_access_bounds(const uint64_t n) const {
     auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
     if ((current_position < initial_pos) ||
-        (current_position + N > final_pos)) {
+        (current_position + n > final_pos)) {
       throw ManagedStreamExceptions::OutOfBoundsException(
-          N, initial_pos, final_pos, current_position);
+          n, initial_pos, final_pos, current_position);
     }
+  }
 
+
+  template<size_t N>
+  std::vector<std::byte> get_bytes() {
+    dynamic_assert_access_bounds(N);
     std::array<std::byte, N> temp_array;
     ref_to_stream.read(reinterpret_cast<char*>(temp_array.data()), N);
     return {std::begin(temp_array), std::end(temp_array)};
+  }
+
+
+  std::vector<std::byte> get_n_bytes(uint64_t n) {
+    dynamic_assert_access_bounds(n);
+    std::vector<std::byte> temp_vector(n);
+    ref_to_stream.read(reinterpret_cast<char*>(temp_vector.data()), n);
+    return temp_vector;
   }
 
 

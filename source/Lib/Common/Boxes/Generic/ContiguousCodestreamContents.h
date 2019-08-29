@@ -2,8 +2,8 @@
 #define CONTIGUOUSCODESTREAMCONTENTS_H__
 
 #include <memory>
-#include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
 
 
 class ContiguousCodestreamContents : public SuperBoxDBoxContents {
@@ -27,12 +27,18 @@ class ContiguousCodestreamContents : public SuperBoxDBoxContents {
   }
 
 
+  const ContiguousCodestreamCode& get_const_ref_to_code() const {
+    return *code;
+  }
+
+
   virtual uint64_t size() const noexcept override {
     return code->size();
   }
 
 
   virtual ContiguousCodestreamContents* clone() const override {
+    std::cout << "ContiguousCodestreamContents clone" << std::endl;
     return new ContiguousCodestreamContents(*this);
   }
 

@@ -101,7 +101,7 @@ const DBoxContents& Box::get_ref_to_dbox_contents() const noexcept {
 std::uint64_t Box::size() const noexcept {
   auto lenght = this->get_lenght();
   return std::visit(
-      [](auto& value_holder) { return (uint64_t)value_holder.get_value(); },
+      [](auto& value_holder) { return (uint64_t) value_holder.get_value(); },
       lenght);
 }
 
@@ -112,6 +112,6 @@ std::ostream& operator<<(std::ostream& stream, const Box& box) {
   if (xlbox) {
     stream << xlbox.value();
   }
-  stream << box.get_ref_to_dbox(); //should avoid copying
+  stream << box.get_ref_to_dbox();  //should avoid copying
   return stream;
 }

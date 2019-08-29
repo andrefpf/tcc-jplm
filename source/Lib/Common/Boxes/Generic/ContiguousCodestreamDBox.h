@@ -11,13 +11,19 @@ class ContiguousCodestreamDBox : public DBox {
   }
 
 
+  ContiguousCodestreamDBox(std::unique_ptr<ContiguousCodestreamCode>&& code)
+      : DBox(std::make_unique<ContiguousCodestreamContents>(std::move(code))) {
+  }
+
+
   ContiguousCodestreamDBox(const ContiguousCodestreamDBox& other)
       : DBox(std::make_unique<ContiguousCodestreamContents>(
             other.get_ref_to_contents())) {
   }
 
 
-  virtual const ContiguousCodestreamContents& get_ref_to_contents() const override {
+  virtual const ContiguousCodestreamContents& get_ref_to_contents()
+      const override {
     return static_cast<const ContiguousCodestreamContents&>(*contents);
   }
 

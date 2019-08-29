@@ -82,6 +82,7 @@ class DBox {
 
 
   virtual const DBoxContents& get_ref_to_contents() const {
+    std::cout << "DBox get_ref_to_contents" << std::endl;
     return *contents;
   }
 
