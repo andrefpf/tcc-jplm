@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 10:34:36
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 11:40:07
+* @Last Modified time: 2019-08-29 10:46:29
 */
 
 #include "ColourSpecificationBoxParser.h"
@@ -23,13 +23,14 @@ std::unique_ptr<Box> JPLMBoxParser::ColourSpecificationBoxParser::parse(
   }
 
   //! \todo implement ICCProfile parsing (needs a ICC Profile implementation available)
-  // if (meth == 2) {
+  if (meth == 2) {
+    // throw BoxParsersExceptions::ColourSpecificationBoxExceptions::ICCProfileIsNotSupportedYetException();
   // 	auto icc_profile = BoxParserRegistry::get_instance().parse<ICCProfile>(box_parser_helper.get_remaining_stream());
   // 	auto colour_specification_box =
   //       std::make_unique<ColourSpecificationBox>(ColourSpecificationContents(meth, prec, approx, icc_profile));
 
   //   return colour_specification_box;
-  // }
+  }
 
   //throw (the only options are 1 and 2 for meth)
   return nullptr;

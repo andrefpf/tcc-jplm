@@ -55,6 +55,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Generic/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
 
 add_library(jplm_boxes_decoding)

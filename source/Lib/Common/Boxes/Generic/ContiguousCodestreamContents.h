@@ -3,42 +3,27 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
-
-
-class Code {
- public:
-  virtual uint64_t size() const noexcept = 0;
-  virtual Code* clone() const = 0;
-
-  virtual bool operator==(const Code& other) const = 0;
-  virtual bool operator!=(const Code& other) const = 0;
-  virtual std::ostream& write_to(std::ostream& stream) const = 0;
-};
-
-
-std::ostream& operator<<(std::ostream& stream, const Code& code) {
-  return code.write_to(stream);
-}
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 
 
 class ContiguousCodestreamContents : public SuperBoxDBoxContents {
   //not implemented yet...
  protected:
-  std::unique_ptr<Code> code;
+  std::unique_ptr<ContiguousCodestreamCode> code;
 
  public:
-  ContiguousCodestreamContents(const Code& code)
-      : code(std::unique_ptr<Code>(code.clone())) {
+  ContiguousCodestreamContents(const ContiguousCodestreamCode& code)
+      : code(std::unique_ptr<ContiguousCodestreamCode>(code.clone())) {
   }
 
 
-  ContiguousCodestreamContents(std::unique_ptr<Code>&& code)
+  ContiguousCodestreamContents(std::unique_ptr<ContiguousCodestreamCode>&& code)
       : code(std::move(code)) {
   }
 
 
   ContiguousCodestreamContents(const ContiguousCodestreamContents& other)
-      : code(std::unique_ptr<Code>(other.code->clone())) {
+      : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())) {
   }
 
 

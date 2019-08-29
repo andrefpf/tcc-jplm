@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 20:02:39
+* @Last Modified time: 2019-08-29 11:14:29
 */
 
 #include "BoxParserRegistry.h"
@@ -60,4 +60,6 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<LightFieldHeaderBoxParser>();
   register_parser<JpegPlenoLightFieldHeaderBoxParser>();
   register_parser<JpegPlenoLightFieldBoxParser>();
+  register_parser<ContiguousCodestreamBoxParser>();
+  // register_parser<...>();  
 }
