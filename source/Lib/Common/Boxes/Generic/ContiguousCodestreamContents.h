@@ -12,9 +12,13 @@ class Code {
 
   virtual bool operator==(const Code& other) const = 0;
   virtual bool operator!=(const Code& other) const = 0;
+  virtual std::ostream& write_to(std::ostream& stream) const = 0;
 };
 
-std::ostream& operator<<(std::ostream& stream, const Code& code);
+
+std::ostream& operator<<(std::ostream& stream, const Code& code) {
+  return code.write_to(stream);
+}
 
 
 class ContiguousCodestreamContents : public SuperBoxDBoxContents {
