@@ -39,8 +39,8 @@
  */
 
 
-#ifndef JPLM_LIB_PART1_COMMON_BOX_H__
-#define JPLM_LIB_PART1_COMMON_BOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_BOX_H__
+#define JPLM_LIB_COMMON_GENERIC_BOX_H__
 
 
 #include <iostream>
@@ -148,4 +148,4 @@ class Box {
 
 std::ostream& operator<<(std::ostream& stream, const Box& Box);
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_BOX_H__ */
