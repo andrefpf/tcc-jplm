@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef DATAENTRYURLDBOX_H__
-#define DATAENTRYURLDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLDBOX_H__
 
 #include "Lib/Common/Boxes/DBox.h"
 #include "DataEntryURLBoxContents.h"
@@ -70,4 +70,4 @@ class DataEntryURLDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: DATAENTRYURLDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLDBOX_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef DATAENTRYURLBOXCONTENTS_H__
-#define DATAENTRYURLBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOXCONTENTS_H__
 
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include <tuple> //std::tie
@@ -103,4 +103,4 @@ class DataEntryURLBoxContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: DATAENTRYURLBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOXCONTENTS_H__ */

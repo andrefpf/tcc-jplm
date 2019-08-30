@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef CHARARRAYDBOXCONTENTS_H__
-#define CHARARRAYDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOXCONTENTS_H__
 
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
@@ -112,4 +112,4 @@ class CharArrayDBoxContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: CHARARRAYDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOXCONTENTS_H__ */

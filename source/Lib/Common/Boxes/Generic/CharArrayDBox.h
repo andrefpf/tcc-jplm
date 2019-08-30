@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef CHARARRAYDBOX_H__
-#define CHARARRAYDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOX_H__
 
 #include "CharArrayDBoxContents.h"
 #include "Lib/Common/Boxes/DBox.h"
@@ -74,4 +74,4 @@ class CharArrayDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: CHARARRAYDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYDBOX_H__ */

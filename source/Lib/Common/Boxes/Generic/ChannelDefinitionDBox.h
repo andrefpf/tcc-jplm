@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef CHANNELDEFINITIONDBOX_H__
-#define CHANNELDEFINITIONDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONDBOX_H__
 
 #include "Lib/Common/Boxes/DBox.h"
 #include "ChannelDefinitionContents.h"
@@ -70,4 +70,4 @@ class ChannelDefinitionDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: CHANNELDEFINITIONDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONDBOX_H__ */

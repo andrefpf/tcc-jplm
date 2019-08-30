@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef UUIDBOXCONTENTS_H__
-#define UUIDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
 
 //UUID
 
@@ -93,4 +93,4 @@ class UUIDBoxContents : public InMemoryDBoxContents {
 };
 
 
-#endif /* end of include guard: UUIDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__ */

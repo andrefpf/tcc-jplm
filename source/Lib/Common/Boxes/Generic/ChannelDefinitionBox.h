@@ -38,8 +38,8 @@
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
-#define JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
 
 #include "ChannelDefinitionDBox.h"
 #include "Lib/Common/Boxes/Box.h"
@@ -64,4 +64,4 @@ class ChannelDefinitionBox : public Box {
   ~ChannelDefinitionBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_CHANNELDEFINITIONBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__ */

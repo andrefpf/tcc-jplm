@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef IMAGEHEADERCONTENTS_H__
-#define IMAGEHEADERCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__
 
 #include <tuple>  //std::tie
 #include "Lib/Part1/Common/CommonExceptions.h"
@@ -166,4 +166,4 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: IMAGEHEADERCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__ */

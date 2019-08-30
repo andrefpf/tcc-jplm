@@ -39,11 +39,11 @@
  */
 
 
-#ifndef COMPRESSIONTYPE_H__
-#define COMPRESSIONTYPE_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPE_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPE_H__
 
 #include <cstdint>
 
 using compression_type_data = uint8_t;
 
-#endif /* end of include guard: COMPRESSIONTYPE_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPE_H__ */

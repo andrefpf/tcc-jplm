@@ -39,8 +39,8 @@
  */
 
 
-#ifndef COMPRESSIONTYPEIMAGE_H__
-#define COMPRESSIONTYPEIMAGE_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPEIMAGE_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPEIMAGE_H__
 
 #include "CompressionType.h"
 
@@ -54,4 +54,4 @@ enum class CompressionTypeImage : compression_type_data {
   //all other values are reserved for ISO use
 };
 
-#endif /* end of include guard: COMPRESSIONTYPEIMAGE_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPEIMAGE_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_COLOURSPECIFICATIONBOX_H__
-#define JPLM_LIB_PART1_COMMON_COLOURSPECIFICATIONBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
 
 #include <stdexcept>
 #include "ColourSpecificationDBox.h"
@@ -70,4 +70,4 @@ class ColourSpecificationBox : public Box {
   ~ColourSpecificationBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_COLOURSPECIFICATIONBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__ */

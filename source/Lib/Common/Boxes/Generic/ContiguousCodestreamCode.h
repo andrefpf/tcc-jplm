@@ -38,8 +38,8 @@
  *  \date     2019-08-29
  */
 
-#ifndef CONTIGUOUSCODESTREAMCODE_H__
-#define CONTIGUOUSCODESTREAMCODE_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
 
 #include <cstddef>  //for std::byte
 #include <cstdint>
@@ -75,4 +75,4 @@ class ContiguousCodestreamCode {
 std::ostream& operator<<(
     std::ostream& stream, const ContiguousCodestreamCode& code);
 
-#endif /* end of include guard: CONTIGUOUSCODESTREAMCODE_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__ */

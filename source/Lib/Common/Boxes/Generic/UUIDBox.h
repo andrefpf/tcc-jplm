@@ -38,8 +38,8 @@
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_UUIDBOX_H__
-#define JPLM_LIB_PART1_COMMON_UUIDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
 
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"
@@ -69,4 +69,4 @@ class UUIDBox : public Box {
 };
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__ */

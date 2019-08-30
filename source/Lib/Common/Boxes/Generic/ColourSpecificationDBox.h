@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef COLOURSPECIFICATIONDBOX_H__
-#define COLOURSPECIFICATIONDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__
 
 #include "Lib/Common/Boxes/DBox.h"
 #include "ColourSpecificationContents.h"
@@ -71,4 +71,4 @@ class ColourSpecificationDBox : public DBox {
 };
 
 
-#endif /* end of include guard: COLOURSPECIFICATIONDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__ */

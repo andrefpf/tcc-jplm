@@ -38,8 +38,8 @@
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_UNIVERSALUNIQUEIDENTIFIER_H__
-#define JPLM_LIB_PART1_COMMON_UNIVERSALUNIQUEIDENTIFIER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNIVERSALUNIQUEIDENTIFIER_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNIVERSALUNIQUEIDENTIFIER_H__
 
 #include <iomanip>  //std::setfill, std::setw
 #include <iostream>
@@ -128,4 +128,4 @@ class UniversalUniqueIdentifier {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UNIVERSALUNIQUEIDENTIFIER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNIVERSALUNIQUEIDENTIFIER_H__ */

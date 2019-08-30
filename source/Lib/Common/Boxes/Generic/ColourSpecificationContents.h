@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef COLOURSPECIFICATIONCONTENTS_H__
-#define COLOURSPECIFICATIONCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONCONTENTS_H__
 
 #include <assert.h>
 #include <optional>
@@ -235,4 +235,4 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
 };
 
 
-#endif /* end of include guard: COLOURSPECIFICATIONCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONCONTENTS_H__ */

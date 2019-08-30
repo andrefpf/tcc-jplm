@@ -39,8 +39,8 @@
  */
 
 
-#ifndef UNDEFINEDDBOXINMEMORYCONTENTS_H__
-#define UNDEFINEDDBOXINMEMORYCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
 
 #include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 
@@ -125,4 +125,4 @@ class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: UNDEFINEDDBOXINMEMORYCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__ */

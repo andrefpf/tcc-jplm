@@ -38,8 +38,8 @@
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_BITSPERCOMPONENTBOX_H__
-#define JPLM_LIB_PART1_COMMON_BITSPERCOMPONENTBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
 
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"
@@ -65,4 +65,4 @@ class BitsPerComponentBox : public Box {
 
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BITSPERCOMPONENTBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__ */

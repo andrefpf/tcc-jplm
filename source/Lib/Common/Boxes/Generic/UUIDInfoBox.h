@@ -38,8 +38,8 @@
  *  \date     2019-07-26
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
-#define JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
 
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"
@@ -63,4 +63,4 @@ class UUIDInfoBox : public Box {
   ~UUIDInfoBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_UUIDINFOBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__ */

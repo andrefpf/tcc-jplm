@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef CONTIGUOUSCODESTREAMCONTENTS_H__
-#define CONTIGUOUSCODESTREAMCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCONTENTS_H__
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
@@ -108,4 +108,4 @@ class ContiguousCodestreamContents : public SuperBoxDBoxContents {
   }
 };
 
-#endif /* end of include guard: CONTIGUOUSCODESTREAMCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCONTENTS_H__ */

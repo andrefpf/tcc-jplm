@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef UUIDLISTDBOX_H__
-#define UUIDLISTDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTDBOX_H__
 
 #include "UUIDListBoxContents.h"
 #include "Lib/Common/Boxes/DBox.h"
@@ -70,4 +70,4 @@ class UUIDListDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: UUIDLISTDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTDBOX_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef UNDEFINEDDBOX_H__
-#define UNDEFINEDDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOX_H__
 
 #include "Lib/Common/Boxes/DBox.h"
 #include "UndefinedDBoxContents.h"
@@ -70,4 +70,4 @@ class UndefinedDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: UNDEFINEDDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOX_H__ */

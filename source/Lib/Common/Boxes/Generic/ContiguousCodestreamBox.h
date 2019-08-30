@@ -39,8 +39,8 @@
  */
 
 
-#ifndef JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__
-#define JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
 
 #include "ContiguousCodestreamDBox.h"
 #include "Lib/Common/Boxes/Box.h"
@@ -81,4 +81,4 @@ class ContiguousCodestreamBox : public Box {
   ~ContiguousCodestreamBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_CONTIGUOUSCODESTREAMBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__ */

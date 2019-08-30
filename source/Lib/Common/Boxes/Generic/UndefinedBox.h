@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef UNDEFINEDBOX_H__
-#define UNDEFINEDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__
 
 #include "Lib/Common/Boxes/Box.h"
 #include "UndefinedDBox.h"
@@ -59,4 +59,4 @@ class UndefinedBox : public Box {
   ~UndefinedBox() = default;
 };
 
-#endif /* end of include guard: UNDEFINEDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__ */

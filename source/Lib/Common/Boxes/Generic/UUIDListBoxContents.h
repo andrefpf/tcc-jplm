@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef UUIDLISTBOXCONTENTS_H__
-#define UUIDLISTBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__
 
 
 #include "UniversalUniqueIdentifier.h"
@@ -91,4 +91,4 @@ class UUIDListBoxContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: UUIDLISTBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__ */

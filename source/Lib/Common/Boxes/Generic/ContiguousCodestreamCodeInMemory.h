@@ -38,8 +38,8 @@
  *  \date     2019-08-29
  */
 
-#ifndef CONTIGUOUSCODESTREAMCODEINMEMORY_H__
-#define CONTIGUOUSCODESTREAMCODEINMEMORY_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__
 
 #include <iostream>
 #include <vector>
@@ -121,4 +121,4 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 };
 
-#endif /* end of include guard: CONTIGUOUSCODESTREAMCODEINMEMORY_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__ */

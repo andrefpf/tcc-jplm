@@ -38,8 +38,8 @@
  *  \date     2019-08-06
  */
 
-#ifndef CHANNELDESCRIPTION_H__
-#define CHANNELDESCRIPTION_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDESCRIPTION_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDESCRIPTION_H__
 
 #include <cstdint>
 #include <limits>
@@ -79,4 +79,4 @@ class ChannelDescription {
 
 };
 
-#endif /* end of include guard: CHANNELDESCRIPTION_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDESCRIPTION_H__ */
