@@ -38,8 +38,8 @@
  *  \date     2019-07-29
  */
 
-#ifndef DBOXCONTENTS_H__
-#define DBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_DBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_GENERIC_DBOXCONTENTS_H__
 
 #include <stdexcept>
 #include <vector>
@@ -60,4 +60,4 @@ class DBoxContents {
   virtual std::ostream& write_to(std::ostream& stream) const = 0;
 };
 
-#endif /* end of include guard: DBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_DBOXCONTENTS_H__ */

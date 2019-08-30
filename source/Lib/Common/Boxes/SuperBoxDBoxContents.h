@@ -38,8 +38,8 @@
  *  \date     2019-08-26
  */
 
-#ifndef SUPERBOXDBOXCONTENTS_H__
-#define SUPERBOXDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOXCONTENTS_H__
 
 #include <iostream>
 #include "source/Lib/Common/Boxes/DBoxContents.h"
@@ -50,4 +50,4 @@ class SuperBoxDBoxContents : public DBoxContents {
   virtual ~SuperBoxDBoxContents() = default;
 };
 
-#endif /* end of include guard: SUPERBOXDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOXCONTENTS_H__ */

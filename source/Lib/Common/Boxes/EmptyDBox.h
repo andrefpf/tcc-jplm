@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef EMPTYDBOX_H__
-#define EMPTYDBOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__
 
 #include "DBox.h"
 #include "EmptyDBoxContents.h"
@@ -70,4 +70,4 @@ class EmptyDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: EMPTYDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__ */

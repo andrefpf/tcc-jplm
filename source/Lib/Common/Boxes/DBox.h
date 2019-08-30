@@ -38,8 +38,8 @@
  *  \date     2019-07-29
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DBOX_H__
-#define JPLM_LIB_PART1_COMMON_DBOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_DBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_DBOX_H__
 
 #include <any>
 #include <cstdint>
@@ -101,4 +101,4 @@ class DBox {
   friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_DBOX_H__ */

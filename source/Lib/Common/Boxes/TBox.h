@@ -38,8 +38,8 @@
  *  \date     2019-07-29
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_TBOX_H__
-#define JPLM_LIB_PART1_COMMON_TBOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_TBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_TBOX_H__
 
 #include "BoxDataHolder.h"
 
@@ -62,4 +62,4 @@ class TBox : public BoxDataHolder<t_box_id_type> {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_TBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_TBOX_H__ */

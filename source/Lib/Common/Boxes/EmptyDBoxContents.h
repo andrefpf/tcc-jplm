@@ -39,8 +39,8 @@
  */
 
 
-#ifndef EMPTYDBOXCONTENTS_H__
-#define EMPTYDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_EMPTYDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_GENERIC_EMPTYDBOXCONTENTS_H__
 
 #include "InMemoryDBoxContents.h"
 
@@ -74,4 +74,4 @@ class EmptyDBoxContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: EMPTYDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EMPTYDBOXCONTENTS_H__ */

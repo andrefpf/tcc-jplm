@@ -39,8 +39,8 @@
  */
 
 
-#ifndef INMEMORYDBOXCONTENTS_H__
-#define INMEMORYDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
 
 
 #include <iostream>
@@ -68,4 +68,4 @@ std::ostream& operator<<(
     std::ostream& stream, const InMemoryDBoxContents& d_box);
 
 
-#endif /* end of include guard: INMEMORYDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__ */

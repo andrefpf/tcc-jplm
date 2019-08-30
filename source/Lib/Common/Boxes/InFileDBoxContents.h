@@ -38,8 +38,8 @@
  *  \date     2019-08-05
  */
 
-#ifndef INFILEDBOXCONTENTS_H__
-#define INFILEDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_INFILEDBOXCONTENTS_H__
+#define JPLM_LIB_COMMON_GENERIC_INFILEDBOXCONTENTS_H__
 
 #include <iostream>
 #include <fstream> 
@@ -65,4 +65,4 @@ class InFileDBoxContents : public DBoxContents {
   virtual std::ostream& write_to(std::ostream& stream) const final;
 };
 
-#endif /* end of include guard: INFILEDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INFILEDBOXCONTENTS_H__ */

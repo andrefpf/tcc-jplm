@@ -38,8 +38,8 @@
  *  \date     2019-07-29
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_XLBOX_H__
-#define JPLM_LIB_PART1_COMMON_XLBOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_XLBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_XLBOX_H__
 
 #include "source/Lib/Common/Boxes/BoxDataHolder.h"
 #include "source/Lib/Part1/Common/CommonExceptions.h"
@@ -70,4 +70,4 @@ class XLBox : public BoxDataHolder<uint64_t> {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_XLBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_XLBOX_H__ */

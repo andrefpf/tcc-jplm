@@ -38,8 +38,8 @@
  *  \date     2019-07-23
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__
-#define JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__
+#define JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__
 
 #include <ostream>
 #include <vector>
@@ -95,4 +95,4 @@ std::ostream& operator<<(
   return stream;
 }
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXDATAHOLDER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__ */
