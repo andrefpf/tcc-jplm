@@ -107,6 +107,11 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
+  void add_contiguous_codestream_box(std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
+    this->contiguous_codestream_box=std::move(contiguous_codestream_box);
+  }
+
+
   virtual ~JpegPlenoLightFieldContents() = default;
 
 
@@ -132,7 +137,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
-  bool operator==(const JpegPlenoLightFieldContents& other) const noexcept {
+  bool operator==(const JpegPlenoLightFieldContents& ) const noexcept { //other
     //! \todo implement here
     return false;
   }
