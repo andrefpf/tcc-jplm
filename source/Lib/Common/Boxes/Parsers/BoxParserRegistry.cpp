@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-14 15:51:14
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-29 19:45:34
+* @Last Modified time: 2019-08-30 10:46:11
 */
 
 #include "BoxParserRegistry.h"
@@ -25,7 +25,7 @@ BoxParserRegistry::get_ref_to_parser_map() {
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     ManagedStream&& managed_stream) const {
   auto box_parser_helper = BoxParserHelperBase(managed_stream);
-  std::cout << "called parser " << std::endl;
+  // std::cout << "called parser " << std::endl;
   return parse(box_parser_helper);
 }
 

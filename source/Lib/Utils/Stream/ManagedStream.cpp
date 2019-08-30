@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 17:01:09
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-29 19:29:34
+* @Last Modified time: 2019-08-30 10:44:41
 */
 
 #include "ManagedStream.h"
@@ -32,7 +32,7 @@ ManagedStream::ManagedStream(
     //this guarantees that the stream is at the begining
     ref_to_stream.seekg(offset, std::ios_base::beg);
   }
-  std::cout << "created managed stream [" << initial_pos << ", " << final_pos << "[" << std::endl;
+  // std::cout << "created managed stream [" << initial_pos << ", " << final_pos << "[" << std::endl;
 }
 
 

@@ -24,7 +24,7 @@ class JPLFileParser {
   auto decode_boxes() {
     uint64_t decoded_boxes = 0;
     while (this->managed_stream.is_valid()) {
-      std::cout << "have " << this->managed_stream.get_length() << " bytes to decode" << std::endl;
+      // std::cout << "have " << this->managed_stream.get_length() << " bytes to decode" << std::endl;
       // auto managed_substream = managed_stream.get_sub_managed_stream(
       //     file_size - managed_stream.tell());
       // auto decoded_box = parser.parse(std::move(managed_substream));
@@ -38,7 +38,7 @@ class JPLFileParser {
             std::vector<std::unique_ptr<Box>>();  //std::move(decoded_box)
       }
       temp_decoded_boxes[id].emplace_back(std::move(decoded_box));
-      std::cout << "decoded box with id: " << id << std::endl;
+      // std::cout << "decoded box with id: " << id << std::endl;
     }
     return decoded_boxes;
   }
@@ -103,7 +103,6 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
             std::unique_ptr<JpegPlenoCodestreamBox>(
                 static_cast<JpegPlenoCodestreamBox*>(
                     jpeg_pleno_light_field_box.release())));
-        std::cout << "Found!" << std::endl;
       }
       jpeg_pleno_light_field_boxes.clear();
       jpeg_pleno_light_field_boxes.shrink_to_fit();
