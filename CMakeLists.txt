@@ -39,8 +39,8 @@ link_libraries(stdc++fs)
 include_directories(source)
 
 #setting up the doxygen documentation build
-# option(BUILD_DOC "Build documentation" ON)
-option(BUILD_DOC "Build documentation" OFF)
+option(BUILD_DOC "Build documentation" ON)
+# option(BUILD_DOC "Build documentation" OFF)
 
 
 add_executable(jpl-encoder-bin
@@ -58,20 +58,19 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Generic/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
 
-add_library(jplm_boxes_decoding)
-target_link_libraries(jplm_boxes_decoding jplm_common_boxes_parsers jplm_common_boxes)
+# add_library(jplm_boxes_decoding)
+# target_link_libraries(jplm_boxes_decoding jplm_common_boxes_parsers jplm_common_boxes)
 
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
-add_library(jplm_boxes_part1_decoder)
-target_link_libraries(jplm_boxes_part1_decoder jplm_boxes_decoding jplm_part1_boxes_decoder)
+
+# target_link_libraries(jplm_common_boxes_parsers jplm_part1_boxes_decoder)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
 
-add_library(jplm_part2_common_boxes)
-target_link_libraries(jplm_part2_common_boxes jplm_common_boxes jplm_part2_common)
+
 
 enable_testing()
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
