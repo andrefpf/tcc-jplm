@@ -31,12 +31,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFileTests.cpp
+/** \file     JPLFileIOTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-08-30
  */
+
 
 
 #include <filesystem>
@@ -44,7 +45,8 @@
 #include <iostream>
 #include <string>
 #include "Lib/Part1/Common/JPLFile.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
+#include "Lib/Part1/Decoder/JPLFileFromStream.h"
+#include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
 
 
@@ -117,8 +119,13 @@ TEST_F(JPLFileFixture, Initialization) {
   jpl_file.add_codestream_box(std::move(jpeg_pleno_light_field_box));
 
   set_filename("tempJPLFile.bin");
+  cout() << jpl_file;
+  flush();
+  cout().close();
 
-  EXPECT_NO_THROW(cout() << jpl_file);
+  auto jpl_file_from_file = JPLFileFromStream("tempJPLFile.bin");
+
+  EXPECT_EQ(jpl_file_from_file.get_number_of_decoded_boxes(), 3); 
 
 }
 
