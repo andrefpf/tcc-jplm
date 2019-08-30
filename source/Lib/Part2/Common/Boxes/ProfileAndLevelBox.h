@@ -55,7 +55,7 @@ class ProfileAndLevelBox : public Box {
       : Box(TBox(id), ProfileAndLevelDBox(contents)) {
   }
 
-
+  
   ProfileAndLevelBox(const uint16_t ppih, const uint16_t plev)
       : Box(TBox(id),
             ProfileAndLevelDBox(ProfileAndLevelContents(ppih, plev))) {
