@@ -38,8 +38,8 @@
  *  \date     2019-07-23
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
 
 #include <vector>
 #include "source/Lib/Common/Boxes/Box.h"
@@ -77,4 +77,4 @@ class JpegPlenoSignatureBox : public Box {
 };
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__ */

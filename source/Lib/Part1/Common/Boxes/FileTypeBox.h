@@ -38,8 +38,8 @@
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__
-#define JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
 
 #include <algorithm>
 #include "Lib/Common/Boxes/Box.h"
@@ -77,4 +77,4 @@ class FileTypeBox : public Box {
   ~FileTypeBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_FILETYPEBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__ */

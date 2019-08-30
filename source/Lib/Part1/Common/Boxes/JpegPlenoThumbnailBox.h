@@ -38,8 +38,8 @@
  *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOTHUMBNAILBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOTHUMBNAILBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
 
 #include "source/Lib/Common/Boxes/Box.h"
 #include "source/Lib/Part1/Common/DefinedBoxes.h"
@@ -85,4 +85,4 @@ class JpegPlenoThumbnailBox : public Box {
 };
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOTHUMBNAILBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__ */

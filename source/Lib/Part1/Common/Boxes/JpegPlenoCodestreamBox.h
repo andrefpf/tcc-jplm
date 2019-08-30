@@ -38,8 +38,8 @@
  *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__
 
 //the ideia is to be the base for
 // JpegPlenoLightFieldBox
@@ -74,4 +74,4 @@ class JpegPlenoCodestreamBox : public Box {
   virtual ~JpegPlenoCodestreamBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODESTREAMBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__ */
