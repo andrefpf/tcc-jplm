@@ -125,7 +125,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
    * \details    Transfers the ownership of the view_io_policy to this lightfield. 
    * 
    * \e Example: 
-   * \snippet Utils/LightfieldVisualization.cpp Setting a view_io_policy into a Lightfield
+   * \snippet App/Utils/LightfieldVisualization.cpp Setting a view_io_policy into a Lightfield
    */
   void set_view_io_policy(std::unique_ptr<ViewIOPolicy<T>>&& view_io_policy) {
     this->view_io_policy = std::move(view_io_policy);

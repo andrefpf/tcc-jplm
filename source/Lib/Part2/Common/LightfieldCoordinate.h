@@ -56,15 +56,18 @@ class LightfieldCoordinate {
 
 
   LightfieldCoordinate(const T t, const T s, const T v, const T u) noexcept
-      : dimensions({t, s, v, u}){};
+      : dimensions({t, s, v, u}) {
+  }
 
 
   LightfieldCoordinate(const std::tuple<T, T, T, T>& dimensions) noexcept
-      : dimensions(dimensions){};
+      : dimensions(dimensions) {
+  }
 
 
   LightfieldCoordinate(const LightfieldCoordinate<T>& other) noexcept
-      : dimensions(other.dimensions){};
+      : dimensions(other.dimensions) {
+  }
 
 
   ~LightfieldCoordinate() = default;

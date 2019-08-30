@@ -6,13 +6,15 @@
       <x>258</x>
       <y>0</y>
       <w>198</w>
-      <h>792</h>
+      <h>1180</h>
     </coordinates>
     <panel_attributes>type=Package
 JPLM
 	cfg
 	doc
 		diagrams
+		doxygen
+		software-guidelines
 	bin
 	build
 	source
@@ -20,30 +22,49 @@ JPLM
 			Common
 			Encoder
 			Decoder
+			Utils
 		Lib
+			Common
+				Boxes
+					Generic
+					Parsers
 			Part1
 				Common
+					Boxes
 				Encoder
 				Decoder
+					Boxes
 			Part2
 				Common
+					Boxes
 				Encoder
 				Decoder
+					Boxes
 			PartX
 				Common
 				Encoder
 				Decoder
-			ThirdPart
+			ThirdParty
 			Utils
+				Image
+				Stream
 		Tests
+			Common
+				Boxes
+					Generic
+					Parsers
 			Part1
 				Common
+					Boxes
 				Encoder
 				Decoder
+					Boxes
 			Part2
 				Common
+					Boxes
 				Encoder
 				Decoder
+					Boxes
 			PartX
 				Common
 				Encoder

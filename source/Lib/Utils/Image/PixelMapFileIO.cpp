@@ -92,7 +92,7 @@ void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
  * The need for reading char-by-char is because there can be a comment between the chars of a field...
  *
  * \param[in]      istream  The input stream
- * \param[in/out]  size     The size
+ * \param[in,out]  size     The size
  */
 void fill_size_string(std::ifstream& istream, std::string& size) {
   read_pixel_map_stream_until_next_field(istream);

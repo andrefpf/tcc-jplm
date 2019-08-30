@@ -16,7 +16,10 @@ set (JPLM_VERSION_PATCH 0)
 set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
 set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_DIR})
+
 
 ##puts the configuration file in the binary dir
 configure_file (
@@ -53,8 +56,57 @@ link_libraries(stdc++fs)
 include_directories(source)
 
 #setting up the doxygen documentation build
-# option(BUILD_DOC "Build documentation" ON)
 option(BUILD_DOC "Build documentation" ON)
+# option(BUILD_DOC "Build documentation" OFF)
+
+
+add_executable(jpl-encoder-bin
+        source/App/Encoder/jpl-encoder.cpp
+        CMakeLists.txt)
+
+add_executable(jpl-decoder-bin
+        source/App/Decoder/jpl-decoder.cpp
+        CMakeLists.txt)
+
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Generic/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
+
+# add_library(jplm_boxes_decoding)
+# target_link_libraries(jplm_boxes_decoding jplm_common_boxes_parsers jplm_common_boxes)
+
+
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
+
+# target_link_libraries(jplm_common_boxes_parsers jplm_part1_boxes_decoder)
+
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
+
+
+
+enable_testing()
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/Boxes/Generic/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/Boxes/Parsers/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Encoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/Boxes/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part1/Decoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/)
+
 
 if(BUILD_DOC)
   find_package(Doxygen)
@@ -74,22 +126,3 @@ if(BUILD_DOC)
     message("Doxygen must be installed to generate the documentation.")
   endif (DOXYGEN_FOUND)
 endif(BUILD_DOC)
-
-add_executable(jpl-encoder-bin
-        source/App/Encoder/jpl-encoder.cpp
-        CMakeLists.txt)
-
-add_executable(jpl-decoder-bin
-        source/App/Decoder/jpl-decoder.cpp
-        CMakeLists.txt)
-
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Utils/)
-
-
-
-enable_testing()
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/)
-add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)

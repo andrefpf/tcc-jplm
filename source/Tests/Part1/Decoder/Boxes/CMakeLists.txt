@@ -1,0 +1,11 @@
+function(add_jplm_part1_boxes_decoder_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
+	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_part2_boxes_decoder)
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_common_boxes_parsers)	
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE stream)
+	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME} "${CMAKE_HOME_DIRECTORY}/resources")
+endfunction()
+
+add_jplm_part1_boxes_decoder_lib_test(JpegPlenoSignatureBoxParserTests jpeg_pleno_signature_box_parser_tests JpegPlenoSignatureBoxParserTests.cpp)
+add_jplm_part1_boxes_decoder_lib_test(FileTypeBoxParserTests file_type_box_parser_tests FileTypeBoxParserTests.cpp)

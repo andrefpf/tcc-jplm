@@ -65,7 +65,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
    * \details This kind of lightfield can be build using only the configuration and a default view io policy. 
    * 
    * For instance:
-   * \snippet Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   * \snippet App/Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
    */
   LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
