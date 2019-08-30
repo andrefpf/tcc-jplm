@@ -48,7 +48,44 @@
 #include "gtest/gtest.h"
 
 
-TEST(BasicTest, Initialization) {
+struct JPLFileFixture : public testing::Test {
+ protected:
+  std::string output_filename;
+  std::ofstream of_stream;
+
+ public:
+  JPLFileFixture() {
+  }
+
+  void set_filename(const std::string& filename) {
+    output_filename = filename;
+    if (of_stream.is_open()) {
+      of_stream.close();
+    }
+    of_stream.open(filename, std::ofstream::binary);
+  }
+
+  void flush() {
+    of_stream.flush();
+  }
+
+  ~JPLFileFixture() {
+    if (of_stream.is_open()) {
+      of_stream.close();
+    }
+    namespace fs = std::filesystem;
+    if (fs::exists(output_filename)) {
+      fs::remove(output_filename);
+    }
+  }
+
+  std::ofstream& cout() {
+    return of_stream;
+  }
+};
+
+
+TEST_F(JPLFileFixture, Initialization) {
   auto lf_header_contents = LightFieldHeaderContents(
       {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
   auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
@@ -79,13 +116,10 @@ TEST(BasicTest, Initialization) {
   auto jpl_file = JPLFile();
   jpl_file.add_codestream_box(std::move(jpeg_pleno_light_field_box));
 
-  std::string output_filename = "~/tempJPLFile.bin";
-  std::ofstream of_stream;
-  of_stream.open(output_filename, std::ofstream::binary);
+  set_filename("tempJPLFile.bin");
 
-  of_stream << jpl_file;
-
-  // EXPECT_NO_THROW();
+  EXPECT_NO_THROW(cout() << jpl_file);
+  
 }
 
 
