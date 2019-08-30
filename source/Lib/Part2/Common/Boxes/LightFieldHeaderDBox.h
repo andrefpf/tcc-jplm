@@ -38,8 +38,8 @@
  *  \date     2019-08-22
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__
-#define JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERDBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERDBOX_H__
 
 #include "Lib/Common/Boxes/DBox.h"
 #include "LightFieldHeaderContents.h"
@@ -72,4 +72,4 @@ class LightFieldHeaderDBox : public DBox {
 };
 
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDHEADERDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERDBOX_H__ */

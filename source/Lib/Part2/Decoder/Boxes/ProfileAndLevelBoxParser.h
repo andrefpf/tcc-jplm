@@ -39,8 +39,8 @@
  */
 
 
-#ifndef PROFILEANDLEVELBOXPARSER_H__
-#define PROFILEANDLEVELBOXPARSER_H__
+#ifndef JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__
+#define JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__
 
 
 #include <memory>
@@ -58,4 +58,4 @@ class ProfileAndLevelBoxParser {
 }  // namespace JPLMBoxParser
 
 
-#endif /* end of include guard: PROFILEANDLEVELBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__ */

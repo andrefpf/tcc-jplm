@@ -38,8 +38,8 @@
  *  \date     2019-08-26
  */
 
-#ifndef CALIBRATIONBOX_H__
-#define CALIBRATIONBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
 
 #include "Lib/Common/Boxes/Box.h"
 
@@ -52,4 +52,4 @@ public:
 	
 };
 
-#endif /* end of include guard: CALIBRATIONBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__ */

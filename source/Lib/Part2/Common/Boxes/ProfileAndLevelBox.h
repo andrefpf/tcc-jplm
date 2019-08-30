@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_PROFILEANDLEVELBOX_H__
-#define JPLM_LIB_PART2_COMMON_PROFILEANDLEVELBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__
 
 
 #include "Lib/Common/Boxes/Box.h"
@@ -75,4 +75,4 @@ class ProfileAndLevelBox : public Box {
   ~ProfileAndLevelBox() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_PROFILEANDLEVELBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-08-28
  */
 
-#ifndef JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__
-#define JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__
+#ifndef JPLM_LIB_PART2_DECODER_BOXES_JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__
+#define JPLM_LIB_PART2_DECODER_BOXES_JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__
 
 #include <memory>
 #include "source/Lib/Common/Boxes/Parsers/BoxParserHelper.h"
@@ -56,4 +56,4 @@ class JpegPlenoLightFieldHeaderBoxParser {
 };
 }  // namespace JPLMBoxParser
 
-#endif /* end of include guard: JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__ */

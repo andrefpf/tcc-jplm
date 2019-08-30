@@ -38,8 +38,8 @@
  *  \date     2019-08-26
  */
 
-#ifndef CALIBRATIONDBOX_H__
-#define CALIBRATIONDBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONDBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONDBOX_H__
 
 class CalibrationDBox
 {
@@ -49,4 +49,4 @@ public:
 	
 };
 
-#endif /* end of include guard: CALIBRATIONDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONDBOX_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-08-27
  */
 
-#ifndef JPEGPLENOLIGHTFIELDHEADERDBOX_H__
-#define JPEGPLENOLIGHTFIELDHEADERDBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__
 
 #include "JpegPlenoLightFieldHeaderContents.h"
 #include "Lib/Common/Boxes/DBox.h"
@@ -84,4 +84,4 @@ class JpegPlenoLightFieldHeaderDBox : public DBox {
   }
 };
 
-#endif /* end of include guard: JPEGPLENOLIGHTFIELDHEADERDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__ */

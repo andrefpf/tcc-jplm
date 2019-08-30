@@ -38,8 +38,8 @@
  *  \date     2019-08-27
  */
 
-#ifndef LIGHTFIELDHEADERBOXPARSER_H__
-#define LIGHTFIELDHEADERBOXPARSER_H__
+#ifndef JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__
+#define JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__
 
 
 
@@ -57,4 +57,4 @@ class LightFieldHeaderBoxParser {
 };
 }  // namespace JPLMBoxParser
 
-#endif /* end of include guard: LIGHTFIELDHEADERBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__ */

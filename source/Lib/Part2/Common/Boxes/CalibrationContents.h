@@ -38,8 +38,8 @@
  *  \date     2019-08-26
  */
 
-#ifndef CALIBRATIONCONTENTS_H__
-#define CALIBRATIONCONTENTS_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 
 class CalibrationContents
 {
@@ -51,4 +51,4 @@ public:
 	
 };
 
-#endif /* end of include guard: CALIBRATIONCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__ */
