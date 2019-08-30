@@ -49,9 +49,14 @@
 namespace JPLMBoxParser {
 class JpegPlenoSignatureBoxParser {
  public:
+  //! [ParsingBox definition with type of the box to be parsed]	
   using ParsingBox = JpegPlenoSignatureBox;
+  //! [ParsingBox definition with type of the box to be parsed]	
+
+  //! [Parse function definition]
   static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
+      BoxParserHelperBase& box_parser_helper);
+  //! [Parse function definition]
 };
 }  // namespace JPLMBoxParser
 

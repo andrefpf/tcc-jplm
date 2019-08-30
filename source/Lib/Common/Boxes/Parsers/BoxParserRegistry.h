@@ -38,6 +38,7 @@
  *  \date     2019-08-21
  */
 
+
 #ifndef JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__
 #define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__
 
@@ -51,7 +52,9 @@
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Common/Boxes/Parsers/ContiguousCodestreamBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
+//! [Include the parser header]
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
+//! [Include the parser header]
 #include "Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldHeaderBoxParser.h"
 #include "Lib/Part2/Decoder/Boxes/LightFieldHeaderBoxParser.h"
@@ -123,3 +126,34 @@ class BoxParserRegistry {
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__ */
+
+
+/*! \page parser_info How to create a new box parser
+  \tableofcontents
+  This page will introduce briefly how to implement a new box parser.
+  \section sec Creating a new box parser
+  Let us assume that we are to implement a parser for the Jpeg Pleno Signature Box.
+  There will be a JpegPlenoSignatureBox class defined. 
+  In our case, it will be at Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h
+
+  The parser class JpegPlenoSignatureBoxParser will be defined in the header Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h 
+  and its implementation will be at Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.cpp .
+
+  To create a new parser class, the class <b>MUST</b> have two mandatory items:
+   -# The name of the box to be parsed.
+    - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h ParsingBox definition with type of the box to be parsed
+   -# The parser method with a standard signature.
+    - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h Parse method definition
+  \subsection subsection1 Parser implementation
+  Text.
+  \subsection subsection2 Registering the parser
+  Include the parser header in the BoxParserRegistry header: 
+
+  \snippet Lib/Common/Boxes/Parsers/BoxParserRegistry.h Include the parser header
+
+  Finally, to allow this parser to be used during decoding, it is necessary to make it visible.
+  To do so, it is only necessary to include a line in BoxParserRegistry::register_known_parsers() implementation: 
+  \snippet Lib/Common/Boxes/Parsers/BoxParserRegistry.cpp Registering the parser
+
+  By doing so, the JpegPlenoSignatureBoxParser parse method will be used whenever a JpegPlenoSignatureBox is found in the bitstream;
+*/
