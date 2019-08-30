@@ -38,8 +38,8 @@
  *  \date     2019-08-20
  */
 
-#ifndef UNPARSEDBOX_H__
-#define UNPARSEDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_UNPARSEDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_UNPARSEDBOX_H__
 
 #include <cstdint>
 
@@ -61,4 +61,4 @@ public:
 	}
 };
 
-#endif /* end of include guard: UNPARSEDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_UNPARSEDBOX_H__ */

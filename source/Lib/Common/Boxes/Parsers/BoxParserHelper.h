@@ -38,8 +38,8 @@
  *  \date     2019-08-15
  */
 
-#ifndef BOXPARSERHELPER_H__
-#define BOXPARSERHELPER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__
 
 #include "CommonExceptions.h"
 #include "Lib/Part1/Common/BinaryTools.h"
@@ -207,4 +207,4 @@ class BoxParserHelper : public BoxParserHelperBase {
 };
 
 
-#endif /* end of include guard: BOXPARSERHELPER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__ */

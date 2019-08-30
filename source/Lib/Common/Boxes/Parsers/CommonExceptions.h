@@ -38,8 +38,8 @@
  *  \date     2019-08-15
  */
 
-#ifndef JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__
-#define JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_COMMONEXCEPTIONS_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_COMMONEXCEPTIONS_H__
 
 #include <cstdint>
 #include <iomanip>
@@ -122,4 +122,4 @@ class MoreThanOneFileTypeBoxException : public std::exception {
 
 }  // namespace JPLFileFromStreamExceptions
 
-#endif /* end of include guard: JPLM_LIB_PART1_DECODER_COMMONEXCEPTIONS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_COMMONEXCEPTIONS_H__ */

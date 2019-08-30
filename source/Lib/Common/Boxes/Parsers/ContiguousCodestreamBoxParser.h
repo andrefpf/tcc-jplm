@@ -38,8 +38,8 @@
  *  \date     2019-08-29
  */
 
-#ifndef CONTIGUOUSCODESTREAMBOXPARSER_H__
-#define CONTIGUOUSCODESTREAMBOXPARSER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
@@ -62,4 +62,4 @@ class ContiguousCodestreamBoxParser {
 //
 // ContiguousCodestreamBoxParser::memory_limit = value_found_in_config;
 
-#endif /* end of include guard: CONTIGUOUSCODESTREAMBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__ */

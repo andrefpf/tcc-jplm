@@ -38,8 +38,8 @@
  *  \date     2019-08-28
  */
 
-#ifndef COLOURSPECIFICATIONBOXPARSER_H__
-#define COLOURSPECIFICATIONBOXPARSER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
@@ -56,4 +56,4 @@ class ColourSpecificationBoxParser {
 };
 }  // namespace JPLMBoxParser
 
-#endif /* end of include guard: COLOURSPECIFICATIONBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__ */

@@ -38,8 +38,8 @@
  *  \date     2019-08-21
  */
 
-#ifndef BOXPARSER_H__
-#define BOXPARSER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__
+#define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__
 
 #include <cstdio>
 #include <functional>
@@ -122,4 +122,4 @@ class BoxParserRegistry {
   }
 };
 
-#endif /* end of include guard: BOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__ */
