@@ -42,7 +42,7 @@
 #define JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOX_H__
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/DBox.h"
 
 class SuperBoxDBox : public DBox {
  public:
