@@ -45,6 +45,7 @@
 
 std::unique_ptr<Box> JPLMBoxParser::FileTypeBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
+  //! [Parsing a file type box]
   auto brand = box_parser_helper.get_next<uint32_t>();
   auto minor_version = box_parser_helper.get_next<uint32_t>();
 
@@ -61,4 +62,5 @@ std::unique_ptr<Box> JPLMBoxParser::FileTypeBoxParser::parse(
       FileTypeContents(brand, minor_version, std::move(compatibility_list)));
 
   return file_type_box;
+  //! [Parsing a file type box]
 }

@@ -143,9 +143,29 @@ class BoxParserRegistry {
    -# The name of the box to be parsed.
     - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h ParsingBox definition with type of the box to be parsed
    -# The parser method with a standard signature.
-    - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h Parse method definition
+    - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h Parse function definition
   \subsection subsection1 Parser implementation
-  Text.
+  
+  To implement the parser, you have access to a BoxParserHelperBase. Such helper has the ability to provide access to the data in the stream.
+  Also, you have access to the BoxParserRegistry, and thus you can parse another box from the stream (in the case of a super box being parsed).
+  
+  Let us first see how to implement a parser for a common box, like the FileTypeBox. 
+  To obtain values for fields of a box, we can call the get_next method of BoxParserHelperBase, specifying the type of the data we want to get.
+  After obtaining all the required data from a box, a box containing that data must be instanciated and returned. See the example below: 
+
+  \snippet Lib/Part1/Decoder/Boxes/FileTypeBoxParser.cpp Parsing a file type box 
+
+  Notice that the size of the data contained in the box is obtained using box_parser_helper.get_data_lenght().
+  
+  Now, let us see how to get a box, in the case it is needed within a superbox.
+
+  \snippet Lib/Part2/Decoder/Boxes/JpegPlenoLightFieldHeaderBoxParser.cpp Parsing a box within a super box
+
+  Notice that the parsing call used to obtain light_field_header_box and bits_per_component_box are different. 
+  The fisrt is a mandatory box. Thus, if the parser does not find such box in the stream in the current position, it throws an exception. 
+  On the other hand, the second box is not mandatory and thus the parse method must be called using false as the last template parameter. 
+
+
   \subsection subsection2 Registering the parser
   Include the parser header in the BoxParserRegistry header: 
 
