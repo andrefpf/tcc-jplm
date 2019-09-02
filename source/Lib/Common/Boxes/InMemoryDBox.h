@@ -31,47 +31,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDDBox.h
+/** \file     InMemoryDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-08-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__
 
-#include "Lib/Common/Boxes/DBox.h"
-#include "UUIDBoxContents.h"
+#ifndef JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__
 
-class UUIDDBox : public DBox {
+
+#include <iostream>
+#include "source/Lib/Common/Boxes/DBox.h"
+
+class InMemoryDBox : public DBox {
  public:
-  UUIDDBox(const UUIDBoxContents& contents)
-      : DBox(std::make_unique<UUIDBoxContents>(contents)) {
+  InMemoryDBox() = default;
+
+
+  virtual ~InMemoryDBox() = default;
+
+
+  virtual std::vector<std::byte> get_bytes() const {
+    throw std::runtime_error(
+        "Not implemented yet (get_bytes).");
   }
 
 
-  UUIDDBox(const UUIDDBox& other)
-      : DBox(std::make_unique<UUIDBoxContents>(other.get_ref_to_contents())) {
-  }
-
-
-  virtual const UUIDBoxContents& get_ref_to_contents() const override {
-    return static_cast<const UUIDBoxContents&>(*contents);
-  }
-
-
-  ~UUIDDBox() = default;
-
-
-  UUIDDBox* clone() const override {
-    return new UUIDDBox(*this);
-  }
-
-
-  void add_data(const std::vector<uint8_t>& data) {
-    static_cast<UUIDBoxContents&>(*contents).add_data(data);
-  }
+  std::ostream& write_to(std::ostream& stream) const final;
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__ */
+
+std::ostream& operator<<(
+    std::ostream& stream, const InMemoryDBox& d_box);
+
+
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__ */

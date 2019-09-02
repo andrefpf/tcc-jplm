@@ -31,42 +31,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBox.h
+/** \file     DefinedBoxes.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-09-02
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "UUIDDBox.h"
-
-
-class UUIDBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::UUIDBoxType);
-
-
-  UUIDBox(const UUIDBoxContents& contents)
-      : Box(TBox(id), UUIDDBox(contents)){};
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/Generic/CharArrayContents.h"
+#include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationContents.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
+#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
+#include "Lib/Common/Boxes/Generic/UndefinedContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
 
 
-  UUIDBox(const UUIDBox& other) : Box(TBox(id), *other.d_box) {
-  }
+using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; //this is from jpeg2000 part 1
+using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>; //this is from jpeg2000 part 1
+using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>; //this is from jpeg2000 part 1
+using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;  //this is from jpeg2000 part 1  
+using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
+using ImageHeaderBox = GenericBox<0x69686472, ImageHeaderContents>; //this is from jpeg2000 part 2 (extensions)  
+using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; //this is from jpeg2000 part 1
+using UUIDBox = GenericBox<0x75756964, UUIDContents>; //this is from jpeg2000 part 1
+using UUIDListBox = GenericBox<0x756C7374, UUIDListContents>; //this is from jpeg2000 part 1
+using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>; //this is from jpeg2000 part 1
 
-
-  ~UUIDBox() = default;
-
-
-  void add_data(const std::vector<uint8_t>& data) {
-    static_cast<UUIDDBox&>(*this->d_box).add_data(data);
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__ */

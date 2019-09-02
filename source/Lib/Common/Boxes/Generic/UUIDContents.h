@@ -31,36 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBoxContents.h
+/** \file     UUIDContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
 
 //UUID
 
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "UniversalUniqueIdentifier.h"
 
-class UUIDBoxContents : public InMemoryDBoxContents {
+class UUIDContents : public InMemoryDBox {
  protected:
   UniversalUniqueIdentifier id;
   std::vector<uint8_t> data;
 
  public:
-  UUIDBoxContents() = default;
+  UUIDContents() = default;
 
 
-  virtual UUIDBoxContents* clone() const override {
-    return new UUIDBoxContents(*this);
+  virtual UUIDContents* clone() const override {
+    return new UUIDContents(*this);
   }
 
 
-  virtual ~UUIDBoxContents() = default;
+  virtual ~UUIDContents() = default;
 
 
   virtual uint64_t size() const noexcept override {
@@ -68,20 +68,20 @@ class UUIDBoxContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other = dynamic_cast<const UUIDBoxContents&>(other);
+    const auto& cast_other = dynamic_cast<const UUIDContents&>(other);
     return *this == cast_other;
   }
 
 
-  bool operator==(const UUIDBoxContents& other) const {
+  bool operator==(const UUIDContents& other) const {
     return (this->id == other.id) && (this->data == other.data);
   }
 
 
-  bool operator!=(const UUIDBoxContents& other) const {
+  bool operator!=(const UUIDContents& other) const {
     return !this->operator==(other);
   }
 
@@ -93,4 +93,4 @@ class UUIDBoxContents : public InMemoryDBoxContents {
 };
 
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__ */

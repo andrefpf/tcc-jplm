@@ -31,36 +31,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageHeaderBox.h
+/** \file     InFileDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-08-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERBOX_H__
+#ifndef JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "ImageHeaderDBox.h"
+#include <iostream>
+#include <fstream> 
+#include "source/Lib/Common/Boxes/DBox.h"
 
+class InFileDBox : public DBox {
+ protected:
+  std::string filename;
+  std::ifstream file;
 
-class ImageHeaderBox : public Box {
  public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::ImageHeaderBoxType);
+  InFileDBox(const std::string& filename)
+      : DBox(), filename(filename),
+        file(filename.c_str(), std::ios::in | std::ios::out) {
+  }
+  
 
-
-  ImageHeaderBox(const ImageHeaderDBox& contents) : Box(TBox(id), contents) {
+  InFileDBox(const InFileDBox& other)
+      : DBox(), filename(other.filename),
+        file(other.filename.c_str(), std::ios::in | std::ios::out) {
   }
 
-
-  ImageHeaderBox(const ImageHeaderBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~ImageHeaderBox() = default;
+  virtual std::ostream& write_to(std::ostream& stream) const final;
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__ */

@@ -38,36 +38,40 @@
  *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__
-#define JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__
 
-#include "DBox.h"
-#include "EmptyDBoxContents.h"
+#ifndef JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
+#define JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
 
+#include "InMemoryDBox.h"
 
-class EmptyDBox : public DBox {
+class EmptyDBox : public InMemoryDBox {
  public:
-  EmptyDBox() : DBox(std::unique_ptr<DBoxContents>(new EmptyDBoxContents())) {
-  }
+  EmptyDBox() = default;
 
-
-  EmptyDBox(const EmptyDBox&) : DBox(std::unique_ptr<DBoxContents>(new EmptyDBoxContents())) {};
-
-
-  EmptyDBox(EmptyDBox&& other) : DBox(std::move(other)) {};
-
-
-  virtual const DBoxContents& get_ref_to_contents() const override {
-    return static_cast<const DBoxContents&>(*contents);
-  }
-  
 
   ~EmptyDBox() = default;
 
 
-  EmptyDBox* clone() const override {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    return std::vector<std::byte>();
+  }
+
+
+  virtual uint64_t size() const noexcept override {
+    return 0;
+  }
+
+
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    return true;
+  }
+
+
+  virtual EmptyDBox* clone() const override {
     return new EmptyDBox(*this);
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EMPTYDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__ */

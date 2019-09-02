@@ -43,10 +43,10 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
-#include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
+#include "Lib/Common/Boxes/SuperBoxDBox.h"
 
 
-class ContiguousCodestreamContents : public SuperBoxDBoxContents {
+class ContiguousCodestreamContents : public SuperBoxDBox {
   //not implemented yet...
  protected:
   std::unique_ptr<ContiguousCodestreamCode> code;
@@ -83,7 +83,7 @@ class ContiguousCodestreamContents : public SuperBoxDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =

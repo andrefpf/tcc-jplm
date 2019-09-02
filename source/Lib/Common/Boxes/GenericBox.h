@@ -31,38 +31,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BitsPerComponentBox.h
+/** \file     GenericBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-02
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
+#ifndef GENERICBOX_H__
+#define GENERICBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "CharArrayDBox.h"
+#include "Box.h"
+#include "TBox.h"
 
-class BitsPerComponentBox : public Box {
+template<t_box_id_type box_id, class T>
+class GenericBox : public Box {
  public:
-  constexpr static auto id =  static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::BitsPerComponentBoxType);
+  constexpr static auto id = box_id;
+  
 
-  BitsPerComponentBox(const std::vector<uint8_t>& bits_per_component_vector)
-      : Box(TBox(id),
-            CharArrayDBox(bits_per_component_vector)){};
-
-
-  BitsPerComponentBox(const BitsPerComponentBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
+  GenericBox(const T& contents) {
+  	
   }
 
 
-  ~BitsPerComponentBox() = default;
+  GenericBox(T&& contents);
+  GenericBox(const GenericBox& other);
+  GenericBox(GenericBox&& other);
+  virtual ~GenericBox() = default;
+
+
+  const T& get_ref_to_contents() const noexcept {
+    return this->d_box->get_ref_to_contents();
+  }
+
+
+  T& get_ref_to_contents() {
+    return this->d_box->get_ref_to_contents();
+  }
+
+
+  T* data() {
+    return static_cast<T*>(this->d_box.data());
+  }
+
+
+  const T* data() const {
+    return static_cast<T*>(this->d_box.data());
+  }
 };
 
 
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__ */
+#endif /* end of include guard: GENERICBOX_H__ */

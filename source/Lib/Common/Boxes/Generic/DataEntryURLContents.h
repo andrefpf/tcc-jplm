@@ -31,37 +31,76 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ChannelDefinitionBox.h
+/** \file     DataEntryURLContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
 
-#include "ChannelDefinitionDBox.h"
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include <tuple> //std::tie
+#include "Lib/Part1/Common/BinaryTools.h"
 
+class DataEntryURLContents : public InMemoryDBox {
+ protected:
+  uint8_t vers;  //version number
+  BinaryTools::uint24_t flag;  //flags
+  std::string loc;  //location (the url)
 
-class ChannelDefinitionBox : public Box {
  public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::ChannelDefinitionBoxType);
+  DataEntryURLContents() = default;
 
 
-  ChannelDefinitionBox(const ChannelDefinitionContents& contents)
-      : Box(TBox(id), ChannelDefinitionDBox(contents)){};
-
-
-  ChannelDefinitionBox(const ChannelDefinitionBox& other)
-      : Box(TBox(id), *other.d_box) {
+  virtual DataEntryURLContents* clone() const override {
+  	return new DataEntryURLContents(*this);
   }
 
 
-  ~ChannelDefinitionBox() = default;
+  ~DataEntryURLContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return 4 + loc.size() + 1;
+    //4 for ver and location + the size of the string + the null termination char
+  }
+
+
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const DataEntryURLContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  bool operator==(const DataEntryURLContents& other) const {
+    return std::tie(this->vers, this->flag, this->loc) ==
+           std::tie(other.vers, other.flag, other.loc);
+  }
+
+
+  bool operator!=(const DataEntryURLContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  uint8_t get_version_number() const noexcept {
+    return vers;
+  }
+
+
+  BinaryTools::uint24_t get_flag() const noexcept {
+    return flag;
+  }
+
+
+  const char* get_location() const noexcept {
+    return loc.c_str();
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */

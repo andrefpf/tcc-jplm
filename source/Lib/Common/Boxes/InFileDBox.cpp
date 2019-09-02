@@ -31,36 +31,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDInfoBox.h
+/** \file     InFileDBox.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+ *  \date     2019-08-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "UUIDInfoDBox.h"
+#include "InFileDBox.h"
 
 
-class UUIDInfoBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::UUIDInfoBoxType);
-
-
-  UUIDInfoBox(const UUIDInfoBoxContents& contents)
-      : Box(TBox(id), UUIDInfoDBox(contents)){};
-
-
-  UUIDInfoBox(const UUIDInfoBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~UUIDInfoBox() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__ */
+std::ostream& InFileDBox::write_to(std::ostream& stream) const {
+  stream << file.rdbuf();
+  return stream;
+}

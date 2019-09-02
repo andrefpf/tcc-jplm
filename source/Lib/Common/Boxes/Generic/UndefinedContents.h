@@ -31,63 +31,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UndefinedBox.h
+/** \file     UndefinedContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-07-25
  */
 
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
 
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
-class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
- public:
+
+class UndefinedContents : public InMemoryDBox {
  protected:
   std::vector<std::byte> byte_array;
 
  public:
-  UndefinedDBoxInMemoryContents(const std::vector<std::byte>& byte_array)
+  UndefinedContents(const std::vector<std::byte>& byte_array)
       : byte_array(byte_array) {
   }
 
 
-  UndefinedDBoxInMemoryContents(std::vector<std::byte>&& byte_array)
+  UndefinedContents(std::vector<std::byte>&& byte_array)
       : byte_array(std::move(byte_array)) {
   }
 
 
-  UndefinedDBoxInMemoryContents(const UndefinedDBoxInMemoryContents& other)
+  UndefinedContents(const UndefinedContents& other)
       : byte_array(other.byte_array) {
   }
 
 
-  UndefinedDBoxInMemoryContents(UndefinedDBoxInMemoryContents&& other)
+  UndefinedContents(UndefinedContents&& other)
       : byte_array(std::move(other.byte_array)) {
   }
 
 
-  UndefinedDBoxInMemoryContents() = default;
+  UndefinedContents() = default;
 
 
-  virtual UndefinedDBoxInMemoryContents* clone() const override {
-    return new UndefinedDBoxInMemoryContents(*this);
+  virtual UndefinedContents* clone() const override {
+    return new UndefinedContents(*this);
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other =
-        dynamic_cast<const UndefinedDBoxInMemoryContents&>(other);
+    const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
     return *this == cast_other;
   }
 
 
-  ~UndefinedDBoxInMemoryContents() = default;
+  ~UndefinedContents() = default;
 
 
   uint64_t size() const noexcept override {
@@ -95,12 +94,12 @@ class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
   }
 
 
-  bool operator==(const UndefinedDBoxInMemoryContents& other) const {
+  bool operator==(const UndefinedContents& other) const {
     return this->byte_array == other.byte_array;
   }
 
 
-  bool operator!=(const UndefinedDBoxInMemoryContents& other) const {
+  bool operator!=(const UndefinedContents& other) const {
     return !this->operator==(other);
   }
 
@@ -125,4 +124,5 @@ class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__ */
+
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__ */

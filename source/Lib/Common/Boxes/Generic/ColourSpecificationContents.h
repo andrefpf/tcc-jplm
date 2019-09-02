@@ -45,7 +45,7 @@
 #include <optional>
 #include <tuple>  //std::tie
 #include <variant>
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part1/Common/BinaryTools.h"
 
 class ICCProfile {
@@ -69,7 +69,7 @@ enum class EnumCS : enum_cs_field_type {
   // other values are reserved for other ISO uses
 };
 
-class ColourSpecificationContents : public InMemoryDBoxContents {
+class ColourSpecificationContents : public InMemoryDBox {
  protected:
   // Comments from ISO/ICE 15444-1:2000(E) pg 161
   uint8_t meth;  // specification method, shall be 1 or 2
@@ -176,7 +176,7 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =

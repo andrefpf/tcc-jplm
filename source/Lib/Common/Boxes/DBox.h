@@ -41,64 +41,19 @@
 #ifndef JPLM_LIB_COMMON_GENERIC_DBOX_H__
 #define JPLM_LIB_COMMON_GENERIC_DBOX_H__
 
-#include <any>
-#include <cstdint>
-#include <iostream>
-#include <memory>  // unique_ptr
-#include "DBoxContents.h"
-
+#include <cstddef>
+#include <stdexcept>
+#include <vector>
 
 class DBox {
- protected:
-  std::unique_ptr<DBoxContents> contents;
-
  public:
   DBox() = default;
+  ~DBox() = default;
 
-
-  DBox(const std::unique_ptr<DBoxContents>& contents)
-      : contents(std::unique_ptr<DBoxContents>(contents->clone())) {
-  }
-
-
-  DBox(std::unique_ptr<DBoxContents>&& contents)
-      : contents(std::move(contents)) {
-  }
-
-
-  DBox(DBox&& other) : contents(std::move(other.contents)) {
-  }
-
-
-  virtual ~DBox() = default;
-
-
-  virtual uint64_t size() {
-    return contents->size();
-  }
-
-
-  virtual DBox* clone() const = 0;
-
-
-  virtual const DBoxContents& get_ref_to_contents() const {
-    std::cout << "DBox get_ref_to_contents" << std::endl;
-    return *contents;
-  }
-
-
-  bool is_equal(const DBox& other) const {
-    return this->get_ref_to_contents().is_equal(other.get_ref_to_contents());
-  }
-
-
-  bool operator==(const DBox& other) const;
-
-
-  bool operator!=(const DBox& other) const;
-
-
-  friend std::ostream& operator<<(std::ostream& os, const DBox& d_box);
+  virtual uint64_t size() const noexcept = 0;
+  virtual DBox* clone() const = 0;  ///! \todo implement
+  virtual bool is_equal(const DBox& other) const = 0;
+  virtual std::ostream& write_to(std::ostream& stream) const = 0;
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_DBOX_H__ */

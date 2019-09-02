@@ -31,41 +31,74 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     InMemoryDBoxContents.h
+/** \file     UUIDInfoContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-05
+ *  \date     2019-08-21
  */
 
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
 
-#ifndef JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
-#define JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
+
+// #include "DataEntryURLBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "UniversalUniqueIdentifier.h"
 
 
-#include <iostream>
-#include "source/Lib/Common/Boxes/DBoxContents.h"
+class UUIDInfoContents : public InMemoryDBox {
+ protected:
+  UUIDListBox u_list;
+  DataEntryURLBox de;
 
-class InMemoryDBoxContents : public DBoxContents {
  public:
-  InMemoryDBoxContents() = default;
+  UUIDInfoContents() = default;
 
-
-  virtual ~InMemoryDBoxContents() = default;
-
-
-  virtual std::vector<std::byte> get_bytes() const {
-    throw std::runtime_error(
-        "Not implemented yet (get_bytes).");
+  // implemented copy constructors in UUIDListBox, DataEntryURLBox
+  UUIDInfoContents(const UUIDInfoContents& other)
+      : u_list(other.u_list), de(other.de) {
   }
 
 
-  std::ostream& write_to(std::ostream& stream) const final;
+  UUIDInfoContents(UUIDInfoContents&& other)
+      : u_list(std::move(other.u_list)), de(std::move(other.de)) {
+  }
+
+
+  virtual UUIDInfoContents* clone() const override {
+    return new UUIDInfoContents(*this);
+  }
+
+
+  ~UUIDInfoContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return u_list.size() + de.size();
+  }
+
+
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UUIDInfoContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  bool operator==(const UUIDInfoContents& other) const {
+    return (this->u_list == other.u_list) && (this->de == other.de);
+  }
+
+
+  bool operator!=(const UUIDInfoContents& other) const {
+    return !this->operator==(other);
+  }
 };
 
 
-std::ostream& operator<<(
-    std::ostream& stream, const InMemoryDBoxContents& d_box);
 
 
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__ */

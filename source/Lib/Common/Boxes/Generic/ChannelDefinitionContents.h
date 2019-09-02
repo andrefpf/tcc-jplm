@@ -41,11 +41,11 @@
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__
 
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "ChannelDescription.h"
 
 
-class ChannelDefinitionContents : public InMemoryDBoxContents {
+class ChannelDefinitionContents : public InMemoryDBox {
  protected:
   std::vector<ChannelDescription> channel_descriptions;
 
@@ -62,7 +62,7 @@ class ChannelDefinitionContents : public InMemoryDBoxContents {
   ~ChannelDefinitionContents() = default;
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
   	if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const ChannelDefinitionContents&>(other);
