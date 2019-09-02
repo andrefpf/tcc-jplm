@@ -82,13 +82,13 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
                 box_parser_helper.get_remaining_stream())
           : nullptr;
 
-  auto light_field_header_contents =
+  auto jpeg_pleno_light_field_header_contents =
       std::make_unique<JpegPlenoLightFieldHeaderContents>(
           std::move(light_field_header_box), std::move(bits_per_component_box),
           std::move(colr), std::move(channel_definition_box));
 
   auto jpeg_pleno_light_field_header_box =
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
-          std::move(light_field_header_contents));
+          std::move(jpeg_pleno_light_field_header_contents));
   return jpeg_pleno_light_field_header_box;
 }

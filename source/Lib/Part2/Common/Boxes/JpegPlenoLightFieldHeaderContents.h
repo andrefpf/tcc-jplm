@@ -44,13 +44,15 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
-#include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
-#include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
-#include "Lib/Common/Boxes/SuperBoxDBoxContents.h"
-#include "LightFieldHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+// #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
+// #include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
+#include "Lib/Common/Boxes/SuperBoxDBox.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
+// #include "LightFieldHeaderBox.h"
 
-class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
+class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<LightFieldHeaderBox> lhdr;  //light_field_header_box
   std::unique_ptr<BitsPerComponentBox>
@@ -185,7 +187,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
@@ -229,5 +231,8 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBoxContents {
     return stream;
   }
 };
+
+
+using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERCONTENTS_H__ */

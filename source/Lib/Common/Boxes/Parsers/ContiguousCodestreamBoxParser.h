@@ -42,7 +42,7 @@
 #define JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
 
 #include <memory>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
 #include "Lib/Part1/Common/DefinedBoxes.h"

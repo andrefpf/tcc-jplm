@@ -45,6 +45,7 @@ std::unique_ptr<Box> JPLMBoxParser::ProfileAndLevelBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   auto ppih = box_parser_helper.get_next<uint16_t>();
   auto plev = box_parser_helper.get_next<uint16_t>();
-  auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(ppih, plev);
+  auto profile_and_level_box =
+      std::make_unique<ProfileAndLevelBox>(ProfileAndLevelContents(ppih, plev));
   return profile_and_level_box;
 }

@@ -50,11 +50,20 @@ class GenericBox : public Box {
   constexpr static auto id = box_id;
 
 
+  GenericBox() : Box(TBox(id), T()) {
+  }
+
+
   GenericBox(const T& contents) : Box(TBox(id), contents) {
   }
 
 
   GenericBox(T&& contents) : Box(TBox(id), std::move(contents)) {
+  }
+
+
+  GenericBox(std::unique_ptr<T>&& contents)
+      : Box(TBox(id), std::move(contents)) {
   }
 
 
@@ -68,27 +77,26 @@ class GenericBox : public Box {
 
 
   const T& get_ref_to_contents() const noexcept {
-    return this->d_box->get_ref_to_contents();
+    return static_cast<const T&>(*(this->d_box));
   }
 
 
   T& get_ref_to_contents() {
-    return this->d_box->get_ref_to_contents();
+    return static_cast<T&>(*(this->d_box));
   }
 
 
   T* data() {
-    return static_cast<T*>(this->d_box.data());
+    return static_cast<T*>(this->d_box.get());
   }
 
 
   const T* data() const {
-    return static_cast<T*>(this->d_box.data());
+    return static_cast<T*>(this->d_box.get());
   }
 
 
-  friend void swap(
-      T& box_a, T& box_b) {
+  friend void swap(T& box_a, T& box_b) {
     using std::swap;
 
     //swap(box_a.t_box, box_b.t_box); unecessary, both will have the same data
@@ -105,7 +113,6 @@ class GenericBox : public Box {
 
     return *this;
   }
-
 };
 
 

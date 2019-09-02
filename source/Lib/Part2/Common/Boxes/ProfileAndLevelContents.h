@@ -43,10 +43,10 @@
 
 
 #include <tuple>  //std::tie
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "source/Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part1/Common/BinaryTools.h"
 
-class ProfileAndLevelContents : public InMemoryDBoxContents {
+class ProfileAndLevelContents : public InMemoryDBox {
  protected:
   uint16_t ppih;  // profile of the codestream
   uint16_t plev;  // level of the codestream
@@ -89,7 +89,7 @@ class ProfileAndLevelContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
@@ -117,5 +117,9 @@ class ProfileAndLevelContents : public InMemoryDBoxContents {
     return bytes;
   }
 };
+
+
+using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
+
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELCONTENTS_H__ */

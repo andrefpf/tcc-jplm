@@ -31,27 +31,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 /** \file     DefinedBoxes.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2019-07-24
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
+#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
 
+#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailContents.h"
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "Lib/Part2/Common/Boxes/CalibrationContents.h"
-#include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
-
-using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
 
 
-using JpegPlenoLightFieldBox = JpegPlenoCodestreamBox<JpegPlenoCodestreamBoxTypes{0x6a706c66}, JpegPlenoLightFieldContents>;
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__ */
+using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
+
+
+
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */

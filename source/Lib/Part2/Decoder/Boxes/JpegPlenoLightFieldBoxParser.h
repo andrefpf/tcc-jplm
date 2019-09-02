@@ -44,10 +44,9 @@
 
 
 #include <memory>
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "source/Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "source/Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
 
 namespace JPLMBoxParser {
 class JpegPlenoLightFieldBoxParser {

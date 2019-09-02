@@ -50,19 +50,26 @@
 #include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/Generic/UndefinedContents.h"
 #include "Lib/Common/Boxes/Generic/UUIDContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 #include "Lib/Common/Boxes/Generic/UUIDListContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 
 
 using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; //this is from jpeg2000 part 1
+
 using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>; //this is from jpeg2000 part 1
+
 using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>; //this is from jpeg2000 part 1
+
 using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;  //this is from jpeg2000 part 1  
-using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
+
 using ImageHeaderBox = GenericBox<0x69686472, ImageHeaderContents>; //this is from jpeg2000 part 2 (extensions)  
+
 using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; //this is from jpeg2000 part 1
+
 using UUIDBox = GenericBox<0x75756964, UUIDContents>; //this is from jpeg2000 part 1
-using UUIDListBox = GenericBox<0x756C7374, UUIDListContents>; //this is from jpeg2000 part 1
-using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>; //this is from jpeg2000 part 1
+
+
+
+
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__ */

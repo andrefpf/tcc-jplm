@@ -103,4 +103,6 @@ class DataEntryURLContents : public InMemoryDBox {
   }
 };
 
+using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
+
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */

@@ -45,6 +45,7 @@
 #include <vector>
 #include <cstddef>  //std::byte
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
 class JpegPlenoSignatureContents : public InMemoryDBox {
  protected:
@@ -94,5 +95,7 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
   }
 
 };
+
+using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
 
 #endif /* end of include guard: JPEGPLENOSIGNATURECONTENTS_H__ */

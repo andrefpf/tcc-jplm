@@ -45,12 +45,14 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
-#include "JpegPlenoLightFieldHeaderBox.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "ProfileAndLevelBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+// #include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
+// #include "JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+// #include "ProfileAndLevelBox.h"
 
-class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
+class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
   //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
@@ -128,7 +130,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =

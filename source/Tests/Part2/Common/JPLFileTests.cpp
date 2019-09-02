@@ -44,7 +44,7 @@
 #include <iostream>
 #include <string>
 #include "Lib/Part1/Common/JPLFile.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 

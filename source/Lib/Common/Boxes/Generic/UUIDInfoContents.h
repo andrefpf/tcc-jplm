@@ -43,10 +43,9 @@
 
 
 // #include "DataEntryURLBox.h"
-#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "UniversalUniqueIdentifier.h"
-
 
 class UUIDInfoContents : public InMemoryDBox {
  protected:
@@ -99,6 +98,6 @@ class UUIDInfoContents : public InMemoryDBox {
 };
 
 
-
+using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>; //this is from jpeg2000 part 1
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__ */

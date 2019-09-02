@@ -42,9 +42,8 @@
 #define JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__
 
 #include <memory>
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 
 namespace JPLMBoxParser {

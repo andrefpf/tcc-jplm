@@ -25,29 +25,32 @@
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * INTERRUPTION) HOWEVER C
+
+
+AUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     InMemoryDBoxContents.cpp
+/** \file     InMemoryDBox.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-05
  */
 
-#include "InMemoryDBoxContents.h"
+#include "InMemoryDBox.h"
 
 
-std::ostream& InMemoryDBoxContents::write_to(std::ostream& stream) const {
+std::ostream& InMemoryDBox::write_to(std::ostream& stream) const {
   auto bytes = this->get_bytes();
   stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
   return stream;
 }
 
 std::ostream& operator<<(
-    std::ostream& stream, const InMemoryDBoxContents& d_box_contents) {
+    std::ostream& stream, const InMemoryDBox& d_box_contents) {
   return d_box_contents.write_to(stream);
 }
