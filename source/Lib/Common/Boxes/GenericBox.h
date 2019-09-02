@@ -48,16 +48,22 @@ template<t_box_id_type box_id, class T>
 class GenericBox : public Box {
  public:
   constexpr static auto id = box_id;
-  
 
-  GenericBox(const T& contents) {
-  	
+
+  GenericBox(const T& contents) : Box(TBox(id), contents) {
   }
 
 
-  GenericBox(T&& contents);
+  GenericBox(T&& contents) : Box(TBox(id), std::move(contents)) {
+  }
+
+
   GenericBox(const GenericBox& other);
+
+
   GenericBox(GenericBox&& other);
+
+
   virtual ~GenericBox() = default;
 
 
@@ -79,6 +85,27 @@ class GenericBox : public Box {
   const T* data() const {
     return static_cast<T*>(this->d_box.data());
   }
+
+
+  friend void swap(
+      T& box_a, T& box_b) {
+    using std::swap;
+
+    //swap(box_a.t_box, box_b.t_box); unecessary, both will have the same data
+    swap(box_a.d_box, box_b.d_box);
+  }
+
+
+  T& operator=(const T& other) {
+    if (&other == this)
+      return *this;
+
+    T temp{other};
+    swap(*this, temp);
+
+    return *this;
+  }
+
 };
 
 

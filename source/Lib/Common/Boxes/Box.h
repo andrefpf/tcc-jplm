@@ -101,9 +101,6 @@ class Box {
   DBox& get_ref_to_dbox() const noexcept;
 
 
-  const DBoxContents& get_ref_to_dbox_contents() const noexcept;
-
-
   bool has_same_type(const Box& other) const noexcept {
     if (other.t_box == this->t_box)
       return true;
@@ -143,6 +140,9 @@ class Box {
   bool operator!=(const Box& other) const {
     return !this->operator==(other);
   }
+
+  friend std::ostream& operator<<(std::ostream& stream, const Box& Box);
+
 };
 
 

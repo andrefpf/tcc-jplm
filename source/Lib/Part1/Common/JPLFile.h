@@ -42,14 +42,12 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPLFILE_H__
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
-#include "source/Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDInfoBox.h"
-#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
+// #include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+// #include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
+// #include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 
 
 class JPLFile {

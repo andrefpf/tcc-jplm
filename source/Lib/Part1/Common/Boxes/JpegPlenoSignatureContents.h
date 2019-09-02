@@ -31,64 +31,68 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoThumbnailDBox.h
+/** \file     JpegPlenoSignatureContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-09-02
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__
+#ifndef JPEGPLENOSIGNATURECONTENTS_H__
+#define JPEGPLENOSIGNATURECONTENTS_H__
 
-#include "JpegPlenoThumbnailContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include <array>
+#include <vector>
+#include <cstddef>  //std::byte
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
+class JpegPlenoSignatureContents : public InMemoryDBox {
+ protected:
+  const std::array<std::byte, 4> signature = {
+      std::byte{0x0d}, std::byte{0x0a}, std::byte{0x87}, std::byte{0x0a}};
 
-class JpegPlenoThumbnailDBox : public DBox {
  public:
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailContents& contents)
-      : DBox(std::make_unique<JpegPlenoThumbnailContents>(contents)) {
+  JpegPlenoSignatureContents() = default;
+  ~JpegPlenoSignatureContents() = default;
+
+
+  virtual JpegPlenoSignatureContents* clone() const override {
+    return new JpegPlenoSignatureContents(*this);
+  }
+  virtual uint64_t size() const noexcept override {
+    return 4;
   }
 
 
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailDBox& other)
-      : DBox(std::make_unique<JpegPlenoThumbnailContents>(
-            other.get_ref_to_contents())) {
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other =
+        dynamic_cast<const JpegPlenoSignatureContents&>(other);
+    return *this == cast_other;
   }
 
 
-  virtual const JpegPlenoThumbnailContents& get_ref_to_contents()
-      const override {
-    return static_cast<const JpegPlenoThumbnailContents&>(*contents);
+  bool operator==(const JpegPlenoSignatureContents& other) const {
+    return (this->signature == other.signature);
   }
 
 
-  ~JpegPlenoThumbnailDBox() = default;
-
-
-  JpegPlenoThumbnailDBox* clone() const override {
-    return new JpegPlenoThumbnailDBox(*this);
+  bool operator!=(const JpegPlenoSignatureContents& other) const {
+    return !this->operator==(other);
   }
 
 
-  friend void swap(JpegPlenoThumbnailDBox& thumbnail_a,
-      JpegPlenoThumbnailDBox& thumbnail_b) {
-    using std::swap;
-
-    swap(thumbnail_a.contents, thumbnail_b.contents);
+  bool is_valid(const std::vector<std::byte>& bytes) {
+  	 if (bytes.size() == 4) {
+      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
+          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
+        return true;
+      }
+    }
+    return false;
   }
 
-
-  JpegPlenoThumbnailDBox& operator=(const JpegPlenoThumbnailDBox& other) {
-    if (&other == this)
-      return *this;
-
-    JpegPlenoThumbnailDBox temp{other};
-    swap(*this, temp);
-
-    return *this;
-  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__ */
+#endif /* end of include guard: JPEGPLENOSIGNATURECONTENTS_H__ */

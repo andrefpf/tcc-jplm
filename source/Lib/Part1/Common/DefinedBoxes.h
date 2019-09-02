@@ -32,7 +32,7 @@
  */
 
 
-/** \file     DefinedBoxesTypes.h
+/** \file     DefinedBoxes.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -42,23 +42,11 @@
 #ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
 #define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
-#include <type_traits>
+#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-
-
-
-typedef std::underlying_type<DefinedBoxesTypes>::type DefinedBoxesTypesUnderlyingType;
-
-
-namespace DefinedBoxes {
-
-  template<DefinedBoxesTypes type>
-  constexpr DefinedBoxesTypesUnderlyingType get_value() {
-    return static_cast<DefinedBoxesTypesUnderlyingType>(type);
-  }
-
-}
-
+using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
+using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */

@@ -31,44 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ProfileAndLevelDBox.h
+/** \file     DefinedBoxes.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-22
+ *  \date     2019-09-02
  */
 
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__
+#include "Lib/Common/Boxes/GenericBox.h"
 
-#include "ProfileAndLevelContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
+using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
+using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
+using LightFieldHeaderBox = GenericBox<0x6c686472, LightFieldHeaderContents>;
+using JpegPlenoLightFieldBox = GenericBox<0x6a706c66, JpegPlenoLightFieldContents>;
 
-class ProfileAndLevelDBox : public DBox {
- public:
-  ProfileAndLevelDBox(const ProfileAndLevelContents& contents)
-      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(contents))) {
-  }
-
-
-  ProfileAndLevelDBox(const ProfileAndLevelDBox& other)
-      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(
-                  other.get_ref_to_contents()))) {
-  }
-
-
-  virtual ~ProfileAndLevelDBox() = default;
-
-
-  virtual const ProfileAndLevelContents& get_ref_to_contents() const override {
-    return static_cast<const ProfileAndLevelContents&>(*contents);
-  }
-
-
-  ProfileAndLevelDBox* clone() const override {
-    return new ProfileAndLevelDBox(*this);
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__ */

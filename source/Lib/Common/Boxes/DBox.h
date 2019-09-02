@@ -54,6 +54,16 @@ class DBox {
   virtual DBox* clone() const = 0;  ///! \todo implement
   virtual bool is_equal(const DBox& other) const = 0;
   virtual std::ostream& write_to(std::ostream& stream) const = 0;
+
+
+  bool operator==(const DBox& other) {
+  	return this->is_equal(other);
+  }
+
+
+  bool operator!=(const DBox& other) {
+  	return !this->operator==(other);
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_DBOX_H__ */

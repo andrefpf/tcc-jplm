@@ -43,14 +43,10 @@
 
 #include <algorithm>
 #include <numeric>
-#include "source/Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
-#include "source/Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
-#include "source/Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
-#include "source/Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "source/Lib/Common/Boxes/Generic/ImageHeaderBox.h"
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
-class JpegPlenoThumbnailContents : public InMemoryDBoxContents {
+class JpegPlenoThumbnailContents : public InMemoryDBox {
  protected:
   ImageHeaderBox ihdr;  //image header box
   BitsPerComponentBox bpcc;
@@ -91,7 +87,7 @@ class JpegPlenoThumbnailContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
