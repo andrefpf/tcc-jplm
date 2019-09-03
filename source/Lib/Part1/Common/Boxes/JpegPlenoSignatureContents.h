@@ -54,12 +54,16 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
 
  public:
   JpegPlenoSignatureContents() = default;
+  
+
   ~JpegPlenoSignatureContents() = default;
 
 
   virtual JpegPlenoSignatureContents* clone() const override {
     return new JpegPlenoSignatureContents(*this);
   }
+
+
   virtual uint64_t size() const noexcept override {
     return 4;
   }
@@ -97,6 +101,11 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
 
   const auto& get_ref_to_signature() const noexcept {
     return signature;
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const override {
+    return std::vector<std::byte>(signature.begin(), signature.end());
   }
 
 };
