@@ -105,21 +105,29 @@ class GenericBox : public BaseBox {
   }
 
 
-  friend void swap(T& box_a, T& box_b) {
+  friend void swap(GenericBox& box_a, GenericBox& box_b) {
     using std::swap;
-
-    //swap(box_a.t_box, box_b.t_box); unecessary, both will have the same data
+    swap(box_a.t_box, box_b.t_box); //! \todo check if this is necessary
     swap(box_a.d_box, box_b.d_box);
   }
 
 
-  T& operator=(const T& other) {
+  GenericBox& operator=(const GenericBox& other) {
     if (&other == this)
       return *this;
 
-    T temp{other};
+    GenericBox temp{other};
     swap(*this, temp);
 
+    return *this;
+  }
+
+
+  GenericBox& operator=(GenericBox&& other) {
+    if(*this != other) {
+      this->t_box = other.t_box;
+      this->d_box = std::move(other.d_box);
+    }
     return *this;
   }
 };
