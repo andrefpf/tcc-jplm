@@ -141,6 +141,18 @@ class Box {
   }
 
 
+  virtual const DBox& get_ref_to_contents() const noexcept = 0;
+
+
+  virtual DBox& get_ref_to_contents() = 0;
+
+
+  virtual DBox* data() = 0;
+
+
+  virtual const DBox* data() const = 0;
+
+
   bool operator==(const Box& other) const {
     return this->is_equal(other);
   }

@@ -80,22 +80,27 @@ class GenericBox : public BaseBox {
   virtual ~GenericBox() = default;
 
 
-  const T& get_ref_to_contents() const noexcept {
+  /**
+   * \brief      Gets a constant reference to the contents of this box.
+   *
+   * \return     The constant reference to contents (of the class type T).
+   */
+  const T& get_ref_to_contents() const noexcept override {
     return static_cast<const T&>(*(this->d_box));
   }
 
 
-  T& get_ref_to_contents() {
+  T& get_ref_to_contents() override {
     return static_cast<T&>(*(this->d_box));
   }
 
 
-  T* data() {
+  T* data() override {
     return static_cast<T*>(this->d_box.get());
   }
 
 
-  const T* data() const {
+  const T* data() const override {
     return static_cast<T*>(this->d_box.get());
   }
 
