@@ -44,6 +44,7 @@
 
 #include <tuple>  //std::tie
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Part1/Common/BinaryTools.h"
 
 class ProfileAndLevelContents : public InMemoryDBox {

@@ -43,7 +43,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 
@@ -60,7 +60,7 @@ TEST(BasicTest, Initialization) {
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
           jpeg_pleno_light_field_header_contents);
   auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
-      11, 12);  // not sure which values to use...
+      ProfileAndLevelContents(11, 12));  // not sure which values to use...
 
 
   auto jpeg_pleno_light_field_contents =

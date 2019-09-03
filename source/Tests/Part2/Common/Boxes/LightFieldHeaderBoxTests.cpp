@@ -40,7 +40,7 @@
 
 
 #include <iostream>
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 TEST(BasicTests, NoThrow) {

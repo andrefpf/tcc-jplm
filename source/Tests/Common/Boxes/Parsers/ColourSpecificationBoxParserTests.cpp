@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-28 11:12:30
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-28 14:36:50
+* @Last Modified time: 2019-09-03 14:33:21
 */
 
 #include <fstream>
@@ -40,7 +40,7 @@ TEST(BasicTest, MethodIs1) {
       std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(colour_specification_box_contents.get_specification_method(), 1);
 }
@@ -56,7 +56,7 @@ TEST(BasicTest, PrecedenceIs0) {
       std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(colour_specification_box_contents.get_precedence(), 0);
 }
@@ -72,7 +72,7 @@ TEST(BasicTest, ApproximationIs0) {
       std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(
       colour_specification_box_contents.get_colour_space_approximation(), 0);
@@ -89,7 +89,7 @@ TEST(BasicTest, EnumCSIsAvailable) {
       std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   //get_colour_space_from_enum returns an optional
   EXPECT_TRUE(colour_specification_box_contents.get_colour_space_from_enum());
@@ -106,7 +106,7 @@ TEST(BasicTest, EnumCSIssRGB) {
       std::move(managed_stream));
 
   const auto& colour_specification_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   //get_colour_space_from_enum returns an optional
   EXPECT_EQ(*(colour_specification_box_contents.get_colour_space_from_enum()),

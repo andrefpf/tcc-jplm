@@ -41,7 +41,7 @@
 
 #include <iostream>
 #include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
+#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 
@@ -57,43 +57,38 @@ struct FileTypeBoxContents : public testing::Test {
   uint32_t minor_version=25;
   std::unique_ptr<FileTypeBox> file_type_box;
   FileTypeBoxContents() {
-    // view.get_im
     file_type_box = std::make_unique<FileTypeBox>(FileTypeContents(brand, minor_version, {0x0004}));
-  }
-
-  const FileTypeContents& get_content_of_file() {
-    return dynamic_cast<const FileTypeContents&>(file_type_box->get_ref_to_dbox_contents());
   }
 };
 
 
 TEST_F(FileTypeBoxContents, HoldsInitializedBrand) {
-  EXPECT_EQ(get_content_of_file().get_brand(), brand);
+  EXPECT_EQ(file_type_box->get_ref_to_contents().get_brand(), brand);
 }
 
 
 TEST_F(FileTypeBoxContents, HoldsInitializedMinorVersion) {
-  EXPECT_EQ(get_content_of_file().get_minor_version(), minor_version);
+  EXPECT_EQ(file_type_box->get_ref_to_contents().get_minor_version(), minor_version);
 }
 
 
 TEST_F(FileTypeBoxContents, HasCorrectSizeAfterCast) {
-  EXPECT_EQ(get_content_of_file().size(), 4+4+4);
+  EXPECT_EQ(file_type_box->get_ref_to_contents().size(), 4+4+4);
 }
 
 
 TEST_F(FileTypeBoxContents, CompatibilityCheckFailsForStdNotDedinedInCompatibilityList) {
-  EXPECT_FALSE(get_content_of_file().is_the_file_compatible_with(0x0002));
+  EXPECT_FALSE(file_type_box->get_ref_to_contents().is_the_file_compatible_with(0x0002));
 }
 
 
 TEST_F(FileTypeBoxContents, CompatibilityCheckSucceedsForStdDedinedInCompatibilityList) {
-  EXPECT_TRUE(get_content_of_file().is_the_file_compatible_with(0x0004));
+  EXPECT_TRUE(file_type_box->get_ref_to_contents().is_the_file_compatible_with(0x0004));
 }
 
 
 TEST_F(FileTypeBoxContents, FileTypeBoxHasCorrectSize) {
-  EXPECT_EQ(file_type_box->size(), get_content_of_file().size()+4+4);
+  EXPECT_EQ(file_type_box->size(), file_type_box->get_ref_to_contents().size()+4+4);
 }
 
 

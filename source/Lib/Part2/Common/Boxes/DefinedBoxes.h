@@ -52,6 +52,6 @@
 using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
 
 
-using JpegPlenoLightFieldBox = JpegPlenoCodestreamBox<JpegPlenoCodestreamBoxTypes{0x6a706c66}, JpegPlenoLightFieldContents>;
+using JpegPlenoLightFieldBox = GenericBox<0x6a706c66, JpegPlenoLightFieldContents, JpegPlenoCodestreamBox>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__ */

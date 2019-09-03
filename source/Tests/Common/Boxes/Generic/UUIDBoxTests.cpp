@@ -39,34 +39,34 @@
  */
 
 #include <iostream>
-#include "Lib/Common/Boxes/Generic/UUIDBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 
 TEST(UUIDBoxBasic, Initialization) {
-  auto contents = UUIDBoxContents();
+  auto contents = UUIDContents();
   EXPECT_NO_THROW(auto box = UUIDBox(contents));
 }
 
 
 TEST(UUIDBoxBasic, HasTheCorrectSizeForOneUUIDWithNoData) {
-  auto uuid_box = UUIDBox(UUIDBoxContents());
+  auto uuid_box = UUIDBox(UUIDContents());
   EXPECT_EQ(uuid_box.size(), 8+UniversalUniqueIdentifier().size());
 }
 
 
 TEST(UUIDBoxBasic, HasTheCorrectSizeForAddedData) {
-  auto uuid_box = UUIDBox(UUIDBoxContents());
+  auto uuid_box = UUIDBox(UUIDContents());
   auto size_before_add = uuid_box.size();
-  uuid_box.add_data({1,2});
+  uuid_box.get_ref_to_contents().add_data({1,2});
   EXPECT_EQ(uuid_box.size(), size_before_add+2);
 }
 
 
 TEST(UUIDBoxBasic, HasTheCorrectSizeForAddedData25) {
-  auto uuid_box = UUIDBox(UUIDBoxContents());
+  auto uuid_box = UUIDBox(UUIDContents());
   auto size_before_add = uuid_box.size();
-  uuid_box.add_data(std::vector<uint8_t>(25));
+  uuid_box.get_ref_to_contents().add_data(std::vector<uint8_t>(25));
   EXPECT_EQ(uuid_box.size(), size_before_add+25);
 }
 

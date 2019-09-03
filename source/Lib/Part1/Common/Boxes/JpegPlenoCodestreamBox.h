@@ -49,19 +49,34 @@
 
 #include "Lib/Common/Boxes/GenericBox.h"
 
-enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
-  LightField = 0x6a706c66,
-  PointCloud = 0x6a707063,
-  Hologram = 0x6a70686f,
-};
+// enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
+//   LightField = 0x6a706c66,
+//   PointCloud = 0x6a707063,
+//   Hologram = 0x6a70686f,
+// };
 
-template<JpegPlenoCodestreamBoxTypes box_id, class T>
-class JpegPlenoCodestreamBox
-    : public GenericBox<static_cast<t_box_id_type>(box_id), T> {
+
+class JpegPlenoCodestreamBox : public Box {
  public:
-  using GenericBox<static_cast<t_box_id_type>(box_id), T>::GenericBox;
+  JpegPlenoCodestreamBox(TBox t_box, const DBox& d_box) : Box(t_box, d_box) {
+  }
+
+
+  JpegPlenoCodestreamBox(TBox t_box, std::unique_ptr<DBox>&& d_box)
+      : Box(t_box, std::move(d_box)) {
+  }
 
   virtual ~JpegPlenoCodestreamBox() = default;
 };
+
+
+// template<JpegPlenoCodestreamBoxTypes box_id, class T>
+// class JpegPlenoCodestreamBox
+//     : public GenericBox<static_cast<t_box_id_type>(box_id), T> {
+//  public:
+//   using GenericBox<static_cast<t_box_id_type>(box_id), T>::GenericBox;
+
+//   virtual ~JpegPlenoCodestreamBox() = default;
+// };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__ */

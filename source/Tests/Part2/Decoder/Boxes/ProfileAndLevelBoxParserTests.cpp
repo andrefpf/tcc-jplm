@@ -73,7 +73,7 @@ TEST(BasicTest, ContainsCorrectProfile) {
   auto box = BoxParserRegistry::get_instance().parse<ProfileAndLevelBox>(
       std::move(managed_stream));
 
-  const auto& profile_and_level_contents = box->get_const_ref_to_contents();
+  const auto& profile_and_level_contents = box->get_ref_to_contents();
 
   EXPECT_EQ(profile_and_level_contents.get_ppih(), 42);
 }
@@ -88,7 +88,7 @@ TEST(BasicTest, ContainsCorrectLevel) {
   auto box = BoxParserRegistry::get_instance().parse<ProfileAndLevelBox>(
       std::move(managed_stream));
 
-  const auto& profile_and_level_contents = box->get_const_ref_to_contents();
+  const auto& profile_and_level_contents = box->get_ref_to_contents();
 
   EXPECT_EQ(profile_and_level_contents.get_plev(), 24);
 }

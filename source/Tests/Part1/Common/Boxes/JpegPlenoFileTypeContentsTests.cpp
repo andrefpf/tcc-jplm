@@ -41,7 +41,7 @@
 
 #include <iostream>
 #include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
+#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 

@@ -146,7 +146,7 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
       }
       jpeg_pleno_light_field_boxes.clear();
       jpeg_pleno_light_field_boxes.shrink_to_fit();
-    }    
+    }
   }
 
   //! \todo Implement for Point Cloud Boxes...
@@ -164,8 +164,6 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
     //   //! \todo Implement for Point Cloud Boxes...
     // }
   }
-
-
 
 
   void populate_codestreams_list() {
@@ -186,7 +184,8 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
   JPLFileFromStream(const std::string& filename)
       : JPLFileParser(filename), JPLFile(JPLFileParser::get_signature_box(),
                                      JPLFileParser::get_file_type_box()) {
-    if (!this->file_type_box->is_compatible_with<JpegPlenoSignatureBox>()) {
+    if (!this->file_type_box->get_ref_to_contents().is_the_file_compatible_with(
+            JpegPlenoSignatureBox::id)) {
       throw JPLFileFromStreamExceptions::
           JpegPlenoNotInCompatibilityListException();
     }

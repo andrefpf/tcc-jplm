@@ -2,10 +2,10 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-12 12:47:01
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-22 17:33:21
+* @Last Modified time: 2019-09-03 14:32:38
 */
 
-#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
 #include "gtest/gtest.h"
 
 

@@ -44,33 +44,35 @@
 #include "Box.h"
 #include "TBox.h"
 
-template<t_box_id_type box_id, class T>
-class GenericBox : public Box {
+template<t_box_id_type box_id, class T, class BaseBox = Box>
+class GenericBox : public BaseBox {
  public:
   constexpr static auto id = box_id;
 
 
-  GenericBox() : Box(TBox(id), T()) {
+  GenericBox() : BaseBox(TBox(id), T()) {
   }
 
 
-  GenericBox(const T& contents) : Box(TBox(id), contents) {
+  GenericBox(const T& contents) : BaseBox(TBox(id), contents) {
   }
 
 
-  GenericBox(T&& contents) : Box(TBox(id), std::move(contents)) {
+  GenericBox(T&& contents) : BaseBox(TBox(id), std::move(contents)) {
   }
 
 
   GenericBox(std::unique_ptr<T>&& contents)
-      : Box(TBox(id), std::move(contents)) {
+      : BaseBox(TBox(id), std::move(contents)) {
   }
 
 
-  GenericBox(const GenericBox& other);
+  GenericBox(const GenericBox& other)
+      : Box(other.t_box, other.get_ref_to_contents()) {
+  }
 
 
-  GenericBox(GenericBox&& other);
+  // GenericBox(GenericBox&& other);
 
 
   virtual ~GenericBox() = default;

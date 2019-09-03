@@ -94,6 +94,11 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
     return false;
   }
 
+
+  const auto& get_ref_to_signature() const noexcept {
+    return signature;
+  }
+
 };
 
 using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;

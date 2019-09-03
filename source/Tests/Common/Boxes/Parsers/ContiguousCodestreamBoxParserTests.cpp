@@ -2,7 +2,7 @@
 * @Author: Ismael Seidel
 * @Date:   2019-08-29 13:36:06
 * @Last Modified by:   Ismael Seidel
-* @Last Modified time: 2019-08-29 16:38:34
+* @Last Modified time: 2019-09-03 14:33:50
 */
 
 
@@ -57,7 +57,7 @@ TEST(BasicTest, CodeHasExpectedSize) {
   auto box = BoxParserRegistry::get_instance().parse<ContiguousCodestreamBox>(
       std::move(managed_stream));
   
-  const auto& contiguous_codestream_box_contents = box->get_const_ref_to_contents();
+  const auto& contiguous_codestream_box_contents = box->get_ref_to_contents();
   const auto& contiguous_codestream_box_code = contiguous_codestream_box_contents.get_const_ref_to_code();
 
   EXPECT_EQ(contiguous_codestream_box_code.size(), 4);
@@ -74,7 +74,7 @@ TEST(BasicTest, ReadsAllExpectedCode) {
   auto box = BoxParserRegistry::get_instance().parse<ContiguousCodestreamBox>(
       std::move(managed_stream));
   
-  const auto& contiguous_codestream_box_code = box->get_const_ref_to_contents().get_const_ref_to_code();
+  const auto& contiguous_codestream_box_code = box->get_ref_to_contents().get_const_ref_to_code();
 
   EXPECT_EQ(contiguous_codestream_box_code.get_byte_at(0), std::byte{25});
   EXPECT_EQ(contiguous_codestream_box_code.get_byte_at(1), std::byte{42});

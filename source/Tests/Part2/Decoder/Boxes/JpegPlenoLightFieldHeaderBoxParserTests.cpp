@@ -75,7 +75,7 @@ TEST(BasicTest, HasColourSpecificationBox) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto colour_specs = jpeg_pleno_light_field_header_contents
                           .get_copy_of_colour_specification_boxes();
 
@@ -93,13 +93,13 @@ TEST(BasicTest, HasColourSpecificationBoxsRGB) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto colour_specs = jpeg_pleno_light_field_header_contents
                           .get_copy_of_colour_specification_boxes();
 
 
   EXPECT_EQ(
-      colour_specs[0].get_const_ref_to_contents().get_colour_space_from_enum(),
+      colour_specs[0].get_ref_to_contents().get_colour_space_from_enum(),
       EnumCS::sRGB);
 }
 
@@ -114,10 +114,10 @@ TEST(BasicTest, HasCorrectT) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(
@@ -135,10 +135,10 @@ TEST(BasicTest, HasCorrectS) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(
@@ -156,10 +156,10 @@ TEST(BasicTest, HasCorrectV) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(
@@ -177,10 +177,10 @@ TEST(BasicTest, HasCorrectU) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(
@@ -198,10 +198,10 @@ TEST(BasicTest, HasCorrectNc) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(light_field_header_contents.get_number_of_components(), 3);
@@ -218,10 +218,10 @@ TEST(BasicTest, HasCorrectBpc) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(light_field_header_contents.get_bits_per_component(), 10);
@@ -238,10 +238,10 @@ TEST(BasicTest, HasCorrectMode) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
   auto light_field_header_contents =
       jpeg_pleno_light_field_header_contents.get_const_ref_to_lhdr()
-          .get_const_ref_to_contents();
+          .get_ref_to_contents();
 
 
   EXPECT_EQ(light_field_header_contents.get_compression_type(),
@@ -259,7 +259,7 @@ TEST(BasicTest, ThereIsNoChannelDefinitionBox) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
 
   EXPECT_FALSE(jpeg_pleno_light_field_header_contents
@@ -277,7 +277,7 @@ TEST(BasicTest, ThereIsNoBitsPerComponentBox) {
           ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   const auto& jpeg_pleno_light_field_header_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
 
   EXPECT_FALSE(jpeg_pleno_light_field_header_contents

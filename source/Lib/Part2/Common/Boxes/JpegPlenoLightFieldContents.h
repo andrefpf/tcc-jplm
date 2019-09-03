@@ -45,10 +45,10 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
 #include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
-// #include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
-#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
-// #include "JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 // #include "ProfileAndLevelBox.h"
 
