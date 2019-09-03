@@ -48,7 +48,7 @@ template<t_box_id_type box_id, class T, class BaseBox = Box>
 class GenericBox : public BaseBox {
  public:
   constexpr static auto id = box_id;
-
+  static_assert(std::is_base_of<Box, BaseBox>::value, "GenericBox must have a class derived from Box as base.");
 
   GenericBox() : BaseBox(TBox(id), T()) {
   }
@@ -68,6 +68,7 @@ class GenericBox : public BaseBox {
 
 
   GenericBox(const GenericBox& other)
+      //by avoiding the use of copy constructor from box makes the code run faster
       : Box(other.t_box, other.get_ref_to_contents()) {
   }
 
