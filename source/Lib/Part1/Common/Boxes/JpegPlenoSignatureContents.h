@@ -110,6 +110,8 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
 
 };
 
+//! [Declaring JpegPlenoSignatureBox]
 using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
+//! [Declaring JpegPlenoSignatureBox]
 
 #endif /* end of include guard: JPEGPLENOSIGNATURECONTENTS_H__ */

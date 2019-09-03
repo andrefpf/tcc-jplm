@@ -44,32 +44,34 @@
 #include "Box.h"
 #include "TBox.h"
 
-template<t_box_id_type box_id, class T, class BaseBox = Box>
+
+template<t_box_id_type box_id, class ContentsClass, class BaseBox = Box>
 class GenericBox : public BaseBox {
  public:
   constexpr static auto id = box_id;
-  static_assert(std::is_base_of<Box, BaseBox>::value, "GenericBox must have a class derived from Box as base.");
+  static_assert(std::is_base_of<Box, BaseBox>::value,
+      "GenericBox must have a class derived from Box as base.");
 
-  GenericBox() : BaseBox(TBox(id), T()) {
+  //! \todo check if should use enable_if for GenericBox when using a default contructible (std::is_default_constructible<T>) contents class
+  GenericBox() : BaseBox(TBox(id), ContentsClass()) {
   }
 
 
-  GenericBox(const T& contents) : BaseBox(TBox(id), contents) {
+  GenericBox(const ContentsClass& contents) : BaseBox(TBox(id), contents) {
   }
 
 
-  GenericBox(T&& contents) : BaseBox(TBox(id), std::move(contents)) {
-  }
-
-
-  GenericBox(std::unique_ptr<T>&& contents)
+  GenericBox(ContentsClass&& contents)
       : BaseBox(TBox(id), std::move(contents)) {
   }
 
 
-  GenericBox(const GenericBox& other)
-      //by avoiding the use of copy constructor from box makes the code run faster
-      : Box(other.t_box, other.get_ref_to_contents()) {
+  GenericBox(std::unique_ptr<ContentsClass>&& contents)
+      : BaseBox(TBox(id), std::move(contents)) {
+  }
+
+
+  GenericBox(const GenericBox& other) : Box(other) {
   }
 
 
@@ -85,29 +87,29 @@ class GenericBox : public BaseBox {
    *
    * \return     The constant reference to contents (of the class type T).
    */
-  const T& get_ref_to_contents() const noexcept override {
-    return static_cast<const T&>(*(this->d_box));
+  const ContentsClass& get_ref_to_contents() const noexcept override {
+    return static_cast<const ContentsClass&>(*(this->d_box));
   }
 
 
-  T& get_ref_to_contents() override {
-    return static_cast<T&>(*(this->d_box));
+  ContentsClass& get_ref_to_contents() override {
+    return static_cast<ContentsClass&>(*(this->d_box));
   }
 
 
-  T* data() override {
-    return static_cast<T*>(this->d_box.get());
+  ContentsClass* data() override {
+    return static_cast<ContentsClass*>(this->d_box.get());
   }
 
 
-  const T* data() const override {
-    return static_cast<T*>(this->d_box.get());
+  const ContentsClass* data() const override {
+    return static_cast<ContentsClass*>(this->d_box.get());
   }
 
 
   friend void swap(GenericBox& box_a, GenericBox& box_b) {
     using std::swap;
-    swap(box_a.t_box, box_b.t_box); //! \todo check if this is necessary
+    swap(box_a.t_box, box_b.t_box);  //! \todo check if this is necessary
     swap(box_a.d_box, box_b.d_box);
   }
 
@@ -124,7 +126,7 @@ class GenericBox : public BaseBox {
 
 
   GenericBox& operator=(GenericBox&& other) {
-    if(*this != other) {
+    if (*this != other) {
       this->t_box = other.t_box;
       this->d_box = std::move(other.d_box);
     }
@@ -132,5 +134,33 @@ class GenericBox : public BaseBox {
   }
 };
 
-
 #endif /* end of include guard: GENERICBOX_H__ */
+
+/*! \page generic_box_info How to create a new box
+  \tableofcontents
+  This page will introduce briefly how to implement a new box.
+  \section sec1 Creating a new box
+  Basically, what changes between boxes is their id and content. 
+  Given that you already implemented the contents class (which must be derived from DBox), to declare a new Box that holds such contents:
+
+  \code{.cpp}
+  using MyNewBox = GenericBox<0x00000000, MyNewContents>;
+  \endcode
+
+  For instance, let us use the JpegPlenoSignatureBox:
+  
+  \snippet Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h Declaring JpegPlenoSignatureBox
+
+  \section sec2 Accessing the contents of the box
+
+  To get the contents of the box: 
+
+  \code{.cpp}
+  auto jpeg_pleno_signature_box = JpegPlenoSignatureBox(); //created the box
+  auto& contents_of_the_box = jpeg_pleno_signature_box.get_ref_to_contents();
+  //It is also possible to obtain a const reference to the contents:
+  const auto& contents_of_the_box = jpeg_pleno_signature_box.get_ref_to_contents();
+  \endcode
+
+
+*/
