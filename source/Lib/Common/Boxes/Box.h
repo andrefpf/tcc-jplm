@@ -77,7 +77,16 @@ class Box {
   }
 
 
-  ~Box() = default;
+  Box(const Box& other)
+      : t_box(other.t_box), d_box(std::unique_ptr<DBox>(other.d_box->clone())) {
+  }
+
+
+  Box(Box&& other) : t_box(other.t_box), d_box(std::move(other.d_box)) {
+  }
+
+
+  virtual ~Box() = default;
 
 
   std::variant<LBox, XLBox> get_lenght() const noexcept;
@@ -142,7 +151,6 @@ class Box {
   }
 
   friend std::ostream& operator<<(std::ostream& stream, const Box& Box);
-
 };
 
 

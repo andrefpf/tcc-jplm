@@ -72,7 +72,8 @@ class GenericBox : public BaseBox {
   }
 
 
-  // GenericBox(GenericBox&& other);
+  GenericBox(GenericBox&& other) : Box(std::move(other)) {
+  }
 
 
   virtual ~GenericBox() = default;
