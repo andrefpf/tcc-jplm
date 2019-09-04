@@ -53,57 +53,131 @@
 #include "TBox.h"
 #include "XLBox.h"
 
+
+/**
+ * \brief      Abstract class to represent a box.
+ * 
+ * \details    Remembering the structure of a Box:
+ *      \image html box/out.png
+ *      
+ *      As can be seen, a Box contains: 
+ *        - LBox (required) 4-byte big-endian usigned integer: uint32_t
+ *        - TBox (required) 4-byte big-endian usigned integer: uint32_t
+ *        - XLBox (optional) if LBox.value = 1, 8-byte big-endian usigned integer: uint64_t
+ *        - DBox (required) variable size: depends on what this contains
+ *        
+ *      Yet, in the box class only holds its type and content. 
+ *      After all, the box is able to compute its size (Box::size) and then decide wether or not it needs a XLBox.
+ */
 class Box {
-  // A Box contains:
-  //LBox (required) 4-byte big-endian usigned integer: uint32_t
-  //TBox (required) 4-byte big-endian usigned integer: uint32_t
-  //XLBox (optional) if LBox.value = 1, 8-byte big-endian usigned integer: uint64_t
-  //DBox (required) variable size: depends on what this contains
  protected:
   // LBox l_box; //kept here just for illustration
-  TBox t_box;
+  TBox t_box; //!< The TBox that keeps the id of this box
   // std::optional<XLBox> xl_box; //kept here just for illustration
-  std::unique_ptr<DBox> d_box;
+  std::unique_ptr<DBox> d_box; //!< Unique ptr to the contents kept by the box
+
+  /**
+   * \brief      There should be no default constructor for the box. 
+   * An id and contents must be set. 
+   * Thus, the default constructor is deleted.
+   */
   Box() = delete;
 
+
  public:
+  /**
+   * \brief      Constructs a Box.
+   *
+   * \param[in]  t_box  The TBox that indicates the ID of this Box.
+   * \param[in]  d_box  A reference to contents (DBox) that will be copied and kept by this Box.
+   */
   Box(TBox t_box, const DBox& d_box = EmptyDBox())
       : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
   }
 
 
+  /**
+   * \brief      Constructs a Box.
+   *
+   * \param[in]  t_box  The TBox that indicates the ID of this Box.
+   * \param      d_box  A temporary unique_ptr the contents (DBox) that will be moved to be held by this Box.
+   */
   Box(TBox t_box, std::unique_ptr<DBox>&& d_box)
       : t_box(t_box), d_box(std::move(d_box)) {
   }
 
 
+  /**
+   * \brief      Copy constructor of the Box.
+   *
+   * \param[in]  other  The other Box that will be copied to this new Box.
+   */
   Box(const Box& other)
       : t_box(other.t_box), d_box(std::unique_ptr<DBox>(other.d_box->clone())) {
   }
 
 
+  /**
+   * \brief      Move constructor for this Box.
+   *
+   * \param      other  The other Box that will give ownership of its contents to this box.
+   */
   Box(Box&& other) : t_box(other.t_box), d_box(std::move(other.d_box)) {
   }
 
-
+  /**
+   * \brief      Destroys the object. 
+   */
   virtual ~Box() = default;
 
-
+  /**
+   * \brief      Gets the lenght (within the respective type) of the Box.
+   *
+   * \return     The lenght, that can be either a LBox or a XLBox, depending on the size of this Box.
+   */
   std::variant<LBox, XLBox> get_lenght() const noexcept;
 
 
+  /**
+   * \brief      Gets the size of this Box.
+   *
+   * \return     Size of this Box (in bytes).
+   */
   std::uint64_t size() const noexcept;
 
 
+  /**
+   * \brief      Gets the LBox.
+   *
+   * \return     The LBox (copy). 
+   *             It may represent the size (lenght) of this Box, if such size fits in 32 bits (uint32_t).
+   *             Otherwise, it will be 1 to show that a XLBox holds the actual size of this Box.
+   */
   LBox get_lbox() const noexcept;
 
 
+  /**
+   * \brief      Gets the TBox.
+   *
+   * \return     The TBox (copy), that indicates the type (ID) of this box.
+   */
   TBox get_tbox() const noexcept;
 
 
+  /**
+   * \brief      Gets the XLBox (if used by this box).
+   *
+   * \return     Possibily the XLBox. Its is optional since it may not be used by the box.
+   * 
+   */
   std::optional<XLBox> get_xlbox() const noexcept;
 
 
+  /**
+   * \brief      Gets a clone of the DBox.
+   *
+   * \return     A unique_ptr to a clone of the DBox that is kept by this Box.
+   */
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
 

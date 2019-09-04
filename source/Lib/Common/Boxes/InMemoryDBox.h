@@ -53,13 +53,24 @@ class InMemoryDBox : public DBox {
 
   virtual ~InMemoryDBox() = default;
 
-
+  /**
+   * \brief      Gets a ordered vector with the bytes to be written into the stream.
+   *
+   * \return     The vector of bytes.
+   */
   virtual std::vector<std::byte> get_bytes() const {
     throw std::runtime_error(
         "Not implemented yet (get_bytes).");
   }
 
 
+  /**
+   * \brief      Writes the bytes of this DBox to the stream.
+   *
+   * \param      stream  The stream
+   *
+   * \return     A reference to the same stream that whas passed as parameter
+   */
   std::ostream& write_to(std::ostream& stream) const final;
 };
 

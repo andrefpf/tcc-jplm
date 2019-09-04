@@ -162,5 +162,4 @@ class GenericBox : public BaseBox {
   const auto& contents_of_the_box = jpeg_pleno_signature_box.get_ref_to_contents();
   \endcode
 
-
 */

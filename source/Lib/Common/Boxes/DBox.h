@@ -47,7 +47,17 @@
 
 
 /**
- * \brief      Abstract class to represent DBoxes (the contents of a box)
+ * \brief      Abstract class to represent a DBox (the contents of a box)
+ * 
+ * \details    Remembering the structure of a Box:
+ *      \image html box/out.png
+ *      
+ *      Notice that the DBox have variable size. Thus the correct size of the must be provided in derived DBox implementations.
+ *      
+ *      \sa \ref data_box_info and \ref parser_info
+ *          
+ *          
+ *      
  */
 class DBox {
  public:
@@ -129,5 +139,12 @@ class DBox {
   This page will introduce briefly how to implement a new DBox.
   \section sec1 Creating a new DBox
   
+  \section sec2 Dealing with superboxes
+
+  By definition, a SuperBox is a box that includes other boxes. 
+  In the case of a super box contents, it is necessary to inherit from SuperBoxDBox.
+  Moreover, the write_to method must be overriden. 
+  Let us take for instance the JpegPlenoLightFieldContents.
+  It contains a ProfileAndLevelBox, a JpegPlenoLightFieldHeaderBox and a ContiguousCodestreamBox.
 
 */
