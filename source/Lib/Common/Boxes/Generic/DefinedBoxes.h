@@ -56,9 +56,9 @@
 
 using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; //this is from jpeg2000 part 1
 
-using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>; //this is from jpeg2000 part 1
 
-using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>; //this is from jpeg2000 part 1
+
+
 
 using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;  //this is from jpeg2000 part 1  
 

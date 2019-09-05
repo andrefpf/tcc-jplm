@@ -53,6 +53,7 @@
  * \tparam     BaseBox        A Box class used as the direct base from which this GenericBox class inherits. 
  *                            The default is to inherit directly from Box. 
  *                            However, to support other abstractions, another class that inherits from Box can be used.
+ *                            
  */
 template<t_box_id_type box_id, class ContentsClass, class BaseBox = Box>
 class GenericBox : public BaseBox {

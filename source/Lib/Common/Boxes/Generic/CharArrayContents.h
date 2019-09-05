@@ -43,6 +43,7 @@
 
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
+
 class CharArrayContents : public InMemoryDBox {
  protected:
   std::vector<uint8_t> chars;

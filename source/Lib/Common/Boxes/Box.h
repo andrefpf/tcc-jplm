@@ -236,6 +236,7 @@ class Box {
     return !this->operator==(other);
   }
 
+
   friend std::ostream& operator<<(std::ostream& stream, const Box& Box);
 };
 
@@ -243,3 +244,9 @@ class Box {
 std::ostream& operator<<(std::ostream& stream, const Box& Box);
 
 #endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_BOX_H__ */
+
+
+/**
+ * \defgroup DefinedBoxes
+ * \brief This group has a list of the defined boxes
+ */
