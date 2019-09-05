@@ -152,7 +152,7 @@ class BoxParserHelperBase {
    * \tparam     T     The type that must be read from the stream
    *
    * \return     The value readed from the stream.
-   * \post       The stream position is sizeof(T) bytes ahead its position before calling this method
+   * \sideeffect{The stream position is sizeof(T) bytes ahead its position before calling this method}
    */
   template<typename T>
   T get_next() {
