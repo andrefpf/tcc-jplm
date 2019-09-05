@@ -43,19 +43,20 @@
 
 #include <tuple>  //std::tie
 #include "CompressionTypeImage.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part1/Common/CommonExceptions.h"
 
 
 class ImageHeaderContents : public InMemoryDBox {
  protected:
-  uint32_t height;
-  uint32_t width;
-  uint16_t nc;  //! Number of components
-  uint8_t bpc;  //! Bits per component
-  CompressionTypeImage c;  //! Compression type
-  uint8_t UnkC;  //! Colourspace Unknown
-  uint8_t IPR;  //! Intellectual Property
+  uint32_t height;  //!< Image height
+  uint32_t width;  //!< Image width
+  uint16_t nc;  //!< Number of components
+  uint8_t bpc;  //!< Bits per component
+  CompressionTypeImage c;  //!< Compression type
+  uint8_t UnkC;  //!< Colourspace Unknown
+  uint8_t IPR;  //!< Intellectual Property
 
  public:
   ImageHeaderContents(uint32_t height, uint32_t width,
@@ -165,5 +166,13 @@ class ImageHeaderContents : public InMemoryDBox {
     return !this->operator==(other);
   }
 };
+
+
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Image Header Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 2 (extensions)
+ */
+using ImageHeaderBox = GenericBox<0x69686472, ImageHeaderContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__ */
