@@ -43,16 +43,7 @@
 
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/Generic/CharArrayContents.h"
-#include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
-#include "Lib/Common/Boxes/Generic/ColourSpecificationContents.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
-#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
-#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/Generic/UndefinedContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
-
 
 /**
  * \ingroup DefinedBoxes

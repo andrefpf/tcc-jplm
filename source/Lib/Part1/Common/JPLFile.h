@@ -43,6 +43,9 @@
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
 #include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/UUIDContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
 #include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
