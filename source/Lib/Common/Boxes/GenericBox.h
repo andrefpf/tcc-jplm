@@ -1,4 +1,4 @@
-/* The copyright in this software is being made available under the BSD
+/* The copyright in th\substack{\text{matrix} \\ \text{partition}is software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
@@ -45,6 +45,15 @@
 #include "TBox.h"
 
 
+/**
+ * \brief      Templated class for creating a specified box using this generic box definition.
+ *
+ * \tparam     box_id         The id representing the type of this box. It will be the value stored in TBox
+ * \tparam     ContentsClass  The class that represents the contents (DBox) of the Box with box_id
+ * \tparam     BaseBox        A Box class used as the direct base from which this GenericBox class inherits. 
+ *                            The default is to inherit directly from Box. 
+ *                            However, to support other abstractions, another class that inherits from Box can be used.
+ */
 template<t_box_id_type box_id, class ContentsClass, class BaseBox = Box>
 class GenericBox : public BaseBox {
  public:
@@ -52,68 +61,134 @@ class GenericBox : public BaseBox {
   static_assert(std::is_base_of<Box, BaseBox>::value,
       "GenericBox must have a class derived from Box as base.");
 
-  //! \todo check if should use enable_if for GenericBox when using a default contructible (std::is_default_constructible<T>) contents class
+  /**
+   * \brief      Default constructor of this object. 
+   * \details    This default constructor will only exists if ContentsClass also provides a default constructor (std::is_default_constructible<ContentsClass>).
+   *             Otherwise the code won't compile.
+   */
   GenericBox() : BaseBox(TBox(id), ContentsClass()) {
   }
 
 
+
+  /**
+   * \brief      Constructs the Box object copying the contents passed as parameter.
+   *
+   * \param[in]  contents  The contents
+   */
   GenericBox(const ContentsClass& contents) : BaseBox(TBox(id), contents) {
   }
 
 
+  /**
+   * \brief      Constructs the Box object moving the contents passed as parameter into this box contents.
+   *
+   * \param      contents  The contents
+   */
   GenericBox(ContentsClass&& contents)
       : BaseBox(TBox(id), std::move(contents)) {
   }
 
 
+  /**
+   * \brief      Constructs the Box object moving the contents passed as parameter.
+   *
+   * \param      contents  The contents
+   */
   GenericBox(std::unique_ptr<ContentsClass>&& contents)
       : BaseBox(TBox(id), std::move(contents)) {
   }
 
 
-  GenericBox(const GenericBox& other) : Box(other) {
+  /**
+   * \brief      Copy constructor
+   *
+   * \param[in]  other  The other box that wil be copied to this box.
+   */
+  GenericBox(const GenericBox& other) : BaseBox(other) {
   }
 
 
-  GenericBox(GenericBox&& other) : Box(std::move(other)) {
+  /**
+   * \brief      Move constructor
+   *
+   * \param      other  The other box that will have its contents moved to the newly created box.
+   * 
+   * \details    The actual move only happens in BaseBox. 
+   *             Thus, to use this constructor the BaseBox must provide a move constructor.
+   */
+  GenericBox(GenericBox&& other) : BaseBox(std::move(other)) {
   }
 
 
+  /**
+   * \brief      Destroys the object.
+   */
   virtual ~GenericBox() = default;
 
 
   /**
    * \brief      Gets a constant reference to the contents of this box.
    *
-   * \return     The constant reference to contents (of the class type T).
+   * \return     The constant reference to contents (of the class type ContentsClass).
    */
   const ContentsClass& get_ref_to_contents() const noexcept override {
     return static_cast<const ContentsClass&>(*(this->d_box));
   }
 
 
+  /**
+   * \brief      Gets a non constant reference to the contents of this box.
+   *
+   * \return     The reference to contents (of the class type ContentsClass)..
+   */
   ContentsClass& get_ref_to_contents() override {
     return static_cast<ContentsClass&>(*(this->d_box));
   }
 
 
+  /**
+   * \brief      Gets a non constant raw pointer to the contents of this box.
+   *
+   * \return     The non constant raw pointer to contents (of the class type ContentsClass).
+   */
   ContentsClass* data() override {
     return static_cast<ContentsClass*>(this->d_box.get());
   }
 
 
+   /**
+   * \brief      Gets a constant raw pointer to the contents of this box.
+   *
+   * \return     The constant raw pointer to contents (of the class type ContentsClass)..
+   */
   const ContentsClass* data() const override {
     return static_cast<ContentsClass*>(this->d_box.get());
   }
 
 
+  /**
+   * \brief      Swaps the contents of box_a for box_b and of box_b for box_a
+   *
+   * \param[in,out]      box_a  The box a
+   * \param[in,out]      box_b  The box b
+   */
   friend void swap(GenericBox& box_a, GenericBox& box_b) {
     using std::swap;
-    swap(box_a.t_box, box_b.t_box);  //! \todo check if this is necessary
+    swap(box_a.t_box, box_b.t_box);  //! \todo check if swaping the box types is necessary
     swap(box_a.d_box, box_b.d_box);
   }
 
 
+  /**
+   * \brief      Assigment operator
+   *
+   * \param[in]  other  The other box that will be copied into this box
+   *
+   * \return     A reference to this box after copying other box contents into this
+   * 
+   * \details    Using the copy/swap idiom
+   */
   GenericBox& operator=(const GenericBox& other) {
     if (&other == this)
       return *this;
@@ -125,6 +200,13 @@ class GenericBox : public BaseBox {
   }
 
 
+  /**
+   * \brief      Move assigment operator
+   *
+   * \param      other  The other box which contents will be moved to this box
+   *
+   * \return     A reference to this box containing the resources of the other box.
+   */
   GenericBox& operator=(GenericBox&& other) {
     if (*this != other) {
       this->t_box = other.t_box;
