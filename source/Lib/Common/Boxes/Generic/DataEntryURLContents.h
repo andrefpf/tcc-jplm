@@ -41,8 +41,9 @@
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
 
+#include <tuple>  //std::tie
+#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include <tuple> //std::tie
 #include "Lib/Part1/Common/BinaryTools.h"
 
 class DataEntryURLContents : public InMemoryDBox {
@@ -56,7 +57,7 @@ class DataEntryURLContents : public InMemoryDBox {
 
 
   virtual DataEntryURLContents* clone() const override {
-  	return new DataEntryURLContents(*this);
+    return new DataEntryURLContents(*this);
   }
 
 
@@ -103,6 +104,12 @@ class DataEntryURLContents : public InMemoryDBox {
   }
 };
 
+
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Data Entry URL Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
 using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */
