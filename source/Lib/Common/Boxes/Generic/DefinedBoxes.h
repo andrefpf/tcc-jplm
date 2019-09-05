@@ -60,9 +60,9 @@ using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; //this is
 
 
 
-using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;  //this is from jpeg2000 part 1  
 
-using ImageHeaderBox = GenericBox<0x69686472, ImageHeaderContents>; //this is from jpeg2000 part 2 (extensions)  
+
+
 
 using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; //this is from jpeg2000 part 1
 
