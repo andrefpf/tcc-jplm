@@ -54,22 +54,19 @@
 #include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 
 
-using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; //this is from jpeg2000 part 1
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Bits Per Component Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>; 
 
 
-
-
-
-
-
-
-
-using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; //this is from jpeg2000 part 1
-
-using UUIDBox = GenericBox<0x75756964, UUIDContents>; //this is from jpeg2000 part 1
-
-
-
-
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Intellectual Property Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; 
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__ */

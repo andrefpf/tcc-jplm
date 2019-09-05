@@ -41,8 +41,7 @@
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
 
-//UUID
-
+#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "UniversalUniqueIdentifier.h"
 
@@ -92,5 +91,12 @@ class UUIDContents : public InMemoryDBox {
   }
 };
 
+
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a UUID Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using UUIDBox = GenericBox<0x75756964, UUIDContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__ */
