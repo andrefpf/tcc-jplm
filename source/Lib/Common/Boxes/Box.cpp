@@ -88,7 +88,12 @@ std::unique_ptr<DBox> Box::get_dbox() const noexcept {
 }
 
 
-DBox& Box::get_ref_to_dbox() const noexcept {
+const DBox& Box::get_ref_to_dbox() const noexcept {
+  return *(this->d_box);
+}
+
+
+DBox& Box::get_ref_to_dbox() noexcept {
   return *(this->d_box);
 }
 

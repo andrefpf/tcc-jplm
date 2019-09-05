@@ -63,7 +63,7 @@
  *      As can be seen, a Box contains: 
  *        - LBox (required) 4-byte big-endian usigned integer: uint32_t
  *        - TBox (required) 4-byte big-endian usigned integer: uint32_t
- *        - XLBox (optional) if LBox.value = 1, 8-byte big-endian usigned integer: uint64_t
+ *        - XLBox (optional) if LBox.value == 1, 8-byte big-endian usigned integer: uint64_t
  *        - DBox (required) variable size: depends on what this contains
  *        
  *      Yet, in the box class only holds its type and content. 
@@ -181,7 +181,20 @@ class Box {
   std::unique_ptr<DBox> get_dbox() const noexcept;
 
 
-  DBox& get_ref_to_dbox() const noexcept;
+  /**
+   * \brief      Gets a const reference to dbox.
+   *
+   * \return     The const reference to dbox.
+   */
+  const DBox& get_ref_to_dbox() const noexcept;
+
+
+  /**
+   * \brief      Gets a reference to dbox.
+   *
+   * \return     The reference to dbox.
+   */
+  DBox& get_ref_to_dbox() noexcept;
 
 
   bool has_same_type(const Box& other) const noexcept {
