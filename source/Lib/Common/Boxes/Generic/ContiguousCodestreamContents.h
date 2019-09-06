@@ -43,7 +43,6 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
-#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/SuperBoxDBox.h"
 
 
@@ -108,15 +107,6 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
     return stream;
   }
 };
-
-
-/**
- * \ingroup DefinedBoxes
- * \brief Definition of a Contiguous Codestream Box
- * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
- */
-using ContiguousCodestreamBox =
-    GenericBox<0x6A703263, ContiguousCodestreamContents>;
 
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCONTENTS_H__ */

@@ -31,35 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ContiguousCodestreamBoxParser.h
+/** \file     ContiguousCodestreamBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-29
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
-#define JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
 
-#include <memory>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-namespace JPLMBoxParser {
-class ContiguousCodestreamBoxParser {
- public:
-  using ParsingBox = ContiguousCodestreamBox;
-  static uint64_t memory_limit;
-  static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
-};
-}  // namespace JPLMBoxParser
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Contiguous Codestream Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;
 
-
-//
-// ContiguousCodestreamBoxParser::memory_limit = value_found_in_config;
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__ */

@@ -45,7 +45,7 @@
 #include <numeric>
 #include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
 #include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
