@@ -43,6 +43,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
 #include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
 #include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
