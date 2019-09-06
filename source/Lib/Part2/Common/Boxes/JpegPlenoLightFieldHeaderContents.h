@@ -231,6 +231,4 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
 };
 
 
-using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
-
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERCONTENTS_H__ */

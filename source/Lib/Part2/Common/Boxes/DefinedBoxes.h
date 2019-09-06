@@ -44,7 +44,6 @@
 
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 
 

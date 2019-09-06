@@ -31,41 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldHeaderTests.cpp
+/** \file     JpegPlenoLightFieldHeaderBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-09-06
  */
 
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
-#include "gtest/gtest.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
 
-
-TEST(BasicTests, HasCorrectId) {
-	EXPECT_EQ(JpegPlenoLightFieldHeaderBox::id, 0x6a706c68);
-}
-
-
-TEST(BasicTest, Initialization) {
-  auto lf_header_contents = LightFieldHeaderContents(
-      {1, 2, 3, 42}, 3, 8, CompressionTypeLightField::transform_mode);
-  auto lf_header_box = LightFieldHeaderBox(lf_header_contents);
-  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
-  colr.emplace_back(std::make_unique<ColourSpecificationBox>());
-  auto jpeg_pleno_light_field_header_contents =
-      JpegPlenoLightFieldHeaderContents(lf_header_contents, colr);
-
-  EXPECT_NO_THROW(auto jpeg_pleno_light_field_header_box = JpegPlenoLightFieldHeaderBox(jpeg_pleno_light_field_header_contents));
-}
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Light Field Header Box
+ */
+using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
 
 
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__ */
