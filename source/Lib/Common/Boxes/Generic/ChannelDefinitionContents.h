@@ -149,11 +149,4 @@ class ChannelDefinitionContents : public InMemoryDBox {
 };
 
 
-/**
- * \ingroup DefinedBoxes
- * \brief Definition of a Channel Definition Box
- * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
- */
-using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>;
-
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__ */

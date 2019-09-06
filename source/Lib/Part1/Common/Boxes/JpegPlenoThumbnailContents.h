@@ -47,7 +47,7 @@
 #include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
 #include "Lib/Common/Boxes/Generic/ColourSpecificationContents.h"
-#include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
+#include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
 class JpegPlenoThumbnailContents : public InMemoryDBox {
