@@ -43,7 +43,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "gtest/gtest.h"
 
 

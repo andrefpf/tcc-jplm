@@ -31,22 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DefinedBoxes.h
+/** \file     JpegPlenoLightFieldBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDBOX_H__
 
-
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Light Field Box
+ */
+using JpegPlenoLightFieldBox =
+    GenericBox<0x6a706c66, JpegPlenoLightFieldContents, JpegPlenoCodestreamBox>;
 
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_DEFINEDBOXES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDBOX_H__ */
