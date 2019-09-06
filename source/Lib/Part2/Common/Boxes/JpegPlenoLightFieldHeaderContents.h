@@ -45,6 +45,7 @@
 #include <tuple>  //std::tie
 #include <vector>
 #include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
 #include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
 #include "Lib/Common/Boxes/SuperBoxDBox.h"

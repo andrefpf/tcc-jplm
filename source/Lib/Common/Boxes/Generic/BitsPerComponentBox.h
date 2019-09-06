@@ -31,25 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DefinedBoxes.h
+/** \file     BitsPerComponentBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
 
+#include "Lib/Common/Boxes/Generic/CharArrayContents.h"
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Common/Boxes/Generic/UndefinedContents.h"
-
 
 /**
  * \ingroup DefinedBoxes
- * \brief Definition of a Intellectual Property Box
+ * \brief Definition of a Bits Per Component Box
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
-using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>; 
+using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>;
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__ */
