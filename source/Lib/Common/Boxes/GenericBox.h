@@ -232,7 +232,7 @@ class GenericBox : public BaseBox {
 
   For instance, let us use the JpegPlenoSignatureBox:
   
-  \snippet Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h Declaring JpegPlenoSignatureBox
+  \snippet Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h Declaring JpegPlenoSignatureBox
 
   \section sec2 Accessing the contents of the box
 

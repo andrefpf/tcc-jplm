@@ -42,7 +42,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 #include "gtest/gtest.h"
 
 std::string get_test_full_name() {

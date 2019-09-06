@@ -31,83 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoSignatureContents.h
+/** \file     JpegPlenoSignatureBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATURECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATURECONTENTS_H__
+#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
+#define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
 
-#include <array>
-#include <vector>
-#include <cstddef>  //std::byte
-#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 
-class JpegPlenoSignatureContents : public InMemoryDBox {
- protected:
-  const std::array<std::byte, 4> signature = {
-      std::byte{0x0d}, std::byte{0x0a}, std::byte{0x87}, std::byte{0x0a}};
+//! [Declaring JpegPlenoSignatureBox]
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Signature Box
+ */
+using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
+//! [Declaring JpegPlenoSignatureBox]
 
- public:
-  JpegPlenoSignatureContents() = default;
-  
-
-  ~JpegPlenoSignatureContents() = default;
-
-
-  virtual JpegPlenoSignatureContents* clone() const override {
-    return new JpegPlenoSignatureContents(*this);
-  }
-
-
-  virtual uint64_t size() const noexcept override {
-    return 4;
-  }
-
-
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const JpegPlenoSignatureContents&>(other);
-    return *this == cast_other;
-  }
-
-
-  bool operator==(const JpegPlenoSignatureContents& other) const {
-    return (this->signature == other.signature);
-  }
-
-
-  bool operator!=(const JpegPlenoSignatureContents& other) const {
-    return !this->operator==(other);
-  }
-
-
-  bool is_valid(const std::vector<std::byte>& bytes) {
-  	 if (bytes.size() == 4) {
-      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
-          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  const auto& get_ref_to_signature() const noexcept {
-    return signature;
-  }
-
-
-  virtual std::vector<std::byte> get_bytes() const override {
-    return std::vector<std::byte>(signature.begin(), signature.end());
-  }
-
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATURECONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__ */

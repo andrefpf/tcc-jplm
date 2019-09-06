@@ -42,8 +42,8 @@
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
 
-#include "FileTypeContents.h"
-#include "JpegPlenoSignatureContents.h"
+#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 
 class JpegPlenoFileTypeContents : public FileTypeContents {
  public:

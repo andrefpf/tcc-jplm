@@ -144,6 +144,7 @@ class BoxParserRegistry {
     - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h ParsingBox definition with type of the box to be parsed
    -# The parser method with a standard signature.
     - \snippet Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h Parse function definition
+    
   \subsection subsection1 Parser implementation
   
   To implement the parser, you have access to a BoxParserHelperBase. Such helper has the ability to provide access to the data in the stream.

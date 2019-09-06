@@ -43,7 +43,7 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 
 namespace JPLMBoxParser {
 class JpegPlenoSignatureBoxParser {
