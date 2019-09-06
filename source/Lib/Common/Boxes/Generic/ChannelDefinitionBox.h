@@ -42,6 +42,7 @@
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
 
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
 /**
  * \ingroup DefinedBoxes

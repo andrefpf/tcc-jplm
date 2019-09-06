@@ -31,28 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ColourSpecificationBoxParser.h
+/** \file     ColourSpecificationBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-28
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__
-#define JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
 
-#include <memory>
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-namespace JPLMBoxParser {
-class ColourSpecificationBoxParser {
- public:
-  using ParsingBox = ColourSpecificationBox;
-  static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
-};
-}  // namespace JPLMBoxParser
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Colour Specification Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>;
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_COLOURSPECIFICATIONBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__ */

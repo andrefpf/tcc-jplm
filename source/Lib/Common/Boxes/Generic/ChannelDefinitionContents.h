@@ -42,7 +42,6 @@
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__
 
 #include "Lib/Common/Boxes/Generic/ChannelDescription.h"
-#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
 /**
