@@ -31,22 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-/** \file     DefinedBoxes.h
+/** \file     JpegPlenoThumbnailBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
-#define JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
 
-#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 #include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailContents.h"
 
-using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
-using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Thumbnail Box
+ */
+using JpegPlenoThumbnailBox = GenericBox<0x6a707468, JpegPlenoThumbnailContents>;
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_DEFINEDBOXES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__ */

@@ -46,12 +46,11 @@
 #include "Lib/Common/Boxes/Generic/UUIDBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDInfoBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDListBox.h"
-#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
 #include "Lib/Part1/Common/Boxes/FileTypeBox.h"
-// #include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-// #include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 
 
 class JPLFile {

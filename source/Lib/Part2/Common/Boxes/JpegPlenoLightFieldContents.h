@@ -45,10 +45,10 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
-#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
-#include "Lib/Common/Boxes/InMemoryDBox.h"
 // #include "ProfileAndLevelBox.h"
 
 class JpegPlenoLightFieldContents : public SuperBoxDBox {
@@ -108,8 +108,9 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
   }
 
 
-  void add_contiguous_codestream_box(std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
-    this->contiguous_codestream_box=std::move(contiguous_codestream_box);
+  void add_contiguous_codestream_box(
+      std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
+    this->contiguous_codestream_box = std::move(contiguous_codestream_box);
   }
 
 
@@ -138,7 +139,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
   }
 
 
-  bool operator==(const JpegPlenoLightFieldContents& ) const noexcept { //other
+  bool operator==(const JpegPlenoLightFieldContents&) const noexcept {  //other
     //! \todo implement here
     return false;
   }

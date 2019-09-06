@@ -38,8 +38,8 @@
  *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
 
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
@@ -52,4 +52,4 @@
 using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
 //! [Declaring JpegPlenoSignatureBox]
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOSIGNATUREBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__ */
