@@ -120,7 +120,4 @@ class ProfileAndLevelContents : public InMemoryDBox {
 };
 
 
-using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
-
-
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELCONTENTS_H__ */

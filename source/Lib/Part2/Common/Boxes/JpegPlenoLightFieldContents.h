@@ -48,8 +48,7 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
-#include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
-// #include "ProfileAndLevelBox.h"
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
 
 class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:

@@ -31,30 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ProfileAndLevelBoxParser.h
+/** \file     ProfileAndLevelBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-09-06
  */
 
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__
 
-#ifndef JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__
-#define JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Profile and Level Box
+ */
+using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
 
-#include <memory>
-#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
-
-namespace JPLMBoxParser {
-class ProfileAndLevelBoxParser {
- public:
-  using ParsingBox = ProfileAndLevelBox;
-  static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
-};
-}  // namespace JPLMBoxParser
-
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_PROFILEANDLEVELBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__ */
