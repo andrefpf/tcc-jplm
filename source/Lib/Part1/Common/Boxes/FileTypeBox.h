@@ -31,68 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     FileTypeBoxTests.cpp
+/** \file     FileTypeBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
 
-#include <iostream>
-#include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
-#include "gtest/gtest.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a File Type Box
+ */
+using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
 
-TEST(FileTypeBoxBasic, InitializationDoesNotThrow) {
-  EXPECT_NO_THROW(
-      auto file_type_box = FileTypeBox(FileTypeContents(0,0,{})));
-}
-
-
-struct FileTypeBoxContents : public testing::Test {
- protected:
-  uint32_t brand = 0x0042;
-  uint32_t minor_version=25;
-  std::unique_ptr<FileTypeBox> file_type_box;
-  FileTypeBoxContents() {
-    file_type_box = std::make_unique<FileTypeBox>(FileTypeContents(brand, minor_version, {0x0004}));
-  }
-};
-
-
-TEST_F(FileTypeBoxContents, HoldsInitializedBrand) {
-  EXPECT_EQ(file_type_box->get_ref_to_contents().get_brand(), brand);
-}
-
-
-TEST_F(FileTypeBoxContents, HoldsInitializedMinorVersion) {
-  EXPECT_EQ(file_type_box->get_ref_to_contents().get_minor_version(), minor_version);
-}
-
-
-TEST_F(FileTypeBoxContents, HasCorrectSizeAfterCast) {
-  EXPECT_EQ(file_type_box->get_ref_to_contents().size(), 4+4+4);
-}
-
-
-TEST_F(FileTypeBoxContents, CompatibilityCheckFailsForStdNotDedinedInCompatibilityList) {
-  EXPECT_FALSE(file_type_box->get_ref_to_contents().is_the_file_compatible_with(0x0002));
-}
-
-
-TEST_F(FileTypeBoxContents, CompatibilityCheckSucceedsForStdDedinedInCompatibilityList) {
-  EXPECT_TRUE(file_type_box->get_ref_to_contents().is_the_file_compatible_with(0x0004));
-}
-
-
-TEST_F(FileTypeBoxContents, FileTypeBoxHasCorrectSize) {
-  EXPECT_EQ(file_type_box->size(), file_type_box->get_ref_to_contents().size()+4+4);
-}
-
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__ */

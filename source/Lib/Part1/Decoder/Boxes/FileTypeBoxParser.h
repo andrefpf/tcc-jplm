@@ -43,7 +43,7 @@
 
 #include <memory>
 #include "source/Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
 
 namespace JPLMBoxParser {
 class FileTypeBoxParser {

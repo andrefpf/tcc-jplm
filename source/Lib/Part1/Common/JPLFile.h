@@ -49,6 +49,7 @@
 #include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
 // #include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 // #include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 

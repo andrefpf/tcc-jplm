@@ -49,7 +49,7 @@
 
 
 
-using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
+
 
 
 
