@@ -45,10 +45,10 @@
 #include <tuple>  //std::tie
 #include <vector>
 #include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/SuperBoxDBox.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
 
 class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
  protected:
@@ -90,8 +90,9 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
   }
 
 
-  std::optional<BitsPerComponentBox> get_copy_of_bits_per_component_box() const {
-    if(bpcc)
+  std::optional<BitsPerComponentBox> get_copy_of_bits_per_component_box()
+      const {
+    if (bpcc)
       return *bpcc;
     return std::nullopt;
   }
@@ -105,8 +106,9 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
   }
 
 
-  std::optional<ChannelDefinitionBox> get_copy_of_channel_definition_box() const {
-    if(cdef)
+  std::optional<ChannelDefinitionBox> get_copy_of_channel_definition_box()
+      const {
+    if (cdef)
       return *cdef;
     return std::nullopt;
   }

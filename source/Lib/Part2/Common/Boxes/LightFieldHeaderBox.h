@@ -31,29 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightFieldHeaderBoxParser.h
+/** \file     LightFieldHeaderBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__
-#define JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERBOX_H__
 
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Light Field Header Box
+ */
+using LightFieldHeaderBox = GenericBox<0x6c686472, LightFieldHeaderContents>;
 
-#include <memory>
-#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
-
-namespace JPLMBoxParser {
-class LightFieldHeaderBoxParser {
- public:
-  using ParsingBox = LightFieldHeaderBox;
-  static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
-};
-}  // namespace JPLMBoxParser
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_LIGHTFIELDHEADERBOXPARSER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERBOX_H__ */

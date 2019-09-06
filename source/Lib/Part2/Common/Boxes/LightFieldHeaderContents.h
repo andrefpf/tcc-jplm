@@ -191,6 +191,6 @@ class LightFieldHeaderContents : public InMemoryDBox {
 };
 
 
-using LightFieldHeaderBox = GenericBox<0x6c686472, LightFieldHeaderContents>;
+
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERCONTENTS_H__ */
