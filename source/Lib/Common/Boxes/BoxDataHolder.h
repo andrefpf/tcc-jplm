@@ -43,7 +43,7 @@
 
 #include <ostream>
 #include <vector>
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
 template<typename T>

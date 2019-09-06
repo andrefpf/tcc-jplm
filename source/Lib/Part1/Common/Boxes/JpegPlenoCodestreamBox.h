@@ -69,14 +69,4 @@ class JpegPlenoCodestreamBox : public Box {
   virtual ~JpegPlenoCodestreamBox() = default;
 };
 
-
-// template<JpegPlenoCodestreamBoxTypes box_id, class T>
-// class JpegPlenoCodestreamBox
-//     : public GenericBox<static_cast<t_box_id_type>(box_id), T> {
-//  public:
-//   using GenericBox<static_cast<t_box_id_type>(box_id), T>::GenericBox;
-
-//   virtual ~JpegPlenoCodestreamBox() = default;
-// };
-
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__ */

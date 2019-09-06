@@ -43,7 +43,7 @@
 
 #include <tuple>  //std::tie
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 class DataEntryURLContents : public InMemoryDBox {
  protected:

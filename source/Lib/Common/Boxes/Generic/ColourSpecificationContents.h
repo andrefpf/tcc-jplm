@@ -48,7 +48,7 @@
 #include "Lib/Common/Boxes/Generic/EnumCS.h"
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
 /**

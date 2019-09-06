@@ -42,7 +42,7 @@
 #define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__
 
 #include "CommonExceptions.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 

@@ -45,7 +45,7 @@
 #include "CompressionTypeLightField.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 
 using colour_space_unknown_flag_type = uint8_t;
