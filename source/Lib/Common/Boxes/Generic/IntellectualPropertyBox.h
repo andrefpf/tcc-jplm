@@ -38,8 +38,8 @@
  *  \date     2019-09-06
  */
 
-#ifndef INTELLECTUALPROPERTYBOX_H__
-#define INTELLECTUALPROPERTYBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_INTELLECTUALPROPERTYBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_INTELLECTUALPROPERTYBOX_H__
 
 #include "Lib/Common/Boxes/Generic/UndefinedContents.h"
 #include "Lib/Common/Boxes/GenericBox.h"
@@ -51,4 +51,4 @@
  */
 using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>;
 
-#endif /* end of include guard: INTELLECTUALPROPERTYBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_INTELLECTUALPROPERTYBOX_H__ */

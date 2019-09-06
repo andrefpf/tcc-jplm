@@ -38,8 +38,8 @@
  *  \date     2019-09-05
  */
 
-#ifndef ENUMCS_H__
-#define ENUMCS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__
 
 #include <cstdint>
 
@@ -61,4 +61,4 @@ enum class EnumCS : enum_cs_field_type {
   // other values are reserved for other ISO uses
 };
 
-#endif /* end of include guard: ENUMCS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__ */
