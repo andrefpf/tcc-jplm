@@ -40,7 +40,7 @@
 
 
 #include <iostream>
-#include "Lib/Part2/Common/Boxes/DefinedBoxes.h"
+#include "Lib/Part2/Common/Boxes/CalibrationBox.h"
 #include "gtest/gtest.h"
 
 TEST(BasicTests, HasCorrectId) {
