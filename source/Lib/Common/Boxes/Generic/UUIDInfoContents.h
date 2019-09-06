@@ -44,7 +44,7 @@
 
 // #include "DataEntryURLBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDListContents.h"
-#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
+#include "Lib/Common/Boxes/Generic/DataEntryURLBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "UniversalUniqueIdentifier.h"
 

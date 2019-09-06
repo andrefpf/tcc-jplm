@@ -31,77 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DataEntryURLContents.h
+/** \file     DataEntryURLBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__
 
-#include <tuple>  //std::tie
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
 
-class DataEntryURLContents : public InMemoryDBox {
- protected:
-  uint8_t vers;  //version number
-  BinaryTools::uint24_t flag;  //flags
-  std::string loc;  //location (the url)
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Data Entry URL Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
 
- public:
-  DataEntryURLContents() = default;
-
-
-  virtual DataEntryURLContents* clone() const override {
-    return new DataEntryURLContents(*this);
-  }
-
-
-  ~DataEntryURLContents() = default;
-
-
-  virtual uint64_t size() const noexcept override {
-    return 4 + loc.size() + 1;
-    //4 for ver and location + the size of the string + the null termination char
-  }
-
-
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const DataEntryURLContents&>(other);
-    return *this == cast_other;
-  }
-
-
-  bool operator==(const DataEntryURLContents& other) const {
-    return std::tie(this->vers, this->flag, this->loc) ==
-           std::tie(other.vers, other.flag, other.loc);
-  }
-
-
-  bool operator!=(const DataEntryURLContents& other) const {
-    return !this->operator==(other);
-  }
-
-
-  uint8_t get_version_number() const noexcept {
-    return vers;
-  }
-
-
-  BinaryTools::uint24_t get_flag() const noexcept {
-    return flag;
-  }
-
-
-  const char* get_location() const noexcept {
-    return loc.c_str();
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__ */
