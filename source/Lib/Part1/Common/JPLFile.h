@@ -42,7 +42,7 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPLFILE_H__
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
-#include "Lib/Common/Boxes/Generic/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDContents.h"
 #include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 #include "Lib/Common/Boxes/Generic/UUIDListContents.h"

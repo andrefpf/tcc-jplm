@@ -31,16 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DefinedBoxes.h
+/** \file     IntellectualPropertyBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__
+#ifndef INTELLECTUALPROPERTYBOX_H__
+#define INTELLECTUALPROPERTYBOX_H__
 
+#include "Lib/Common/Boxes/Generic/UndefinedContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Intellectual Property Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>;
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DEFINEDBOXES_H__ */
+#endif /* end of include guard: INTELLECTUALPROPERTYBOX_H__ */
