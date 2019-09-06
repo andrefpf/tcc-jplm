@@ -46,7 +46,9 @@
 #include <vector>
 #include <cstddef> // std::byte
 
-
+/**
+ * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
+ */
 namespace BinaryTools {
 
 struct uint24_t {

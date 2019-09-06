@@ -149,6 +149,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
   }
 
 
+  //! [Overridden write_to in JpegPlenoLightFieldContents]
   std::ostream& write_to(std::ostream& stream) const final {
     stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
     if (contiguous_codestream_box) {
@@ -156,6 +157,8 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
     }
     return stream;
   }
+  //! [Overridden write_to in JpegPlenoLightFieldContents]
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__ */

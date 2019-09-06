@@ -45,13 +45,18 @@
 
 using t_box_id_type = uint32_t;
 
+/**
+ * \brief      Class for holding the id of a box, i.e., the field tbox.
+ */
 class TBox : public BoxDataHolder<t_box_id_type> {
- public:
+ protected:
+  TBox() = delete;
 
-  TBox() = default;
+ public:
   TBox(const t_box_id_type& value) : BoxDataHolder<t_box_id_type>(value) {
   }
-  ~TBox() = default;
+
+  virtual ~TBox() = default;
 
   bool operator==(const TBox& other) const {
     return this->is_equal(other);

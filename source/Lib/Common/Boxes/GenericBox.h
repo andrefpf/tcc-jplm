@@ -219,22 +219,25 @@ class GenericBox : public BaseBox {
 
 #endif /* end of include guard: GENERICBOX_H__ */
 
-/*! \page generic_box_info How to create a new box
+/*! \page a_generic_box_info How to create a new box
   \tableofcontents
   This page will introduce briefly how to implement a new box.
-  \section sec1 Creating a new box
-  Basically, what changes between boxes is their id and content. 
-  Given that you already implemented the contents class (which must be derived from DBox), to declare a new Box that holds such contents:
+  \section creating_box Creating a new box
+  Basically, what changes between different boxes that are specified in the standard are their id and content. 
+  Given that you already implemented the contents class (see \ref data_box_info), to declare a new Box that holds such contents:
 
   \code{.cpp}
   using MyNewBox = GenericBox<0x00000000, MyNewContents>;
   \endcode
 
-  For instance, let us use the JpegPlenoSignatureBox:
+  For instance, let us use as example the \link JpegPlenoSignatureBox \endlink. Its definition is as simple as this: 
   
   \snippet Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h Declaring JpegPlenoSignatureBox
 
-  \section sec2 Accessing the contents of the box
+  Also, it is important to define new boxes in separated/distinct files to keep the source files organized. 
+  Thus, when a new box must be included in other part of the code, it will be easier to find. 
+
+  \section accessing_box Accessing the contents of the box
 
   To get the contents of the box: 
 

@@ -137,14 +137,63 @@ class DBox {
 /*! \page data_box_info How to implement a DBox (contents of a box)
   \tableofcontents
   This page will introduce briefly how to implement a new DBox.
-  \section sec1 Creating a new DBox
+  \section creating_new_dbox Creating a new DBox
   
-  \section sec2 Dealing with superboxes
+  A new DBox class must inherit from DBox. 
+  However, to provide a more complete DBox implementation, the DBoxes can inherit from:
+    - InMemoryDBox: that keeps its data in memory; it is fast, but may demand too much memory;
+    - InFileDBox : that keeps its data in file; it saves memory, but is slow.; 
+  \todo InFileDBox is not yet implemented.
+
+  In both cases, the following methods must be overridden:
+    - clone : such method is used to copy the DBox without causing object slicing. Its use is mainly done by the Box class constructors; 
+    - is_equal : method used to compare DBoxes. Useful for testing;
+    - size : method that informs the Box the size of DBox contents (in bytes). 
+             This method <b>MUST</b> be correct to allow correct encoding/decoding (parsing) of boxes.
+             Moreover, if this method is incorrect, the parsing of other boxes may be affected;
+
+  Most boxes that are already defined (see \link DefinedBoxes \endlink) have their DBox inherited from InMemoryDBox.
+
+  \subsection inheriting_from_mem_d_box Inheriting from InMemoryDBox
+
+  In this case, there is another method to be overridden:
+    - get_bytes : this method creates a vector of bytes that will be written in the stream when the boxes are written; (see InMemoryDBox::get_bytes) 
+
+  The standard defines that data must be written in the file considering big-endian bytes. 
+  As the endianess depends on the processor architecture, there is a utility called \link BinaryTools \endlink that provides methods to generate sequences of bytes in the correct big-endian order.
+
+  For instance, to include a uint16_t variable in the bytes vector (from InMemoryDBox::get_bytes method):
+
+  \code{.cpp}
+    uint16_t myval = 42;
+    auto bytes = std::vector<std::byte>();
+    BinaryTools::append_big_endian_bytes(bytes, myval);
+  \endcode
+
+  After this, bytes vector will contain the two bytes of myval in big-endian order. 
+
+  \note During parsing, the endianess conversion (if needed) is already embedded in BoxParserHelperBase::get_next method. 
+  Also, when not needed there will be no loss in performance (the compiler will optimize such calls).
+
+  \subsection inheriting_from_infile_d_box Inheriting from InFileDBox  
+
+  \warning Not implemented yet...
+
+  \section dealing_with_superboxes Dealing with SuperBox (es)
 
   By definition, a SuperBox is a box that includes other boxes. 
   In the case of a super box contents, it is necessary to inherit from SuperBoxDBox.
-  Moreover, the write_to method must be overriden. 
+  Moreover, the write_to method must be overridden. 
   Let us take for instance the JpegPlenoLightFieldContents.
   It contains a ProfileAndLevelBox, a JpegPlenoLightFieldHeaderBox and a ContiguousCodestreamBox.
+
+  Its overridden write_to function looks like:
+
+  \snippet Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h Overridden write_to in JpegPlenoLightFieldContents
+
+  It is in fact very simple: it is just redirecting the boxes to the stream in the order they must appear in file.
+  Also, the <b>required</b> boxes must be present (if not, an error/exception will be thrown). 
+  Non required boxes should be tested first to see if they are available. 
+  In the example above, the Contiguous Codestream Box is optional.
 
 */
