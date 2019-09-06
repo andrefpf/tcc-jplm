@@ -31,73 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDInfoContents.h
+/** \file     UUIDInfoBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-09-06  
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
 
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 
-// #include "DataEntryURLBox.h"
-#include "Lib/Common/Boxes/Generic/UUIDListBox.h"
-#include "Lib/Common/Boxes/Generic/DataEntryURLBox.h"
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "UniversalUniqueIdentifier.h"
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a UUID Info Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>;
 
-
-class UUIDInfoContents : public InMemoryDBox {
- protected:
-  UUIDListBox u_list;
-  DataEntryURLBox de;
-
- public:
-  UUIDInfoContents() = default;
-
-  // implemented copy constructors in UUIDListBox, DataEntryURLBox
-  UUIDInfoContents(const UUIDInfoContents& other)
-      : u_list(other.u_list), de(other.de) {
-  }
-
-
-  UUIDInfoContents(UUIDInfoContents&& other)
-      : u_list(std::move(other.u_list)), de(std::move(other.de)) {
-  }
-
-
-  virtual UUIDInfoContents* clone() const override {
-    return new UUIDInfoContents(*this);
-  }
-
-
-  ~UUIDInfoContents() = default;
-
-
-  virtual uint64_t size() const noexcept override {
-    return u_list.size() + de.size();
-  }
-
-
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDInfoContents&>(other);
-    return *this == cast_other;
-  }
-
-
-  bool operator==(const UUIDInfoContents& other) const {
-    return (this->u_list == other.u_list) && (this->de == other.de);
-  }
-
-
-  bool operator!=(const UUIDInfoContents& other) const {
-    return !this->operator==(other);
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__ */

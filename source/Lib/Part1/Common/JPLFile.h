@@ -44,8 +44,8 @@
 
 #include "Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
-#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDListBox.h"
 #include "Lib/Part1/Common/Boxes/DefinedBoxes.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
