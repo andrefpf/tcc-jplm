@@ -31,22 +31,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldCodec.h
+/** \file     JpegPlenoCodec.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__
-#define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__
-
-#include "Lib/Part1/Common/JpegPlenoCodec.h"
-
-class JpegPlenoLightFieldCodec : public JpegPlenoCodec {
+class JpegPlenoCodec {
+protected:
+	//Configuration configuration;
  public:
-  JpegPlenoLightFieldCodec() = default;
-  virtual ~JpegPlenoLightFieldCodec() = default;
+  JpegPlenoCodec() = default;
+  virtual ~JpegPlenoCodec() = default;
 };
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__ */
