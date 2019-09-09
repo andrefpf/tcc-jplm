@@ -1,6 +1,9 @@
-# Guidelines for JPEG Pleno reference software development
+Guidelines for JPEG Pleno reference software development {#guidelines}
+===
 
-## Introduction
+[TOC]
+
+# Introduction
 
 C++ is the development language used to develop the JPEG Pleno's codec and required by the committee. This language language has many features, which can induce bug-prone code and make it harder to read and maintain.
 

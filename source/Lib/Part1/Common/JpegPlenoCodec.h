@@ -38,10 +38,19 @@
  *  \date     2019-09-09
  */
 
+#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
+#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
+
+#include <memory> //std::unique_ptr
+#include "Lib/Part1/JPLFile.h"
+
 class JpegPlenoCodec {
- protected:
-  //Configuration configuration;
+protected:
+	// Configuration configuration;
+	std::unique_ptr<JPLFile> jpl_file;
  public:
   JpegPlenoCodec() = default;
   virtual ~JpegPlenoCodec() = default;
 };
+
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__ */
