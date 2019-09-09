@@ -41,10 +41,12 @@
 #ifndef JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER4DTRANSFORMMODE_H__
 #define JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER4DTRANSFORMMODE_H__
 
-#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder.h"
+#include "Lib/Part2/Decoder/JpegPlenoLightFieldDecoder.h"
 
+
+template<typename T = uint16_t>
 class JpegPlenoLightFieldDecoder4DTransformMode
-    : public JpegPlenoLightFieldEncoder {
+    : public JpegPlenoLightFieldDecoder<T> {
  public:
   JpegPlenoLightFieldDecoder4DTransformMode() = default;
   virtual ~JpegPlenoLightFieldDecoder4DTransformMode() = default;

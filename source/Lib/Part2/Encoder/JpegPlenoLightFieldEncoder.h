@@ -42,10 +42,40 @@
 #define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
 
 #include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
+#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 
-class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec {
+//stub
+class LightFieldEncoderConfiguration {
+ protected:
+  std::string path;
+
  public:
-  JpegPlenoLightFieldEncoder() = default;
+  LightFieldEncoderConfiguration(const std::string& path) : path(path) {
+  }
+
+  LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
+  LightfieldIOConfiguration get_lightfield_io_configurations() const {
+    LightfieldDimension<std::size_t> size(3, 3, 32, 32);
+    LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+    return LightfieldIOConfiguration(path, initial, size);
+  }
+};
+
+template<typename T = uint16_t>
+class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
+ protected:
+  std::unique_ptr<const LightFieldEncoderConfiguration> configuration;
+
+ public:
+  JpegPlenoLightFieldEncoder(
+      std::unique_ptr<const LightFieldEncoderConfiguration>&& configuration)
+      : JpegPlenoLightFieldCodec<T>(
+            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
+                configuration->get_lightfield_io_configurations()))),
+        configuration(std::move(configuration)) {
+  }
+
   virtual ~JpegPlenoLightFieldEncoder() = default;
 };
 

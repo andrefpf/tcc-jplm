@@ -42,10 +42,18 @@
 #define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__
 
 #include "Lib/Part1/Common/JpegPlenoCodec.h"
+#include "Lib/Part2/Common/Lightfield.h"
 
+template<typename T>
 class JpegPlenoLightFieldCodec : public JpegPlenoCodec {
+ protected:
+  std::unique_ptr<Lightfield<T>> light_field;
+
  public:
-  JpegPlenoLightFieldCodec() = default;
+  JpegPlenoLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
+      : light_field(std::move(light_field)) {
+  }
+  
   virtual ~JpegPlenoLightFieldCodec() = default;
 };
 

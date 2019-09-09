@@ -43,8 +43,9 @@
 
 #include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder.h"
 
+template<typename T = uint16_t>
 class JpegPlenoLightFieldEncoder4DPredictionMode
-    : public JpegPlenoLightFieldEncoder {
+    : public JpegPlenoLightFieldEncoder<T> {
  public:
   JpegPlenoLightFieldEncoder4DPredictionMode() = default;
   virtual ~JpegPlenoLightFieldEncoder4DPredictionMode() = default;

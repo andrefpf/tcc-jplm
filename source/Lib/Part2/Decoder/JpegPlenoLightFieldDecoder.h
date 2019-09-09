@@ -43,7 +43,8 @@
 
 #include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
 
-class JpegPlenoLightFieldDecoder : public JpegPlenoLightFieldCodec {
+template<typename T = uint16_t>
+class JpegPlenoLightFieldDecoder : public JpegPlenoLightFieldCodec<T> {
  public:
   JpegPlenoLightFieldDecoder() = default;
   virtual ~JpegPlenoLightFieldDecoder() = default;

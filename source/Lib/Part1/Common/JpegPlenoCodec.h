@@ -41,16 +41,37 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
 
-#include <memory> //std::unique_ptr
+#include <memory>  //std::unique_ptr
 #include "Lib/Part1/Common/JPLFile.h"
 
 class JpegPlenoCodec {
-protected:
-	// Configuration configuration;
-	std::unique_ptr<JPLFile> jpl_file;
+ protected:
+  // Configuration configuration;
+  std::unique_ptr<JPLFile> jpl_file;
+
  public:
-  JpegPlenoCodec() = default;
+  JpegPlenoCodec() : jpl_file(std::make_unique<JPLFile>()) {
+  }
+
+
+  JpegPlenoCodec(std::unique_ptr<JPLFile>&& jpl_file)
+      : jpl_file(std::move(jpl_file)) {
+  }
+
+
   virtual ~JpegPlenoCodec() = default;
+
+
+  JPLFile& get_ref_to_jpl_file() {
+  	return *jpl_file;
+  }
+
+
+  const JPLFile& get_ref_to_jpl_file() const {
+  	return *jpl_file;
+  }
+
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__ */

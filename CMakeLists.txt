@@ -109,6 +109,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Encoder/)
 
 
 if(BUILD_DOC)

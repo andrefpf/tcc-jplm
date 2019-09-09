@@ -31,37 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DTransformMode.h
+/** \file     JpegPlenoLightFieldEncoder4DTransformModeTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__
-#define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__
+#include <fstream>
+#include <iostream>
+#include <string>
+#include "gtest/gtest.h"
+#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder4DTransformMode.h"
 
-#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder.h"
 
-class LightFieldEncoderConfiguration4DTransformMode
-    : public LightFieldEncoderConfiguration {
-  public:
-  LightFieldEncoderConfiguration4DTransformMode(const std::string& path)
-      : LightFieldEncoderConfiguration(path) {
+
+std::string resources_path = "../resources";
+
+
+TEST(BasicTest, Unknown) {
+	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
+	auto encoder = JpegPlenoLightFieldEncoder4DTransformMode(std::move(configuration));
+}
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  //this is to enable ctest to run the test passing the path to the resources
+  if (argc > 1) {
+    resources_path = std::string(argv[1]);
   }
-};
 
-
-template<typename T = uint16_t>
-class JpegPlenoLightFieldEncoder4DTransformMode
-    : public JpegPlenoLightFieldEncoder<T> {
- public:
-  JpegPlenoLightFieldEncoder4DTransformMode(
-      std::unique_ptr<LightFieldEncoderConfiguration4DTransformMode>&&
-          configuration)
-      : JpegPlenoLightFieldEncoder<T>(std::move(configuration)) {
-  }
-  virtual ~JpegPlenoLightFieldEncoder4DTransformMode() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__ */
+  return RUN_ALL_TESTS();
+}
