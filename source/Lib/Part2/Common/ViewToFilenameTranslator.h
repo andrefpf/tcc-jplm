@@ -45,6 +45,7 @@
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
 #include <sstream>
+#include "Lib/Part2/Common/CommonExceptions.h"
 
 class ViewToFilenameTranslator {
  public:
@@ -56,13 +57,12 @@ class ViewToFilenameTranslator {
 
 
 class PPM3CharViewToFilename : public ViewToFilenameTranslator {
-public:
-	PPM3CharViewToFilename() : ViewToFilenameTranslator() {};
-	~PPM3CharViewToFilename() = default;
+ public:
+  PPM3CharViewToFilename() : ViewToFilenameTranslator(){};
+  ~PPM3CharViewToFilename() = default;
 
-	virtual std::string view_position_to_filename(
+  virtual std::string view_position_to_filename(
       const std::pair<std::size_t, std::size_t>& position) const override;
-
 };
 
 

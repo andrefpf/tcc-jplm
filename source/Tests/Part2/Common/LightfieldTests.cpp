@@ -40,114 +40,117 @@
 
 #include <iostream>
 #include "Lib/Part2/Common/Lightfield.h"
+#include "Lib/Utils/Image/RGBImage.h"
 #include "gtest/gtest.h"
 
 
 TEST(InitialLightfieldTests, LightfieldHoldsGivenWidth) {
-	Lightfield<uint16_t> lightfield(2,3);
-	EXPECT_EQ(lightfield.get_width(), 2);
+  Lightfield<uint16_t> lightfield(2, 3);
+  EXPECT_EQ(lightfield.get_width(), 2);
 }
 
 
 TEST(InitialLightfieldTests, LightfieldHoldsGivenHeight) {
-	Lightfield<uint16_t> lightfield(2,3);
-	EXPECT_EQ(lightfield.get_height(), 3);
+  Lightfield<uint16_t> lightfield(2, 3);
+  EXPECT_EQ(lightfield.get_height(), 3);
 }
 
 
-struct LightfieldViewTests: public testing::Test 
-{
+struct LightfieldViewTests : public testing::Test {
  protected:
-  Lightfield<uint16_t> lightfield; // = Lightfield<uint16_t>(2,3);
-  std::unique_ptr<RGBImage<uint16_t>> image = std::make_unique<RGBImage<uint16_t>>(1,2,10);
+  Lightfield<uint16_t> lightfield;  // = Lightfield<uint16_t>(2,3);
+  std::unique_ptr<RGBImage<uint16_t>> image =
+      std::make_unique<RGBImage<uint16_t>>(1, 2, 10);
   View<uint16_t> view;
-  LightfieldViewTests() : lightfield(2,3) {
-    view = View<uint16_t>(std::move(image));
+  LightfieldViewTests() : lightfield(2, 3), view(std::move(image)) {
+    // view = View<uint16_t>(std::move(image));
   }
-
 };
 
 
 TEST_F(LightfieldViewTests, MoveViewKeepsLightfieldWidth) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   EXPECT_EQ(lightfield.get_width(), 2);
 }
 
 
 TEST_F(LightfieldViewTests, MoveViewKeepsLightfieldHeight) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   EXPECT_EQ(lightfield.get_height(), 3);
 }
 
 
 TEST_F(LightfieldViewTests, MoveViewKeepsViewWidth) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_width(), 1);
 }
 
 
 TEST_F(LightfieldViewTests, MoveViewKeepsViewHeight) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), 2);
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_height(), 2);
 }
 
 
 TEST_F(LightfieldViewTests, MoveViewKeepsViewBpp) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_bpp(), 10);
 }
 
 
 TEST_F(LightfieldViewTests, CopyViewKeepsLightfieldWidth) {
-  lightfield.set_view_at(view, {0,0});
+  lightfield.set_view_at(view, {0, 0});
   EXPECT_EQ(lightfield.get_width(), 2);
 }
 
 
 TEST_F(LightfieldViewTests, CopyViewKeepsLightfieldHeight) {
-  lightfield.set_view_at(view, {0,0});
+  lightfield.set_view_at(view, {0, 0});
   EXPECT_EQ(lightfield.get_height(), 3);
 }
 
 
 TEST_F(LightfieldViewTests, CopyViewKeepsWidth) {
-  lightfield.set_view_at(view, {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), 1);
+  lightfield.set_view_at(view, {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_width(), 1);
 }
 
 
 TEST_F(LightfieldViewTests, CopyViewKeepsHeight) {
-  lightfield.set_view_at(view, {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), 2);
+  lightfield.set_view_at(view, {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_height(), 2);
 }
 
 
 TEST_F(LightfieldViewTests, CopyViewKeepsViewBpp) {
-  lightfield.set_view_at(view, {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), 10);
+  lightfield.set_view_at(view, {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_bpp(), 10);
 }
 
 
 TEST_F(LightfieldViewTests, LighfieldGetsViewsWidth) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_width(), lightfield.get_views_width());
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(
+      lightfield.get_view_at({0, 0}).get_width(), lightfield.get_views_width());
 }
 
 
 TEST_F(LightfieldViewTests, LighfieldGetsViewsHeight) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_height(), lightfield.get_views_height());
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(lightfield.get_view_at({0, 0}).get_height(),
+      lightfield.get_views_height());
 }
 
 
 TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
-  lightfield.set_view_at(std::move(view), {0,0});
-  EXPECT_EQ(lightfield.get_view_at({0,0}).get_bpp(), lightfield.get_views_bpp());
+  lightfield.set_view_at(std::move(view), {0, 0});
+  EXPECT_EQ(
+      lightfield.get_view_at({0, 0}).get_bpp(), lightfield.get_views_bpp());
 }
 
 
 TEST_F(LightfieldViewTests, LighfieldGetsDimension) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   const auto [t, s, v, u] = lightfield.get_dimensions().get();
   EXPECT_EQ(t, 2);
   EXPECT_EQ(s, 3);
@@ -157,7 +160,7 @@ TEST_F(LightfieldViewTests, LighfieldGetsDimension) {
 
 
 TEST_F(LightfieldViewTests, LighfieldGetsDimensionThroughStructuredBinding) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   const auto [t, s, v, u] = lightfield.get_dimensions();
   EXPECT_EQ(t, 2);
   EXPECT_EQ(s, 3);
@@ -167,7 +170,7 @@ TEST_F(LightfieldViewTests, LighfieldGetsDimensionThroughStructuredBinding) {
 
 
 TEST_F(LightfieldViewTests, AViewCanBeAcessedByBracketOperator) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   auto my_view = lightfield[0][0];
   EXPECT_EQ(my_view.get_width(), lightfield.get_views_width());
   EXPECT_EQ(my_view.get_height(), lightfield.get_views_height());
@@ -176,7 +179,7 @@ TEST_F(LightfieldViewTests, AViewCanBeAcessedByBracketOperator) {
 
 
 TEST_F(LightfieldViewTests, AChannelCanBeAcessedByBracketOperator) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   auto my_channel = lightfield[0][0][0];
   EXPECT_EQ(my_channel.get_width(), lightfield.get_views_width());
   EXPECT_EQ(my_channel.get_height(), lightfield.get_views_height());
@@ -185,7 +188,7 @@ TEST_F(LightfieldViewTests, AChannelCanBeAcessedByBracketOperator) {
 
 
 TEST_F(LightfieldViewTests, APixelCanBeAcessedByBracketOperator) {
-  lightfield.set_view_at(std::move(view), {0,0});
+  lightfield.set_view_at(std::move(view), {0, 0});
   lightfield[0][0][0][0][0] = 25;
   lightfield[0][0][0][0][1] = 12;
   auto my_pixel = lightfield[0][0][0][0][0];
@@ -194,6 +197,17 @@ TEST_F(LightfieldViewTests, APixelCanBeAcessedByBracketOperator) {
   EXPECT_EQ(my_pixel_2, 12);
 }
 
+
+TEST(Anything, Test) {
+  auto tst = std::make_unique<int[]>(0);
+  if (!tst) {
+    std::cout << "not alocated" << std::endl;
+  } else {
+    std::cout << "alocated" << std::endl;
+    auto a = tst[0];
+    std::cout << "alocated " << a << std::endl;
+  }
+}
 
 // TEST_F(LightfieldViewTests, LighfieldGetsViewsBpp) {
 //   lightfield.set_view_at(std::move(view), {0,0});

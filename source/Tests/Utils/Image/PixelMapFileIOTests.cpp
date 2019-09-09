@@ -40,7 +40,7 @@
 
 #include <iostream>
 #include <string>
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 #include "gtest/gtest.h"
 
 

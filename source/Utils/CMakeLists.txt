@@ -1,5 +1,0 @@
-add_executable(lenslet_13x13_shifter Lenslet13x13Shifter.cpp)
-target_link_libraries(lenslet_13x13_shifter image)
-
-add_executable(compute_psnr ComputePSNR.cpp)
-target_link_libraries(compute_psnr image)

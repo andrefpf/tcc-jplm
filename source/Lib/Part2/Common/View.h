@@ -43,7 +43,7 @@
 
 #include <type_traits>  //is_integral
 #include "Lib/Part2/Common/CommonExceptions.h"
-#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ThreeChannelImage.h"
 
 template<typename T>
 class View {
@@ -51,6 +51,10 @@ class View {
   std::unique_ptr<Image<T>> image_;
   std::pair<std::size_t, std::size_t> view_size;
   std::size_t bpp;
+
+  //required by some base classes
+  View() = default;
+
 
  public:
   static_assert(std::is_integral<T>::value, "The view type must be integral");
@@ -76,15 +80,14 @@ class View {
   }
 
 
-  View() {
-    // std::cout << "This is the view default constructor..." << std::endl;
-  }
-  //for now this is needed in the lightfield constructor
-
-
   View(const View<T>& other)
       : image_(other.get_image_clone()), view_size(other.view_size),
         bpp(other.bpp) {
+  }
+
+
+  virtual View<T>* clone() const {
+    return new View<T>(*this);
   }
 
 
@@ -93,6 +96,32 @@ class View {
       return nullptr;
     }
     return image_->clone();
+  }
+
+
+  Image<T>* get_image_ptr() {
+    if (!image_) {
+      return nullptr;
+    }
+    return image_.get();
+  }
+
+
+  std::unique_ptr<Image<T>> release_image() {
+    return std::move(std::unique_ptr<Image<T>>(image_.release()));
+    // image_.reset(nullptr);
+  }
+
+
+  void set_image(Image<T>&& image) {
+    image_ = std::move(image);
+  }
+
+
+  bool has_image() const {
+    if (image_)
+      return true;
+    return false;
   }
 
 
@@ -127,7 +156,7 @@ class View {
   }
 
 
-  ~View() = default;
+  virtual ~View() = default;
 
 
   auto get_width() const noexcept {
@@ -161,6 +190,16 @@ class View {
   }
 
 
+  auto get_number_of_pixels() const {
+    return get_width() * get_height();
+  }
+
+
+  auto get_number_of_pixels_per_channel() const {
+    return get_number_of_channels() * get_number_of_pixels();
+  }
+
+
   //these are unsafe
   inline virtual ImageChannel<T>& operator[](const int i) noexcept {
     return (*(image_.get()))[i];
@@ -173,7 +212,10 @@ class View {
 
 
   virtual std::tuple<T, T, T> get_pixel_at(
-      const std::pair<std::size_t, std::size_t>& coordinate) const {
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    if (!image_) {
+      load_image(view_size);
+    }
     if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
@@ -186,15 +228,36 @@ class View {
   }
 
 
-  virtual T get_value_at(const std::size_t channel, const std::pair<std::size_t, std::size_t>& coordinate) const {
+  virtual T get_value_at(const std::size_t channel,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    if (!image_) {
+      load_image(view_size);
+    }
     if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
     if (channel >= image_->get_number_of_channels()) {
       throw ViewExceptions::InvalidNumberOfChannelsException();
     }
+    // std::cout << "getting pixel" << std::endl;
     return image_->get_pixel_at(channel, coordinate);
   }
+
+
+  virtual void load_image(const std::pair<std::size_t, std::size_t>& size,
+      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) {
+    std::cout << "Im not sure how to load a image with size "
+              << std::get<0>(size) << "x" << std::get<1>(size)
+              << "with initial point at (" << std::get<0>(initial) << ", "
+              << std::get<1>(initial) << ")" << std::endl;
+  }
+
+
+  void load_image() {
+    // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';
+    load_image(this->view_size);
+  }
 };
+
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEW_H__ */

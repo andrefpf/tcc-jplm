@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+image: gcc
+before_script:
+ - apt-get update --yes
+ - apt-get install --yes cmake
+
+build:
+  stage: build
+  script:
+    - mkdir build && cd build; cmake ..; make
+  artifacts:
+    paths:
+      - bin/*
+
+test:
+  stage: test
+  script:
+    - mkdir build && cd build; cmake ..; ctest

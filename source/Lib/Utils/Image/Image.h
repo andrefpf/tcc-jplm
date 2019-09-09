@@ -42,9 +42,11 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGE_H__
 
 #include <vector>
-#include "ImageChannel.h"
+#include "Lib/Utils/Image/ImageChannel.h"
 
-enum ImageType { Invalid, GrayScale, RGB, YCoCg, BT601, BT709, BT2020 };
+//The BT types should also support full and reduced dynamic ranges
+enum ImageType { Invalid, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };
+
 
 template<typename T>
 class Image {
@@ -52,6 +54,13 @@ class Image {
   const ImageType type;
   std::vector<ImageChannel<T>> channels;
 
+  /**
+   * \brief      Determines this Image is equal to other Image with same type.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if equal, False otherwise.
+   */
   bool is_equal(const Image<T>& other) const {
     if (this != &other) {
       if (this->get_number_of_channels() != other.get_number_of_channels()) {
@@ -67,6 +76,7 @@ class Image {
     return true;
   }
 
+
  public:
   Image(std::size_t width, std::size_t height, std::size_t bpp,
       std::size_t number_of_channels, ImageType type)
@@ -78,15 +88,45 @@ class Image {
   }
 
 
+  //this constructor allows for creating image channels with different bpps
+  Image(std::size_t width, std::size_t height, std::vector<std::size_t> bpps,
+      ImageType type)
+      : type(type) {
+    channels.reserve(bpps.size());
+    for (const auto& bpp : bpps) {
+      channels.emplace_back(ImageChannel<T>(width, height, bpp));
+    }
+  }
+
+
+  /**
+   * \brief      Copy constructor of the Image
+   * \details    Copies the type and then uses the std::vector copy constructor to copy channels
+   *
+   * \param[in]  other  The other
+   */
   Image(const Image<T>& other) : type(other.type) {
     channels = other.channels;
   }
 
 
+  /**
+   * \brief      Move constructor of the Image
+   * \details    Copies the other type and then uses move assigment
+   * 
+   * \param      other  The other
+   */
   Image(Image<T>&& other) noexcept : type(other.type) {
     *this = std::move(other);
   }
 
+
+  /**
+   * \brief      Creates a new instance of the object with same properties than original.
+   * \details    Provides a deep copy of the image (derived classes included)
+   *
+   * \return     Copy of this object.
+   */
   auto clone() const {
     return std::unique_ptr<Image<T>>(generate_ptr_to_clone());
   }
@@ -95,9 +135,21 @@ class Image {
   virtual ~Image() = default;
 
 
+  /**
+   * \brief      Pure virtual function used to make a deep copy. 
+   *
+   * \return     A pointer to the derived image (as implemented in derive classes)
+   */
   virtual Image* generate_ptr_to_clone() const = 0;
 
 
+  /**
+   * \brief      Image move assignment.
+   *
+   * \param      other  The other image
+   *
+   * \return     This image with the data from other
+   */
   Image& operator=(Image&& other) {
     if (this != &other) {
       this->channels.clear();
@@ -107,6 +159,13 @@ class Image {
   }
 
 
+  /**
+   * \brief      Image copy assignment.
+   *
+   * \param[in]  other  The other image
+   *
+   * \return     This image with a copy of the data from the other image.
+   */
   Image& operator=(const Image& other) {
     if (this != &other) {
       this->channels = other.channels;
@@ -115,48 +174,130 @@ class Image {
   }
 
 
+  /**
+   * \brief      Equal operator
+   *
+   * \param[in]  other  The other image to be compared with this
+   *
+   * \return     If the other image is equal this image, returns true. Otherwise, returns false.
+   */
   bool operator==(const Image<T>& other) const {
     return this->is_equal(other);
   }
 
 
+  /**
+   * \brief      Not equal operator
+   *
+   * \param[in]  other  The other image to be compared with this
+   *
+   * \return     If the other image is equal this image, returns false. Otherwise, returns true.
+   * 
+   * \details It is the oposite of operator==. Thus, uses operator== to avoid replicating code.
+   */
   bool operator!=(const Image<T>& other) const {
     return !(*this == other);
   }
 
 
+  /**
+   * \brief      Gets the number of channels.
+   *
+   * \return     The number of channels that this image have.
+   */
   auto get_number_of_channels() const {
     return channels.size();
   }
 
 
+  /**
+   * \brief      Gets the width of this Image.
+   *
+   * \return     The width.
+   */
   auto get_width() const {
     return channels[0].get_width();
   }
 
 
+  /**
+   * \brief      Gets the height of this Image.
+   *
+   * \return     The height.
+   */
   auto get_height() const {
     return channels[0].get_height();
   }
 
 
+  /**
+   * \brief      Gets the bits per pixel (bpp) of this Image.
+   *
+   * \return     The bits per pixel.
+   */
   auto get_bpp() const {
     return channels[0].get_bpp();
   }
 
 
+  /**
+   * \brief      Gets a vector with the bits per pixel (bpp) of each and every channel of this Image.
+   * \details    Useful for images with different bpp according to channel
+   *
+   * \return     The bpps.
+   */
+  auto get_bpps() const {
+    std::vector<std::size_t> bpps;
+    bpps.reserve(channels.size());
+    for (const auto& channel : channels) {
+      bpps.emplace_back(channel.get_bpp());
+    }
+    return bpps;
+  }
+
+  /**
+   * \brief      Gets the number of pixels per channel of this Image.
+   *
+   * \return     The number of pixels per channel.
+   */
   auto get_number_of_pixels_per_channel() const {
     return channels[0].get_number_of_pixels();
   }
 
 
+  /**
+   * \brief      Gets a vector with the umber of pixels of each and every channel of this Image.
+   * \details    Useful for images with different number of pixels according to channel
+   *
+   * \return     The std::vector with number of pixels.
+   */
+  auto get_number_of_pixels_of_each_channel() const {
+    std::vector<std::size_t> number_of_pixels;
+    number_of_pixels.reserve(channels.size());
+    for (const auto& channel : channels) {
+      number_of_pixels.emplace_back(channel.get_number_of_pixels());
+    }
+    return number_of_pixels;
+  }
+
+
+  /**
+   * \brief      Gets the number of pixels of this Image.
+   *
+   * \return     The number of pixels.
+   */
   auto get_number_of_pixels() const {
     return (this->get_number_of_channels()) *
            (this->get_number_of_pixels_per_channel());
   }
 
 
-  decltype(type) get_type() const {
+  /**
+   * \brief      Gets the type of this Image.
+   *
+   * \return     The type, from ImageType enum.
+   */
+  auto get_type() const {
     return type;
   }
 
@@ -215,13 +356,14 @@ class Image {
     return channels[i];
   }
 
+  
   void shift_pixels_by(int8_t shift) {
     for (auto& channel : channels) {
       channel.shift_pixels_by(shift);
     }
   }
 
-
+  
   auto begin() {
     return channels.begin();
   }
@@ -232,12 +374,22 @@ class Image {
   }
 
 
-  auto cbegin() {
+  auto begin() const noexcept {
+    return this->channels.cbegin();
+  }
+
+
+  auto end() const noexcept {
+    return this->channels.cend();
+  }
+
+
+  auto cbegin() const noexcept {
     return channels.cbegin();
   }
 
 
-  auto cend() {
+  auto cend() const noexcept {
     return channels.cend();
   }
 
@@ -246,249 +398,7 @@ class Image {
 };
 
 
-template<typename T>
-class ThreeChannelImage : public Image<T> {
- public:
-  ThreeChannelImage(const std::size_t width, const std::size_t height,
-      const std::size_t bpp, const ImageType type)
-      : Image<T>(width, height, bpp, 3, type){};
 
-
-  ThreeChannelImage(ThreeChannelImage<T>&& other) noexcept
-      : Image<T>(std::move(other)) {
-  }
-
-
-  ThreeChannelImage(const ThreeChannelImage<T>& other) : Image<T>(other){};
-
-
-  ThreeChannelImage& operator=(ThreeChannelImage<T>&& other) {
-    Image<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const ThreeChannelImage<T>& other) const {
-    return this->is_equal(other);
-  }
-
-
-  inline bool operator!=(const ThreeChannelImage<T>& other) const {
-    return !this->is_equal(other);
-  }
-
-
-  std::tuple<T, T, T> get_pixel_at(
-      const std::size_t i, const std::size_t j) const {
-    return std::make_tuple(this->channels[0].get_value_at(i, j),
-        this->channels[1].get_value_at(i, j),
-        this->channels[2].get_value_at(i, j));
-  }
-
-
-  std::tuple<T, T, T> get_pixel_at(
-      const std::pair<std::size_t, std::size_t>& coordinate) const {
-    return get_pixel_at(std::get<0>(coordinate), std::get<1>(coordinate));
-  }
-
-
-  void set_pixel_at(
-      const std::tuple<T, T, T>& pixel, std::size_t i, std::size_t j) {
-    this->channels[0].set_value_at(std::get<0>(pixel), i, j);
-    this->channels[1].set_value_at(std::get<1>(pixel), i, j);
-    this->channels[2].set_value_at(std::get<2>(pixel), i, j);
-  }
-
-
-  void set_pixel_at(const std::tuple<T, T, T>& pixel,
-      std::pair<std::size_t, std::size_t> coordinate) {
-    set_value_at(pixel, std::get<0>(coordinate), std::get<1>(coordinate));
-  }
-
-
-  virtual ~ThreeChannelImage() = default;
-};
-
-
-template<typename T>
-class RGBImage : public ThreeChannelImage<T> {
- public:
-  RGBImage(std::size_t width, std::size_t height, std::size_t bpp)
-      : ThreeChannelImage<T>(width, height, bpp, ImageType::RGB){};
-
-
-  RGBImage(RGBImage<T>&& other) noexcept
-      : ThreeChannelImage<T>(std::move(other)) {
-  }
-
-
-  RGBImage(const RGBImage<T>& other) : ThreeChannelImage<T>(other){};
-
-
-  RGBImage& operator=(RGBImage<T>&& other) {
-    ThreeChannelImage<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const RGBImage<T>& other) const {
-    return this->is_equal(other);
-  }
-
-
-  inline bool operator!=(const RGBImage<T>& other) const {
-    return !this->is_equal(other);
-  }
-
-
-  virtual RGBImage* generate_ptr_to_clone() const override {
-    return new RGBImage<T>(*this);
-  }
-
-
-  ~RGBImage() = default;
-
-
-  std::vector<std::string> get_channel_names() const final {
-    return {"Red", "Green", "Blue"};
-  }
-};
-
-
-template<typename T>
-class YCbCrImage : public ThreeChannelImage<T> {
- public:
-  YCbCrImage(
-      std::size_t width, std::size_t height, std::size_t bpp, ImageType type)
-      : ThreeChannelImage<T>(width, height, bpp, type){};
-
-
-  YCbCrImage(YCbCrImage<T>&& other) noexcept
-      : ThreeChannelImage<T>(std::move(other)) {
-  }
-
-
-  YCbCrImage(const YCbCrImage<T>& other) : ThreeChannelImage<T>(other){};
-
-
-  YCbCrImage& operator=(YCbCrImage<T>&& other) {
-    ThreeChannelImage<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const YCbCrImage<T>& other) const {
-    return this->is_equal(other);
-  }
-
-
-  ~YCbCrImage() = default;
-
-
-  std::vector<std::string> get_channel_names() const final {
-    return {"Y", "Cb", "Cr"};
-  }
-};
-
-
-template<typename T>
-class BT601Image : public YCbCrImage<T> {
- public:
-  BT601Image(std::size_t width, std::size_t height, std::size_t bpp)
-      : YCbCrImage<T>(width, height, bpp, ImageType::BT601){};
-
-
-  BT601Image(BT601Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
-  }
-
-
-  BT601Image(const BT601Image<T>& other) : YCbCrImage<T>(other){};
-
-
-  BT601Image& operator=(BT601Image<T>&& other) {
-    YCbCrImage<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const BT601Image<T>& other) const {
-    return this->is_equal(other);
-  }
-
-
-  ~BT601Image() = default;
-
-
-  virtual BT601Image* generate_ptr_to_clone() const override {
-    return new BT601Image<T>(*this);
-  }
-};
-
-template<typename T>
-class BT709Image : public YCbCrImage<T> {
- public:
-  BT709Image(std::size_t width, std::size_t height, std::size_t bpp)
-      : YCbCrImage<T>(width, height, bpp, ImageType::BT709){};
-
-
-  BT709Image(BT709Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
-  }
-
-
-  BT709Image(const BT709Image<T>& other) : YCbCrImage<T>(other){};
-
-
-  BT709Image& operator=(BT709Image<T>&& other) {
-    YCbCrImage<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const BT709Image<T>& other) const {
-    return this->is_equal(other);
-  }
-
-
-  ~BT709Image() = default;
-
-
-  virtual BT709Image* generate_ptr_to_clone() const override {
-    return new BT709Image<T>(*this);
-  }
-};
-
-template<typename T>
-class BT2020Image : public YCbCrImage<T> {
- public:
-  BT2020Image(std::size_t width, std::size_t height, std::size_t bpp)
-      : YCbCrImage<T>(width, height, bpp, ImageType::BT2020){};
-
-
-  BT2020Image(BT2020Image<T>&& other) noexcept
-      : YCbCrImage<T>(std::move(other)) {
-  }
-
-
-  BT2020Image(const BT2020Image<T>& other) : YCbCrImage<T>(other){};
-
-
-  BT2020Image& operator=(BT2020Image<T>&& other) {
-    YCbCrImage<T>::operator=(std::move(other));
-    return *this;
-  }
-
-
-  inline bool operator==(const BT2020Image<T>& other) const {
-    return this->is_equal(other);
-  }
-
-  ~BT2020Image() = default;
-
-
-  virtual BT2020Image* generate_ptr_to_clone() const override {
-    return new BT2020Image<T>(*this);
-  }
-};
 
 template<typename T>
 class GrayScaleImage : public Image<T> {
@@ -533,5 +443,6 @@ class GrayScaleImage : public Image<T> {
     return new GrayScaleImage<T>(*this);
   }
 };
+
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGE_H__ */

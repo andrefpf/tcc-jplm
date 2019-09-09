@@ -48,16 +48,29 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "Generic2DStructure.h"
-#include "ImageExceptions.h"
-#include "Metrics.h"
+#include "Lib/Utils/Image/Generic2DStructure.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
+#include "Lib/Utils/Image/Metrics.h"
 
+/**
+ * @brief Image Channel class inherits from Generic2DStructure
+ * @details [long description]
+ * 
+ * @tparam T [description]
+ */
 template<typename T>
 class ImageChannel : public Generic2DStructure<T> {
  private:
   const std::size_t bpp;
 
  protected:
+  /**
+   * @brief Checks if a given value is valid, i.e, is within the expected channel bpp
+   * @details [long description]
+   * 
+   * @param value [description]
+   * @return [description]
+   */
   inline bool is_value_valid(const T value) {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return (get_min_value() <= value && value <= get_max_value());
@@ -69,16 +82,16 @@ class ImageChannel : public Generic2DStructure<T> {
  public:
   ImageChannel(
       const std::size_t width, const std::size_t height, const std::size_t bpp)
-      : Generic2DStructure<T>(width, height), bpp(bpp) {
+      : Generic2DStructure<T>(width, height, false), bpp(bpp) {
     if (bpp == 0)
       throw ImageChannelExceptions::InvalidSizeException();
-    this->alloc_resources();
+    this->alloc_all_resources();
   }
 
 
   ImageChannel(const ImageChannel<T>& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
-    this->alloc_resources();
+    //FIXME: this should be part of Generic2DStructure copy contructor
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
   }
@@ -86,6 +99,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
   ImageChannel(ImageChannel<T>&& other) noexcept
       : Generic2DStructure<T>(other.width, other.height), bpp(other.bpp) {
+    //! \todo  check if it is possible to initiallyze the Generic2DStructure with false
     *this = std::move(other);
   }
 
@@ -102,12 +116,20 @@ class ImageChannel : public Generic2DStructure<T> {
   ~ImageChannel() = default;
 
 
-  virtual ImageChannel* generate_ptr_to_clone() const override {
+  virtual ImageChannel* clone() const override {
     return new ImageChannel(*this);
-  };
+  }
 
 
+  /**
+   * @brief Fills the complete channel with the given value
+   * @details Every position within the current channel will contain value.
+   * If the channel T is uint8_t, this operation can be faster by using memset
+   * 
+   * @param value The value used to fill the channel with.
+   */
   void fill_with(const T value) {
+    //! \todo  check if it is possible to replace this by using std::fill(this->begin(), this->end(), value);
     if constexpr (std::is_same<T, uint8_t>::value) {
       std::memset(this->elements.get(), value, this->number_of_elements);
     } else {
@@ -119,6 +141,11 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
+  /**
+   * \brief      Gets the maximum value that can be in the image channel.
+   * \attention The returned value is not the minimum that is currently in the channel.
+   * \return     The maximum value.
+   */
   inline T get_max_value() const {
     auto positive_bpp = bpp;
     if constexpr (std::numeric_limits<T>::is_signed) {
@@ -128,6 +155,12 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
+  /**
+   * \brief Gets the minimum value that can be in the image channel
+   * \details If T is an unsigned type, then the minimum value will be 0. Otherwise, it depends on the used bpp.
+   * \attention The returned value is not the minimum that is currently in the channel.
+   * \return The minimum value. 
+   */
   inline T get_min_value() const {
     if constexpr (std::numeric_limits<T>::is_signed) {
       return -std::pow(2.0, static_cast<double>(bpp - 1));
@@ -136,7 +169,14 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
-  std::vector<T> as_raster_vector() {
+  /**
+  * \brief Creates a new vector containing all values from the current channel in raster order
+  * \details [long description]
+  * \return A vector with all values from the current channel.
+  */
+  std::vector<T> as_raster_vector() {  
+    //! \todo  check if this method must exist
+    //! \todo  check if this method may be const
     auto temp_ptr = this->elements.get();
     auto ret_vector = std::vector<T>();
     ret_vector.reserve(this->number_of_elements);
@@ -148,13 +188,35 @@ class ImageChannel : public Generic2DStructure<T> {
     return ret_vector;
   }
 
-
+  /**
+   * \brief Non const acessor
+   * \details gets a pointer to the element in vertical position i
+   * \warning Unsafe: this acessor does not check if the data is 
+   * available (memory is allocated) and makes no bound checking.
+   * 
+   * \warning Unsafe: Also, this acessor will not check for values larger
+   * than the maximum (limited by the bpp). Thus a wrong value will render
+   * the image channel unstable (i.e., with invalid values).
+   * 
+   * \param[in] i The row index to be accessed
+   * \return A pointer to the i^{th} row of the image channel
+   */
   inline T* operator[](const int i) {
+    //! \todo  check if this operator is not inherited from Generic2DStructure
     return this->elements_for_2d_access[i];
   }
 
-
+  /**
+   * \brief      Const acessor
+   * \warning Unsafe: this acessor does not check if the data is 
+   * available (memory is allocated) and makes no bound checking
+   *
+   * \param[in]  i    The row index to be accessed
+   *
+   * \return     A const pointer to the i^{th} row of the image channel.
+   */
   inline const T* operator[](const int i) const {
+    //! \todo  check if this operator is not inherited from Generic2DStructure
     return this->elements_for_2d_access[i];
   }
 
@@ -171,16 +233,23 @@ class ImageChannel : public Generic2DStructure<T> {
   }
 
 
+  /**
+   * \brief      Copy assignment of the image channel
+   *
+   * \param[in]  other  The other
+   */
   void operator=(const ImageChannel<T>& other) {
-    if (!this->has_equal_size(other)) {  //needs to realloc
-      this->alloc_resources();
+    //check if this channel has exactly the same sizes, and thus memory size allocated
+    if (!this->has_equal_size(other)) { //if not the same size,
+      this->alloc_all_resources(); //needs to realloc
     }
+    //Copies the content (elements/values) of the other image to this image.
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
   }
 
-
-  typedef typename std::make_signed<T>::type signed_type;
+  
+  typedef typename std::make_signed<T>::type signed_type; 
 
 
   ImageChannel<signed_type> operator-(const ImageChannel<T>& other) const {
@@ -203,10 +272,7 @@ class ImageChannel : public Generic2DStructure<T> {
 
 
   void set_value_at(const T& value, const std::size_t i, const std::size_t j) {
-    if (!is_value_valid(value)) {
-      throw ImageChannelExceptions::InvalidValueException();
-    }
-    Generic2DStructure<T>::set_element_at(value, i, j);
+    this->set_value_at(value, {i, j});
   }
 
 
@@ -215,8 +281,7 @@ class ImageChannel : public Generic2DStructure<T> {
     if (!is_value_valid(value)) {
       throw ImageChannelExceptions::InvalidValueException();
     }
-    Generic2DStructure<T>::set_element_at(
-        value, std::get<0>(coordinate), std::get<1>(coordinate));
+    Generic2DStructure<T>::set_element_at(value, coordinate);
   }
 
 
@@ -258,7 +323,7 @@ class ImageChannel : public Generic2DStructure<T> {
         if constexpr (std::is_integral<T>::value) {
           auto shifted = value << shift;
           auto max = this->get_max_value();
-          if ((shifted > max) || (shifted < value))  //overflow
+          if ((shifted > max) || (shifted < value))  //avoids overflow
             return max;
           return shifted;
         }

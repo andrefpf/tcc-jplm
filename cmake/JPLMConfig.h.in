@@ -1,0 +1,18 @@
+#ifndef JPLMCONFIG_H__
+#define JPLMCONFIG_H__
+
+
+#define JPLM_NAME "@JPLM_NAME@"
+#define JPLM_VERSION_MAJOR "@JPLM_VERSION_MAJOR@"
+#define JPLM_VERSION_MINOR "@JPLM_VERSION_MINOR@"
+#define JPLM_VERSION_PATCH "@JPLM_VERSION_PATCH@"
+
+// MAJOR version when you make incompatible API changes,
+// MINOR version when you add functionality in a backwards-compatible manner, and
+// PATCH version when you make backwards-compatible bug fixes.
+
+#define JPLM_VERSION  "@JPLM_VERSION_MAJOR@.@JPLM_VERSION_MINOR@.@JPLM_VERSION_PATCH@"
+
+//from https://semver.org/
+
+#endif /* end of include guard: JPLMCONFIG_H__ */

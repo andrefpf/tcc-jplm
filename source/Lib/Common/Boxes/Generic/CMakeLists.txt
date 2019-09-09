@@ -1,0 +1,2 @@
+set(COMMON_BOXES_GENERIC_SOURCES ContiguousCodestreamCode.cpp)
+add_library(jplm_common_boxes_generic ${COMMON_BOXES_GENERIC_SOURCES})

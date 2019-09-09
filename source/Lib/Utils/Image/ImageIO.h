@@ -41,11 +41,14 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 #define JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 
-#include "PPMBinaryFile.h"
-#include "PixelMapFile.h"
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFile.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 namespace ImageIO {
+
+
+
 
 void write_image_to_file(
     const std::variant<Image<uint8_t>, Image<uint16_t>>& image,
@@ -60,8 +63,17 @@ void write_image_to_file(
     const Image<uint8_t>& image, const std::string& filename);
 
 
+/**
+ * \brief      Function to write a full image to file
+ *
+ * \param[in]  image      The image
+ * \param[in]  filename   The filename
+ * \param[in]  overwrite  The overwrite flag. If set, the file will be overwritten if it already exists
+ *
+ * \tparam     T            The value container of the image (template resolution makes this hidden)
+ */
 template<typename T>
-void write(const Image<T>& image, const std::string& filename,
+void imwrite(const Image<T>& image, const std::string& filename,
     const bool overwrite = false) {
   namespace fs = std::filesystem;
   using fpath = fs::path;
@@ -82,8 +94,18 @@ void write(const Image<T>& image, const std::string& filename,
   }
 }
 
+
+/**
+ * \brief      Function to write image patch to file
+ *
+ * \param[in]  patch_image  The image patch to be written
+ * \param[in]  filename     The filename
+ * \param[in]  origin       The origin (the initial point from which the patch will be placed)
+ *
+ * \tparam     T            The value container of the image (template resolution makes this hidden)
+ */
 template<typename T>
-void write(const Image<T>& patch_image, const std::string& filename,
+void imwrite(const Image<T>& patch_image, const std::string& filename,
     std::pair<std::size_t, std::size_t> origin) {
   using fpath = std::filesystem::path;
   auto name = fpath(filename);
@@ -96,6 +118,68 @@ void write(const Image<T>& patch_image, const std::string& filename,
         static_cast<PPMBinaryFile*>(oppened_image.release()));
     oppened_image_as_rgb->write_image_patch_to_file(patch_image, origin);
   }
+}
+
+
+
+
+/**
+ * \brief      matlab like image reading function
+ *
+ * \param[in]  filename  The filename
+ *
+ * \tparam     ImageT    The expected return image class
+ * \tparam     T         The image value container in the ImageT
+ *
+ * \return     returns a std::unique_ptr to ImageT<T> read from file
+ */
+template<template<typename> class ImageT, typename T>
+std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
+  using fpath = std::filesystem::path;
+  auto name = fpath(filename);
+  if (name.extension() == fpath(".ppm")) {
+    auto ppm_file = PixelMapFileIO::open(filename);
+    auto image = ppm_file->read_full_image();
+    auto converted_image =
+        PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(image);
+    return std::move(converted_image);
+  }
+  throw std::logic_error(
+      "Not fully implemented (for types other than ppm): ImageIO::imread");
+}
+
+
+/**
+ * \brief      opens a image file pointer
+ *
+ * \return     A unique_ptr to the image file that is oppened
+ */
+std::unique_ptr<ImageFile> open(const std::string& filename);
+
+
+/**
+ * \brief      Function to read a image from a file
+ *
+ * \param      image_file  A oppened image file (using ImageIO::open(filename))
+ *
+ * \tparam     ImageT    The expected return image class
+ * \tparam     T         The image value container in the ImageT
+ *
+ * \return     returns a std::unique_ptr to ImageT<T> read from file
+ */
+template<template<typename> class ImageT, typename T>
+std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
+  switch (image_file.get_type()) {
+    case ImageFileType::PixelMap: {
+      auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
+      auto converted_image =
+          PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
+              image);
+      return std::move(converted_image);
+    }
+  }
+
+  throw std::logic_error("Not fully implemented: ImageIO::read");
 }
 
 
