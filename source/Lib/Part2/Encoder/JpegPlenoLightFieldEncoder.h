@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
 
-#include "Lib/Part1/Common/JpegPlenoLightFieldCodec.h"
+#include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
 
 class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec {
  public:

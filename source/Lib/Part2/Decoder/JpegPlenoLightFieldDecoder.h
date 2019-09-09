@@ -38,10 +38,10 @@
  *  \date     2019-09-09
  */
 
-#ifndef JPEGPLENOLIGHTFIELDDECODER_H__
-#define JPEGPLENOLIGHTFIELDDECODER_H__
+#ifndef JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__
+#define JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__
 
-#include "Lib/Part1/Common/JpegPlenoLightFieldCodec.h"
+#include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
 
 class JpegPlenoLightFieldDecoder : public JpegPlenoLightFieldCodec {
  public:
@@ -49,4 +49,4 @@ class JpegPlenoLightFieldDecoder : public JpegPlenoLightFieldCodec {
   virtual ~JpegPlenoLightFieldDecoder() = default;
 };
 
-#endif /* end of include guard: JPEGPLENOLIGHTFIELDDECODER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__ */

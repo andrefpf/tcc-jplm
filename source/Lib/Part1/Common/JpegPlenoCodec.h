@@ -42,7 +42,7 @@
 #define JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
 
 #include <memory> //std::unique_ptr
-#include "Lib/Part1/JPLFile.h"
+#include "Lib/Part1/Common/JPLFile.h"
 
 class JpegPlenoCodec {
 protected:

@@ -1,0 +1,2 @@
+set(PART2_DECODER_SOURCES  JpegPlenoLightFieldDecoder.cpp JpegPlenoLightFieldDecoder4DPredictionMode.cpp JpegPlenoLightFieldDecoder4DTransformMode.cpp)
+add_library(jplm_part2_decoder ${PART2_DECODER_SOURCES})
