@@ -45,6 +45,7 @@
 #include <vector>
 #include "ContiguousCodestreamCode.h"
 
+
 class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
  protected:
   std::vector<std::byte> bytes;

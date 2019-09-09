@@ -25,72 +25,32 @@
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
  * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * INTERRUPTION) HOWEVER C
+
+
+AUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDBoxContents.h
+/** \file     InMemoryDBox.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-08-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__
-
-//UUID
-
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "UniversalUniqueIdentifier.h"
-
-class UUIDBoxContents : public InMemoryDBoxContents {
- protected:
-  UniversalUniqueIdentifier id;
-  std::vector<uint8_t> data;
-
- public:
-  UUIDBoxContents() = default;
+#include "InMemoryDBox.h"
 
 
-  virtual UUIDBoxContents* clone() const override {
-    return new UUIDBoxContents(*this);
-  }
+std::ostream& InMemoryDBox::write_to(std::ostream& stream) const {
+  auto bytes = this->get_bytes();
+  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+  return stream;
+}
 
-
-  virtual ~UUIDBoxContents() = default;
-
-
-  virtual uint64_t size() const noexcept override {
-    return id.size() + data.size() * sizeof(uint8_t);
-  }
-
-
-  virtual bool is_equal(const DBoxContents& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDBoxContents&>(other);
-    return *this == cast_other;
-  }
-
-
-  bool operator==(const UUIDBoxContents& other) const {
-    return (this->id == other.id) && (this->data == other.data);
-  }
-
-
-  bool operator!=(const UUIDBoxContents& other) const {
-    return !this->operator==(other);
-  }
-
-
-  void add_data(const std::vector<uint8_t>& data_to_add) {
-    data.reserve(data_to_add.size());
-    data.insert(data.end(), data_to_add.begin(), data_to_add.end());
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOXCONTENTS_H__ */
+std::ostream& operator<<(
+    std::ostream& stream, const InMemoryDBox& d_box_contents) {
+  return d_box_contents.write_to(stream);
+}

@@ -45,17 +45,26 @@
 #include <cstdint>
 #include <ostream>
 
+/**
+ * \brief      Class for contiguous codestream code.
+ */
 class ContiguousCodestreamCode {
  public:
   virtual uint64_t size() const noexcept = 0;
+
+
   virtual ContiguousCodestreamCode* clone() const = 0;
 
-  // virtual bool operator==(const ContiguousCodestreamCode& other) const = 0;
-  // virtual bool operator!=(const ContiguousCodestreamCode& other) const = 0;
+
   virtual bool is_equal(const ContiguousCodestreamCode& other) const = 0;
+
+
   virtual std::ostream& write_to(std::ostream& stream) const = 0;
 
+
   virtual void push_byte(const std::byte byte) = 0;
+
+
   virtual std::byte get_byte_at(const uint64_t pos) const = 0;
 
 
@@ -68,7 +77,7 @@ class ContiguousCodestreamCode {
     return !this->operator==(other);
   }
 
-  //! \todo define a iterator interface
+  //! \todo define a iterator interface for ContiguousCodestreamCode
 };
 
 

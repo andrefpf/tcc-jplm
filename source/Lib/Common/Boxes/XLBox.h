@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_COMMON_GENERIC_XLBOX_H__
 #define JPLM_LIB_COMMON_GENERIC_XLBOX_H__
 
-#include "source/Lib/Common/Boxes/BoxDataHolder.h"
-#include "source/Lib/Part1/Common/CommonExceptions.h"
+#include "Lib/Common/Boxes/BoxDataHolder.h"
+#include "Lib/Part1/Common/CommonExceptions.h"
 
 
 class XLBox : public BoxDataHolder<uint64_t> {

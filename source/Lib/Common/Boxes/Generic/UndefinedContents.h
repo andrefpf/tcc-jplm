@@ -31,47 +31,98 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDDBox.h
+/** \file     UndefinedContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-07-25
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__
 
-#include "Lib/Common/Boxes/DBox.h"
-#include "UUIDBoxContents.h"
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
 
-class UUIDDBox : public DBox {
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+
+
+class UndefinedContents : public InMemoryDBox {
+ protected:
+  std::vector<std::byte> byte_array;
+
  public:
-  UUIDDBox(const UUIDBoxContents& contents)
-      : DBox(std::make_unique<UUIDBoxContents>(contents)) {
+  UndefinedContents(const std::vector<std::byte>& byte_array)
+      : byte_array(byte_array) {
   }
 
 
-  UUIDDBox(const UUIDDBox& other)
-      : DBox(std::make_unique<UUIDBoxContents>(other.get_ref_to_contents())) {
+  UndefinedContents(std::vector<std::byte>&& byte_array)
+      : byte_array(std::move(byte_array)) {
   }
 
 
-  virtual const UUIDBoxContents& get_ref_to_contents() const override {
-    return static_cast<const UUIDBoxContents&>(*contents);
+  UndefinedContents(const UndefinedContents& other)
+      : byte_array(other.byte_array) {
   }
 
 
-  ~UUIDDBox() = default;
-
-
-  UUIDDBox* clone() const override {
-    return new UUIDDBox(*this);
+  UndefinedContents(UndefinedContents&& other)
+      : byte_array(std::move(other.byte_array)) {
   }
 
 
-  void add_data(const std::vector<uint8_t>& data) {
-    static_cast<UUIDBoxContents&>(*contents).add_data(data);
+  UndefinedContents() = default;
+
+
+  virtual UndefinedContents* clone() const override {
+    return new UndefinedContents(*this);
+  }
+
+
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  ~UndefinedContents() = default;
+
+
+  uint64_t size() const noexcept override {
+    return byte_array.size();
+  }
+
+
+  bool operator==(const UndefinedContents& other) const {
+    return this->byte_array == other.byte_array;
+  }
+
+
+  bool operator!=(const UndefinedContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  void set_bytes(const std::vector<std::byte>&& bytes) {
+    byte_array = std::move(bytes);
+  }
+
+
+  void set_bytes(const std::vector<std::byte>& bytes) {
+    byte_array = bytes;
+  }
+
+
+  void add_bytes(const std::vector<std::byte>& bytes) {
+    byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    return byte_array;
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDDBOX_H__ */
+
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__ */

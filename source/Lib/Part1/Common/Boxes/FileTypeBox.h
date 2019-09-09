@@ -31,50 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     FileTypeBox.cpp
+/** \file     FileTypeBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__
 
-#include <algorithm>
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "FileTypeDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
 
-
-class FileTypeBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::FileTypeBoxType);
-
-
-  FileTypeBox(const FileTypeContents& contents)
-      : Box(TBox(id), FileTypeDBox(contents)){};
-
-
-  FileTypeBox(const FileTypeBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  template<uint32_t id_of_other_codec>
-  bool is_compatible_with() {
-    return dynamic_cast<const FileTypeContents&>(
-        this->get_ref_to_dbox_contents())
-        .is_the_file_compatible_with(id_of_other_codec);
-  }
-
-  template<class OtherBox>
-  bool is_compatible_with() {
-    return is_compatible_with<OtherBox::id>();
-  }
-
-
-  ~FileTypeBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a File Type Box
+ */
+using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_FILETYPEBOX_H__ */

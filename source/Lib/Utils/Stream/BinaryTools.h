@@ -38,17 +38,17 @@
  *  \date     2019-07-30
  */
 
-//! \todo this class (BinaryTools) to Lib/Common/ (already updated the include guard)
-
-#ifndef JPLM_LIB_COMMON_BINARYTOOLS_H__
-#define JPLM_LIB_COMMON_BINARYTOOLS_H__
+#ifndef JPLM_LIB_UTILS_STREAM_BINARYTOOLS_H__
+#define JPLM_LIB_UTILS_STREAM_BINARYTOOLS_H__
 
 #include <algorithm>  // std::reverse
 #include <cstdint>
 #include <vector>
 #include <cstddef> // std::byte
 
-
+/**
+ * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
+ */
 namespace BinaryTools {
 
 struct uint24_t {
@@ -159,4 +159,4 @@ std::vector<std::byte>& append_big_endian_bytes(
 
 }  // namespace BinaryTools
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BINARYTOOLS_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_STREAM_BINARYTOOLS_H__ */

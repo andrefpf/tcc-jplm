@@ -1,2 +1,2 @@
-set(PART1_COMMON_SOURCES ../../Common/Boxes/Box.cpp ../../Common/Boxes/DBox.cpp ../../Common/Boxes/InFileDBoxContents.cpp ../../Common/Boxes/InMemoryDBoxContents.cpp BinaryTools.cpp)
+set(PART1_COMMON_SOURCES ../../Common/Boxes/Box.cpp ../../Common/Boxes/InFileDBox.cpp ../../Common/Boxes/InMemoryDBox.cpp)
 add_library(jplm_part1_common ${PART1_COMMON_SOURCES})

@@ -31,32 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UndefinedBox.h
+/** \file     EnumCS.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-09-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "UndefinedDBox.h"
+#include <cstdint>
 
-class UndefinedBox : public Box {
- public:
-  UndefinedBox(const TBox& type, const UndefinedDBoxContents& contents)
-      : Box(type, UndefinedDBox(contents)) {
-  }
+/**
+ * Defines the type of EnumCs field
+ */
+using enum_cs_field_type = uint32_t;
 
-
-  UndefinedBox(const UndefinedBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
-  }
-
-
-  ~UndefinedBox() = default;
+/**
+ * \brief      Enum class to represent EnumCS values.
+ */
+enum class EnumCS : enum_cs_field_type {
+  sRGB = 16,  //!< sRGB as defined by IEC 61966–2–1
+  greyscale =
+      17,  //!< greyscale: A greyscale space where image luminance is related to code values
+  // using the sRGB non-linearity given in Eqs. (2) through (4) of IEC 61966–2–1
+  // (sRGB) specification
+  //
+  // other values are reserved for other ISO uses
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_ENUMCS_H__ */

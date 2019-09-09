@@ -31,64 +31,85 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoThumbnailDBox.h
+/** \file     CharArrayContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYCONTENTS_H__
 
-#include "JpegPlenoThumbnailContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
 
-class JpegPlenoThumbnailDBox : public DBox {
+class CharArrayContents : public InMemoryDBox {
+ protected:
+  std::vector<uint8_t> chars;
+
  public:
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailContents& contents)
-      : DBox(std::make_unique<JpegPlenoThumbnailContents>(contents)) {
+  CharArrayContents(const std::vector<uint8_t>& array) : chars(array) {
   }
 
 
-  JpegPlenoThumbnailDBox(const JpegPlenoThumbnailDBox& other)
-      : DBox(std::make_unique<JpegPlenoThumbnailContents>(
-            other.get_ref_to_contents())) {
+  CharArrayContents(std::vector<uint8_t>&& array) : chars(std::move(array)) {
   }
 
 
-  virtual const JpegPlenoThumbnailContents& get_ref_to_contents()
-      const override {
-    return static_cast<const JpegPlenoThumbnailContents&>(*contents);
+  CharArrayContents(const CharArrayContents& other)
+      : chars(other.get_const_ref_to_vector()) {
   }
 
 
-  ~JpegPlenoThumbnailDBox() = default;
+  CharArrayContents(CharArrayContents&& other)
+      : chars(std::move(other.chars)){};
 
 
-  JpegPlenoThumbnailDBox* clone() const override {
-    return new JpegPlenoThumbnailDBox(*this);
+  ~CharArrayContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return chars.size();
   }
 
 
-  friend void swap(JpegPlenoThumbnailDBox& thumbnail_a,
-      JpegPlenoThumbnailDBox& thumbnail_b) {
-    using std::swap;
-
-    swap(thumbnail_a.contents, thumbnail_b.contents);
+  virtual CharArrayContents* clone() const override {
+    return new CharArrayContents(*this);
   }
 
 
-  JpegPlenoThumbnailDBox& operator=(const JpegPlenoThumbnailDBox& other) {
-    if (&other == this)
-      return *this;
+  const std::vector<uint8_t>& get_const_ref_to_vector() const {
+    return chars;
+  }
 
-    JpegPlenoThumbnailDBox temp{other};
-    swap(*this, temp);
 
-    return *this;
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const CharArrayContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  bool operator==(const CharArrayContents& other) const {
+    return this->chars == other.chars;
+  }
+
+
+  bool operator!=(const CharArrayContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+    for (const auto& value : chars) {
+      bytes.emplace_back(std::byte{value});
+    }
+    return bytes;
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYCONTENTS_H__ */

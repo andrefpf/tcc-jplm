@@ -47,29 +47,24 @@
 // JpegPlenoHologramBox
 //
 
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+
+// enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
+//   LightField = 0x6a706c66,
+//   PointCloud = 0x6a707063,
+//   Hologram = 0x6a70686f,
+// };
+
 
 class JpegPlenoCodestreamBox : public Box {
  public:
-  JpegPlenoCodestreamBox(const TBox& type_box, const DBox& data_box)
-      : Box(type_box, data_box) {
+  JpegPlenoCodestreamBox(TBox t_box, const DBox& d_box) : Box(t_box, d_box) {
   }
 
 
-  JpegPlenoCodestreamBox(const TBox& type_box, DBox&& data_box)
-      : Box(type_box, std::move(data_box)) {
+  JpegPlenoCodestreamBox(TBox t_box, std::unique_ptr<DBox>&& d_box)
+      : Box(t_box, std::move(d_box)) {
   }
-
-
-  JpegPlenoCodestreamBox(const TBox& type_box, std::unique_ptr<DBox>&& data_box)
-      : Box(type_box, std::move(data_box)) {
-  }
-
-
-  JpegPlenoCodestreamBox(const JpegPlenoCodestreamBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
-  }
-
 
   virtual ~JpegPlenoCodestreamBox() = default;
 };

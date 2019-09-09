@@ -61,7 +61,7 @@ TEST(JPLFileBasicTest, JPLFileHasValidSignatureBox) {
 TEST(JPLFileBasicTest, JPLFileIsCompatibleWithPleno) {
   auto file_type_box = FileTypeBox(JpegPlenoFileTypeContents());
   auto jpl_file = JPLFile(file_type_box);
-  EXPECT_TRUE(jpl_file.get_file_type_box().is_compatible_with<0x6a706c20>());
+  EXPECT_TRUE(jpl_file.get_file_type_box().get_ref_to_contents().is_the_file_compatible_with(0x6a706c20));
 }
 
 

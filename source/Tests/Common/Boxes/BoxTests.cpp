@@ -39,57 +39,61 @@
  */
 
 #include <iostream>
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 #include "gtest/gtest.h"
 
 
-TEST(BoxBasicTest, BoxInitializationDoesNotThrow) {
-	EXPECT_NO_THROW(Box(TBox(0x00000000), EmptyDBox()));
-}
+using EmptyBox = GenericBox<0x00000000, EmptyDBox>;
 
-TEST(BoxBasicTest, BoxInitializationDefaultDoesNotThrow) {
-	EXPECT_NO_THROW(Box(TBox(0x00000000)));
+TEST(BoxBasicTest, BoxInitializationDoesNotThrow) {
+	EXPECT_NO_THROW(EmptyBox());
 }
 
 
 TEST(BoxBasicTest, ExpectedValueInBoxType) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_EQ(box.get_tbox(), TBox(0x00000000));
 }
 
 
 TEST(BoxBasicTest, ExpectedValueInBoxData) {
-	auto box = Box(TBox(0x00000000));
-	EXPECT_EQ(*box.get_dbox(), EmptyDBox());
+	auto box = EmptyBox();
+	EXPECT_EQ(box.get_ref_to_contents(), EmptyDBox());
+}
+
+
+TEST(BoxBasicTest, ExpectedValueInDBox) {
+	auto box = EmptyBox();
+	EXPECT_EQ(*(box.get_dbox()), EmptyDBox());
 }
 
 
 TEST(BoxBasicTest, ExpectedBoxSize8) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_EQ(box.size(), 8);
 }
 
 
 TEST(BoxBasicTest, ExpectedNoXLFieldForSmallBox) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_FALSE(box.get_xlbox());
 }
 
 
 TEST(BoxBasicTest, ExpectedBoxLBoxDifferentFrom1) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_NE(box.get_lbox(), LBox(1));
 }
 
 
 TEST(BoxBasicTest, ExpectedBoxLenghtEqualSize) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_EQ(box.get_lbox().get_value(), box.size());
 }
 
 
 TEST(BoxBasicTest, ExpectedBoxLenghtTypeForSmallSizeBox) {
-	auto box = Box(TBox(0x00000000));
+	auto box = EmptyBox();
 	EXPECT_EQ(box.get_lenght().index(), 0);
 }
 //doing the other test would need too much memory

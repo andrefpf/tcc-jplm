@@ -31,41 +31,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     InMemoryDBoxContents.h
+/** \file     InFileDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-05
  */
 
-
-#ifndef JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
-#define JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__
-
+#ifndef JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
 
 #include <iostream>
-#include "source/Lib/Common/Boxes/DBoxContents.h"
+#include <fstream> 
+#include "Lib/Common/Boxes/DBox.h"
 
-class InMemoryDBoxContents : public DBoxContents {
+class InFileDBox : public DBox {
+ protected:
+  std::string filename;
+  std::ifstream file;
+
  public:
-  InMemoryDBoxContents() = default;
+  InFileDBox(const std::string& filename)
+      : DBox(), filename(filename),
+        file(filename.c_str(), std::ios::in | std::ios::out) {
+  }
+  
 
-
-  virtual ~InMemoryDBoxContents() = default;
-
-
-  virtual std::vector<std::byte> get_bytes() const {
-    throw std::runtime_error(
-        "Not implemented yet (get_bytes).");
+  InFileDBox(const InFileDBox& other)
+      : DBox(), filename(other.filename),
+        file(other.filename.c_str(), std::ios::in | std::ios::out) {
   }
 
-
-  std::ostream& write_to(std::ostream& stream) const final;
+  virtual std::ostream& write_to(std::ostream& stream) const final;
 };
 
-
-std::ostream& operator<<(
-    std::ostream& stream, const InMemoryDBoxContents& d_box);
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INMEMORYDBOXCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__ */

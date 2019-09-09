@@ -104,7 +104,7 @@ TEST_F(JPLFileFixture, Initialization) {
 
 
   auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
-      11, 12);  // not sure which values to use...
+      ProfileAndLevelContents(11, 12));  // not sure which values to use...
 
 
   auto jpeg_pleno_light_field_contents =

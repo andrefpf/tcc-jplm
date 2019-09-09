@@ -31,44 +31,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ColourSpecificationDBox.h
+/** \file     UUIDContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
 
-#include "Lib/Common/Boxes/DBox.h"
-#include "ColourSpecificationContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "UniversalUniqueIdentifier.h"
 
-class ColourSpecificationDBox : public DBox {
+class UUIDContents : public InMemoryDBox {
+ protected:
+  UniversalUniqueIdentifier id;
+  std::vector<uint8_t> data;
+
  public:
-  ColourSpecificationDBox(const ColourSpecificationContents& contents)
-      : DBox(std::make_unique<ColourSpecificationContents>(contents)) {
+  UUIDContents() = default;
+
+
+  virtual UUIDContents* clone() const override {
+    return new UUIDContents(*this);
   }
 
 
-  ColourSpecificationDBox(const ColourSpecificationDBox& other)
-      : DBox(std::make_unique<ColourSpecificationContents>(other.get_ref_to_contents())) {
+  virtual ~UUIDContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return id.size() + data.size() * sizeof(uint8_t);
   }
 
 
-  virtual const ColourSpecificationContents& get_ref_to_contents() const override {
-    return static_cast<const ColourSpecificationContents&>(*contents);
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UUIDContents&>(other);
+    return *this == cast_other;
   }
 
 
-  ~ColourSpecificationDBox() = default;
-
-
-  ColourSpecificationDBox* clone() const override {
-    return new ColourSpecificationDBox(*this);
+  bool operator==(const UUIDContents& other) const {
+    return (this->id == other.id) && (this->data == other.data);
   }
 
+
+  bool operator!=(const UUIDContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  void add_data(const std::vector<uint8_t>& data_to_add) {
+    data.reserve(data_to_add.size());
+    data.insert(data.end(), data_to_add.begin(), data_to_add.end());
+  }
 };
 
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__ */

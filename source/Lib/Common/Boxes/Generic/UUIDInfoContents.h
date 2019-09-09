@@ -31,57 +31,73 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldHeaderDBox.h
+/** \file     UUIDInfoContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-08-21
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
 
-#include "JpegPlenoLightFieldHeaderContents.h"
-#include "Lib/Common/Boxes/DBox.h"
 
-class JpegPlenoLightFieldHeaderDBox : public DBox {
+// #include "DataEntryURLBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDListBox.h"
+#include "Lib/Common/Boxes/Generic/DataEntryURLBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "UniversalUniqueIdentifier.h"
+
+
+class UUIDInfoContents : public InMemoryDBox {
+ protected:
+  UUIDListBox u_list;
+  DataEntryURLBox de;
+
  public:
-  JpegPlenoLightFieldHeaderDBox(
-      const JpegPlenoLightFieldHeaderContents& contents)
-      : DBox(std::make_unique<JpegPlenoLightFieldHeaderContents>(contents)) {
+  UUIDInfoContents() = default;
+
+  // implemented copy constructors in UUIDListBox, DataEntryURLBox
+  UUIDInfoContents(const UUIDInfoContents& other)
+      : u_list(other.u_list), de(other.de) {
   }
 
 
-  JpegPlenoLightFieldHeaderDBox(const JpegPlenoLightFieldHeaderDBox& other)
-      : DBox(std::make_unique<JpegPlenoLightFieldHeaderContents>(
-            other.get_ref_to_contents())) {
+  UUIDInfoContents(UUIDInfoContents&& other)
+      : u_list(std::move(other.u_list)), de(std::move(other.de)) {
   }
 
 
-  JpegPlenoLightFieldHeaderDBox(JpegPlenoLightFieldHeaderContents&& contents)
-      : DBox(std::make_unique<JpegPlenoLightFieldHeaderContents>(
-            std::move(contents))) {
+  virtual UUIDInfoContents* clone() const override {
+    return new UUIDInfoContents(*this);
   }
 
 
-  JpegPlenoLightFieldHeaderDBox(
-      std::unique_ptr<JpegPlenoLightFieldHeaderContents>&& contents)
-      : DBox(std::move(contents)) {
+  ~UUIDInfoContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return u_list.size() + de.size();
   }
 
 
-  virtual const JpegPlenoLightFieldHeaderContents& get_ref_to_contents()
-      const override {
-    return static_cast<const JpegPlenoLightFieldHeaderContents&>(*contents);
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const UUIDInfoContents&>(other);
+    return *this == cast_other;
   }
 
 
-  ~JpegPlenoLightFieldHeaderDBox() = default;
+  bool operator==(const UUIDInfoContents& other) const {
+    return (this->u_list == other.u_list) && (this->de == other.de);
+  }
 
 
-  JpegPlenoLightFieldHeaderDBox* clone() const override {
-    return new JpegPlenoLightFieldHeaderDBox(*this);
+  bool operator!=(const UUIDInfoContents& other) const {
+    return !this->operator==(other);
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERDBOX_H__ */
+
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__ */

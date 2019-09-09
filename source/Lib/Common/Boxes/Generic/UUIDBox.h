@@ -35,38 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOX_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "UUIDDBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-
-class UUIDBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::UUIDBoxType);
-
-
-  UUIDBox(const UUIDBoxContents& contents)
-      : Box(TBox(id), UUIDDBox(contents)){};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a UUID Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using UUIDBox = GenericBox<0x75756964, UUIDContents>;
 
 
-  UUIDBox(const UUIDBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~UUIDBox() = default;
-
-
-  void add_data(const std::vector<uint8_t>& data) {
-    static_cast<UUIDDBox&>(*this->d_box).add_data(data);
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMMON_UUIDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDBOX_H__ */

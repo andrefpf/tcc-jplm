@@ -35,50 +35,20 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-27
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
 
-#include "JpegPlenoLightFieldHeaderDBox.h"
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
 
-
-class JpegPlenoLightFieldHeaderBox : public Box {
- public:
-  constexpr static t_box_id_type id = 0x6a706c68;
-
-
-  JpegPlenoLightFieldHeaderBox(
-      const JpegPlenoLightFieldHeaderContents& contents)
-      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(contents)) {
-  }
-
-
-  JpegPlenoLightFieldHeaderBox(JpegPlenoLightFieldHeaderContents&& contents)
-      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(std::move(contents))) {
-  }
-
-
-  JpegPlenoLightFieldHeaderBox(std::unique_ptr<JpegPlenoLightFieldHeaderContents>&& contents)
-      : Box(TBox(id), JpegPlenoLightFieldHeaderDBox(std::move(contents))) {
-  }
-
-
-  JpegPlenoLightFieldHeaderBox(const JpegPlenoLightFieldHeaderBox& other)
-      : Box(TBox(id), *other.d_box) {
-  }
-
-
-  const JpegPlenoLightFieldHeaderContents& get_const_ref_to_contents() const {
-    return dynamic_cast<const JpegPlenoLightFieldHeaderContents&>(
-        this->get_ref_to_dbox_contents());
-  }
-
-
-  ~JpegPlenoLightFieldHeaderBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Light Field Header Box
+ */
+using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
 
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__ */

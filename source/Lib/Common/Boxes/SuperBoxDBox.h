@@ -31,23 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     InMemoryDBoxContents.cpp
+/** \file     SuperBoxDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-05
+ *  \date     2019-08-26
  */
 
-#include "InMemoryDBoxContents.h"
+#ifndef JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOX_H__
 
+#include <iostream>
+#include "Lib/Common/Boxes/DBox.h"
 
-std::ostream& InMemoryDBoxContents::write_to(std::ostream& stream) const {
-  auto bytes = this->get_bytes();
-  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-  return stream;
-}
+class SuperBoxDBox : public DBox {
+ public:
+  SuperBoxDBox() = default;
+  virtual ~SuperBoxDBox() = default;
+};
 
-std::ostream& operator<<(
-    std::ostream& stream, const InMemoryDBoxContents& d_box_contents) {
-  return d_box_contents.write_to(stream);
-}
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_SUPERBOXDBOX_H__ */

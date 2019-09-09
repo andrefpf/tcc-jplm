@@ -35,54 +35,19 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__
 
-#include "source/Lib/Common/Boxes/Box.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
-#include "JpegPlenoThumbnailDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailContents.h"
 
-
-class JpegPlenoThumbnailBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::JPEGPlenoThumbnailBoxType);
-
-
-  JpegPlenoThumbnailBox(const JpegPlenoThumbnailDBox& contents)
-      : Box(TBox(id), contents){};
-
-
-  ~JpegPlenoThumbnailBox() = default;
-
-
-  JpegPlenoThumbnailBox(const JpegPlenoThumbnailBox& other)
-      : Box(TBox(id), *other.d_box) {
-  }
-
-
-  friend void swap(
-      JpegPlenoThumbnailBox& thumbnail_a, JpegPlenoThumbnailBox& thumbnail_b) {
-    using std::swap;
-
-    //swap(thumbnail_a.t_box, thumbnail_b.t_box); unecessary, both will have the same data
-    swap(thumbnail_a.d_box, thumbnail_b.d_box);
-  }
-
-
-  JpegPlenoThumbnailBox& operator=(const JpegPlenoThumbnailBox& other) {
-    if (&other == this)
-      return *this;
-
-    JpegPlenoThumbnailBox temp{other};
-    swap(*this, temp);
-
-    return *this;
-  }
-};
-
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Thumbnail Box
+ */
+using JpegPlenoThumbnailBox = GenericBox<0x6a707468, JpegPlenoThumbnailContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__ */

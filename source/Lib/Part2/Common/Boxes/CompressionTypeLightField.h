@@ -32,8 +32,7 @@
  */
 
 /** \file     CompressionTypeLightField.h
- *  \brief    
- *  \details  
+ *  \brief    This files keeps the definition of CompressionTypeLightField enumeration
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-22
  */
@@ -43,10 +42,14 @@
 
 #include "Lib/Common/Boxes/Generic/CompressionType.h"
 
+/**
+ * \brief      Enum class for representing the compression type of light field.
+ * \note       The values that are not defined in the present enum are reserved for ISO use.
+ */
 enum class CompressionTypeLightField : compression_type_data {
-	transform_mode = 0, //the 4D transform mode is used
-	prediction_mode = 1, //the 4D prediction mode is used
-	//all other values are reserved for ISO use
+	transform_mode = 0, //!< Indicates that the 4D transform mode is used to encode the light field. It is coded as compression_type_data value 0
+	prediction_mode = 1, //!< Indicates that the 4D prediction mode is used to encode the light field. It is coded as compression_type_data value 1
+	// all other values are reserved for ISO use
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_COMPRESSIONTYPELIGHTFIELD_H__ */

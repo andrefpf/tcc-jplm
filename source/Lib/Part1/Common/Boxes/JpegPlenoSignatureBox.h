@@ -35,46 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-23
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__
 
-#include <vector>
-#include "source/Lib/Common/Boxes/Box.h"
-#include "source/Lib/Common/Boxes/Generic/CharArrayDBox.h"
-#include "source/Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 
-class JpegPlenoSignatureBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::JPEGPlenoSignatureBoxType);
-
-
-  JpegPlenoSignatureBox()
-      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})){};
-
-
-  JpegPlenoSignatureBox(
-      const JpegPlenoSignatureBox&)  //other is not even used...
-      : Box(TBox(id), CharArrayDBox({0x0d, 0x0a, 0x87, 0x0a})) {
-  }
-
-
-  bool is_valid(const std::vector<std::byte>& bytes) const noexcept {
-    if (bytes.size() == 4) {
-      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
-          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-
-  ~JpegPlenoSignatureBox() = default;
-};
-
+//! [Declaring JpegPlenoSignatureBox]
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Signature Box
+ */
+using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
+//! [Declaring JpegPlenoSignatureBox]
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__ */

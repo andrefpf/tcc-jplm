@@ -32,8 +32,7 @@
  */
 
 /** \file     CompressionTypeImage.h
- *  \brief    
- *  \details  
+ *  \brief    This file keeps the declaration of CompressionTypeImage enumeration
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-22
  */
@@ -44,13 +43,17 @@
 
 #include "CompressionType.h"
 
+/**
+ * \brief      Enum class for representing the compression type of images.
+ * \note       The values that are not defined in the present enum are reserved for ISO use.
+ */
 enum class CompressionTypeImage : compression_type_data {
-  JPEG_2000 = 0,
-  JPEG = 1,
-  JPEG_LS = 2,
-  JPEG_XT = 3,
-  JPEG_XR = 4,
-  JPEG_XS = 5
+  JPEG_2000 = 0, //!< Indicates that <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 0
+  JPEG = 1, //!< Indicates that <a href="https://jpeg.org/jpeg/index.html">JPEG</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 1
+  JPEG_LS = 2, //!< Indicates that <a href="https://jpeg.org/jpegls/index.html">JPEG LS</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 2
+  JPEG_XT = 3, //!< Indicates that <a href="https://jpeg.org/jpegxt/index.html">JPEG XT</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 3
+  JPEG_XR = 4, //!< Indicates that <a href="https://jpeg.org/jpegxr/index.html">JPEG XR</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 4
+  JPEG_XS = 5 //!< Indicates that <a href="https://jpeg.org/jpegxs/index.html">JPEG XS</a> is used to encode the image. It is coded as \link compression_type_data \endlink value 5
   //all other values are reserved for ISO use
 };
 

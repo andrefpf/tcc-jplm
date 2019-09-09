@@ -35,21 +35,19 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-26
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Part2/Common/Boxes/CalibrationContents.h"
 
-class CalibrationBox
-{
-public:
-  constexpr static uint32_t id = 0x6c666361;
-	CalibrationBox();
-	~CalibrationBox();
-	
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Calibration Box
+ */
+using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__ */

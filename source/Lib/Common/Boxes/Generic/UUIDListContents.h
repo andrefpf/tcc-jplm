@@ -31,98 +31,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UndefinedBox.h
+/** \file     UUIDListContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-08-21  
  */
 
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTCONTENTS_H__
+#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTCONTENTS_H__
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__
 
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "UniversalUniqueIdentifier.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
-class UndefinedDBoxInMemoryContents : public InMemoryDBoxContents {
- public:
+
+class UUIDListContents : public InMemoryDBox {
  protected:
-  std::vector<std::byte> byte_array;
+  std::vector<UniversalUniqueIdentifier> id;
 
  public:
-  UndefinedDBoxInMemoryContents(const std::vector<std::byte>& byte_array)
-      : byte_array(byte_array) {
+  UUIDListContents() = default;
+
+
+  virtual UUIDListContents* clone() const override {
+    return new UUIDListContents(*this);
   }
 
 
-  UndefinedDBoxInMemoryContents(std::vector<std::byte>&& byte_array)
-      : byte_array(std::move(byte_array)) {
+  ~UUIDListContents() = default;
+
+
+  virtual uint64_t size() const noexcept override {
+    return 2 + id.size() * 16;
+    //2 for NU (Number of UUID) + 16 for each uuid on the list
   }
 
 
-  UndefinedDBoxInMemoryContents(const UndefinedDBoxInMemoryContents& other)
-      : byte_array(other.byte_array) {
-  }
-
-
-  UndefinedDBoxInMemoryContents(UndefinedDBoxInMemoryContents&& other)
-      : byte_array(std::move(other.byte_array)) {
-  }
-
-
-  UndefinedDBoxInMemoryContents() = default;
-
-
-  virtual UndefinedDBoxInMemoryContents* clone() const override {
-    return new UndefinedDBoxInMemoryContents(*this);
-  }
-
-
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other =
-        dynamic_cast<const UndefinedDBoxInMemoryContents&>(other);
+    const auto& cast_other = dynamic_cast<const UUIDListContents&>(other);
     return *this == cast_other;
   }
 
 
-  ~UndefinedDBoxInMemoryContents() = default;
-
-
-  uint64_t size() const noexcept override {
-    return byte_array.size();
+  bool operator==(const UUIDListContents& other) const {
+    return (this->id == other.id);
   }
 
 
-  bool operator==(const UndefinedDBoxInMemoryContents& other) const {
-    return this->byte_array == other.byte_array;
-  }
-
-
-  bool operator!=(const UndefinedDBoxInMemoryContents& other) const {
+  bool operator!=(const UUIDListContents& other) const {
     return !this->operator==(other);
   }
 
 
-  void set_bytes(const std::vector<std::byte>&& bytes) {
-    byte_array = std::move(bytes);
-  }
-
-
-  void set_bytes(const std::vector<std::byte>& bytes) {
-    byte_array = bytes;
-  }
-
-
-  void add_bytes(const std::vector<std::byte>& bytes) {
-    byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
-  }
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return byte_array;
+  uint16_t get_nu() const noexcept {
+    return id.size();
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDDBOXINMEMORYCONTENTS_H__ */
+
+#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTCONTENTS_H__ */

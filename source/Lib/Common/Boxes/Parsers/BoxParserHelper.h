@@ -42,7 +42,7 @@
 #define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__
 
 #include "CommonExceptions.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
 
@@ -146,6 +146,14 @@ class BoxParserHelperBase {
   }
 
 
+  /**
+   * \brief      Gets the next value with type T from the stream.
+   *
+   * \tparam     T     The type that must be read from the stream
+   *
+   * \return     The value readed from the stream.
+   * \sideeffect{The stream position is sizeof(T) bytes ahead its position before calling this method}
+   */
   template<typename T>
   T get_next() {
     using namespace BinaryTools;

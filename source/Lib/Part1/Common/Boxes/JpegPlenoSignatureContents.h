@@ -31,44 +31,83 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ProfileAndLevelDBox.h
+/** \file     JpegPlenoSignatureContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-22
+ *  \date     2019-09-02
  */
 
+#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__
+#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__
+#include <array>
+#include <vector>
+#include <cstddef>  //std::byte
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-#include "ProfileAndLevelContents.h"
-#include "source/Lib/Common/Boxes/DBox.h"
+class JpegPlenoSignatureContents : public InMemoryDBox {
+ protected:
+  const std::array<std::byte, 4> signature = {
+      std::byte{0x0d}, std::byte{0x0a}, std::byte{0x87}, std::byte{0x0a}};
 
-class ProfileAndLevelDBox : public DBox {
  public:
-  ProfileAndLevelDBox(const ProfileAndLevelContents& contents)
-      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(contents))) {
+  JpegPlenoSignatureContents() = default;
+  
+
+  ~JpegPlenoSignatureContents() = default;
+
+
+  virtual JpegPlenoSignatureContents* clone() const override {
+    return new JpegPlenoSignatureContents(*this);
   }
 
 
-  ProfileAndLevelDBox(const ProfileAndLevelDBox& other)
-      : DBox(std::move(std::make_unique<ProfileAndLevelContents>(
-                  other.get_ref_to_contents()))) {
+  virtual uint64_t size() const noexcept override {
+    return 4;
   }
 
 
-  virtual ~ProfileAndLevelDBox() = default;
-
-
-  virtual const ProfileAndLevelContents& get_ref_to_contents() const override {
-    return static_cast<const ProfileAndLevelContents&>(*contents);
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other =
+        dynamic_cast<const JpegPlenoSignatureContents&>(other);
+    return *this == cast_other;
   }
 
 
-  ProfileAndLevelDBox* clone() const override {
-    return new ProfileAndLevelDBox(*this);
+  bool operator==(const JpegPlenoSignatureContents& other) const {
+    return (this->signature == other.signature);
   }
+
+
+  bool operator!=(const JpegPlenoSignatureContents& other) const {
+    return !this->operator==(other);
+  }
+
+
+  bool is_valid(const std::vector<std::byte>& bytes) {
+  	 if (bytes.size() == 4) {
+      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
+          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  const auto& get_ref_to_signature() const noexcept {
+    return signature;
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const override {
+    return std::vector<std::byte>(signature.begin(), signature.end());
+  }
+
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELDBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__ */

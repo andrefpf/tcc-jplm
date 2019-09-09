@@ -31,64 +31,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDListBoxContents.h
+/** \file     InMemoryDBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+ *  \date     2019-08-05
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__
+
+#ifndef JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__
+#define JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__
 
 
-#include "UniversalUniqueIdentifier.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include <iostream>
+#include "Lib/Common/Boxes/DBox.h"
 
-
-class UUIDListBoxContents : public InMemoryDBoxContents {
- protected:
-  std::vector<UniversalUniqueIdentifier> id;
-
+class InMemoryDBox : public DBox {
  public:
-  UUIDListBoxContents() = default;
+  InMemoryDBox() = default;
 
 
-  virtual UUIDListBoxContents* clone() const override {
-    return new UUIDListBoxContents(*this);
+  virtual ~InMemoryDBox() = default;
+
+  /**
+   * \brief      Gets a ordered vector with the bytes to be written into the stream.
+   *
+   * \return     The vector of bytes.
+   */
+  virtual std::vector<std::byte> get_bytes() const {
+    throw std::runtime_error(
+        "Not implemented yet (get_bytes).");
   }
 
 
-  ~UUIDListBoxContents() = default;
-
-
-  virtual uint64_t size() const noexcept override {
-    return 2 + id.size() * 16;
-    //2 for NU (Number of UUID) + 16 for each uuid on the list
-  }
-
-
-  virtual bool is_equal(const DBoxContents& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDListBoxContents&>(other);
-    return *this == cast_other;
-  }
-
-
-  bool operator==(const UUIDListBoxContents& other) const {
-    return (this->id == other.id);
-  }
-
-
-  bool operator!=(const UUIDListBoxContents& other) const {
-    return !this->operator==(other);
-  }
-
-
-  uint16_t get_nu() const noexcept {
-    return id.size();
-  }
+  /**
+   * \brief      Writes the bytes of this DBox to the stream.
+   *
+   * \param      stream  The stream
+   *
+   * \return     A reference to the same stream that whas passed as parameter
+   */
+  std::ostream& write_to(std::ostream& stream) const final;
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOXCONTENTS_H__ */
+
+std::ostream& operator<<(
+    std::ostream& stream, const InMemoryDBox& d_box);
+
+
+#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_INMEMORYDBOX_H__ */

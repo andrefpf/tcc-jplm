@@ -35,33 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__
 
-#include "ChannelDefinitionDBox.h"
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Channel Definition Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>;
 
-class ChannelDefinitionBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::ChannelDefinitionBoxType);
-
-
-  ChannelDefinitionBox(const ChannelDefinitionContents& contents)
-      : Box(TBox(id), ChannelDefinitionDBox(contents)){};
-
-
-  ChannelDefinitionBox(const ChannelDefinitionBox& other)
-      : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~ChannelDefinitionBox() = default;
-};
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONBOX_H__ */

@@ -42,9 +42,8 @@
 #define JPLM_LIB_PART1_DECODER_BOXES_JPEGPLENOSIGNATUREBOXPARSER_H__
 
 #include <memory>
-#include "source/Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 
 namespace JPLMBoxParser {
 class JpegPlenoSignatureBoxParser {

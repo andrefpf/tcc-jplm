@@ -35,32 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+ *  \date     2019-09-06  
  */
+
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "UUIDListDBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-
-class UUIDListBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::UUIDListBoxType);
-
-
-  UUIDListBox(const UUIDListBoxContents& contents)
-      : Box(TBox(id), UUIDListDBox(contents)){};
-
-
-  UUIDListBox(const UUIDListBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~UUIDListBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a UUID List Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using UUIDListBox = GenericBox<0x756C7374, UUIDListContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTBOX_H__ */

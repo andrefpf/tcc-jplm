@@ -48,7 +48,7 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoSignatureBoxParser::parse(
   auto bytes = managed_stream.get_bytes<4>();
 
   auto jpeg_pleno_signature_box = std::make_unique<JpegPlenoSignatureBox>();
-  if (!jpeg_pleno_signature_box->is_valid(bytes)) {
+  if (!jpeg_pleno_signature_box->get_ref_to_contents().is_valid(bytes)) {
     throw JpegPlenoSignatureBoxParserExceptions::InvalidJpegPlenoSignatureBox();
   }
   return jpeg_pleno_signature_box;

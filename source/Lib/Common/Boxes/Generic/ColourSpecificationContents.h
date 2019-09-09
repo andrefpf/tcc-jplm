@@ -45,66 +45,73 @@
 #include <optional>
 #include <tuple>  //std::tie
 #include <variant>
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Common/Boxes/Generic/EnumCS.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
+
+/**
+ * \brief      Class for icc profile.
+ * \todo If necessary, ICCProfile class must be implemented
+ */
 class ICCProfile {
   //not implemented
  public:
   uint64_t size() const noexcept {
-    return 0;  //not implemented
+    return 0;
   }
 };
 
-
-using enum_cs_field_type = uint32_t;
-
-enum class EnumCS : enum_cs_field_type {
-  sRGB = 16,  //sRGB as defined by IEC 61966–2–1
-  greyscale =
-      17,  //greyscale: A greyscale space where image luminance is related to code values
-  // using the sRGB non-linearity given in Eqs. (2) through (4) of IEC 61966–2–1
-  // (sRGB) specification
-  //
-  // other values are reserved for other ISO uses
-};
-
-class ColourSpecificationContents : public InMemoryDBoxContents {
+/**
+ * \brief      Class for colour specification box contents.
+ * \details    Defined in ISO/ICE 15444-1:2000(E) pg 161
+ */
+class ColourSpecificationContents : public InMemoryDBox {
  protected:
-  // Comments from ISO/ICE 15444-1:2000(E) pg 161
-  uint8_t meth;  // specification method, shall be 1 or 2
-  //   Specification method. This field specifies the method used by this Colour Specification box to define
-  // the colourspace of the decompressed image. This field is encoded as a 1-byte unsigned integer. The
-  // value of this field shall be 1 or 2, as defined in Table I-9.
-  //
-  // 1 means Enumerated Colourspace.
-  // 2 means Restricted ICC profile.
+  /**
+   * \brief Specification method, shall be 1 or 2
+   * \details This field specifies the method used by this Colour Specification box to define
+   * the colourspace of the decompressed image. Valid values for this field are:
+   *   - 1, meaning that Enumerated Colourspace (EnumCS) is used;
+   *   - 2, meaning that Restricted ICC profile (ICCProfile) is used;
+   */
+  uint8_t meth;
 
-  int8_t prec;  // precedence. Reserved for ISO use and value shall be 0;
-  //   Precedence. This field is reserved for ISO use and the value shall be set to zero; however, conforming
-  // readers shall ignore the value of this field. This field is specified as a signed 1 byte integer.
+  /**
+   * \brief Precedence
+   * \note Reserved for ISO use and value shall be 0. However, conforming readers shall ignore the value of this field.
+   */
+  int8_t prec;
 
-  uint8_t
-      approx;  // Coulourspace approximation; shall be set to 0; other values for ISO use;
-  //   Colourspace approximation. This field specifies the extent to which this colour specification
-  // method approximates the “correct” definition of the colourspace. The value of this field shall be set to
-  // zero; however, conforming readers shall ignore the value of this field. Other values are reserved for
-  // other ISO use. This field is specified as 1 byte unsigned integer
+  /**
+   * \brief   Coulourspace approximation; 
+   * \note    This field shall be set to 0; other values for ISO use.
+   * \details This field specifies the extent to which this colour specification
+   * method approximates the “correct” definition of the colourspace. 
+   * Conforming readers shall ignore the value of this field. 
+   */
+  uint8_t approx;
 
-  std::optional<EnumCS> enum_cs;  //enumerated colourspace
-  //   Enumerated colourspace. This field specifies the colourspace of the image using integer codes. To
-  // correctly interpret the colour of an image using an enumerated colourspace, the application must know
-  // the definition of that colourspace internally. This field contains a 4-byte big endian unsigned integer
-  // value indicating the colourspace of the image. If the value of the METH field is 2, then the EnumCS
-  // field shall not exist. Valid EnumCS values for the first colourspace specification box in conforming files
-  // are limited to 16 and 17 as defined in Table I-10:
 
+  /**
+   * \brief Enumerated colourspace
+   * \details This field specifies the colourspace of the image using integer codes. 
+   * To correctly interpret the colour of an image using an enumerated colourspace, the application must know
+   * the definition of that colourspace internally.  If the value of the METH field is 2 (meth == 2), then the EnumCS
+   * field shall not exist. Valid EnumCS values for the first colourspace specification box in conforming files are
+   * limited to 16 and 17.
+   */
+  std::optional<EnumCS> enum_cs;
+
+  /**
+   * \brief This field contains a valid ICC profile, as specified by the ICC Profile Format Specification
+   * \details ICC Profile Format specifies the transformation of the decompressed image data into the PCS. 
+   *  This field shall not exist if the value of the METH field is 1 (meth == 1). 
+   *  If the value of the METH field is 2 (meth == 2), then the ICC profile shall conform to the 
+   *  Monochrome Input Profile class or the Three-Component Matrix-Based Input Profile class as defined in ICC.1:1998-09.
+   */
   std::optional<ICCProfile> profile;
-  //   This field contains a valid ICC profile, as specified by the ICC Profile Format
-  // Specification, which specifies the transformation of the decompressed image data into the PCS. This
-  // field shall not exist if the value of the METH field is 1. If the value of the METH field is 2, then the ICC
-  // profile shall conform to the Monochrome Input Profile class or the Three-Component Matrix-Based
-  // Input Profile class as defined in ICC.1:1998-09.
 
  public:
   ColourSpecificationContents(ICCProfile profile)
@@ -126,36 +133,77 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
   virtual ~ColourSpecificationContents() = default;
 
 
+  /**
+   * \brief      Gets the meth field value.
+   *
+   * \return     The meth value.
+   * \sa get_specification_method()
+   */
   auto get_meth() const noexcept {
     return meth;
   }
 
 
+  /**
+   * \brief      Gets the specification method (meth field) value.
+   *
+   * \return     The specification method value.
+   * \sa get_meth()
+   */
   auto get_specification_method() const noexcept {
     return get_meth();
   }
 
 
+  /**
+   * \brief      Gets the prec field value.
+   *
+   * \return     The prec value.
+   * \sa get_precedence()
+   */
   auto get_prec() const noexcept {
     return prec;
   }
 
 
+  /**
+   * \brief      Gets the precedence (prec field) value.
+   *
+   * \return     The precedence value.
+   * \sa get_prec()
+   */
   auto get_precedence() const noexcept {
     return get_prec();
   }
 
 
+  /**
+   * \brief      Gets the approx field value.
+   *
+   * \return     The approx value.
+   * \sa get_colour_space_approximation()
+   */
   auto get_approx() const noexcept {
     return approx;
   }
 
 
+  /**
+   * \brief      Gets the colour space approximation (approx field) value.
+   *
+   * \return     The colour space approximation value.
+   * \sa get_approx
+   */
   auto get_colour_space_approximation() const noexcept {
     return get_approx();
   }
 
 
+  /**
+   * \brief      Gets the colour space from enum (EnumCS).
+   *
+   * \return     The colour space from enum.
+   */
   auto get_colour_space_from_enum() const {
     return enum_cs;
   }
@@ -176,7 +224,7 @@ class ColourSpecificationContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =

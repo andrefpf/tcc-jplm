@@ -41,12 +41,13 @@
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_FILETYPECONTENTS_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_FILETYPECONTENTS_H__
 
+#include <vector>
 #include <algorithm>  //std::find
 #include <tuple>  //std::tie
-#include "source/Lib/Part1/Common/BinaryTools.h"
-#include "source/Lib/Common/Boxes/InMemoryDBoxContents.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
-class FileTypeContents : public InMemoryDBoxContents {
+class FileTypeContents : public InMemoryDBox {
   uint32_t BR;  //! brand
   uint32_t MinV;  //! minor version
   std::vector<uint32_t> CL;  //! compatibility list
@@ -121,7 +122,7 @@ class FileTypeContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const FileTypeContents&>(other);

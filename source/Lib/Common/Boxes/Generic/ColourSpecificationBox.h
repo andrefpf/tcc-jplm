@@ -35,39 +35,20 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__
 
-#include <stdexcept>
-#include "ColourSpecificationDBox.h"
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-class ColourSpecificationBox : public Box {
- public:
-  constexpr static t_box_id_type id = 0x636F6C72;
-
-  // The standard contents is with meth 1 and rgb image
-  ColourSpecificationBox(
-      const ColourSpecificationContents& color_specification_contents =
-          ColourSpecificationContents())
-      : Box(TBox(id), ColourSpecificationDBox(color_specification_contents)){};
-
-
-  ColourSpecificationBox(const ColourSpecificationBox& other)
-      : Box(TBox(id), *other.d_box) {
-  }
-
-
-  const ColourSpecificationContents& get_const_ref_to_contents() const {
-    return dynamic_cast<const ColourSpecificationContents&>(
-        this->get_ref_to_dbox_contents());
-  }
-
-  ~ColourSpecificationBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Colour Specification Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COLOURSPECIFICATIONBOX_H__ */

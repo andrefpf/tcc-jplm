@@ -35,34 +35,20 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "CharArrayDBox.h"
+#include "Lib/Common/Boxes/Generic/CharArrayContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-class BitsPerComponentBox : public Box {
- public:
-  constexpr static auto id =  static_cast<DefinedBoxesTypesUnderlyingType>(
-                DefinedBoxesTypes::BitsPerComponentBoxType);
-
-  BitsPerComponentBox(const std::vector<uint8_t>& bits_per_component_vector)
-      : Box(TBox(id),
-            CharArrayDBox(bits_per_component_vector)){};
-
-
-  BitsPerComponentBox(const BitsPerComponentBox& other)
-      : Box(TBox(other.t_box), *other.d_box) {
-  }
-
-
-  ~BitsPerComponentBox() = default;
-};
-
-
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Bits Per Component Box
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_BITSPERCOMPONENTBOX_H__ */

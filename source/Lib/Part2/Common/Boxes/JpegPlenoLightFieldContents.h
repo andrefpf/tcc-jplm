@@ -45,12 +45,12 @@
 #include <memory>
 #include <tuple>  //std::tie
 #include <vector>
-#include "JpegPlenoLightFieldHeaderBox.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "ProfileAndLevelBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
 
-class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
+class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
   //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
@@ -107,8 +107,9 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
-  void add_contiguous_codestream_box(std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
-    this->contiguous_codestream_box=std::move(contiguous_codestream_box);
+  void add_contiguous_codestream_box(
+      std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
+    this->contiguous_codestream_box = std::move(contiguous_codestream_box);
   }
 
 
@@ -128,7 +129,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
@@ -137,7 +138,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
-  bool operator==(const JpegPlenoLightFieldContents& ) const noexcept { //other
+  bool operator==(const JpegPlenoLightFieldContents&) const noexcept {  //other
     //! \todo implement here
     return false;
   }
@@ -148,6 +149,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
   }
 
 
+  //! [Overridden write_to in JpegPlenoLightFieldContents]
   std::ostream& write_to(std::ostream& stream) const final {
     stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
     if (contiguous_codestream_box) {
@@ -155,6 +157,8 @@ class JpegPlenoLightFieldContents : public SuperBoxDBoxContents {
     }
     return stream;
   }
+  //! [Overridden write_to in JpegPlenoLightFieldContents]
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__ */
