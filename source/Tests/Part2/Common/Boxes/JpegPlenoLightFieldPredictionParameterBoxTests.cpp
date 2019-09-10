@@ -31,25 +31,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldIntermediateViewBox.h
+/** \file     JpegPlenoLightFieldPredictionParameterBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-10
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__
 
-#include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewContents.h"
+#include <iostream>
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldPredictionParameterBox.h"
+#include "gtest/gtest.h"
 
-/**
- * \ingroup DefinedBoxes
- * \brief Definition of the Jpeg Pleno Light Field Intermediate View Box
- * \tparam JpegPlenoLightFieldIntermediateViewContents
- * \note Used only in 4D Prediction Mode
- */
-using JpegPlenoLightFieldIntermediateViewBox = GenericBox<0x6c666976,JpegPlenoLightFieldIntermediateViewContents>;
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
