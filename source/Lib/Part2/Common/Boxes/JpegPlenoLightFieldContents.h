@@ -52,12 +52,13 @@
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldNormalizedDisparityViewBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldReferenceViewBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 
 
 class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
-  //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
+  std::unique_ptr<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box; //optional;
   std::unique_ptr<JpegPlenoLightFieldHeaderBox>
       jpeg_pleno_light_field_header_box;  //required
   std::unique_ptr<ContiguousCodestreamBox>
@@ -161,7 +162,11 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
 
   //! [Overridden write_to in JpegPlenoLightFieldContents]
   std::ostream& write_to(std::ostream& stream) const final {
-    stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
+    stream << *profile_and_level_box; 
+    if(jpeg_pleno_thumbnail_box) {
+      stream << *jpeg_pleno_thumbnail_box;
+    }
+    stream << *jpeg_pleno_light_field_header_box;
     if (contiguous_codestream_box) {
       stream << *contiguous_codestream_box;
     }
