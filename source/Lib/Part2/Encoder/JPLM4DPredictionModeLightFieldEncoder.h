@@ -31,15 +31,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldEncoder4DPredictionMode.h
+/** \file     JPLM4DPredictionModeLightFieldEncoder.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__
-#define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__
+#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 
@@ -56,20 +56,20 @@ class LightFieldEncoderConfiguration4DPredictionMode
 };
 
 template<typename T = uint16_t>
-class JPLMLightFieldEncoder4DPredictionMode
+class JPLM4DPredictionModeLightFieldEncoder
     : public JPLMLightFieldEncoder<T> {
  public:
-  JPLMLightFieldEncoder4DPredictionMode(
+  JPLM4DPredictionModeLightFieldEncoder(
       std::unique_ptr<LightFieldEncoderConfiguration4DPredictionMode>&&
           configuration)
       : JPLMLightFieldEncoder<T>(std::move(configuration)) {
   }
 
-  virtual ~JPLMLightFieldEncoder4DPredictionMode() = default;
+  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
 
   virtual void run() override {
     //! \todo implement run method for jpl lightfield encoder
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */

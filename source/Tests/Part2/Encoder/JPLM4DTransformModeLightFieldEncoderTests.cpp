@@ -31,11 +31,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldEncoder4DTransformMode.cpp
+/** \file     JPLM4DTransformModeLightFieldEncoderTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JPLMLightFieldDecoder4DTransformMode.h"
+#include <fstream>
+#include <iostream>
+#include <string>
+#include "gtest/gtest.h"
+#include "Lib/Part2/Encoder/JPLM4DTransformModeLightFieldEncoder.h"
+
+
+
+std::string resources_path = "../resources";
+
+
+TEST(BasicTest, Unknown) {
+	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
+	auto encoder = JPLM4DTransformModeLightFieldEncoder(std::move(configuration));
+	encoder.run();
+	// const auto& jpl_file = encoder.get_ref_to_jpl_file();
+	// std::ofstream of_stream("~/testLF.jpl", std::ofstream::binary);
+	// of_stream << jpl_file;
+}
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  //this is to enable ctest to run the test passing the path to the resources
+  if (argc > 1) {
+    resources_path = std::string(argv[1]);
+  }
+
+  return RUN_ALL_TESTS();
+}

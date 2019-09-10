@@ -1,2 +1,2 @@
-set(PART2_ENCODER_SOURCES JPLMLightFieldEncoder.cpp JPLMLightFieldEncoder4DPredictionMode.cpp JPLMLightFieldEncoder4DTransformMode.cpp)
+set(PART2_ENCODER_SOURCES JPLMLightFieldEncoder.cpp JPLM4DPredictionModeLightFieldEncoder.cpp JPLM4DTransformModeLightFieldEncoder.cpp)
 add_library(jplm_part2_encoder ${PART2_ENCODER_SOURCES})

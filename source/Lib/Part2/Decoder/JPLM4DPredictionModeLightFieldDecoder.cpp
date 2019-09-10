@@ -31,23 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldDecoder4DPredictionMode.h
+/** \file     JPLM4DPredictionModeLightFieldDecoder.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__
-#define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__
-
-#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
-
-class JPLMLightFieldDecoder4DPredictionMode
-{
-public:
-	JPLMLightFieldDecoder4DPredictionMode() = default;
-	virtual ~JPLMLightFieldDecoder4DPredictionMode() = default;	
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__ */
+#include "JPLM4DPredictionModeLightFieldDecoder.h"

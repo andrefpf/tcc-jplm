@@ -31,40 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldEncoder4DTransformModeTests.cpp
+/** \file     JPLM4DTransformModeLightFieldDecoder.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "gtest/gtest.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder4DTransformMode.h"
+#ifndef JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
+#define JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
+
+#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
 
 
+template<typename T = uint16_t>
+class JPLM4DTransformModeLightFieldDecoder
+    : public JPLMLightFieldDecoder<T> {
+ public:
+  JPLM4DTransformModeLightFieldDecoder() = default;
+  virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
+};
 
-std::string resources_path = "../resources";
-
-
-TEST(BasicTest, Unknown) {
-	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
-	auto encoder = JPLMLightFieldEncoder4DTransformMode(std::move(configuration));
-	encoder.run();
-	// const auto& jpl_file = encoder.get_ref_to_jpl_file();
-	// std::ofstream of_stream("~/testLF.jpl", std::ofstream::binary);
-	// of_stream << jpl_file;
-}
-
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  //this is to enable ctest to run the test passing the path to the resources
-  if (argc > 1) {
-    resources_path = std::string(argv[1]);
-  }
-
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__ */

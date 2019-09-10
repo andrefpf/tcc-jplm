@@ -31,25 +31,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldDecoder4DTransformMode.h
+/** \file     JPLM4DTransformModeLightFieldEncoder.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__
-#define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__
+#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
+#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
-#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+
+class LightFieldEncoderConfiguration4DTransformMode
+    : public LightFieldEncoderConfiguration {
+  public:
+  LightFieldEncoderConfiguration4DTransformMode(const std::string& path)
+      : LightFieldEncoderConfiguration(path) {
+  }
+
+
+  virtual CompressionTypeLightField get_compression_type() const override {
+    return CompressionTypeLightField::transform_mode;
+  }
+};
 
 
 template<typename T = uint16_t>
-class JPLMLightFieldDecoder4DTransformMode
-    : public JPLMLightFieldDecoder<T> {
+class JPLM4DTransformModeLightFieldEncoder
+    : public JPLMLightFieldEncoder<T> {
  public:
-  JPLMLightFieldDecoder4DTransformMode() = default;
-  virtual ~JPLMLightFieldDecoder4DTransformMode() = default;
+  JPLM4DTransformModeLightFieldEncoder(
+      std::unique_ptr<LightFieldEncoderConfiguration4DTransformMode>&&
+          configuration)
+      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  }
+
+  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
+
+
+  virtual void run() override {
+    //! \todo implement run method for jpl lightfield encoder
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
