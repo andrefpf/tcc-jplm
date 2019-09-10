@@ -160,7 +160,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
 
   JpegPlenoLightFieldHeaderContents(std::unique_ptr<LightFieldHeaderBox>&& lhdr,
       std::unique_ptr<BitsPerComponentBox>&& bpcc,
-      std::vector<std::unique_ptr<ColourSpecificationBox>>&& colr,
+      std::vector<std::unique_ptr<ColourSpecificationBox>>&& colr = {},
       std::unique_ptr<ChannelDefinitionBox>&& cdef = nullptr)
       : lhdr(std::move(lhdr)), bpcc(bpcc ? std::move(bpcc) : nullptr),
         colr(std::move(colr)), cdef(cdef ? std::move(cdef) : nullptr) {

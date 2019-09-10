@@ -46,7 +46,6 @@
 
 class JpegPlenoCodec {
  protected:
-  // Configuration configuration;
   std::unique_ptr<JPLFile> jpl_file;
 
  public:

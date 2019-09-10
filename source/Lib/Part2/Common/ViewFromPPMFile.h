@@ -89,7 +89,7 @@ class ViewFromPPMFile : public View<T> {
 
 
   void load_image(const std::pair<std::size_t, std::size_t>& size,
-      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) override {
+      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const override {
     const auto& [i, j] = initial;
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //loads the entire image

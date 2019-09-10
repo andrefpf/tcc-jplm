@@ -44,7 +44,9 @@
 #include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
 
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 //stub
 class LightFieldEncoderConfiguration {
  protected:
@@ -54,11 +56,17 @@ class LightFieldEncoderConfiguration {
   LightFieldEncoderConfiguration(const std::string& path) : path(path) {
   }
 
+
   LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
-  LightfieldIOConfiguration get_lightfield_io_configurations() const {
+  auto  get_lightfield_io_configurations() const {
     LightfieldDimension<std::size_t> size(3, 3, 32, 32);
     LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
     return LightfieldIOConfiguration(path, initial, size);
+  }
+
+
+  auto get_compression_type() const {
+    return CompressionTypeLightField::transform_mode;
   }
 };
 
@@ -74,7 +82,20 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
             std::move(std::make_unique<LightfieldFromPPMFile<T>>(
                 configuration->get_lightfield_io_configurations()))),
         configuration(std::move(configuration)) {
+          
+
+    auto lf_header_contents = LightFieldHeaderContents(
+        this->light_field->template get_dimensions<uint32_t>(),
+        this->light_field->get_number_of_channels_in_view(),
+        this->light_field->get_views_bpp(), configuration->get_compression_type());
+
+    // auto jpeg_pleno_lf_header_contents = JpegPlenoLightFieldHeaderContents(
+
+    //   );
+
+
   }
+
 
   virtual ~JpegPlenoLightFieldEncoder() = default;
 };

@@ -78,6 +78,12 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   }
 
 
+  template<typename OtherT>
+  LightfieldDimension(const LightfieldCoordinate<OtherT>& other)
+      : LightfieldCoordinate<T>(other) {
+  }
+
+
   bool operator==(const LightfieldDimension<T>& other) const {
     return this->dimensions == other.dimensions;
   }

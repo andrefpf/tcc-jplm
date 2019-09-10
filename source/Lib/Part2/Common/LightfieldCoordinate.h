@@ -70,6 +70,32 @@ class LightfieldCoordinate {
   }
 
 
+  template<typename OtherT>
+  LightfieldCoordinate(const LightfieldCoordinate<OtherT>& other)
+      : dimensions(std::make_tuple(static_cast<OtherT>(other.get_t()),
+            static_cast<OtherT>(other.get_s()),
+            static_cast<OtherT>(other.get_v()),
+            static_cast<OtherT>(other.get_u()))) {
+    const auto& [t, s, v, u] = other.get();
+    if (t > std::numeric_limits<T>::max() ||
+        t < std::numeric_limits<T>::min()) {
+      throw LightfieldCoordinateExceptions::OverflowException();
+    }
+    if (s > std::numeric_limits<T>::max() ||
+        s < std::numeric_limits<T>::min()) {
+      throw LightfieldCoordinateExceptions::OverflowException();
+    }
+    if (v > std::numeric_limits<T>::max() ||
+        v < std::numeric_limits<T>::min()) {
+      throw LightfieldCoordinateExceptions::OverflowException();
+    }
+    if (u > std::numeric_limits<T>::max() ||
+        u < std::numeric_limits<T>::min()) {
+      throw LightfieldCoordinateExceptions::OverflowException();
+    }
+  }
+
+
   ~LightfieldCoordinate() = default;
 
 
