@@ -56,6 +56,12 @@ class ProfileAndLevelContents : public InMemoryDBox {
       : ppih(ppih), plev(plev) {
   }
 
+  /**
+   * \brief      Constructs the object with default values
+   * \warning    The current standard is not defining any default value
+   */
+  ProfileAndLevelContents() : ppih(0), plev(0) {}
+
 
   auto get_profile_of_the_codestream() const noexcept {
     return ppih;

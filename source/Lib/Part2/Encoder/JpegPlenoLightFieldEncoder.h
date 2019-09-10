@@ -41,12 +41,15 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
 
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
 #include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
 
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 //stub
 class LightFieldEncoderConfiguration {
  protected:
@@ -58,7 +61,7 @@ class LightFieldEncoderConfiguration {
 
 
   LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
-  auto  get_lightfield_io_configurations() const {
+  auto get_lightfield_io_configurations() const {
     LightfieldDimension<std::size_t> size(3, 3, 32, 32);
     LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
     return LightfieldIOConfiguration(path, initial, size);
@@ -82,18 +85,29 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
             std::move(std::make_unique<LightfieldFromPPMFile<T>>(
                 configuration->get_lightfield_io_configurations()))),
         configuration(std::move(configuration)) {
-          
+    auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
+
 
     auto lf_header_contents = LightFieldHeaderContents(
         this->light_field->template get_dimensions<uint32_t>(),
         this->light_field->get_number_of_channels_in_view(),
-        this->light_field->get_views_bpp(), configuration->get_compression_type());
+        this->light_field->get_views_bpp(),
+        configuration->get_compression_type());
+    auto lightfield_header_box =
+        std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
+    auto colour_specification_boxes =
+        std::vector<std::unique_ptr<ColourSpecificationBox>>();
+    colour_specification_boxes.emplace_back(
+        std::move(std::make_unique<ColourSpecificationBox>()));
 
-    // auto jpeg_pleno_lf_header_contents = JpegPlenoLightFieldHeaderContents(
+    auto jpeg_pleno_light_field_header_box =
+        std::make_unique<JpegPlenoLightFieldHeaderBox>(
+            JpegPlenoLightFieldHeaderContents(std::move(lightfield_header_box),
+                nullptr, std::move(colour_specification_boxes)));
 
-    //   );
-
-
+    auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(
+        JpegPlenoLightFieldContents(std::move(profile_and_level_box),
+            std::move(jpeg_pleno_light_field_header_box)));
   }
 
 
