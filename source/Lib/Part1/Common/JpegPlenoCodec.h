@@ -71,6 +71,8 @@ class JpegPlenoCodec {
   }
 
 
+  virtual void run() = 0;
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__ */

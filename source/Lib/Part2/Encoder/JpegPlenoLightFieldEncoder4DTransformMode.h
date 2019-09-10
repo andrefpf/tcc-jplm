@@ -62,6 +62,11 @@ class JpegPlenoLightFieldEncoder4DTransformMode
       : JpegPlenoLightFieldEncoder<T>(std::move(configuration)) {
   }
   virtual ~JpegPlenoLightFieldEncoder4DTransformMode() = default;
+
+
+  virtual void run() override {
+    
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__ */

@@ -52,6 +52,9 @@ std::string resources_path = "../resources";
 TEST(BasicTest, Unknown) {
 	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
 	auto encoder = JpegPlenoLightFieldEncoder4DTransformMode(std::move(configuration));
+	encoder.run();
+	const auto& jpl_file = encoder.get_ref_to_jpl_file();
+	
 }
 
 
