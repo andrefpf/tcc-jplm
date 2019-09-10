@@ -78,13 +78,7 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
  protected:
   std::unique_ptr<const LightFieldEncoderConfiguration> configuration;
 
- public:
-  JpegPlenoLightFieldEncoder(
-      std::unique_ptr<const LightFieldEncoderConfiguration>&& configuration)
-      : JpegPlenoLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        configuration(std::move(configuration)) {
+  void add_pleno_lf_box() {
     auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
 
 
@@ -108,6 +102,18 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
     auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(
         JpegPlenoLightFieldContents(std::move(profile_and_level_box),
             std::move(jpeg_pleno_light_field_header_box)));
+
+    this->jpl_file->add_codestream_box(std::move(jpeg_pleno_light_field_box));
+  }
+
+ public:
+  JpegPlenoLightFieldEncoder(
+      std::unique_ptr<const LightFieldEncoderConfiguration>&& configuration)
+      : JpegPlenoLightFieldCodec<T>(
+            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
+                configuration->get_lightfield_io_configurations()))),
+        configuration(std::move(configuration)) {
+    add_pleno_lf_box();
   }
 
 
