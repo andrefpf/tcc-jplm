@@ -117,10 +117,51 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
                 : nullptr) {
   }
 
-
+  /**
+   * \brief      Adds a contiguous codestream box to the JPEG Pleno Light Field Contents.
+   *
+   * \param      contiguous_codestream_box  The contiguous codestream box
+   * \warning    If a contiguous codestream box is already present it will be overwritten
+   */
   void add_contiguous_codestream_box(
       std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
     this->contiguous_codestream_box = std::move(contiguous_codestream_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field reference view box.
+   *
+   * \param      jpeg_pleno_lf_reference_view_box  The jpeg pleno light field reference view box
+   * \warning    If a jpeg pleno light field reference view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_reference_view_box(
+      std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>&& jpeg_pleno_lf_reference_view_box) {
+    this->jpeg_pleno_lf_reference_view_box = std::move(jpeg_pleno_lf_reference_view_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field normalized disparity view box.
+   *
+   * \param      jpeg_pleno_lf_normalized_disparity_view_box  The jpeg pleno light field normalized disparity view box
+   * \warning    If a jpeg pleno light field normalized disparity view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_normalized_disparity_view_box(
+      std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>&& jpeg_pleno_lf_normalized_disparity_view_box) {
+    this->jpeg_pleno_lf_normalized_disparity_view_box = std::move(jpeg_pleno_lf_normalized_disparity_view_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field intermediate view box.
+   *
+   * \param      jpeg_pleno_lf_intermediate_view_box  The jpeg pleno line feed intermediate view box
+   * \warning    If a jpeg pleno light field intermediate view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_intermediate_view_box(
+      std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>&& jpeg_pleno_lf_intermediate_view_box) {
+    this->jpeg_pleno_lf_intermediate_view_box = std::move(jpeg_pleno_lf_intermediate_view_box);
   }
 
 
@@ -162,11 +203,11 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
 
   //! [Overridden write_to in JpegPlenoLightFieldContents]
   std::ostream& write_to(std::ostream& stream) const final {
-    stream << *profile_and_level_box; 
+    stream << *profile_and_level_box; //required
     if(jpeg_pleno_thumbnail_box) {
       stream << *jpeg_pleno_thumbnail_box;
     }
-    stream << *jpeg_pleno_light_field_header_box;
+    stream << *jpeg_pleno_light_field_header_box;  //required
     if (contiguous_codestream_box) {
       stream << *contiguous_codestream_box;
     }
