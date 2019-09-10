@@ -31,34 +31,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldReferenceViewContents.h
+/** \file     JpegPlenoLightFieldViewDescriptionBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-09-10
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDREFERENCEVIEWCONTENTS_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDREFERENCEVIEWCONTENTS_H__
 
-#include <memory>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/SuperBoxDBox.h"
-#include "Lib/Part2/Common/Boxes/CommonCodestreamElementsBox.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldViewDescriptionBox.h"
+#include <iostream>
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldReferenceViewBox.h"
+#include "gtest/gtest.h"
 
-
-
-class JpegPlenoLightFieldReferenceViewContents : public SuperBoxDBox {
- protected:
-  std::unique_ptr<JpegPlenoLightFieldViewDescriptionBox>
-      jpeg_pleno_light_field_view_description_box;  //required
-  std::unique_ptr<CommonCodestreamElementsBox>
-      common_codestream_elements_box;  //optional
-  std::unique_ptr<ContiguousCodestreamBox> contiguous_codestream_box;  //required
- public:
-  JpegPlenoLightFieldReferenceViewContents() = default;
-  ~JpegPlenoLightFieldReferenceViewContents() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDREFERENCEVIEWCONTENTS_H__ */
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
