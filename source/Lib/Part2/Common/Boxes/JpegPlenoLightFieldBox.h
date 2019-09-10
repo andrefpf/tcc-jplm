@@ -48,6 +48,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Jpeg Pleno Light Field Box
+ * \tparam JpegPlenoCodestreamBox
  */
 using JpegPlenoLightFieldBox =
     GenericBox<0x6a706c66, JpegPlenoLightFieldContents, JpegPlenoCodestreamBox>;

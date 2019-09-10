@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Light Field Header Box
+ * \tparam LightFieldHeaderContents
  */
 using LightFieldHeaderBox = GenericBox<0x6c686472, LightFieldHeaderContents>;
 

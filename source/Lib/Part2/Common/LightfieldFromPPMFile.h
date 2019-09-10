@@ -47,10 +47,10 @@
 
 
 /**
- * @brief A class that holds a complete lightfield, where the views are obtained from PPM Files.
- * @details [long description]
+ * \brief A class that holds a complete lightfield, where the views are obtained from PPM Files.
+ * \details [long description]
  * 
- * @tparam T Its the type of each pixel in the Lightfield.
+ * \tparam T Its the type of each pixel in the Lightfield.
  */
 template<typename T>
 class LightfieldFromPPMFile : public Lightfield<T> {

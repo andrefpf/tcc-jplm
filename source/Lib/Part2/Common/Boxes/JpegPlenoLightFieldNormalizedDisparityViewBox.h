@@ -44,6 +44,12 @@
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldNormalizedDisparityViewContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Light Normalized Disparity View Box
+ * \tparam JpegPlenoLightFieldNormalizedDisparityViewContents
+ * \note Used only in 4D Prediction Mode
+ */
 using JpegPlenoLightFieldNormalizedDisparityViewBox = GenericBox<0x6c666476, JpegPlenoLightFieldNormalizedDisparityViewContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDNORMALIZEDDISPARITYVIEWBOX_H__ */

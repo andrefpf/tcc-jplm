@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Jpeg Pleno Light Field Reference View Box
+ * \tparam JpegPlenoLightFieldReferenceViewContents
  * \note Used only in 4D Prediction Mode
  */
 using JpegPlenoLightFieldReferenceViewBox = GenericBox<0x6c667276, JpegPlenoLightFieldReferenceViewContents>;

@@ -44,6 +44,11 @@
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewContents.h"
 
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of the Jpeg Pleno Light Field Box
+ * \tparam JpegPlenoLightFieldIntermediateViewContents
+ */
 using JpegPlenoLightFieldIntermediateViewBox = GenericBox<0x6c666976,JpegPlenoLightFieldIntermediateViewContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__ */

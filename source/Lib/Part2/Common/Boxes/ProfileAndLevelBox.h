@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Profile and Level Box
+ * \tparam ProfileAndLevelContents
  */
 using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
 
