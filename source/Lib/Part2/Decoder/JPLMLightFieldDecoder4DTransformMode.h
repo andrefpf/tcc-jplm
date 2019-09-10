@@ -31,11 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldDecoder4DPredictionMode.cpp
+/** \file     JPLMLightFieldDecoder4DTransformMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JpegPlenoLightFieldDecoder4DPredictionMode.h"
+#ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__
+#define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__
+
+#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+
+
+template<typename T = uint16_t>
+class JPLMLightFieldDecoder4DTransformMode
+    : public JPLMLightFieldDecoder<T> {
+ public:
+  JPLMLightFieldDecoder4DTransformMode() = default;
+  virtual ~JPLMLightFieldDecoder4DTransformMode() = default;
+};
+
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DTRANSFORMMODE_H__ */

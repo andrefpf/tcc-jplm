@@ -31,11 +31,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DTransformMode.cpp
+/** \file     JPLMLightFieldEncoder4DPredictionMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JpegPlenoLightFieldDecoder4DTransformMode.h"
+#ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__
+#define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__
+
+#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+
+class LightFieldEncoderConfiguration4DPredictionMode
+    : public LightFieldEncoderConfiguration {
+ public:
+  LightFieldEncoderConfiguration4DPredictionMode(const std::string& path)
+      : LightFieldEncoderConfiguration(path) {
+  }
+
+  virtual CompressionTypeLightField get_compression_type() const override {
+    return CompressionTypeLightField::prediction_mode;
+  }
+};
+
+template<typename T = uint16_t>
+class JPLMLightFieldEncoder4DPredictionMode
+    : public JPLMLightFieldEncoder<T> {
+ public:
+  JPLMLightFieldEncoder4DPredictionMode(
+      std::unique_ptr<LightFieldEncoderConfiguration4DPredictionMode>&&
+          configuration)
+      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  }
+
+  virtual ~JPLMLightFieldEncoder4DPredictionMode() = default;
+
+  virtual void run() override {
+    //! \todo implement run method for jpl lightfield encoder
+  }
+};
+
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DPREDICTIONMODE_H__ */

@@ -31,34 +31,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoCodec.h
+/** \file     JPLMCodec.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
-#define JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__
+#ifndef JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
+#define JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
 
 #include <memory>  //std::unique_ptr
 #include "Lib/Part1/Common/JPLFile.h"
 
-class JpegPlenoCodec {
+/**
+ * \brief      Class for jplm codec.
+ */
+class JPLMCodec {
  protected:
   std::unique_ptr<JPLFile> jpl_file;
 
  public:
-  JpegPlenoCodec() : jpl_file(std::make_unique<JPLFile>()) {
+  
+  JPLMCodec() : jpl_file(std::make_unique<JPLFile>()) {
   }
 
 
-  JpegPlenoCodec(std::unique_ptr<JPLFile>&& jpl_file)
+  JPLMCodec(std::unique_ptr<JPLFile>&& jpl_file)
       : jpl_file(std::move(jpl_file)) {
   }
 
 
-  virtual ~JpegPlenoCodec() = default;
+  virtual ~JPLMCodec() = default;
 
 
   JPLFile& get_ref_to_jpl_file() {
@@ -75,4 +79,4 @@ class JpegPlenoCodec {
 
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPEGPLENOCODEC_H__ */
+#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLMCODEC_H__ */

@@ -31,30 +31,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldCodec.h
+/** \file     JPLMLightFieldEncoder4DTransformMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__
-#define JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__
+#ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DTRANSFORMMODE_H__
+#define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DTRANSFORMMODE_H__
 
-#include "Lib/Part1/Common/JpegPlenoCodec.h"
-#include "Lib/Part2/Common/Lightfield.h"
+#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 
-template<typename T>
-class JpegPlenoLightFieldCodec : public JpegPlenoCodec {
- protected:
-  std::unique_ptr<Lightfield<T>> light_field;
-
- public:
-  JpegPlenoLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
-      : light_field(std::move(light_field)) {
+class LightFieldEncoderConfiguration4DTransformMode
+    : public LightFieldEncoderConfiguration {
+  public:
+  LightFieldEncoderConfiguration4DTransformMode(const std::string& path)
+      : LightFieldEncoderConfiguration(path) {
   }
-  
-  virtual ~JpegPlenoLightFieldCodec() = default;
+
+
+  virtual CompressionTypeLightField get_compression_type() const override {
+    return CompressionTypeLightField::transform_mode;
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCODEC_H__ */
+
+template<typename T = uint16_t>
+class JPLMLightFieldEncoder4DTransformMode
+    : public JPLMLightFieldEncoder<T> {
+ public:
+  JPLMLightFieldEncoder4DTransformMode(
+      std::unique_ptr<LightFieldEncoderConfiguration4DTransformMode>&&
+          configuration)
+      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  }
+
+  virtual ~JPLMLightFieldEncoder4DTransformMode() = default;
+
+
+  virtual void run() override {
+    //! \todo implement run method for jpl lightfield encoder
+  }
+};
+
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER4DTRANSFORMMODE_H__ */

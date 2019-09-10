@@ -31,23 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldDecoder.h
+/** \file     JPLMLightFieldDecoder.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__
-#define JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__
-
-#include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
-
-template<typename T = uint16_t>
-class JpegPlenoLightFieldDecoder : public JpegPlenoLightFieldCodec<T> {
- public:
-  JpegPlenoLightFieldDecoder() = default;
-  virtual ~JpegPlenoLightFieldDecoder() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPEGPLENOLIGHTFIELDDECODER_H__ */
+#include "JPLMLightFieldDecoder.h"

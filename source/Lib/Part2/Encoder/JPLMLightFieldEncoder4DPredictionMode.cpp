@@ -31,11 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder.cpp
+/** \file     JPLMLightFieldEncoder4DPredictionMode.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JpegPlenoLightFieldEncoder.h"
+#include "JPLMLightFieldEncoder4DPredictionMode.h"

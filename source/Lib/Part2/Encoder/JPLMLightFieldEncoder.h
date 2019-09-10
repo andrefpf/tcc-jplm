@@ -31,22 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder.h
+/** \file     JPLMLightFieldEncoder.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__
+#ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
+#define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
 
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
-#include "Lib/Part2/Common/JpegPlenoLightFieldCodec.h"
+#include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 
@@ -68,13 +68,11 @@ class LightFieldEncoderConfiguration {
   }
 
 
-  auto get_compression_type() const {
-    return CompressionTypeLightField::transform_mode;
-  }
+  virtual CompressionTypeLightField get_compression_type() const = 0;
 };
 
 template<typename T = uint16_t>
-class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
+class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
  protected:
   std::unique_ptr<const LightFieldEncoderConfiguration> configuration;
 
@@ -106,10 +104,11 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
     this->jpl_file->add_codestream_box(std::move(jpeg_pleno_light_field_box));
   }
 
+
  public:
-  JpegPlenoLightFieldEncoder(
+  JPLMLightFieldEncoder(
       std::unique_ptr<const LightFieldEncoderConfiguration>&& configuration)
-      : JpegPlenoLightFieldCodec<T>(
+      : JPLMLightFieldCodec<T>(
             std::move(std::make_unique<LightfieldFromPPMFile<T>>(
                 configuration->get_lightfield_io_configurations()))),
         configuration(std::move(configuration)) {
@@ -117,7 +116,7 @@ class JpegPlenoLightFieldEncoder : public JpegPlenoLightFieldCodec<T> {
   }
 
 
-  virtual ~JpegPlenoLightFieldEncoder() = default;
+  virtual ~JPLMLightFieldEncoder() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__ */

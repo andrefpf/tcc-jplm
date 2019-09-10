@@ -31,42 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DTransformMode.h
+/** \file     JPLMLightFieldDecoder4DPredictionMode.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__
-#define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__
-
-#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder.h"
-
-class LightFieldEncoderConfiguration4DTransformMode
-    : public LightFieldEncoderConfiguration {
-  public:
-  LightFieldEncoderConfiguration4DTransformMode(const std::string& path)
-      : LightFieldEncoderConfiguration(path) {
-  }
-};
-
-
-template<typename T = uint16_t>
-class JpegPlenoLightFieldEncoder4DTransformMode
-    : public JpegPlenoLightFieldEncoder<T> {
- public:
-  JpegPlenoLightFieldEncoder4DTransformMode(
-      std::unique_ptr<LightFieldEncoderConfiguration4DTransformMode>&&
-          configuration)
-      : JpegPlenoLightFieldEncoder<T>(std::move(configuration)) {
-  }
-  virtual ~JpegPlenoLightFieldEncoder4DTransformMode() = default;
-
-
-  virtual void run() override {
-    
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DTRANSFORMMODE_H__ */
+#include "JPLMLightFieldDecoder4DPredictionMode.h"

@@ -31,24 +31,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DPredictionMode.h
+/** \file     JPLMLightFieldCodec.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DPREDICTIONMODE_H__
-#define JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DPREDICTIONMODE_H__
+#ifndef JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__
+#define JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__
 
-#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder.h"
+#include "Lib/Part1/Common/JPLMCodec.h"
+#include "Lib/Part2/Common/Lightfield.h"
 
-template<typename T = uint16_t>
-class JpegPlenoLightFieldEncoder4DPredictionMode
-    : public JpegPlenoLightFieldEncoder<T> {
+template<typename T>
+class JPLMLightFieldCodec : public JPLMCodec {
+ protected:
+  std::unique_ptr<Lightfield<T>> light_field;
+
  public:
-  JpegPlenoLightFieldEncoder4DPredictionMode() = default;
-  virtual ~JpegPlenoLightFieldEncoder4DPredictionMode() = default;
+  JPLMLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
+      : light_field(std::move(light_field)) {
+  }
+  
+  virtual ~JPLMLightFieldCodec() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPEGPLENOLIGHTFIELDENCODER4DPREDICTIONMODE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__ */

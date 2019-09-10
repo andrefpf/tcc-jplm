@@ -31,39 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DTransformModeTests.cpp
+/** \file     JPLMLightFieldDecoder4DPredictionMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "gtest/gtest.h"
-#include "Lib/Part2/Encoder/JpegPlenoLightFieldEncoder4DTransformMode.h"
+#ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__
+#define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__
 
+#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
 
+class JPLMLightFieldDecoder4DPredictionMode
+{
+public:
+	JPLMLightFieldDecoder4DPredictionMode() = default;
+	virtual ~JPLMLightFieldDecoder4DPredictionMode() = default;	
+};
 
-std::string resources_path = "../resources";
-
-
-TEST(BasicTest, Unknown) {
-	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
-	auto encoder = JpegPlenoLightFieldEncoder4DTransformMode(std::move(configuration));
-	encoder.run();
-	const auto& jpl_file = encoder.get_ref_to_jpl_file();
-	
-}
-
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  //this is to enable ctest to run the test passing the path to the resources
-  if (argc > 1) {
-    resources_path = std::string(argv[1]);
-  }
-
-  return RUN_ALL_TESTS();
-}
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER4DPREDICTIONMODE_H__ */

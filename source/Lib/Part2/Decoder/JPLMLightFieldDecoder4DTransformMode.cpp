@@ -31,11 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldEncoder4DTransformMode.cpp
+/** \file     JPLMLightFieldEncoder4DTransformMode.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JpegPlenoLightFieldEncoder4DTransformMode.h"
+#include "JPLMLightFieldDecoder4DTransformMode.h"
