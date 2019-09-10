@@ -48,6 +48,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a UUID List Box
+ * \tparam UUIDListContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using UUIDListBox = GenericBox<0x756C7374, UUIDListContents>;

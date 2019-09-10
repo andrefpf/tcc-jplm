@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Intellectual Property Box
+ * \tparam UndefinedContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using IntellectualPropertyBox = GenericBox<0x6A703269, UndefinedContents>;

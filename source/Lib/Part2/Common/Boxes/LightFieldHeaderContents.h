@@ -44,7 +44,6 @@
 #include <tuple>  //std::tie
 #include "CompressionTypeLightField.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 

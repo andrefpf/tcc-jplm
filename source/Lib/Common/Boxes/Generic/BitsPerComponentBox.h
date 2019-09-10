@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Bits Per Component Box
+ * \tparam CharArrayContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using BitsPerComponentBox = GenericBox<0x62706363, CharArrayContents>;

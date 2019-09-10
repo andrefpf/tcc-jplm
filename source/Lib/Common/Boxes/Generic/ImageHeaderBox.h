@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Image Header Box
+ * \tparam ImageHeaderContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 2 (extensions)
  */
 using ImageHeaderBox = GenericBox<0x69686472, ImageHeaderContents>;

@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a File Type Box
+ * \tparam FileTypeContents
  */
 using FileTypeBox = GenericBox<0x66747970, FileTypeContents>;
 
