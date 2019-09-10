@@ -48,7 +48,11 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldNormalizedDisparityViewBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldReferenceViewBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
+
 
 class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:
@@ -58,6 +62,12 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
       jpeg_pleno_light_field_header_box;  //required
   std::unique_ptr<ContiguousCodestreamBox>
       contiguous_codestream_box;  //optional
+  std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>
+      jpeg_pleno_lf_reference_view_box = nullptr;
+  std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>
+      jpeg_pleno_lf_normalized_disparity_view_box = nullptr;
+  std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>
+      jpeg_pleno_lf_intermediate_view_box = nullptr;
 
  public:
   JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
@@ -155,10 +165,18 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
     if (contiguous_codestream_box) {
       stream << *contiguous_codestream_box;
     }
+    if (jpeg_pleno_lf_reference_view_box) {
+      stream << *jpeg_pleno_lf_reference_view_box;
+    }
+    if (jpeg_pleno_lf_normalized_disparity_view_box) {
+      stream << *jpeg_pleno_lf_normalized_disparity_view_box;
+    }
+    if (jpeg_pleno_lf_intermediate_view_box) {
+      stream << *jpeg_pleno_lf_intermediate_view_box;
+    }
     return stream;
   }
   //! [Overridden write_to in JpegPlenoLightFieldContents]
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__ */
