@@ -25,6 +25,6 @@ document:
     stage: document
     script:
     - mkdir build && cd build; cmake ..; make doxygen
-    artifacts:
+  artifacts:
     paths:
-      - doc/*    
+      - doc/*  
