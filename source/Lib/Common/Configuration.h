@@ -31,23 +31,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ConfigurationFactory.h
+/** \file     Configuration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef CONFIGURATIONFACTORY_H__
-#define CONFIGURATIONFACTORY_H__
+#ifndef CONFIGURATION_H__
+#define CONFIGURATION_H__
 
-#include <memory>
-#include "Lib/Common/Configuration.h"
-
-class ConfigurationFactory {
- public:
-  static std::unique_ptr<Configuration> get_configuration(
-      int argc, char const* argv[]);
+class Configuration
+{
+public:
+	Configuration() = default;
+	~Configuration() = default;	
 };
 
-#endif /* end of include guard: CONFIGURATIONFACTORY_H__ */
+#endif /* end of include guard: CONFIGURATION_H__ */
