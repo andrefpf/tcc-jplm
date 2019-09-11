@@ -31,21 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Configuration.h
+/** \file     JPLMConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef CONFIGURATION_H__
-#define CONFIGURATION_H__
+#ifndef JPLMCONFIGURATION_H__
+#define JPLMCONFIGURATION_H__
 
-class Configuration
-{
-public:
-	Configuration() = default;
-	~Configuration() = default;	
+class JPLMConfiguration {
+ public:
+  JPLMConfiguration() = default;
+  ~JPLMConfiguration() = default;
 };
 
-#endif /* end of include guard: CONFIGURATION_H__ */
+#endif /* end of include guard: JPLMCONFIGURATION_H__ */

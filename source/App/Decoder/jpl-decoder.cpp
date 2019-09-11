@@ -6,8 +6,8 @@
 
 
 int main(int argc, char const* argv[]) {
-  auto configuration = ConfigurationFactory::get_configuration(argc, argv);
-  auto decoder = CodecFactory::get_decoder(std::move(configuration));
+  auto configuration = JPLMConfigurationFactory::get_configuration(argc, argv);
+  auto decoder = JPLMCodecFactory::get_decoder(std::move(configuration));
   decoder.run();
   exit(EXIT_SUCCESS);
 }

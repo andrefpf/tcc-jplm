@@ -31,23 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ConfigurationFactory.h
+/** \file     JPLMCodecFactory.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef CONFIGURATIONFACTORY_H__
-#define CONFIGURATIONFACTORY_H__
+#ifndef JPLMCODECFACTORY_H__
+#define JPLMCODECFACTORY_H__
 
-#include <memory>
-#include "Lib/Common/Configuration.h"
-
-class ConfigurationFactory {
- public:
-  static std::unique_ptr<Configuration> get_configuration(
-      int argc, char const* argv[]);
+class JPLMCodecFactory
+{
+public:
+	JPLMCodecFactory();
+	~JPLMCodecFactory();
+	
 };
 
-#endif /* end of include guard: CONFIGURATIONFACTORY_H__ */
+#endif /* end of include guard: JPLMCODECFACTORY_H__ */
