@@ -1,11 +1,12 @@
 stages:
   - build
   - test
+  - document
 
 image: gcc
 before_script:
  - apt-get update --yes
- - apt-get install --yes cmake
+ - apt-get install --yes cmake doxygen
 
 build:
   stage: build
@@ -19,3 +20,11 @@ test:
   stage: test
   script:
     - mkdir build && cd build; cmake ..; ctest
+
+document:
+    stage: document
+    script:
+    - mkdir build && cd build; cmake ..; make doxygen
+    artifacts:
+    paths:
+      - doc/*    
