@@ -22,8 +22,8 @@ test:
     - mkdir build && cd build; cmake ..; ctest
 
 document:
-    stage: document
-    script:
+  stage: document
+  script:
     - mkdir build && cd build; cmake ..; make doxygen
   artifacts:
     paths:
