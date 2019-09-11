@@ -1,7 +1,6 @@
 stages:
   - build
   - test-and-document
-  - document
 
 image: gcc
 before_script:
@@ -11,7 +10,7 @@ before_script:
 build:
   stage: build
   script:
-    - mkdir build && cd build; cmake ..; make
+    - mkdir build && cd build && rm *; cmake .. && make
   artifacts:
     paths:
       - bin/*
