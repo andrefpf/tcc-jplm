@@ -41,26 +41,15 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 
-class LightFieldEncoderConfiguration4DPredictionMode
-    : public LightFieldEncoderConfiguration {
- public:
-  LightFieldEncoderConfiguration4DPredictionMode(const std::string& path)
-      : LightFieldEncoderConfiguration(path) {
-  }
-
-  virtual CompressionTypeLightField get_compression_type() const override {
-    return CompressionTypeLightField::prediction_mode;
-  }
-};
 
 template<typename T = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder
-    : public JPLMLightFieldEncoder<T> {
+class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
  public:
   JPLM4DPredictionModeLightFieldEncoder(
-      std::unique_ptr<LightFieldEncoderConfiguration4DPredictionMode>&&
+      std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
           configuration)
       : JPLMLightFieldEncoder<T>(std::move(configuration)) {
   }

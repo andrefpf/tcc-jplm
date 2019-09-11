@@ -31,20 +31,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
+/** \file     JPLMEncoderConfigurationLightField4DTransformMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMCONFIGURATION_H__
-#define JPLMCONFIGURATION_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 
-class JPLMConfiguration {
- public:
-  JPLMConfiguration() = default;
-  ~JPLMConfiguration() = default;
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+
+
+class JPLMEncoderConfigurationLightField4DTransformMode
+    : public JPLMEncoderConfigurationLightField {
+  public:
+  JPLMEncoderConfigurationLightField4DTransformMode(const std::string& path)
+      : JPLMEncoderConfigurationLightField(path) {
+  }
+
+  virtual CompressionTypeLightField get_compression_type() const override {
+    return CompressionTypeLightField::transform_mode;
+  }
 };
 
-#endif /* end of include guard: JPLMCONFIGURATION_H__ */
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__ */

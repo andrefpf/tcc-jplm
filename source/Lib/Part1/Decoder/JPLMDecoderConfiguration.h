@@ -31,35 +31,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldEncoder.h
+/** \file     JPLMDecoderConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-09-11
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
+#ifndef JPLMDECODERCONFIGURATION_H__
+#define JPLMDECODERCONFIGURATION_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-
-
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
+class JPLMDecoderConfiguration {
  public:
-  JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
-  }
-
-  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
-
-
-  virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
-  }
+  JPLMDecoderConfiguration() = default;
+  virtual ~JPLMDecoderConfiguration() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */

@@ -49,32 +49,13 @@
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
 
-//stub
-class LightFieldEncoderConfiguration {
- protected:
-  std::string path;
-
- public:
-  LightFieldEncoderConfiguration(const std::string& path) : path(path) {
-  }
-
-
-  LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
-  auto get_lightfield_io_configurations() const {
-    LightfieldDimension<std::size_t> size(3, 3, 32, 32);
-    LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-    return LightfieldIOConfiguration(path, initial, size);
-  }
-
-
-  virtual CompressionTypeLightField get_compression_type() const = 0;
-};
 
 template<typename T = uint16_t>
 class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
  protected:
-  std::unique_ptr<const LightFieldEncoderConfiguration> configuration;
+  std::unique_ptr<const JPLMEncoderConfigurationLightField> configuration;
 
   void add_pleno_lf_box() {
     auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
@@ -107,7 +88,7 @@ class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
 
  public:
   JPLMLightFieldEncoder(
-      std::unique_ptr<const LightFieldEncoderConfiguration>&& configuration)
+      std::unique_ptr<const JPLMEncoderConfigurationLightField>&& configuration)
       : JPLMLightFieldCodec<T>(
             std::move(std::make_unique<LightfieldFromPPMFile<T>>(
                 configuration->get_lightfield_io_configurations()))),

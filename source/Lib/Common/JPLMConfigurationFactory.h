@@ -42,12 +42,17 @@
 #define JPLMCONFIGURATIONFACTORY_H__
 
 #include <memory>
-#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
+#include "Lib/Part1/Decoder/JPLMDecoderConfiguration.h"
 
 class JPLMConfigurationFactory {
  public:
-  static std::unique_ptr<JPLMConfiguration> get_configuration(
-      int argc, char const* argv[]);
+
+  template<class Configuration>	
+  static std::unique_ptr<Configuration> get_configuration(
+      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
+  	return nullptr;
+  }
 };
 
 #endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */

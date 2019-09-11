@@ -60,13 +60,23 @@ option(BUILD_DOC "Build documentation" ON)
 # option(BUILD_DOC "Build documentation" OFF)
 
 
-# add_executable(jpl-encoder-bin
-#         source/App/Encoder/jpl-encoder.cpp
-#         CMakeLists.txt)
+add_executable(jpl-encoder-bin
+        source/App/Encoder/jpl-encoder.cpp
+        CMakeLists.txt)
 
-# add_executable(jpl-decoder-bin
-#         source/App/Decoder/jpl-decoder.cpp
-#         CMakeLists.txt)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common) 
+target_link_libraries(jpl-encoder-bin PRIVATE image) 
+
+add_executable(jpl-decoder-bin
+        source/App/Decoder/jpl-decoder.cpp
+        CMakeLists.txt)
+
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_common)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_encoder)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common) 
+target_link_libraries(jpl-decoder-bin PRIVATE image) 
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)

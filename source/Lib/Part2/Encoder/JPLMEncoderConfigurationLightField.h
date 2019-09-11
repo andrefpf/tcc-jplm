@@ -31,35 +31,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldEncoder.h
+/** \file     JPLMEncoderConfigurationLightField.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-09-11
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Part2/Common/Lightfield.h"
+#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
 
+//stub
+class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
+ protected:
+  std::string path;
 
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
  public:
-  JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  JPLMEncoderConfigurationLightField(const std::string& path) : path(path) {
   }
 
-  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
+  LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
 
-  virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
+  
+  auto get_lightfield_io_configurations() const {
+    LightfieldDimension<std::size_t> size(3, 3, 32, 32);
+    LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+    return LightfieldIOConfiguration(path, initial, size);
   }
+
+
+  virtual CompressionTypeLightField get_compression_type() const = 0;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */

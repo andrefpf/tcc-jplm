@@ -31,35 +31,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldEncoder.h
+/** \file     JPLMEncoderConfigurationLightField4DPredictionMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-09-11
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
 
-
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
+class JPLMEncoderConfigurationLightField4DPredictionMode
+    : public JPLMEncoderConfigurationLightField {
  public:
-  JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  JPLMEncoderConfigurationLightField4DPredictionMode(const std::string& path)
+      : JPLMEncoderConfigurationLightField(path) {
   }
 
-  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
-
-
-  virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
+  virtual CompressionTypeLightField get_compression_type() const override {
+    return CompressionTypeLightField::prediction_mode;
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */

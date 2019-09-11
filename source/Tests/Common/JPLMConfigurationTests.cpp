@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Part1/Common/JPLMConfiguration.h"
 #include "gtest/gtest.h"
 
 int main(int argc, char* argv[]) {

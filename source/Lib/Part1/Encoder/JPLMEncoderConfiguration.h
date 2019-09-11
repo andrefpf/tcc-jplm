@@ -31,35 +31,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldEncoder.h
+/** \file     JPLMEncoderConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-09-11
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
+#ifndef JPLMENCODERCONFIGURATION_H__
+#define JPLMENCODERCONFIGURATION_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "Lib/Part1/Common/JPLMConfiguration.h"
 
-
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
+class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
-  JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+  JPLMEncoderConfiguration() = default;
+  ~JPLMEncoderConfiguration() = default;
+
+  std::string get_output_filename() const {
+    return std::string("NotImplementedYet.jpl");
   }
 
-  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
-
-  virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
+  JpegPlenoPart get_jpeg_pleno_part() const {
+    return JpegPlenoPart::LightField;
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */

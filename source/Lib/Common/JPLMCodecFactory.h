@@ -41,12 +41,59 @@
 #ifndef JPLMCODECFACTORY_H__
 #define JPLMCODECFACTORY_H__
 
-class JPLMCodecFactory
-{
-public:
-	JPLMCodecFactory();
-	~JPLMCodecFactory();
-	
+#include <memory>
+#include "Lib/Part1/Common/JPLMCodec.h"
+#include "Lib/Part1/Common/JPLMConfiguration.h"
+#include "Lib/Part2/Encoder/JPLM4DPredictionModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/JPLM4DTransformModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
+
+
+class JPLMCodecFactory {
+ protected:
+  static std::unique_ptr<JPLMCodec> get_light_field_encoder(
+      std::unique_ptr<JPLMEncoderConfigurationLightField>&& configuration) {
+    if (configuration->get_compression_type() ==
+        CompressionTypeLightField::prediction_mode) {
+      return std::make_unique<JPLM4DPredictionModeLightFieldEncoder<uint16_t>>(
+          std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>(
+              static_cast<JPLMEncoderConfigurationLightField4DPredictionMode*>(
+                  configuration.release())));
+    }
+    assert(configuration->get_compression_type() ==
+           CompressionTypeLightField::transform_mode);
+
+    return std::make_unique<JPLM4DTransformModeLightFieldEncoder<uint16_t>>(
+        std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>(
+            static_cast<JPLMEncoderConfigurationLightField4DTransformMode*>(
+                configuration.release())));
+  }
+
+
+ public:
+  static std::unique_ptr<JPLMCodec> get_encoder(
+      std::unique_ptr<JPLMEncoderConfiguration>&& configuration) {
+    switch (configuration->get_jpeg_pleno_part()) {
+      case JpegPlenoPart::LightField: {
+        return get_light_field_encoder(
+            std::move(std::unique_ptr<JPLMEncoderConfigurationLightField>(
+                static_cast<JPLMEncoderConfigurationLightField*>(
+                    configuration.release()))));
+      }
+      default: {
+        std::cerr << "Unknown part" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    return nullptr;
+  }
+  static std::unique_ptr<JPLMCodec> get_decoder(
+     [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
+    return nullptr;
+  }
 };
 
 #endif /* end of include guard: JPLMCODECFACTORY_H__ */

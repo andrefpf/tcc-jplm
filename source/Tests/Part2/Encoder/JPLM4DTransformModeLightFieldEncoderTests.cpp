@@ -50,7 +50,7 @@ std::string resources_path = "../resources";
 
 
 TEST(BasicTest, Unknown) {
-	auto configuration = std::make_unique<LightFieldEncoderConfiguration4DTransformMode>(resources_path+"/small_greek/");
+	auto configuration = std::make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(resources_path+"/small_greek/");
 	auto encoder = JPLM4DTransformModeLightFieldEncoder(std::move(configuration));
 	encoder.run();
 	// const auto& jpl_file = encoder.get_ref_to_jpl_file();
