@@ -9,3 +9,4 @@ endfunction()
 
 add_jplm_lib_common_test(JPLFileIOTests jpl_file_io_tests JPLFileIOTests.cpp)
 add_jplm_lib_common_test(JPLMCodecFactoryTests jplm_codec_factory_tests JPLMCodecFactoryTests.cpp)
+add_jplm_lib_common_test(JPLMConfigurationFactoryTests jplm_configuration_factory_tests JPLMConfigurationFactoryTests.cpp)
