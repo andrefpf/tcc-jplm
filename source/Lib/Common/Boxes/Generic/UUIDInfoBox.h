@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a UUID Info Box
+ * \tparam UUIDInfoContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>;

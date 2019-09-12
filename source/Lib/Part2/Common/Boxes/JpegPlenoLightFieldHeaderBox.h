@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Jpeg Pleno Light Field Header Box
+ * \tparam JpegPlenoLightFieldHeaderContents
  */
 using JpegPlenoLightFieldHeaderBox = GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
 

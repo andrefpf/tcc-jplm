@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Calibration Box
+ * \tparam CalibrationContents
  */
 using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
 

@@ -47,17 +47,28 @@
 #include <vector>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldNormalizedDisparityViewBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldReferenceViewBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
+
 
 class JpegPlenoLightFieldContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<ProfileAndLevelBox> profile_and_level_box;  //required
-  //! \todo here (after (profile_and_level_box and jpeg_pleno_light_field_header_box) it is possible to have a pleno thumbnail box
+  std::unique_ptr<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;  //optional;
   std::unique_ptr<JpegPlenoLightFieldHeaderBox>
       jpeg_pleno_light_field_header_box;  //required
   std::unique_ptr<ContiguousCodestreamBox>
       contiguous_codestream_box;  //optional
+  std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>
+      jpeg_pleno_lf_reference_view_box = nullptr;
+  std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>
+      jpeg_pleno_lf_normalized_disparity_view_box = nullptr;
+  std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>
+      jpeg_pleno_lf_intermediate_view_box = nullptr;
 
  public:
   JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
@@ -106,10 +117,57 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
                 : nullptr) {
   }
 
-
+  /**
+   * \brief      Adds a contiguous codestream box to the JPEG Pleno Light Field Contents.
+   *
+   * \param      contiguous_codestream_box  The contiguous codestream box
+   * \warning    If a contiguous codestream box is already present it will be overwritten
+   */
   void add_contiguous_codestream_box(
       std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
     this->contiguous_codestream_box = std::move(contiguous_codestream_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field reference view box.
+   *
+   * \param      jpeg_pleno_lf_reference_view_box  The jpeg pleno light field reference view box
+   * \warning    If a jpeg pleno light field reference view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_reference_view_box(
+      std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>&&
+          jpeg_pleno_lf_reference_view_box) {
+    this->jpeg_pleno_lf_reference_view_box =
+        std::move(jpeg_pleno_lf_reference_view_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field normalized disparity view box.
+   *
+   * \param      jpeg_pleno_lf_normalized_disparity_view_box  The jpeg pleno light field normalized disparity view box
+   * \warning    If a jpeg pleno light field normalized disparity view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_normalized_disparity_view_box(
+      std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>&&
+          jpeg_pleno_lf_normalized_disparity_view_box) {
+    this->jpeg_pleno_lf_normalized_disparity_view_box =
+        std::move(jpeg_pleno_lf_normalized_disparity_view_box);
+  }
+
+
+  /**
+   * \brief      Adds a jpeg pleno light field intermediate view box.
+   *
+   * \param      jpeg_pleno_lf_intermediate_view_box  The jpeg pleno line feed intermediate view box
+   * \warning    If a jpeg pleno light field intermediate view box is already present it will be overwritten
+   */
+  void add_jpeg_pleno_light_field_intermediate_view_box(
+      std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>&&
+          jpeg_pleno_lf_intermediate_view_box) {
+    this->jpeg_pleno_lf_intermediate_view_box =
+        std::move(jpeg_pleno_lf_intermediate_view_box);
   }
 
 
@@ -122,10 +180,24 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
 
 
   uint64_t size() const noexcept override {
-    uint64_t required_boxes_size = profile_and_level_box->size() +
-                                   jpeg_pleno_light_field_header_box->size();
-
-    return required_boxes_size;
+    uint64_t size = profile_and_level_box->size() +
+                    jpeg_pleno_light_field_header_box->size();
+    if (jpeg_pleno_thumbnail_box) {
+      size += jpeg_pleno_thumbnail_box->size();
+    }
+    if (contiguous_codestream_box) {
+      size += contiguous_codestream_box->size();
+    }
+    if (jpeg_pleno_lf_reference_view_box) {
+      size += jpeg_pleno_lf_reference_view_box->size();
+    }
+    if (jpeg_pleno_lf_normalized_disparity_view_box) {
+      size += jpeg_pleno_lf_normalized_disparity_view_box->size();
+    }
+    if (jpeg_pleno_lf_intermediate_view_box) {
+      size += jpeg_pleno_lf_intermediate_view_box->size();
+    }
+    return size;
   }
 
 
@@ -151,14 +223,26 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
 
   //! [Overridden write_to in JpegPlenoLightFieldContents]
   std::ostream& write_to(std::ostream& stream) const final {
-    stream << *profile_and_level_box << *jpeg_pleno_light_field_header_box;
+    stream << *profile_and_level_box;  //required
+    if (jpeg_pleno_thumbnail_box) {
+      stream << *jpeg_pleno_thumbnail_box;
+    }
+    stream << *jpeg_pleno_light_field_header_box;  //required
     if (contiguous_codestream_box) {
       stream << *contiguous_codestream_box;
+    }
+    if (jpeg_pleno_lf_reference_view_box) {
+      stream << *jpeg_pleno_lf_reference_view_box;
+    }
+    if (jpeg_pleno_lf_normalized_disparity_view_box) {
+      stream << *jpeg_pleno_lf_normalized_disparity_view_box;
+    }
+    if (jpeg_pleno_lf_intermediate_view_box) {
+      stream << *jpeg_pleno_lf_intermediate_view_box;
     }
     return stream;
   }
   //! [Overridden write_to in JpegPlenoLightFieldContents]
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPEGPLENOLIGHTFIELDCONTENTS_H__ */

@@ -185,7 +185,14 @@ class DBox {
   In the case of a super box contents, it is necessary to inherit from SuperBoxDBox.
   Moreover, the write_to method must be overridden. 
   Let us take for instance the JpegPlenoLightFieldContents.
-  It contains a ProfileAndLevelBox, a JpegPlenoLightFieldHeaderBox and a ContiguousCodestreamBox.
+  It contains the following boxes (in order):
+    - ProfileAndLevelBox (required)
+    - JpegPlenoThumbnailBox (optional)
+    - JpegPlenoLightFieldHeaderBox (required)
+    - ContiguousCodestreamBox (optional)
+    - JpegPlenoLightFieldReferenceViewBox (optional)
+    - JpegPlenoLightFieldNormalizedDisparityViewBox (optional)
+    - JpegPlenoLightFieldIntermediateViewBox (optional)
 
   Its overridden write_to function looks like:
 
@@ -194,6 +201,7 @@ class DBox {
   It is in fact very simple: it is just redirecting the boxes to the stream in the order they must appear in file.
   Also, the <b>required</b> boxes must be present (if not, an error/exception will be thrown). 
   Non required boxes should be tested first to see if they are available. 
-  In the example above, the Contiguous Codestream Box is optional.
+  In the above example, both ProfileAndLevelBox and JpegPlenoLightFieldHeaderBox are required boxes.
+  Their valid existance (i.e., an instantiated object != nullptr) in the JpegPlenoLightFieldContents instance must be garanteed by construction.
 
 */

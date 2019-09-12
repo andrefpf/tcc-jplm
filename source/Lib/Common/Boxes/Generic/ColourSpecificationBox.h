@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Colour Specification Box
+ * \tparam ColourSpecificationContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using ColourSpecificationBox = GenericBox<0x636F6C72, ColourSpecificationContents>;

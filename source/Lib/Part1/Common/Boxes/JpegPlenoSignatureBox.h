@@ -45,11 +45,14 @@
 #include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 
 //! [Declaring JpegPlenoSignatureBox]
+
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Jpeg Pleno Signature Box
+ * \tparam JpegPlenoSignatureContents
  */
 using JpegPlenoSignatureBox = GenericBox<0x6A706C20, JpegPlenoSignatureContents>;
+
 //! [Declaring JpegPlenoSignatureBox]
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATUREBOX_H__ */

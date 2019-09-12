@@ -1,14 +1,15 @@
+JPEG Pleno Model RC
+===
 
-# JPEG Pleno Model RC
+[TOC]
 
-The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pleno Part 4).
-
-### Part 4, Reference software
+# Part 4, Reference software
 
 Provides reference implementations for the standardized technologies within the JPEG Pleno framework for purpose of reference for prospective implementers of the standard and compliance testing.
 
 ## Scope of the project
 
+The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pleno Part 4).
 
 ### JPEG Pleno
 JPEG Pleno aims to provide a standard framework for representing new imaging modalities, such as texture-plus-depth, [light field](https://jpeg.org/jpegpleno/lightfield.html), [point cloud](https://jpeg.org/jpegpleno/pointcloud.html), and [holographic imaging](https://jpeg.org/jpegpleno/holography.html). Such imaging should be understood as light representations inspired by the plenoptic function, regardless of which model captured or created all or part of the content. [Read more](https://jpeg.org/jpegpleno/index.html)

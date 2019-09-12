@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Data Entry URL Box
+ * \tparam DataEntryURLContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;

@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of a Channel Definition Box
+ * \tparam ChannelDefinitionContents
  * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
  */
 using ChannelDefinitionBox = GenericBox<0x63646566, ChannelDefinitionContents>;

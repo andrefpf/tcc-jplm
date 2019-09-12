@@ -47,6 +47,7 @@
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Jpeg Pleno Thumbnail Box
+ * \tparam JpegPlenoThumbnailContents
  */
 using JpegPlenoThumbnailBox = GenericBox<0x6a707468, JpegPlenoThumbnailContents>;
 

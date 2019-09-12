@@ -54,6 +54,8 @@ template<typename T>
 class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  protected:
   std::unique_ptr<ViewIOPolicy<T>> view_io_policy;
+  mutable std::unique_ptr<LightfieldDimension<std::size_t>> lightfield_dimension =
+      nullptr;
 
  public:
   /**
@@ -209,14 +211,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     if (!this->elements) {
       //Throws
     }
-    return this->elements[0]->get_number_of_channels(); 
+    return this->elements[0]->get_number_of_channels();
   }
+
 
   auto get_number_of_pixels_per_view_channel() const {
     if (!this->elements) {
       //Throws
     }
-    return get_views_width()*get_views_height();
+    return get_views_width() * get_views_height();
   }
 
 
@@ -228,11 +231,18 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  auto get_dimensions() const {
-    return LightfieldDimension(this->get_width(), this->get_height(),
-        this->get_views_width(), this->get_views_height());
-  }
+  template<typename Type = std::size_t>
+  LightfieldDimension<Type> get_dimensions() const {
+    if (!lightfield_dimension) {
+      lightfield_dimension =
+          std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),
+              this->get_views_width(), this->get_views_height());
+    }
+    return LightfieldDimension<Type>(*lightfield_dimension);
 
+    // return LightfieldDimension<Type>(this->get_width(), this->get_height(),
+    //     this->get_views_width(), this->get_views_height());
+  }
 
   inline View<T>* operator[](const int i) {
     // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
@@ -254,7 +264,6 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
     return (*this->elements_for_2d_access[i]).get();
   }
-
 
 
   /**
