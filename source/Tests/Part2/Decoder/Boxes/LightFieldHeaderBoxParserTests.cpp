@@ -76,7 +76,7 @@ TEST(BasicTest, ContainsCorrectT) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(
       light_field_header_box_contents.get_light_field_dimension().get_t(), 13);
@@ -94,7 +94,7 @@ TEST(BasicTest, ContainsCorrectS) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(
       light_field_header_box_contents.get_light_field_dimension().get_s(), 31);
@@ -112,7 +112,7 @@ TEST(BasicTest, ContainsCorrectV) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(
       light_field_header_box_contents.get_light_field_dimension().get_v(), 512);
@@ -130,7 +130,7 @@ TEST(BasicTest, ContainsCorrectU) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(
       light_field_header_box_contents.get_light_field_dimension().get_u(), 215);
@@ -148,7 +148,7 @@ TEST(BasicTest, ContainsCorrectNC) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(light_field_header_box_contents.get_number_of_components(), 3);
 }
@@ -165,7 +165,7 @@ TEST(BasicTest, ContainsCorrectBPC) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(light_field_header_box_contents.get_bits_per_component(), 10);
 }
@@ -182,7 +182,7 @@ TEST(BasicTest, ContainsCorrectCompressionType) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(light_field_header_box_contents.get_compression_type(),
       CompressionTypeLightField::transform_mode);
@@ -200,7 +200,7 @@ TEST(BasicTest, ContainsCorrectUnkc) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(light_field_header_box_contents.get_color_space_unknown_flag(),
       ColourSpaceUnknownFlag::known);
@@ -218,7 +218,7 @@ TEST(BasicTest, ContainsCorrectIpr) {
       std::move(managed_stream));
 
   const auto& light_field_header_box_contents =
-      box->get_const_ref_to_contents();
+      box->get_ref_to_contents();
 
   EXPECT_EQ(light_field_header_box_contents.get_intelectual_property_flag(),
       IntelectualPropertyFlag::has_no_rights_information);

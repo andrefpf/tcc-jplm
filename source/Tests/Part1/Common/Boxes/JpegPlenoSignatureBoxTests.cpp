@@ -100,13 +100,11 @@ TEST(JpegPlenoSignatureBoxBasic, TwoSignatureBoxesAreEqual) {
 
 TEST(JpegPlenoSignatureBoxBasic, CorrectDBoxValue) {
   auto pleno_signature_box = JpegPlenoSignatureBox();
-  auto dbox = pleno_signature_box.get_dbox();
-  const auto& contents = dynamic_cast<const CharArrayDBoxContents&>(dbox->get_ref_to_contents());
-  const auto& vec= contents.get_const_ref_to_vector();
-  EXPECT_EQ(vec.at(0), 0x0d);
-  EXPECT_EQ(vec.at(1), 0x0a);
-  EXPECT_EQ(vec.at(2), 0x87);
-  EXPECT_EQ(vec.at(3), 0x0a);
+  const auto& signature = pleno_signature_box.get_ref_to_contents().get_ref_to_signature();
+  EXPECT_EQ(signature.at(0), std::byte{0x0d});
+  EXPECT_EQ(signature.at(1), std::byte{0x0a});
+  EXPECT_EQ(signature.at(2), std::byte{0x87});
+  EXPECT_EQ(signature.at(3), std::byte{0x0a});
 }
 
 struct JpegPlenoSignatureBoxToFile : public testing::Test {

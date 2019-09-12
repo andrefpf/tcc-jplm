@@ -1,4 +1,4 @@
-# Contributors:
+# Contributors
 
   - [Pedro Garcia](https://gitlab.com/pedrogarcia) : Architectural design, development of 4D-transform mode, third-part-lib porting
   - [Pekka Astola](https://gitlab.com/astolap) : Design and development of 4D-prediction mode

@@ -42,10 +42,9 @@
 #define JPLM_LIB_PART2_DECODER_BOXES_JPEGPLENOLIGHTFIELDHEADERBOXPARSER_H__
 
 #include <memory>
-#include "source/Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "source/Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "source/Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
 
 namespace JPLMBoxParser {
 class JpegPlenoLightFieldHeaderBoxParser {

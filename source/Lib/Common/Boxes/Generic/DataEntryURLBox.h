@@ -1,4 +1,3 @@
-
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
@@ -36,33 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+ *  \date     2019-09-06
  */
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__
 
-#include "DataEntryURLDBox.h"
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
 
-
-class DataEntryURLBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::DataEntryURLBoxType);
-
-
-  DataEntryURLBox(const DataEntryURLBoxContents& contents)
-      : Box(TBox(id), DataEntryURLDBox(contents)){};
-
-
-  DataEntryURLBox(const DataEntryURLBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~DataEntryURLBox() = default;
-};
-
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Data Entry URL Box
+ * \tparam DataEntryURLContents
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using DataEntryURLBox = GenericBox<0x75726C20, DataEntryURLContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLBOX_H__ */

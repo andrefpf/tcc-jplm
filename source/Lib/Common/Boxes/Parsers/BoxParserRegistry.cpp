@@ -89,7 +89,9 @@ void BoxParserRegistry::register_known_parsers() {
   // Common:
   register_parser<ColourSpecificationBoxParser>();
   // Part 1:
+  //! [Registering the parser]
   register_parser<JpegPlenoSignatureBoxParser>();
+  //! [Registering the parser]
   register_parser<FileTypeBoxParser>();
   // Part 2:
   register_parser<ProfileAndLevelBoxParser>();

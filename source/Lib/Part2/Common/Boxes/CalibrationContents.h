@@ -41,14 +41,51 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 
-class CalibrationContents
-{
-protected:
-	
-public:
-	CalibrationContents();
-	~CalibrationContents();
-	
+#include <tuple>  //std::tie
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
+
+class CalibrationContents : public InMemoryDBox {
+ protected:
+ public:
+  //! \todo implement this class (CalibrationContents)
+  CalibrationContents() = default;
+  virtual ~CalibrationContents() = default;
+
+
+  virtual CalibrationContents* clone() const override {
+    return new CalibrationContents(*this);
+  }
+
+
+  uint64_t size() const noexcept override {
+    return 0;  //
+  }
+
+
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
+      return false;
+    const auto& cast_other = dynamic_cast<const CalibrationContents&>(other);
+    return *this == cast_other;
+  }
+
+
+  bool operator==(const CalibrationContents& ) const noexcept { //other
+    return true;
+  }
+
+
+  bool operator!=(const CalibrationContents& other) const noexcept {
+    return !this->operator==(other);
+  }
+
+
+  virtual std::vector<std::byte> get_bytes() const override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+    return bytes;
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__ */

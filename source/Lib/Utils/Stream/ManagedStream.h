@@ -1,5 +1,5 @@
-#ifndef MANAGEDSTREAM_H__
-#define MANAGEDSTREAM_H__
+#ifndef JPLM_LIB_UTILS_STREAM_MANAGEDSTREAM_H__
+#define JPLM_LIB_UTILS_STREAM_MANAGEDSTREAM_H__
 
 #include <array>
 #include <cstddef>
@@ -93,4 +93,4 @@ class ManagedStream {
   ~ManagedStream() = default;
 };
 
-#endif /* end of include guard: MANAGEDSTREAM_H__ */
+#endif /* end of include guard: JPLM_LIB_UTILS_STREAM_MANAGEDSTREAM_H__ */

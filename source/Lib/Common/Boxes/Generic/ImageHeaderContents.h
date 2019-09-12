@@ -42,21 +42,20 @@
 #define JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__
 
 #include <tuple>  //std::tie
-#include "Lib/Part1/Common/CommonExceptions.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
 #include "CompressionTypeImage.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part1/Common/CommonExceptions.h"
 
 
-
-class ImageHeaderContents : public InMemoryDBoxContents {
+class ImageHeaderContents : public InMemoryDBox {
  protected:
-  uint32_t height;
-  uint32_t width;
-  uint16_t nc;  //! Number of components
-  uint8_t bpc;  //! Bits per component
-  CompressionTypeImage c;  //! Compression type
-  uint8_t UnkC;  //! Colourspace Unknown
-  uint8_t IPR;  //! Intellectual Property
+  uint32_t height;  //!< Image height
+  uint32_t width;  //!< Image width
+  uint16_t nc;  //!< Number of components
+  uint8_t bpc;  //!< Bits per component
+  CompressionTypeImage c;  //!< Compression type
+  uint8_t UnkC;  //!< Colourspace Unknown
+  uint8_t IPR;  //!< Intellectual Property
 
  public:
   ImageHeaderContents(uint32_t height, uint32_t width,
@@ -66,7 +65,8 @@ class ImageHeaderContents : public InMemoryDBoxContents {
         bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
     //should width, height and bpc be checked against 0?
     if ((height == 0) || (width == 0) || (nc == 0) || (bpc == 0)) {
-      throw ImageHeaderBoxExceptions::InvalidSizeException(height, width, nc, bpc);
+      throw ImageHeaderBoxExceptions::InvalidSizeException(
+          height, width, nc, bpc);
     }
   }
 
@@ -122,12 +122,12 @@ class ImageHeaderContents : public InMemoryDBoxContents {
 
 
   bool has_intellectual_property() const noexcept {
-    if(UnkC == 0) {
+    if (UnkC == 0) {
       return false;
-    } //1
+    }  //1
     return true;
     //! \todo Check if should throw exception when value is not 0 or 1
-     // Other values are reserved for ISO use
+    // Other values are reserved for ISO use
   }
 
 
@@ -145,7 +145,7 @@ class ImageHeaderContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const ImageHeaderContents&>(other);
@@ -165,5 +165,6 @@ class ImageHeaderContents : public InMemoryDBoxContents {
     return !this->operator==(other);
   }
 };
+
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_IMAGEHEADERCONTENTS_H__ */

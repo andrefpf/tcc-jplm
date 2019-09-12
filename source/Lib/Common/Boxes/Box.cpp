@@ -88,13 +88,13 @@ std::unique_ptr<DBox> Box::get_dbox() const noexcept {
 }
 
 
-DBox& Box::get_ref_to_dbox() const noexcept {
+const DBox& Box::get_ref_to_dbox() const noexcept {
   return *(this->d_box);
 }
 
 
-const DBoxContents& Box::get_ref_to_dbox_contents() const noexcept {
-  return this->d_box->get_ref_to_contents();
+DBox& Box::get_ref_to_dbox() noexcept {
+  return *(this->d_box);
 }
 
 
@@ -112,6 +112,5 @@ std::ostream& operator<<(std::ostream& stream, const Box& box) {
   if (xlbox) {
     stream << xlbox.value();
   }
-  stream << box.get_ref_to_dbox();  //should avoid copying
-  return stream;
+  return box.d_box->write_to(stream);
 }

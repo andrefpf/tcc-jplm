@@ -44,13 +44,19 @@
 
 std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
+  //! [Parsing a box within a super box]
   auto& box_parser = BoxParserRegistry::get_instance();
-  
+
   auto light_field_header_box = box_parser.parse<LightFieldHeaderBox>(
       box_parser_helper.get_remaining_stream());
 
-  auto bits_per_component_box = box_parser.parse<BitsPerComponentBox, false>(
-      box_parser_helper.get_remaining_stream());  //optional, may be nullptr
+  //! \todo verify if checking for data availability may be performed by the parser.
+  auto bits_per_component_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<BitsPerComponentBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;  //optional, may be nullptr
+  //! [Parsing a box within a super box]
 
   std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
 
@@ -76,13 +82,13 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
                 box_parser_helper.get_remaining_stream())
           : nullptr;
 
-  auto light_field_header_contents =
+  auto jpeg_pleno_light_field_header_contents =
       std::make_unique<JpegPlenoLightFieldHeaderContents>(
           std::move(light_field_header_box), std::move(bits_per_component_box),
           std::move(colr), std::move(channel_definition_box));
 
   auto jpeg_pleno_light_field_header_box =
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
-          std::move(light_field_header_contents));
+          std::move(jpeg_pleno_light_field_header_contents));
   return jpeg_pleno_light_field_header_box;
 }

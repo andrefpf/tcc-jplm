@@ -48,7 +48,7 @@
 template<typename T>
 class View {
  protected:
-  std::unique_ptr<Image<T>> image_;
+  mutable std::unique_ptr<Image<T>> image_;
   std::pair<std::size_t, std::size_t> view_size;
   std::size_t bpp;
 
@@ -184,6 +184,9 @@ class View {
 
   auto get_number_of_channels() const {
     if (!image_) {
+      load_image(view_size);
+    }
+    if (!image_) {
       throw ViewExceptions::ImageWasNotInitialyzedException();
     }
     return image_->get_number_of_channels();
@@ -245,7 +248,7 @@ class View {
 
 
   virtual void load_image(const std::pair<std::size_t, std::size_t>& size,
-      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) {
+      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const {
     std::cout << "Im not sure how to load a image with size "
               << std::get<0>(size) << "x" << std::get<1>(size)
               << "with initial point at (" << std::get<0>(initial) << ", "
@@ -253,7 +256,7 @@ class View {
   }
 
 
-  void load_image() {
+  void load_image() const {
     // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';
     load_image(this->view_size);
   }

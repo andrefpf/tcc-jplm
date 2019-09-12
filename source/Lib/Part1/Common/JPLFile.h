@@ -42,14 +42,15 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPLFILE_H__
 #define JPLM_LIB_PART1_COMMON_JPLFILE_H__
 
-#include "source/Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDBox.h"
-#include "source/Lib/Common/Boxes/Generic/UUIDInfoBox.h"
-#include "source/Lib/Part1/Common/Boxes/FileTypeBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-#include "source/Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+#include "Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDListBox.h"
+#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
 
 
 class JPLFile {
@@ -57,7 +58,7 @@ class JPLFile {
   std::unique_ptr<JpegPlenoSignatureBox> jpeg_pleno_signature_box;
   std::unique_ptr<FileTypeBox> file_type_box;  //this is the FileTypeBox
   // std::optional<XMLBoxWithCatalog> xml_box_with_catalog;
-  std::optional<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
+  std::unique_ptr<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
   std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>
       jpeg_pleno_codestreams;  //optional
   std::optional<IntellectualPropertyBox> ipr_box;
@@ -108,14 +109,15 @@ class JPLFile {
 
 
   JPLFile& add_thumbnail_box(
-      const JpegPlenoThumbnailBox& thumbail_box) {  //thumbail_box
-    jpeg_pleno_thumbnail_box = thumbail_box;
+      const JpegPlenoThumbnailBox& thumbnail_box) {  //thumbnail_box
+    jpeg_pleno_thumbnail_box =
+        std::make_unique<JpegPlenoThumbnailBox>(thumbnail_box);
     return *this;
   }
 
 
   bool has_thumbnail() const noexcept {
-    return jpeg_pleno_thumbnail_box.has_value();
+    return jpeg_pleno_thumbnail_box ? true : false;
   }
 
 

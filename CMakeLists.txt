@@ -64,9 +64,19 @@ add_executable(jpl-encoder-bin
         source/App/Encoder/jpl-encoder.cpp
         CMakeLists.txt)
 
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common) 
+target_link_libraries(jpl-encoder-bin PRIVATE image) 
+
 add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
+
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_common)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_encoder)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common) 
+target_link_libraries(jpl-decoder-bin PRIVATE image) 
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
@@ -80,12 +90,15 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
 
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
 
 # target_link_libraries(jplm_common_boxes_parsers jplm_part1_boxes_decoder)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/)
 
 
 
@@ -106,6 +119,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Encoder/)
 
 
 if(BUILD_DOC)

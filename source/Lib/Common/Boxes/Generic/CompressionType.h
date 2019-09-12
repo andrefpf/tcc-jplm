@@ -32,8 +32,7 @@
  */
 
 /** \file     CompressionType.h
- *  \brief    
- *  \details  
+ *  \brief    This files keeps the definition of the compression type data
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-22
  */
@@ -44,6 +43,9 @@
 
 #include <cstdint>
 
+/**
+ * Indicates the data type used to store a compression type
+ */
 using compression_type_data = uint8_t;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_COMPRESSIONTYPE_H__ */

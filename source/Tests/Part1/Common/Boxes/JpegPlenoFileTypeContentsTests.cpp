@@ -41,7 +41,6 @@
 
 #include <iostream>
 #include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/FileTypeBox.h"
 #include "gtest/gtest.h"
 
 
@@ -123,7 +122,7 @@ TEST(JpegPlenoFileTypeContentsBasics, BytesCompatibility) {
   auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
   auto bytes = jpeg_pleno_file_type_contents.get_bytes();
 
-  //for the standard constructor it adds 0x6a706c20 as compatible 
+  //for the standard constructor it adds 0x6a706c20 as compatible
   //right after MinV
   EXPECT_EQ(bytes.at(8), std::byte{0x6a});
   EXPECT_EQ(bytes.at(9), std::byte{0x70});
@@ -136,7 +135,7 @@ TEST(JpegPlenoFileTypeContentsBasics, BytesCompatibleWithItsBrand) {
   auto jpeg_pleno_file_type_contents = JpegPlenoFileTypeContents();
   auto bytes = jpeg_pleno_file_type_contents.get_bytes();
 
-  //for the standard constructor it adds 0x6a706c20 as compatible 
+  //for the standard constructor it adds 0x6a706c20 as compatible
   //right after MinV
   EXPECT_EQ(bytes.at(0), bytes.at(8));
   EXPECT_EQ(bytes.at(1), bytes.at(9));

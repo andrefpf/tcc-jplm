@@ -41,40 +41,81 @@
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__
 
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "ChannelDescription.h"
+#include "Lib/Common/Boxes/Generic/ChannelDescription.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
-
-class ChannelDefinitionContents : public InMemoryDBoxContents {
+/**
+ * \brief      Class for channel definition contents.
+ * \sa ChannelDefinitionBox
+ * \todo It is necessary to define the get_bytes() method of ChannelDefinitionContents.
+ */
+class ChannelDefinitionContents : public InMemoryDBox {
  protected:
-  std::vector<ChannelDescription> channel_descriptions;
+  std::vector<ChannelDescription>
+      channel_descriptions;  //!< Vector of channel description
 
  public:
   ChannelDefinitionContents() = default;
 
-  
-  ChannelDefinitionContents(const ChannelDefinitionContents& other) : channel_descriptions(other.channel_descriptions) {}
+
+  /**
+   * \brief      Copy constructor
+   *
+   * \param[in]  other  The other channel definition content
+   */
+  ChannelDefinitionContents(const ChannelDefinitionContents& other)
+      : channel_descriptions(other.channel_descriptions) {
+  }
 
 
-  ChannelDefinitionContents(ChannelDefinitionContents&& other) : channel_descriptions(std::move(other.channel_descriptions)) {}
+  /**
+   * \brief      Move constructor
+   *
+   * \param      other  The other
+   */
+  ChannelDefinitionContents(ChannelDefinitionContents&& other)
+      : channel_descriptions(std::move(other.channel_descriptions)) {
+  }
 
 
-  ~ChannelDefinitionContents() = default;
+  /**
+   * \brief      Destroys the object.
+   */
+  virtual ~ChannelDefinitionContents() = default;
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
-  	if (typeid(*this) != typeid(other))
+  /**
+   * \brief      Determines if equal.
+   *
+   * \param[in]  other  The other
+   *
+   * \return     True if equal, false otherwise.
+   */
+  virtual bool is_equal(const DBox& other) const override {
+    if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other = dynamic_cast<const ChannelDefinitionContents&>(other);
+    const auto& cast_other =
+        dynamic_cast<const ChannelDefinitionContents&>(other);
     return *this == cast_other;
   }
 
 
+  /**
+   * \brief      Creates a new instance of the object with same properties than original.
+   *
+   * \return     Copy of this object.
+   */
   virtual ChannelDefinitionContents* clone() const override {
-  	return new ChannelDefinitionContents(*this);
+    return new ChannelDefinitionContents(*this);
   }
 
 
+  /**
+   * \brief      Gets the size, in bytes, of this contents
+   *
+   * \return     Size in bytes
+   * \details    There are 2 bytes to represent N (number of channel descriptions) and 3 uint16_t for each channel descriptor.
+   */
   uint64_t size() const noexcept override {
     //2 is from N (number of channel descriptions)
     //3 is from the 3 fields in ChannelDescription
@@ -82,15 +123,29 @@ class ChannelDefinitionContents : public InMemoryDBoxContents {
   }
 
 
+  /**
+   * \brief      Equal operator
+   *
+   * \param[in]  other  The other ChannelDefinitionContents
+   *
+   * \return     True if equal, false otherwise.
+   */
   bool operator==(const ChannelDefinitionContents& other) const {
     return this->channel_descriptions == other.channel_descriptions;
   }
 
 
+  /**
+   * \brief      Not equal operator
+   *
+   * \param[in]  other  The other ChannelDefinitionContents
+   *
+   * \return     False if equal, true otherwise.
+   */
   bool operator!=(const ChannelDefinitionContents& other) const {
     return !this->operator==(other);
   }
-
 };
+
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHANNELDEFINITIONCONTENTS_H__ */

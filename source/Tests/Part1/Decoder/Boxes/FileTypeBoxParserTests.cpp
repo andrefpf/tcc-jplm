@@ -91,7 +91,7 @@ TEST(BasicFileTypeBoxTest, IdentifiesCompatibilityList) {
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
        std::move(managed_stream));
 
-  EXPECT_TRUE(box->is_compatible_with<JpegPlenoSignatureBox>());
+  EXPECT_TRUE(box->get_ref_to_contents().is_the_file_compatible_with(JpegPlenoSignatureBox::id));
 }
 
 
@@ -103,7 +103,7 @@ TEST(BasicFileTypeBoxTest, IdentifiesIfNotInCompatibilityList) {
   auto box = BoxParserRegistry::get_instance().parse<FileTypeBox>(
        std::move(managed_stream));
 
-  EXPECT_FALSE(box->is_compatible_with<JpegPlenoSignatureBox>());
+  EXPECT_FALSE(box->get_ref_to_contents().is_the_file_compatible_with(JpegPlenoSignatureBox::id));
 }
 
 

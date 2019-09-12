@@ -43,8 +43,8 @@
 
 #include <tuple>  //std::tie
 #include "CompressionTypeLightField.h"
-#include "Lib/Common/Boxes/InMemoryDBoxContents.h"
-#include "Lib/Part1/Common/BinaryTools.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 
 using colour_space_unknown_flag_type = uint8_t;
@@ -65,7 +65,7 @@ enum class IntelectualPropertyFlag : intelectual_property_flag_type {
 };
 
 
-class LightFieldHeaderContents : public InMemoryDBoxContents {
+class LightFieldHeaderContents : public InMemoryDBox {
  protected:
   // uint32_t rows;  //T number of rows of the subaperture view array
   // uint32_t columns;  //S number of columns of the subaperture view array
@@ -143,7 +143,7 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
   }
 
 
-  virtual bool is_equal(const DBoxContents& other) const override {
+  virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
@@ -188,5 +188,8 @@ class LightFieldHeaderContents : public InMemoryDBoxContents {
     return bytes;
   }
 };
+
+
+
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERCONTENTS_H__ */

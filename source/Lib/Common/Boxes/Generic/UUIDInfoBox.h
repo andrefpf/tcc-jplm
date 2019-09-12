@@ -35,32 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+ *  \date     2019-09-06  
  */
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__
 
-#include "Lib/Common/Boxes/Box.h"
-#include "Lib/Part1/Common/DefinedBoxes.h"
-#include "UUIDInfoDBox.h"
+#include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 
-
-class UUIDInfoBox : public Box {
- public:
-  constexpr static auto id = static_cast<DefinedBoxesTypesUnderlyingType>(
-      DefinedBoxesTypes::UUIDInfoBoxType);
-
-
-  UUIDInfoBox(const UUIDInfoBoxContents& contents)
-      : Box(TBox(id), UUIDInfoDBox(contents)){};
-
-
-  UUIDInfoBox(const UUIDInfoBox& other) : Box(TBox(id), *other.d_box) {
-  }
-
-
-  ~UUIDInfoBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a UUID Info Box
+ * \tparam UUIDInfoContents
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using UUIDInfoBox = GenericBox<0x75696E66, UUIDInfoContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOBOX_H__ */

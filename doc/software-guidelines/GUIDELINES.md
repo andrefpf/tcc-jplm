@@ -1,12 +1,15 @@
-# Guidelines for JPEG Pleno reference software development
+Guidelines for JPEG Pleno reference software development {#guidelines}
+===
 
-## Introduction
+[TOC]
+
+# Introduction
 
 C++ is the development language used to develop the JPEG Pleno's codec and required by the committee. This language language has many features, which can induce bug-prone code and make it harder to read and maintain.
 
 The goal of this guide is to manage this complexity by describing in generality the rules to make the JPEG Pleno reference software readable while still allowing coders to use C++ language features productively.
 
-Since this document is intended to be a general styling recommendation, it do not describe in detail the dos and don'ts of writing C++ code. If the developer identify some feature use that is not present in this document, we recommend the use of [Google C++ Style Guide](https://www.google.com "Google C++ Style Guide"). In fact, this document is inspired in the Google C++ Style Guide. However, in case of conflicts between this document and the Google's C++ code style, this document must precede.
+Since this document is intended to be a general styling recommendation, it do not describe in detail the dos and don'ts of writing C++ code. If the developer identify some feature use that is not present in this document, we recommend the use of [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html "Google C++ Style Guide"). In fact, this document is inspired in the Google C++ Style Guide. However, in case of conflicts between this document and the Google's C++ code style, this document must precede.
 
 The use of the following rules is mandatory for all software implementation tasks. Code commits that do not comply with these rules should not be accepted by the software coordinators.
 

@@ -35,50 +35,21 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-24
+ *  \date     2019-09-06
  */
-
 
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
 #define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__
 
-#include "ContiguousCodestreamDBox.h"
-#include "Lib/Common/Boxes/Box.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-
-class ContiguousCodestreamBox : public Box {
- public:
-  constexpr static uint32_t id = 0x6A703263;
-
-  ContiguousCodestreamBox(const ContiguousCodestreamContents& contents)
-      : Box(TBox(id), ContiguousCodestreamDBox(contents)) {
-  }
-
-
-  ContiguousCodestreamBox(const ContiguousCodestreamCode& code)
-      : Box(TBox(id),
-            ContiguousCodestreamDBox(ContiguousCodestreamContents(code))) {
-  }
-
-
-  ContiguousCodestreamBox(std::unique_ptr<ContiguousCodestreamCode>&& code)
-      : Box(TBox(id),
-            std::make_unique<ContiguousCodestreamDBox>(std::move(code))) {
-  }
-
-
-  ContiguousCodestreamBox(const ContiguousCodestreamBox& other)
-      : Box(TBox(id), *other.d_box) {
-  }
-
-
-  const ContiguousCodestreamContents& get_const_ref_to_contents() const {
-    return dynamic_cast<const ContiguousCodestreamContents&>(
-        this->get_ref_to_dbox_contents());
-  }
-
-
-  ~ContiguousCodestreamBox() = default;
-};
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a Contiguous Codestream Box
+ * \tparam ContiguousCodestreamContents
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using ContiguousCodestreamBox = GenericBox<0x6A703263, ContiguousCodestreamContents>;
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMBOX_H__ */

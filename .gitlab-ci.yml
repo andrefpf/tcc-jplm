@@ -1,21 +1,29 @@
 stages:
   - build
-  - test
+  - test-and-document
 
 image: gcc
 before_script:
  - apt-get update --yes
- - apt-get install --yes cmake
+ - apt-get install --yes cmake graphviz doxygen
 
 build:
   stage: build
   script:
-    - mkdir build && cd build; cmake ..; make
+    - mkdir build; mkdir bin; cd build; cmake ..; make
   artifacts:
     paths:
       - bin/*
-
+    expire_in: 20 minutes
 test:
-  stage: test
+  stage: test-and-document
   script:
     - mkdir build && cd build; cmake ..; ctest
+
+document:
+  stage: test-and-document
+  script:
+    - mkdir build && cd build; cmake ..; make doxygen
+  artifacts:
+    paths:
+      - doc/*  

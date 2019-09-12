@@ -32,14 +32,15 @@
  */
 
 /** \file     ContiguousCodestreamCode.cpp
- *  \brief    
- *  \details  
+ *  \brief    Contains the implementation of the contiguous codestream code writing method
+ *  \details  It basically calls the contiguous codestream code write method. that will be overrided depending on its type.
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-29
  */
 
 #include "ContiguousCodestreamCode.h"
 
-std::ostream& operator<<(std::ostream& stream, const ContiguousCodestreamCode& code) {
+std::ostream& operator<<(
+    std::ostream& stream, const ContiguousCodestreamCode& code) {
   return code.write_to(stream);
 }

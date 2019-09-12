@@ -1,4 +1,4 @@
-function(add_jplm_io_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
+function(add_jplm_lib_common_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_part2_boxes_decoder)
@@ -7,5 +7,7 @@ function(add_jplm_io_test TEST_NAME TEST_BIN_NAME TEST_SOURCE)
 	add_test(${TEST_NAME} ${EXECUTABLE_OUTPUT_PATH}/${TEST_BIN_NAME} "${CMAKE_HOME_DIRECTORY}/resources")
 endfunction()
 
-
-add_jplm_io_test(JPLFileIOTests jpl_file_io_tests JPLFileIOTests.cpp)
+add_jplm_lib_common_test(JPLFileIOTests jpl_file_io_tests JPLFileIOTests.cpp)
+add_jplm_lib_common_test(JPLMCodecFactoryTests jplm_codec_factory_tests JPLMCodecFactoryTests.cpp)
+add_jplm_lib_common_test(JPLMConfigurationFactoryTests jplm_configuration_factory_tests JPLMConfigurationFactoryTests.cpp)
+add_jplm_lib_common_test(JPLMConfigurationTests jplm_configuration_tests JPLMConfigurationTests.cpp)
