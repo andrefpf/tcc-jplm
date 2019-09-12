@@ -70,13 +70,13 @@ double get_mean_squared_error(const std::vector<T>& errors) {
  * \brief      Gets the peak signal to noise ratio (PSNR) of a vector containing the errors (noise).
  *
  * \param[in]  errors     The errors
- * \param[in]  max_value  The maximum value (normally it is \f$2^\text{color depth}-1\f$)
+ * \param[in]  max_value  The maximum value (normally it is \f$2^{color depth}-1\f$)
  *
  * \tparam     T          The type that is contained by the vector
  *
  * \return     The peak signal to noise ratio.
  * 
- * \details  PSNR is computed as \f$10\times\text{log}_{10}\left(\frac{\text{max_value}^2}{\text{MSE}(\text{errors})}\right)\f$
+ * \details  PSNR is computed as \f$10\times{log}_{10}\left(\frac{{maxvalue}^2}{{MSE}({errors})}\right)\f$
  * 
  * Use:
  * \snippet Tests/Utils/Image/MetricsTests.cpp Computing PSNR of a vector with the error values
