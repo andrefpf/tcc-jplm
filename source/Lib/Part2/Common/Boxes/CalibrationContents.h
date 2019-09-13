@@ -44,9 +44,85 @@
 #include <tuple>  //std::tie
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include <variant>
+#include <vector>
+
+class VariableFloatingPointCoordinates {
+ protected:
+  uint8_t pp;
+
+ public:
+  VariableFloatingPointCoordinates(uint8_t pp) : pp(pp) {
+  }
+
+  auto get_pp() const noexcept {
+    return pp;
+  }
+};
+
+
+template<typename T>
+class FloatingPointCoordinates : VariableFloatingPointCoordinates {
+ protected:
+  std::tuple<T, T, T> origin_position;  //x, y, z
+  std::tuple<T, T, T> rotation_around_axis;
+  std::tuple<T, T, T> scaling;
+
+ public:
+  FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
+      const std::tuple<T, T, T>& rotation_around_axis,
+      const std::tuple<T, T, T>& scaling) : VariableFloatingPointCoordinates(sizeof(T)/2) {
+    static_assert(std::numeric_limits<T>::is_iec559, "The coordinate type must be IEC559/IEEE 754");
+  }
+
+  
+  constexpr uint64_t size() const noexcept {
+    return (pp * 2) * 9;
+  }
+
+  
+  std::tuple<T, T, T> get_origin_position() const {
+    return origin_position;
+  }
+
+
+  std::tuple<T, T, T> get_rotation_around_axis() const {
+    return rotation_around_axis;
+  }
+
+
+  std::tuple<T, T, T> get_scaling() const {
+    return scaling;
+  }
+};
+
+
+enum CalibrationParam : uint8_t {
+  XCC = 0,
+  YCC = 1,
+  ZCC = 2,
+  THETA_X_CAM = 3,
+  THETA_Y_CAM = 4,
+  THETA_Z_CAM = 5,
+  F = 6,
+  SW = 7,
+  SH = 8,
+  SK = 9,
+  U0 = 10,
+  V0 = 11
+};
 
 class CalibrationContents : public InMemoryDBox {
+ 
  protected:
+  std::unique_ptr<VariableFloatingPointCoordinates> coordinates;
+  //uint16_t extInt; //(is this necessary?)
+  float baseline_x;
+  float baseline_y;
+  using calibration = std::variant<float, std::vector<float>>;
+  std::array<calibration, 12> values;
+
+
  public:
   //! \todo implement this class (CalibrationContents)
   CalibrationContents() = default;
@@ -55,6 +131,16 @@ class CalibrationContents : public InMemoryDBox {
 
   virtual CalibrationContents* clone() const override {
     return new CalibrationContents(*this);
+  }
+
+
+  template<CalibrationParam calibration_type> 
+  float get(uint64_t linear_position) const {
+    const auto& value = std::get<calibration_type>(values);
+    if(std::holds_alternative<float>(value)) {
+      return std::get<0>(value);
+    }
+    return std::get<1>(value).at(linear_position);
   }
 
 
@@ -71,7 +157,7 @@ class CalibrationContents : public InMemoryDBox {
   }
 
 
-  bool operator==(const CalibrationContents& ) const noexcept { //other
+  bool operator==(const CalibrationContents&) const noexcept {  //other
     return true;
   }
 
