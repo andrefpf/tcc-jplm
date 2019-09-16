@@ -45,6 +45,9 @@
 #include <cstdint>
 #include <vector>
 #include <cstddef> // std::byte
+#include <iostream>
+#include <tuple>
+#include <utility>
 
 /**
  * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
@@ -156,6 +159,15 @@ std::vector<std::byte>& append_big_endian_bytes(
   return byte_list;
 }
 
+
+template<typename ... Args>
+std::vector<std::byte>& append_big_endian_bytes(std::vector<std::byte>& byte_list, const std::tuple<Args...>& tuple) {
+  std::apply([&byte_list](const auto& ...value){
+    (..., append_big_endian_bytes(byte_list, value))
+    ;}, tuple);
+  return byte_list;
+
+}
 
 }  // namespace BinaryTools
 

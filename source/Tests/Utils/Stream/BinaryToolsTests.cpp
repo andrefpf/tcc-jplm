@@ -113,6 +113,23 @@ TEST(ValueFromByteVector, FourBytesOtherValue) {
   EXPECT_EQ(value, 65535);
 }
 
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectSizeFor3Uint8) {
+  auto tuple = std::tuple<uint8_t, uint8_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(bytes.size(), 3);
+}
+
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectSizeFor2Uint8And1Uint16) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(bytes.size(), 4);
+}
+
+
 ///! \todo need to test for exceptions
 
 
