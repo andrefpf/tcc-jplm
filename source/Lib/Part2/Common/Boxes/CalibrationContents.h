@@ -41,11 +41,12 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 
+#include <memory>
 #include <tuple>  //std::tie
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
 #include <variant>
 #include <vector>
+#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 class VariableFloatingPointCoordinates {
  protected:
@@ -58,6 +59,8 @@ class VariableFloatingPointCoordinates {
   auto get_pp() const noexcept {
     return pp;
   }
+
+  virtual VariableFloatingPointCoordinates* clone() const = 0;
 };
 
 
@@ -71,16 +74,18 @@ class FloatingPointCoordinates : VariableFloatingPointCoordinates {
  public:
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
       const std::tuple<T, T, T>& rotation_around_axis,
-      const std::tuple<T, T, T>& scaling) : VariableFloatingPointCoordinates(sizeof(T)/2) {
-    static_assert(std::numeric_limits<T>::is_iec559, "The coordinate type must be IEC559/IEEE 754");
+      const std::tuple<T, T, T>& scaling)
+      : VariableFloatingPointCoordinates(sizeof(T) / 2) {
+    static_assert(std::numeric_limits<T>::is_iec559,
+        "The coordinate type must be IEC559/IEEE 754");
   }
 
-  
+
   constexpr uint64_t size() const noexcept {
     return (pp * 2) * 9;
   }
 
-  
+
   std::tuple<T, T, T> get_origin_position() const {
     return origin_position;
   }
@@ -93,6 +98,10 @@ class FloatingPointCoordinates : VariableFloatingPointCoordinates {
 
   std::tuple<T, T, T> get_scaling() const {
     return scaling;
+  }
+
+  virtual FloatingPointCoordinates* clone() const override {
+    return new FloatingPointCoordinates(*this);
   }
 };
 
@@ -112,21 +121,43 @@ enum CalibrationParam : uint8_t {
   V0 = 11
 };
 
+
 class CalibrationContents : public InMemoryDBox {
- 
  protected:
   std::unique_ptr<VariableFloatingPointCoordinates> coordinates;
   //uint16_t extInt; //(is this necessary?)
-  float baseline_x;
-  float baseline_y;
+  std::tuple<float, float> baseline;  //x, y
   using calibration = std::variant<float, std::vector<float>>;
   std::array<calibration, 12> values;
 
 
  public:
   //! \todo implement this class (CalibrationContents)
-  CalibrationContents() = default;
+  CalibrationContents(const VariableFloatingPointCoordinates& coordinates,
+      const std::tuple<float, float>& baseline,
+      const std::array<calibration, 12>& values)
+      : coordinates(std::unique_ptr<VariableFloatingPointCoordinates>(
+            coordinates.clone())),
+        baseline(baseline), values(values) {
+  }
+
+
+  CalibrationContents(
+      std::unique_ptr<VariableFloatingPointCoordinates>&& coordinates,
+      std::tuple<float, float>&& baseline, std::array<calibration, 12>&& values)
+      : coordinates(std::move(coordinates)), baseline(std::move(baseline)),
+        values(std::move(values)) {
+  }
+
+
   virtual ~CalibrationContents() = default;
+
+
+  CalibrationContents(const CalibrationContents& other)
+      : coordinates(std::unique_ptr<VariableFloatingPointCoordinates>(
+            other.coordinates->clone())),
+        baseline(other.baseline), values(other.values) {
+  }
 
 
   virtual CalibrationContents* clone() const override {
@@ -134,10 +165,10 @@ class CalibrationContents : public InMemoryDBox {
   }
 
 
-  template<CalibrationParam calibration_type> 
+  template<CalibrationParam calibration_type>
   float get(uint64_t linear_position) const {
     const auto& value = std::get<calibration_type>(values);
-    if(std::holds_alternative<float>(value)) {
+    if (std::holds_alternative<float>(value)) {
       return std::get<0>(value);
     }
     return std::get<1>(value).at(linear_position);
