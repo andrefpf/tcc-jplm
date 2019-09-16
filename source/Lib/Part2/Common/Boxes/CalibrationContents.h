@@ -47,40 +47,51 @@
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include <cmath>
+#include <iostream>
 
 class VariableFloatingPointCoordinates {
  protected:
-  uint8_t pp;
+  //PP = 0, precision = 16 == "half float"
+  //PP = 1, precision = 32 == float
+  //PP = 2, precision = 64 == double
+  //PP = 3, precision = 128 == "long double"
+  // ...
+  uint8_t pp ;
 
  public:
   VariableFloatingPointCoordinates(uint8_t pp) : pp(pp) {
   }
+  virtual VariableFloatingPointCoordinates* clone() const = 0;
 
   auto get_pp() const noexcept {
     return pp;
   }
 
-  virtual VariableFloatingPointCoordinates* clone() const = 0;
 
   virtual uint64_t size() const noexcept = 0;
 };
 
 
 template<typename T>
-class FloatingPointCoordinates : VariableFloatingPointCoordinates {
+class FloatingPointCoordinates : public VariableFloatingPointCoordinates {
  protected:
   std::tuple<T, T, T> origin_position;  //x, y, z
   std::tuple<T, T, T> rotation_around_axis;
   std::tuple<T, T, T> scaling;
-  constexpr uint64_t my_size() {
+  constexpr uint64_t my_size() const noexcept {
     return sizeof(T) * 9;
+  }
+
+  constexpr uint8_t compute_p() const {
+    return std::log2(sizeof(T))-1;
   }
 
  public:
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
       const std::tuple<T, T, T>& rotation_around_axis,
       const std::tuple<T, T, T>& scaling)
-      : VariableFloatingPointCoordinates(sizeof(T) / 2) {
+      : VariableFloatingPointCoordinates(compute_p()) {
     static_assert(std::numeric_limits<T>::is_iec559,
         "The coordinate type must be IEC559/IEEE 754");
   }
@@ -129,6 +140,12 @@ enum CalibrationParam : uint8_t {
 
 class CalibrationContents : public InMemoryDBox {
  protected:
+  static_assert(std::numeric_limits<float>::is_iec559,
+      "Float must be IEC559/IEEE754. However it seems that in this compiler "
+      "this is not true.");
+  static_assert(std::numeric_limits<double>::is_iec559,
+      "Double must be IEC559/IEEE754. However it seems that in this compiler "
+      "this is not true.");
   std::unique_ptr<VariableFloatingPointCoordinates> coordinates;
   //uint16_t extInt; //(is this necessary?)
   std::tuple<float, float> baseline;  //x, y
@@ -181,7 +198,7 @@ class CalibrationContents : public InMemoryDBox {
 
 
   uint64_t size() const noexcept override {
-    return 0;  //
+    return coordinates->size();  //
   }
 
 

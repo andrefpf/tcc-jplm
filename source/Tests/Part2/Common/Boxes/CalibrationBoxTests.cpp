@@ -48,6 +48,18 @@ TEST(BasicTests, HasCorrectId) {
 }
 
 
+TEST(FloatingPointCoordinatesTests, FloatPPis1) {
+	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
+	EXPECT_EQ(coordinates.get_pp(), 1);
+}
+
+
+TEST(FloatingPointCoordinatesTests, DoublePPis2) {
+	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
+	EXPECT_EQ(coordinates.get_pp(), 2);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
