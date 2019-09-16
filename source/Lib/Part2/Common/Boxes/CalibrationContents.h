@@ -127,9 +127,30 @@ class FloatingPointCoordinates
   }
 
 
-  std::ostream& write_to(std::ostream& stream) const {
-    stream << static_cast<const unsigned char>(this->get_pp());
-    return stream;
+  // std::ostream& write_to(std::ostream& stream) const {
+  //   stream << static_cast<const unsigned char>(this->get_pp());
+  //    split_in_big_endian_bytes
+  //   return stream;
+  // }
+  std::vector<std::byte> get_bytes() const noexcept {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+
+    bytes.emplace_back(std::byte{this->get_pp()});
+
+    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(origin_position));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(origin_position));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(origin_position));
+
+    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(rotation_around_axis));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(rotation_around_axis));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(rotation_around_axis));
+
+    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(scaling));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(scaling));
+    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(scaling));
+    
+    return bytes;
   }
 };
 
