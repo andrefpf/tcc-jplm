@@ -54,9 +54,21 @@ TEST(FloatingPointCoordinatesTests, FloatPPis1) {
 }
 
 
+TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4) {
+	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
+	EXPECT_EQ(coordinates.size(), 36);
+}
+
+
 TEST(FloatingPointCoordinatesTests, DoublePPis2) {
 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
 	EXPECT_EQ(coordinates.get_pp(), 2);
+}
+
+
+TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8) {
+	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
+	EXPECT_EQ(coordinates.size(), 72);
 }
 
 
