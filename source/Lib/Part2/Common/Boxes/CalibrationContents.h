@@ -61,6 +61,8 @@ class VariableFloatingPointCoordinates {
   }
 
   virtual VariableFloatingPointCoordinates* clone() const = 0;
+
+  virtual uint64_t size() const noexcept = 0;
 };
 
 
@@ -70,6 +72,9 @@ class FloatingPointCoordinates : VariableFloatingPointCoordinates {
   std::tuple<T, T, T> origin_position;  //x, y, z
   std::tuple<T, T, T> rotation_around_axis;
   std::tuple<T, T, T> scaling;
+  constexpr uint64_t my_size() {
+    return sizeof(T) * 9;
+  }
 
  public:
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
@@ -81,8 +86,8 @@ class FloatingPointCoordinates : VariableFloatingPointCoordinates {
   }
 
 
-  constexpr uint64_t size() const noexcept {
-    return (pp * 2) * 9;
+  virtual uint64_t size() const noexcept override {
+    return my_size();
   }
 
 
