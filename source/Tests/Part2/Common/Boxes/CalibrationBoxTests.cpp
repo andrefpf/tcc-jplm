@@ -60,6 +60,33 @@ TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4) {
 }
 
 
+TEST(FloatingPointCoordinatesTests, FloatGetOriginPosition) {
+	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
+	const auto& [x, y, z] = coordinates.get_origin_position();
+	EXPECT_EQ(x, 1.0);
+	EXPECT_EQ(y, 2.0);
+	EXPECT_EQ(z, 3.0);
+}
+
+
+TEST(FloatingPointCoordinatesTests, FloatGetRotationAroundAxis) {
+	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
+	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
+	EXPECT_EQ(x, 4.0);
+	EXPECT_EQ(y, 5.0);
+	EXPECT_EQ(z, 6.0);
+}
+
+
+TEST(FloatingPointCoordinatesTests, FloatGetScaling) {
+	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,2,4});
+	const auto& [x, y, z] = coordinates.get_scaling();
+	EXPECT_EQ(x, 1.0);
+	EXPECT_EQ(y, 2.0);
+	EXPECT_EQ(z, 4.0);
+}
+
+
 TEST(FloatingPointCoordinatesTests, DoublePPis2) {
 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
 	EXPECT_EQ(coordinates.get_pp(), 2);
@@ -69,6 +96,33 @@ TEST(FloatingPointCoordinatesTests, DoublePPis2) {
 TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8) {
 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
 	EXPECT_EQ(coordinates.size(), 72);
+}
+
+
+TEST(FloatingPointCoordinatesTests, DoubleGetOriginPosition) {
+	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
+	const auto& [x, y, z] = coordinates.get_origin_position();
+	EXPECT_EQ(x, 1.0);
+	EXPECT_EQ(y, 2.0);
+	EXPECT_EQ(z, 3.0);
+}
+
+
+TEST(FloatingPointCoordinatesTests, DoubleGetRotationAroundAxis) {
+	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
+	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
+	EXPECT_EQ(x, 4.0);
+	EXPECT_EQ(y, 5.0);
+	EXPECT_EQ(z, 6.0);
+}
+
+
+TEST(FloatingPointCoordinatesTests, DoubleGetScaling) {
+	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,2,4});
+	const auto& [x, y, z] = coordinates.get_scaling();
+	EXPECT_EQ(x, 1.0);
+	EXPECT_EQ(y, 2.0);
+	EXPECT_EQ(z, 4.0);
 }
 
 

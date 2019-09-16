@@ -41,28 +41,31 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 
+#include <cmath>
+#include <iostream>
 #include <memory>
+#include <ostream>
 #include <tuple>  //std::tie
 #include <variant>
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
-#include <cmath>
-#include <iostream>
 
-class VariableFloatingPointCoordinates {
+class VariablePrecisionFloatingPointCoordinates {
  protected:
-  //PP = 0, precision = 16 == "half float"
+  //PP = 0, precision = 16 == "short float" //unavailable
   //PP = 1, precision = 32 == float
   //PP = 2, precision = 64 == double
-  //PP = 3, precision = 128 == "long double"
+  //PP = 3, precision = 128 == "long double" //unavailable (some implemetation uses 80 bits...)
   // ...
-  uint8_t pp ;
+  uint8_t pp;  //!< Precision of coordinates
 
  public:
-  VariableFloatingPointCoordinates(uint8_t pp) : pp(pp) {
+  VariablePrecisionFloatingPointCoordinates(uint8_t pp) : pp(pp) {
   }
-  virtual VariableFloatingPointCoordinates* clone() const = 0;
+
+
+  virtual VariablePrecisionFloatingPointCoordinates* clone() const = 0;
 
   auto get_pp() const noexcept {
     return pp;
@@ -74,7 +77,8 @@ class VariableFloatingPointCoordinates {
 
 
 template<typename T>
-class FloatingPointCoordinates : public VariableFloatingPointCoordinates {
+class FloatingPointCoordinates
+    : public VariablePrecisionFloatingPointCoordinates {
  protected:
   std::tuple<T, T, T> origin_position;  //x, y, z
   std::tuple<T, T, T> rotation_around_axis;
@@ -84,14 +88,16 @@ class FloatingPointCoordinates : public VariableFloatingPointCoordinates {
   }
 
   constexpr uint8_t compute_p() const {
-    return std::log2(sizeof(T))-1;
+    return std::log2(sizeof(T)) - 1;
   }
 
  public:
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
       const std::tuple<T, T, T>& rotation_around_axis,
       const std::tuple<T, T, T>& scaling)
-      : VariableFloatingPointCoordinates(compute_p()) {
+      : VariablePrecisionFloatingPointCoordinates(compute_p()),
+        origin_position(origin_position),
+        rotation_around_axis(rotation_around_axis), scaling(scaling) {
     static_assert(std::numeric_limits<T>::is_iec559,
         "The coordinate type must be IEC559/IEEE 754");
   }
@@ -118,6 +124,12 @@ class FloatingPointCoordinates : public VariableFloatingPointCoordinates {
 
   virtual FloatingPointCoordinates* clone() const override {
     return new FloatingPointCoordinates(*this);
+  }
+
+
+  std::ostream& write_to(std::ostream& stream) const {
+    stream << static_cast<const unsigned char>(this->get_pp());
+    return stream;
   }
 };
 
@@ -146,7 +158,7 @@ class CalibrationContents : public InMemoryDBox {
   static_assert(std::numeric_limits<double>::is_iec559,
       "Double must be IEC559/IEEE754. However it seems that in this compiler "
       "this is not true.");
-  std::unique_ptr<VariableFloatingPointCoordinates> coordinates;
+  std::unique_ptr<VariablePrecisionFloatingPointCoordinates> coordinates;
   //uint16_t extInt; //(is this necessary?)
   std::tuple<float, float> baseline;  //x, y
   using calibration = std::variant<float, std::vector<float>>;
@@ -155,17 +167,18 @@ class CalibrationContents : public InMemoryDBox {
 
  public:
   //! \todo implement this class (CalibrationContents)
-  CalibrationContents(const VariableFloatingPointCoordinates& coordinates,
+  CalibrationContents(
+      const VariablePrecisionFloatingPointCoordinates& coordinates,
       const std::tuple<float, float>& baseline,
       const std::array<calibration, 12>& values)
-      : coordinates(std::unique_ptr<VariableFloatingPointCoordinates>(
+      : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             coordinates.clone())),
         baseline(baseline), values(values) {
   }
 
 
   CalibrationContents(
-      std::unique_ptr<VariableFloatingPointCoordinates>&& coordinates,
+      std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
       std::tuple<float, float>&& baseline, std::array<calibration, 12>&& values)
       : coordinates(std::move(coordinates)), baseline(std::move(baseline)),
         values(std::move(values)) {
@@ -176,7 +189,7 @@ class CalibrationContents : public InMemoryDBox {
 
 
   CalibrationContents(const CalibrationContents& other)
-      : coordinates(std::unique_ptr<VariableFloatingPointCoordinates>(
+      : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             other.coordinates->clone())),
         baseline(other.baseline), values(other.values) {
   }
