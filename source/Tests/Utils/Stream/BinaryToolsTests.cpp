@@ -162,6 +162,22 @@ TEST(ValueFromByteVector, CanReadToATupple) {
   EXPECT_EQ(tuple, parsed_tuple);
 }
 
+
+TEST(ValueFromByteVector, CanReadToATiedTupple) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,1421,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  uint8_t x;
+  uint16_t y;
+  uint8_t z;
+
+  std::tie(x, y, z) = BinaryTools::get_tuple_from_big_endian_byte_vector<uint8_t, uint16_t, uint8_t>(bytes);
+
+  EXPECT_EQ(x, std::get<0>(tuple));
+  EXPECT_EQ(y, std::get<1>(tuple));
+  EXPECT_EQ(z, std::get<2>(tuple));
+}
+
 ///! \todo need to test for exceptions
 
 
