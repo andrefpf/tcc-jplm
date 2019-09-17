@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
 
+#include <assert.h>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -50,6 +51,7 @@
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 
 class VariablePrecisionFloatingPointCoordinates {
  protected:
@@ -169,6 +171,46 @@ enum CameraParameterType : uint8_t {
 };
 
 
+class CameraParametersArray {
+ protected:
+  std::tuple<float, float> baseline;  //x, y
+  lightfield_dimension_type n_view_rows;
+  lightfield_dimension_type n_view_columns;
+  std::size_t n_views;
+  using camera_parameter = std::variant<float, std::vector<float>>;
+  std::array<camera_parameter, 12> camera_parameters;
+
+ public:
+  CameraParametersArray();
+
+  CameraParametersArray(const std::tuple<float, float>& baseline, lightfield_dimension_type rows, lightfield_dimension_type columns, uint16_t ext_int) 
+  : baseline(baseline), n_view_rows(rows), n_view_columns(columns), n_views(rows*columns), camera_parameters(
+    {(ext_int&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>1)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>2)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>3)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>4)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>5)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>6)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>7)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>8)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>9)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>10)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
+    ((ext_int>>11)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0)})
+  {
+  }
+
+  uint16_t get_ext_int_bits() const noexcept {
+    uint16_t ext_int = 0;
+    uint8_t count = 0;
+    for (const auto& param : camera_parameters) {
+      ext_int |= (param.index() << count++);
+    }
+    assert(count == 12);
+  }
+};
+
+
 class CalibrationContents : public InMemoryDBox {
  protected:
   static_assert(std::numeric_limits<float>::is_iec559,
@@ -231,7 +273,7 @@ class CalibrationContents : public InMemoryDBox {
 
 
   uint64_t size() const noexcept override {
-    return coordinates->size();  //
+    return coordinates->size() + 2 * sizeof(float) + 2;  //
   }
 
 
