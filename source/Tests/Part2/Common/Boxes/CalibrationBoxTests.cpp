@@ -209,6 +209,23 @@ TEST_P(ExtIntTest, GetCorrectSize) {
 }
 
 
+TEST(CameraParametersArrayBaselineTests, CorrectBaselineX) {
+	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
+	EXPECT_EQ(camera_parameter_array.get_baseline_x(), 1.0);
+}
+
+
+TEST(CameraParametersArrayBaselineTests, CorrectBaselineY) {
+	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
+	EXPECT_EQ(camera_parameter_array.get_baseline_y(), 2.0);
+}
+
+
+TEST(CameraParametersArrayBaselineTests, CorrectBaselineTuple) {
+	auto baseline = std::tuple<float, float>(1.0,2.0);
+	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
+	EXPECT_EQ(camera_parameter_array.get_baseline(), baseline);
+}
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

@@ -50,9 +50,9 @@
 #include <variant>
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
-#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 
 class VariablePrecisionFloatingPointCoordinates {
  protected:
@@ -203,7 +203,8 @@ class CameraParametersArray {
         const auto& vec = std::get<1>(param);
         if (vec.size() != n_views) {
           throw CameraParameterBoxExceptions::
-              InvalidCameraParameterArrayVectorSizeException(n_views, vec.size());
+              InvalidCameraParameterArrayVectorSizeException(
+                  n_views, vec.size());
         }
       }
     }
@@ -262,18 +263,51 @@ class CameraParametersArray {
     return ext_int;
   }
 
+
   uint64_t size() const noexcept {
     //initially is size in number of values (floats)
-    uint64_t size = 2; //initialized with 2 == baselines
+    uint64_t size = 2;  //initialized with 2 == baselines
     for (const auto& param : camera_parameters) {
       if (param.index() == 1) {
-        size+=std::get<1>(param).size();
+        size += std::get<1>(param).size();
       } else {
         size++;
       }
     }
-    return size*sizeof(float);
+    return size * sizeof(float);
   }
+
+  /**
+   * \brief      Gets the baseline (x, y).
+   *
+   * \return     The baseline as a tuple ordered as baseline_x, baseline_y.
+   */
+  std::tuple<float, float> get_baseline() const noexcept {
+    return baseline;
+  }
+
+
+  float get_baseline_x() const noexcept {
+    return std::get<0>(baseline);
+  }
+
+
+  float get_baseline_y() const noexcept {
+    return std::get<1>(baseline);
+  }
+
+
+  std::tuple<float, float> set_baseline(const std::tuple<float, float>& new_baseline) noexcept {
+    baseline = new_baseline;
+    return baseline;
+  }
+
+
+  std::tuple<float, float> set_baseline(std::tuple<float, float>&& new_baseline) noexcept {
+    baseline = std::move(new_baseline);
+    return baseline;
+  }
+
 };
 
 
@@ -293,7 +327,7 @@ class CalibrationContents : public InMemoryDBox {
 
 
  public:
-  //! \todo implement this class (CalibrationContents)
+  //! \todo implement this class (CalibrationConte  nts)
   CalibrationContents(
       const VariablePrecisionFloatingPointCoordinates& coordinates,
       const std::tuple<float, float>& baseline,
