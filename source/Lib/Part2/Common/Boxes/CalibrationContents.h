@@ -175,8 +175,17 @@ enum CameraParameterType : uint8_t {
 class CameraParametersArray {
  protected:
   std::tuple<float, float> baseline;  //x, y
+  /**
+   * \warning Such value is on the CameraParameterBox bitstream!
+   */
   lightfield_dimension_type n_view_rows;
+  /**
+   * \warning Such value is on the CameraParameterBox bitstream!
+   */
   lightfield_dimension_type n_view_columns;
+  /**
+   * \warning Such value is on the CameraParameterBox bitstream!
+   */
   std::size_t n_views;
   using camera_parameter = std::variant<float, std::vector<float>>;
   std::array<camera_parameter, 12> camera_parameters;
@@ -194,7 +203,7 @@ class CameraParametersArray {
         const auto& vec = std::get<1>(param);
         if (vec.size() != n_views) {
           throw CameraParameterBoxExceptions::
-              InvalidCameraParameterArrayVectorSize(n_views, vec.size());
+              InvalidCameraParameterArrayVectorSizeException(n_views, vec.size());
         }
       }
     }
@@ -250,6 +259,20 @@ class CameraParametersArray {
       ext_int |= (param.index() << count++);
     }
     assert(count == 12);
+    return ext_int;
+  }
+
+  uint64_t size() const noexcept {
+    //initially is size in number of values (floats)
+    uint64_t size = 2; //initialized with 2 == baselines
+    for (const auto& param : camera_parameters) {
+      if (param.index() == 1) {
+        size+=std::get<1>(param).size();
+      } else {
+        size++;
+      }
+    }
+    return size*sizeof(float);
   }
 };
 

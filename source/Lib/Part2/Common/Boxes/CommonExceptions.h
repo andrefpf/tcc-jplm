@@ -42,12 +42,12 @@
 #define JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__
 
 namespace CameraParameterBoxExceptions {
-class InvalidCameraParameterArrayVectorSize : public std::exception {
+class InvalidCameraParameterArrayVectorSizeException : public std::exception {
  protected:
   std::string message;
 
  public:
-  InvalidCameraParameterArrayVectorSize(const std::size_t expected_size, const std::size_t obtained_size)
+  InvalidCameraParameterArrayVectorSizeException(const std::size_t expected_size, const std::size_t obtained_size)
       : message(
             std::string("Camera Parameter array was expecting") + std::to_string(expected_size) +
             std::string(" camera parameters. However, only ") + std::to_string(obtained_size) + 

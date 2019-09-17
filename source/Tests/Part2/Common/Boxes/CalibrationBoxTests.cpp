@@ -148,6 +148,68 @@ TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
 }
 
 
+TEST(CameraParametersArrayTests, InitializationWithExtInt) {
+	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x1);
+	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float));
+}
+
+
+TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
+	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x2);
+	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float));
+}
+
+
+
+std::size_t count_ones(uint16_t value) {
+	std::size_t ones = 0;
+	for(auto i = 0; i<16; ++i) {
+		if(value&0x1){
+			ones++;
+		}
+		value>>=1;
+	}
+	return ones;
+}
+
+
+TEST(CameraParametersArrayTests, InitializationWithExtOnes) {
+	uint16_t ext_int = 0x4d;
+	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+	auto ones = count_ones(ext_int);
+	EXPECT_EQ(ones, 4);
+	EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float));
+}
+
+
+class ExtIntTest : public ::testing::TestWithParam<int> {
+ public:
+  ExtIntTest() = default;
+  ~ExtIntTest() = default;
+};
+
+
+INSTANTIATE_TEST_SUITE_P(AUTO_GEN_OH, ExtIntTest,
+    ::testing::Range(
+        0, 4095, 1));
+
+
+TEST_P(ExtIntTest, GetExtIntIsEqualItsInitialization) {
+  uint16_t ext_int = static_cast<uint16_t>(GetParam());
+  auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+  EXPECT_EQ(ext_int, camera_parameter_array.get_ext_int_bits());
+}
+
+
+TEST_P(ExtIntTest, GetCorrectSize) {
+  uint16_t ext_int = static_cast<uint16_t>(GetParam());
+  auto ones = count_ones(ext_int);
+  auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+  EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float));
+}
+
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
