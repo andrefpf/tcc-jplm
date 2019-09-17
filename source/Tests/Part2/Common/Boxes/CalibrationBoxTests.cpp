@@ -126,12 +126,26 @@ TEST(FloatingPointCoordinatesTests, DoubleGetScaling) {
 }
 
 
-// TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
-// 	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,2,4});
-// 	const auto& [x, y, z] = coordinates.get_scaling();
-// 	auto bytes = coordinates.get_bytes();
-// 	const auto& [a, b, c] = binaryTools
-// }
+TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
+	auto coordinates = FloatingPointCoordinates<float>({12,2,3}, {4,5,6}, {1,2,4});
+	const auto& [x, y, z] = coordinates.get_origin_position();
+	auto bytes = coordinates.get_bytes();
+	// the 1 is necessary because the first byte represents pp;
+	const auto& [a, b, c] = BinaryTools::get_tuple_from_big_endian_byte_vector<float, float, float>(bytes, 1);
+	EXPECT_EQ(x, a);
+	EXPECT_EQ(y, b);
+	EXPECT_EQ(z, c);
+
+	// auto count = 0;
+	// for(const auto& byte: bytes) {
+	// 	std::cout << std::to_integer<int>(byte) << " ";
+	// 	++count;
+	// 	if(count == 1)
+	// 		count+=3;
+	// 	if(count%4 == 0)
+	// 		std::cout << std::endl;
+	// }
+}
 
 
 int main(int argc, char *argv[]) {
