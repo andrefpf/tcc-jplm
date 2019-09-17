@@ -73,6 +73,7 @@ class VariablePrecisionFloatingPointCoordinates {
 
 
   virtual uint64_t size() const noexcept = 0;
+  virtual std::vector<std::byte> get_bytes() const noexcept = 0;
 };
 
 
@@ -132,7 +133,7 @@ class FloatingPointCoordinates
   //    split_in_big_endian_bytes
   //   return stream;
   // }
-  std::vector<std::byte> get_bytes() const noexcept {
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
 
@@ -141,25 +142,30 @@ class FloatingPointCoordinates
     BinaryTools::append_big_endian_bytes(bytes, origin_position);
     BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
     BinaryTools::append_big_endian_bytes(bytes, scaling);
-    
+
     return bytes;
   }
 };
 
-
-enum CalibrationParam : uint8_t {
-  XCC = 0,
-  YCC = 1,
-  ZCC = 2,
-  THETA_X_CAM = 3,
-  THETA_Y_CAM = 4,
-  THETA_Z_CAM = 5,
-  F = 6,
-  SW = 7,
-  SH = 8,
-  SK = 9,
-  U0 = 10,
-  V0 = 11
+/**
+ * \brief      Enumeration of Camera Parameter Types
+ * \note    This enum is not part of the standard.
+ *             It is used to access the various camera parameter types within the 
+ *             CameraParameterBoxContents;
+ */
+enum CameraParameterType : uint8_t {
+  XCC = 0,  //!< Camera centre along XL coordinate axis
+  YCC = 1,  //!< Camera centre along YL coordinate axis
+  ZCC = 2,  //!< Camera centre along ZL coordinate axis
+  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
+  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
+  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
+  F = 6,  //!< Focal lenght (mm)
+  SW = 7,  //!< Sensor width (mm)
+  SH = 8,  //!< Sensor width (mm)
+  SK = 9,  //!< Sensor skew
+  U0 = 10,  //!< Horizontal principle point offset
+  V0 = 11  //!< Vertical principle point offset
 };
 
 
@@ -174,8 +180,8 @@ class CalibrationContents : public InMemoryDBox {
   std::unique_ptr<VariablePrecisionFloatingPointCoordinates> coordinates;
   //uint16_t extInt; //(is this necessary?)
   std::tuple<float, float> baseline;  //x, y
-  using calibration = std::variant<float, std::vector<float>>;
-  std::array<calibration, 12> values;
+  using camera_parameter = std::variant<float, std::vector<float>>;
+  std::array<camera_parameter, 12> camera_parameters;
 
 
  public:
@@ -183,18 +189,19 @@ class CalibrationContents : public InMemoryDBox {
   CalibrationContents(
       const VariablePrecisionFloatingPointCoordinates& coordinates,
       const std::tuple<float, float>& baseline,
-      const std::array<calibration, 12>& values)
+      const std::array<camera_parameter, 12>& camera_parameters)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             coordinates.clone())),
-        baseline(baseline), values(values) {
+        baseline(baseline), camera_parameters(camera_parameters) {
   }
 
 
   CalibrationContents(
       std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
-      std::tuple<float, float>&& baseline, std::array<calibration, 12>&& values)
+      std::tuple<float, float>&& baseline,
+      std::array<camera_parameter, 12>&& camera_parameters)
       : coordinates(std::move(coordinates)), baseline(std::move(baseline)),
-        values(std::move(values)) {
+        camera_parameters(std::move(camera_parameters)) {
   }
 
 
@@ -204,7 +211,7 @@ class CalibrationContents : public InMemoryDBox {
   CalibrationContents(const CalibrationContents& other)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             other.coordinates->clone())),
-        baseline(other.baseline), values(other.values) {
+        baseline(other.baseline), camera_parameters(other.camera_parameters) {
   }
 
 
@@ -213,9 +220,9 @@ class CalibrationContents : public InMemoryDBox {
   }
 
 
-  template<CalibrationParam calibration_type>
+  template<CameraParameterType camera_parameter_type>
   float get(uint64_t linear_position) const {
-    const auto& value = std::get<calibration_type>(values);
+    const auto& value = std::get<camera_parameter_type>(camera_parameters);
     if (std::holds_alternative<float>(value)) {
       return std::get<0>(value);
     }
@@ -249,6 +256,7 @@ class CalibrationContents : public InMemoryDBox {
   virtual std::vector<std::byte> get_bytes() const override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
+    BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
     return bytes;
   }
 };

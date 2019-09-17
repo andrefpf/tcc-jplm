@@ -178,6 +178,27 @@ TEST(ValueFromByteVector, CanReadToATiedTupple) {
   EXPECT_EQ(z, std::get<2>(tuple));
 }
 
+
+TEST(CatVectos, ConcatenateByteVectorsCorrectFinalSize) {
+  auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
+  auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
+  BinaryTools::byte_vector_cat(vec_a, vec_b);
+  EXPECT_EQ(vec_a.size(), 5);
+}
+
+
+TEST(CatVectos, ConcatenateByteVectorsCorrectValuesInTheVector) {
+  auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
+  auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
+  BinaryTools::byte_vector_cat(vec_a, vec_b);
+  EXPECT_EQ(vec_a[0], std::byte{1});
+  EXPECT_EQ(vec_a[1], std::byte{2});
+  EXPECT_EQ(vec_a[2], std::byte{3});
+  EXPECT_EQ(vec_a[3], std::byte{4});
+  EXPECT_EQ(vec_a[4], std::byte{5});
+
+}
+
 ///! \todo need to test for exceptions
 
 

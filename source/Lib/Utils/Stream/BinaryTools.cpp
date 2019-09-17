@@ -51,8 +51,8 @@ uint16_t BinaryTools::swap_endianess(const uint16_t in) {
 
 
 uint32_t BinaryTools::swap_endianess(const uint32_t in) {
-  return ((in >> 24) & 0x000000FF) | ((in >> 8) & 0x0000FF00) |
-         ((in << 8) & 0x00FF0000) | ((in << 24) & 0xFF000000);
+  return ((in >> 24) & 0x000000FF) | ((in >> 8)  & 0x0000FF00) |
+         ((in << 8)  & 0x00FF0000) | ((in << 24) & 0xFF000000);
 }
 
 
@@ -61,4 +61,10 @@ uint64_t BinaryTools::swap_endianess(const uint64_t in) {
          ((in >> 24) & 0x0000000000FF0000) | ((in >> 8)  & 0x00000000FF000000) |
          ((in << 8)  & 0x000000FF00000000) | ((in << 24) & 0x0000FF0000000000) |
          ((in << 40) & 0x00FF000000000000) | ((in << 56) & 0xFF00000000000000);
+}
+
+std::vector<std::byte>& BinaryTools::byte_vector_cat(
+    std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b) {
+  vec_a.insert(vec_a.end(), vec_b.begin(), vec_b.end());
+  return vec_a;
 }
