@@ -130,6 +130,29 @@ TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectSizeFor2Uint8And1Uint16) 
 }
 
 
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectOrderUint8) {
+  auto tuple = std::tuple<uint8_t, uint8_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 255);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 0);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 128);
+}
+
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectOrderUint8Uint16Uint8) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,1421,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 255);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes), 1421);
+  std::rotate(bytes.begin(), bytes.begin()+2, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 128);
+}
+
 ///! \todo need to test for exceptions
 
 
