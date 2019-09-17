@@ -126,6 +126,14 @@ TEST(FloatingPointCoordinatesTests, DoubleGetScaling) {
 }
 
 
+// TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
+// 	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,2,4});
+// 	const auto& [x, y, z] = coordinates.get_scaling();
+// 	auto bytes = coordinates.get_bytes();
+// 	const auto& [a, b, c] = binaryTools
+// }
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

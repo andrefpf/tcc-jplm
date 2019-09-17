@@ -138,17 +138,9 @@ class FloatingPointCoordinates
 
     bytes.emplace_back(std::byte{this->get_pp()});
 
-    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(origin_position));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(origin_position));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(origin_position));
-
-    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(rotation_around_axis));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(rotation_around_axis));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(rotation_around_axis));
-
-    BinaryTools::append_big_endian_bytes(bytes, std::get<0>(scaling));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<1>(scaling));
-    BinaryTools::append_big_endian_bytes(bytes, std::get<2>(scaling));
+    BinaryTools::append_big_endian_bytes(bytes, origin_position);
+    BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
+    BinaryTools::append_big_endian_bytes(bytes, scaling);
     
     return bytes;
   }

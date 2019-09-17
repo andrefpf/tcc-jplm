@@ -42,12 +42,12 @@
 #define JPLM_LIB_UTILS_STREAM_BINARYTOOLS_H__
 
 #include <algorithm>  // std::reverse
+#include <cstddef>  // std::byte
 #include <cstdint>
-#include <vector>
-#include <cstddef> // std::byte
 #include <iostream>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 /**
  * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
@@ -59,10 +59,10 @@ struct uint24_t {
   uint16_t lo;
 
   bool operator==(const uint24_t& other) const {
-    return (this->hi == other.hi) &&  (this->lo == other.lo);
+    return (this->hi == other.hi) && (this->lo == other.lo);
   }
 
-   bool operator!=(const uint24_t& other) const {
+  bool operator!=(const uint24_t& other) const {
     return !this->operator==(other);
   }
 };
@@ -126,21 +126,23 @@ std::vector<std::byte> split_in_big_endian_bytes(const T& in) {
 
 
 template<typename T>
-T get_value_from_big_endian_byte_vector(const std::vector<std::byte>& bytes, const std::size_t pos=0) {
+T get_value_from_big_endian_byte_vector(
+    const std::vector<std::byte>& bytes, const std::size_t pos = 0) {
+  //! \todo check if necessary to test the size of std::vector for enough bytes to convert
   constexpr auto n_bytes = sizeof(T);
   if constexpr (n_bytes == 1) {
     return static_cast<T>(bytes.at(pos));
   }
 
-  T out=0;
+  T out = 0;
 
   auto ptr_to_byte = reinterpret_cast<std::byte*>(&out);
   if constexpr (BinaryTools::using_little_endian()) {
-    ptr_to_byte+=n_bytes-1;
+    ptr_to_byte += n_bytes - 1;
   }
 
-  for (auto i = pos; i < pos+n_bytes; ++i) {
-    *ptr_to_byte=bytes.at(i);
+  for (auto i = pos; i < pos + n_bytes; ++i) {
+    *ptr_to_byte = bytes.at(i);
     if constexpr (BinaryTools::using_little_endian()) {
       --ptr_to_byte;
     } else {
@@ -148,6 +150,24 @@ T get_value_from_big_endian_byte_vector(const std::vector<std::byte>& bytes, con
     }
   }
   return out;
+}
+
+
+template<typename... Args>
+std::tuple<Args...> get_tuple_from_big_endian_byte_vector(
+    const std::vector<std::byte>& bytes, const std::size_t pos = 0) {
+  auto tuple = std::tuple<Args...>();
+  auto current_byte_pos = pos;
+  std::apply(
+      [&bytes, &current_byte_pos](auto&... value) {
+        (..., (value = get_value_from_big_endian_byte_vector<
+                   std::remove_reference_t<decltype(value)>>(
+                   bytes, current_byte_pos),
+                  current_byte_pos += sizeof(value)));
+      },
+      tuple);
+
+  return tuple;
 }
 
 
@@ -160,13 +180,15 @@ std::vector<std::byte>& append_big_endian_bytes(
 }
 
 
-template<typename ... Args>
-std::vector<std::byte>& append_big_endian_bytes(std::vector<std::byte>& byte_list, const std::tuple<Args...>& tuple) {
-  std::apply([&byte_list](const auto& ...value){
-    (..., append_big_endian_bytes(byte_list, value))
-    ;}, tuple);
+template<typename... Args>
+std::vector<std::byte>& append_big_endian_bytes(
+    std::vector<std::byte>& byte_list, const std::tuple<Args...>& tuple) {
+  std::apply(
+      [&byte_list](const auto&... value) {
+        (..., append_big_endian_bytes(byte_list, value));
+      },
+      tuple);
   return byte_list;
-
 }
 
 }  // namespace BinaryTools
