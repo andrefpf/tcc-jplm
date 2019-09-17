@@ -50,8 +50,9 @@
 #include <variant>
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 
 class VariablePrecisionFloatingPointCoordinates {
  protected:
@@ -181,23 +182,65 @@ class CameraParametersArray {
   std::array<camera_parameter, 12> camera_parameters;
 
  public:
-  CameraParametersArray();
+  CameraParametersArray(const std::tuple<float, float>& baseline,
+      const lightfield_dimension_type& rows,
+      const lightfield_dimension_type& columns,
+      std::array<camera_parameter, 12> camera_parameters)
+      : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
+        n_views(rows * columns), camera_parameters(camera_parameters) {
+    //checking if camera parameters are correctly initialized
+    for (const auto& param : camera_parameters) {
+      if (param.index() == 1) {
+        const auto& vec = std::get<1>(param);
+        if (vec.size() != n_views) {
+          throw CameraParameterBoxExceptions::
+              InvalidCameraParameterArrayVectorSize(n_views, vec.size());
+        }
+      }
+    }
+  }
 
-  CameraParametersArray(const std::tuple<float, float>& baseline, lightfield_dimension_type rows, lightfield_dimension_type columns, uint16_t ext_int) 
-  : baseline(baseline), n_view_rows(rows), n_view_columns(columns), n_views(rows*columns), camera_parameters(
-    {(ext_int&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>1)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>2)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>3)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>4)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>5)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>6)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>7)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>8)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>9)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>10)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0),
-    ((ext_int>>11)&1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0)})
-  {
+  CameraParametersArray(const std::tuple<float, float>& baseline,
+      lightfield_dimension_type rows, lightfield_dimension_type columns,
+      uint16_t ext_int)
+      : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
+        n_views(rows * columns),
+        camera_parameters(
+            {(ext_int & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+                           : camera_parameter(0.0),
+                ((ext_int >> 1) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 2) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 3) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 4) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 5) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 6) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 7) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 8) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 9) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 10) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0),
+                ((ext_int >> 11) & 1)
+                    ? camera_parameter(std::vector<float>(n_views, 0.0))
+                    : camera_parameter(0.0)}) {
   }
 
   uint16_t get_ext_int_bits() const noexcept {
