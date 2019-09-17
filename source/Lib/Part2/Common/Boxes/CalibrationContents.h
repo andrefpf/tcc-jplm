@@ -277,6 +277,36 @@ class CameraParametersArray {
     return size * sizeof(float);
   }
 
+
+  /**
+   * \brief      Compile time getter function for any available camera parameter 
+   *
+   * \param[in]  position               The position (t, s)
+   *
+   * \tparam     camera_parameter_type  One of the camera parameter types available, that are defined in CameraParameterType enum.
+   *
+   * \return     The requested camera parameter
+   */
+  template<CameraParameterType camera_parameter_type>
+  float get(
+      const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
+          position) const {
+    const auto& [t, s] = position;
+    const auto& value = std::get<camera_parameter_type>(camera_parameters);
+    if (std::holds_alternative<float>(value)) {
+      if constexpr (camera_parameter_type == CameraParameterType::XCC) {
+        return std::get<0>(value) + s * std::get<0>(baseline);
+      }
+      if constexpr (camera_parameter_type == CameraParameterType::YCC) {
+        return std::get<0>(value) + t * std::get<1>(baseline);
+      }
+      return std::get<0>(value);
+    }
+    auto linear_position = t * n_view_columns + s;
+    return std::get<1>(value).at(linear_position);
+  }
+
+
   /**
    * \brief      Gets the baseline (x, y).
    *
@@ -287,22 +317,46 @@ class CameraParametersArray {
   }
 
 
+  /**
+   * \brief      Gets the baseline x.
+   *
+   * \return     The baseline x.
+   */
   float get_baseline_x() const noexcept {
     return std::get<0>(baseline);
   }
 
 
+  /**
+   * \brief      Gets the baseline y.
+   *
+   * \return     The baseline y.
+   */
   float get_baseline_y() const noexcept {
     return std::get<1>(baseline);
   }
 
 
+  /**
+   * \brief      Sets the baseline.
+   *
+   * \param[in]  new_baseline  The new baseline (expecting baseline_x, baseline_y tuple)
+   *
+   * \return     Returns the newly set baseline for further use
+   */
   std::tuple<float, float> set_baseline(const std::tuple<float, float>& new_baseline) noexcept {
     baseline = new_baseline;
     return baseline;
   }
 
 
+  /**
+   * \brief      Sets the baseline (move version).
+   *
+   * \param      new_baseline  The new baseline
+   *
+   * \return     Returns the newly set baseline for further use
+   */
   std::tuple<float, float> set_baseline(std::tuple<float, float>&& new_baseline) noexcept {
     baseline = std::move(new_baseline);
     return baseline;

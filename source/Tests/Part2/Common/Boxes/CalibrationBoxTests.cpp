@@ -227,6 +227,13 @@ TEST(CameraParametersArrayBaselineTests, CorrectBaselineTuple) {
 	EXPECT_EQ(camera_parameter_array.get_baseline(), baseline);
 }
 
+
+TEST(CameraParametersArrayBaselineTests, GetsTheYCCUsingBaselineAndTValue) {
+	auto baseline = std::tuple<float, float>(1.0,2.0);
+	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
+	EXPECT_EQ(camera_parameter_array.get<YCC>({11, 10}), 22.0);
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
