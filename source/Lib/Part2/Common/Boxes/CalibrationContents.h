@@ -174,6 +174,9 @@ enum CameraParameterType : uint8_t {
 
 class CameraParametersArray {
  protected:
+ 	/**
+ 	 * \brief The baseline (x,y) used to compute XCC and YCC parameters when they are not all defined
+ 	 */
   std::tuple<float, float> baseline;  //x, y
   /**
    * \warning Such value is on the CameraParameterBox bitstream!
@@ -252,6 +255,7 @@ class CameraParametersArray {
                     ? camera_parameter(std::vector<float>(n_views, 0.0))
                     : camera_parameter(0.0)}) {
   }
+
 
   uint16_t get_ext_int_bits() const noexcept {
     uint16_t ext_int = 0;
@@ -361,6 +365,11 @@ class CameraParametersArray {
     baseline = std::move(new_baseline);
     return baseline;
   }
+
+
+  // std::vector<std::byte> get_bytes() const noexcept {
+  	
+  // }
 
 };
 

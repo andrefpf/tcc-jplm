@@ -179,7 +179,7 @@ TEST(ValueFromByteVector, CanReadToATiedTupple) {
 }
 
 
-TEST(CatVectos, ConcatenateByteVectorsCorrectFinalSize) {
+TEST(CatVectors, ConcatenateByteVectorsCorrectFinalSize) {
   auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
   auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
   BinaryTools::byte_vector_cat(vec_a, vec_b);
@@ -187,7 +187,7 @@ TEST(CatVectos, ConcatenateByteVectorsCorrectFinalSize) {
 }
 
 
-TEST(CatVectos, ConcatenateByteVectorsCorrectValuesInTheVector) {
+TEST(CatVectors, ConcatenateByteVectorsCorrectValuesInTheVector) {
   auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
   auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
   BinaryTools::byte_vector_cat(vec_a, vec_b);
@@ -196,10 +196,33 @@ TEST(CatVectos, ConcatenateByteVectorsCorrectValuesInTheVector) {
   EXPECT_EQ(vec_a[2], std::byte{3});
   EXPECT_EQ(vec_a[3], std::byte{4});
   EXPECT_EQ(vec_a[4], std::byte{5});
-
 }
 
+
+TEST(Vectors, GenerateVectorofBytesFromAnUint16VectorGetsCorrectVectorSize) {
+  auto vec_a = std::vector<uint16_t>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(uint16_t));
+}
+
+
+TEST(Vectors, GenerateVectorofBytesFromAFloatVectorGetsCorrectVectorSize) {
+  auto vec_a = std::vector<float>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(float));
+}
+
+
+TEST(Vectors, GenerateVectorofBytesFromAnUint8VectorGetsCorrectBytes) {
+  auto vec_a = std::vector<uint16_t>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(uint16_t));
+}
+
+
 ///! \todo need to test for exceptions
+
+
 
 
 int main(int argc, char *argv[]) {

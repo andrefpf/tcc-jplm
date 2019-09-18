@@ -193,6 +193,18 @@ std::vector<std::byte>& append_big_endian_bytes(
   return byte_list;
 }
 
+template<typename T>
+std::vector<std::byte> get_big_endian_bytes_vector_from_vector(const std::vector<T>& vec){
+  auto bytes_vector = std::vector<std::byte>();
+  auto n_bytes = vec.size()*sizeof(T);
+  bytes_vector.reserve(n_bytes);
+  for(const auto& value: vec) {
+    byte_vector_cat(bytes_vector, split_in_big_endian_bytes(value));
+  }
+  return bytes_vector;
+}
+
+
 }  // namespace BinaryTools
 
 #endif /* end of include guard: JPLM_LIB_UTILS_STREAM_BINARYTOOLS_H__ */
