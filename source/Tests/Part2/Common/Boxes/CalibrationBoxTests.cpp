@@ -150,13 +150,13 @@ TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
 
 TEST(CameraParametersArrayTests, InitializationWithExtInt) {
 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float));
+	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
 }
 
 
 TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x2);
-	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float));
+	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
 }
 
 
@@ -178,7 +178,7 @@ TEST(CameraParametersArrayTests, InitializationWithExtOnes) {
 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
 	auto ones = count_ones(ext_int);
 	EXPECT_EQ(ones, 4);
-	EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float));
+	EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
 }
 
 
@@ -205,7 +205,7 @@ TEST_P(ExtIntTest, GetCorrectSize) {
   uint16_t ext_int = static_cast<uint16_t>(GetParam());
   auto ones = count_ones(ext_int);
   auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
-  EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float));
+  EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
 }
 
 

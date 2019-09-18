@@ -204,6 +204,12 @@ std::vector<std::byte> get_big_endian_bytes_vector_from_vector(const std::vector
   return bytes_vector;
 }
 
+template<template<typename> class Vector, typename T> 
+std::enable_if_t<std::is_same<std::vector<T>, Vector<T>>::value, std::vector<std::byte>>& append_big_endian_bytes(
+    std::vector<std::byte>& byte_list, const Vector<T>& vector) {
+    return byte_vector_cat(byte_list, get_big_endian_bytes_vector_from_vector(vector));
+}
+
 
 }  // namespace BinaryTools
 

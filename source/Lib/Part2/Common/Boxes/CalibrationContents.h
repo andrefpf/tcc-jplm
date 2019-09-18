@@ -278,7 +278,7 @@ class CameraParametersArray {
         size++;
       }
     }
-    return size * sizeof(float);
+    return (size * sizeof(float))+sizeof(uint16_t);
   }
 
 
@@ -367,9 +367,19 @@ class CameraParametersArray {
   }
 
 
-  // std::vector<std::byte> get_bytes() const noexcept {
-  	
-  // }
+  std::vector<std::byte> get_bytes() const noexcept {
+  	auto bytes = std::vector<std::byte>();
+  	bytes.reserve(this->size()); 
+  	//bytes.push_back(this->get_ext_int_bits())
+  	BinaryTools::append_big_endian_bytes(bytes, this->get_ext_int_bits());
+  	BinaryTools::append_big_endian_bytes(bytes, this->get_baseline());
+  	for (const auto& param_variant : camera_parameters) {
+  		std::visit([&bytes](const auto& param){
+  			BinaryTools::append_big_endian_bytes(bytes, param);
+  		}, param_variant);
+  	}
+  	return bytes;
+  }
 
 };
 
