@@ -54,101 +54,6 @@
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
-class VariablePrecisionFloatingPointCoordinates {
- protected:
-  //PP = 0, precision = 16 == "short float" //unavailable
-  //PP = 1, precision = 32 == float
-  //PP = 2, precision = 64 == double
-  //PP = 3, precision = 128 == "long double" //unavailable (some implemetation uses 80 bits...)
-  // ...
-  uint8_t pp;  //!< Precision of coordinates
-
- public:
-  VariablePrecisionFloatingPointCoordinates(uint8_t pp) : pp(pp) {
-  }
-
-
-  virtual VariablePrecisionFloatingPointCoordinates* clone() const = 0;
-
-  auto get_pp() const noexcept {
-    return pp;
-  }
-
-
-  virtual uint64_t size() const noexcept = 0;
-  virtual std::vector<std::byte> get_bytes() const noexcept = 0;
-};
-
-
-template<typename T>
-class FloatingPointCoordinates
-    : public VariablePrecisionFloatingPointCoordinates {
- protected:
-  std::tuple<T, T, T> origin_position;  //x, y, z
-  std::tuple<T, T, T> rotation_around_axis;
-  std::tuple<T, T, T> scaling;
-  constexpr uint64_t my_size() const noexcept {
-    return sizeof(T) * 9;
-  }
-
-  constexpr uint8_t compute_p() const {
-    return std::log2(sizeof(T)) - 1;
-  }
-
- public:
-  FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
-      const std::tuple<T, T, T>& rotation_around_axis,
-      const std::tuple<T, T, T>& scaling)
-      : VariablePrecisionFloatingPointCoordinates(compute_p()),
-        origin_position(origin_position),
-        rotation_around_axis(rotation_around_axis), scaling(scaling) {
-    static_assert(std::numeric_limits<T>::is_iec559,
-        "The coordinate type must be IEC559/IEEE 754");
-  }
-
-
-  virtual uint64_t size() const noexcept override {
-    return my_size();
-  }
-
-
-  std::tuple<T, T, T> get_origin_position() const {
-    return origin_position;
-  }
-
-
-  std::tuple<T, T, T> get_rotation_around_axis() const {
-    return rotation_around_axis;
-  }
-
-
-  std::tuple<T, T, T> get_scaling() const {
-    return scaling;
-  }
-
-  virtual FloatingPointCoordinates* clone() const override {
-    return new FloatingPointCoordinates(*this);
-  }
-
-
-  // std::ostream& write_to(std::ostream& stream) const {
-  //   stream << static_cast<const unsigned char>(this->get_pp());
-  //    split_in_big_endian_bytes
-  //   return stream;
-  // }
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    bytes.emplace_back(std::byte{this->get_pp()});
-
-    BinaryTools::append_big_endian_bytes(bytes, origin_position);
-    BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
-    BinaryTools::append_big_endian_bytes(bytes, scaling);
-
-    return bytes;
-  }
-};
 
 /**
  * \brief      Enumeration of Camera Parameter Types
@@ -171,12 +76,14 @@ enum CameraParameterType : uint8_t {
   V0 = 11  //!< Vertical principle point offset
 };
 
+// namespace CameraParameters {
+using camera_parameter = std::variant<float, std::vector<float>>;
 
 class CameraParametersArray {
  protected:
- 	/**
- 	 * \brief The baseline (x,y) used to compute XCC and YCC parameters when they are not all defined
- 	 */
+  /**
+   * \brief The baseline (x,y) used to compute XCC and YCC parameters when they are not all defined
+   */
   std::tuple<float, float> baseline;  //x, y
   /**
    * \warning Such value is on the CameraParameterBox bitstream!
@@ -190,7 +97,6 @@ class CameraParametersArray {
    * \warning Such value is on the CameraParameterBox bitstream!
    */
   std::size_t n_views;
-  using camera_parameter = std::variant<float, std::vector<float>>;
   std::array<camera_parameter, 12> camera_parameters;
 
  public:
@@ -213,6 +119,15 @@ class CameraParametersArray {
     }
   }
 
+
+  /**
+   * \brief      Constructs the object.
+   *
+   * \param[in]  baseline  The baseline
+   * \param[in]  rows      The number of rows (number of views in the vertical direction)
+   * \param[in]  columns   The number of columns (number of views in the horizontal direction)
+   * \param[in]  ext_int   The ExtInt bits (that will be used to instantiate a zeroed array of camera parameters)
+   */
   CameraParametersArray(const std::tuple<float, float>& baseline,
       lightfield_dimension_type rows, lightfield_dimension_type columns,
       uint16_t ext_int)
@@ -257,6 +172,11 @@ class CameraParametersArray {
   }
 
 
+  /**
+   * \brief      Gets the ExtInt bits as defined in Table A.8 of the standard
+   *
+   * \return     The extent int bits.
+   */
   uint16_t get_ext_int_bits() const noexcept {
     uint16_t ext_int = 0;
     uint8_t count = 0;
@@ -268,6 +188,11 @@ class CameraParametersArray {
   }
 
 
+  /**
+   * \brief      Gets the size (in bytes) of the data in this class 
+   *
+   * \return     The size (in bytes)
+   */
   uint64_t size() const noexcept {
     //initially is size in number of values (floats)
     uint64_t size = 2;  //initialized with 2 == baselines
@@ -278,7 +203,7 @@ class CameraParametersArray {
         size++;
       }
     }
-    return (size * sizeof(float))+sizeof(uint16_t);
+    return (size * sizeof(float)) + sizeof(uint16_t);
   }
 
 
@@ -348,7 +273,8 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(const std::tuple<float, float>& new_baseline) noexcept {
+  std::tuple<float, float> set_baseline(
+      const std::tuple<float, float>& new_baseline) noexcept {
     baseline = new_baseline;
     return baseline;
   }
@@ -361,26 +287,173 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(std::tuple<float, float>&& new_baseline) noexcept {
+  std::tuple<float, float> set_baseline(
+      std::tuple<float, float>&& new_baseline) noexcept {
     baseline = std::move(new_baseline);
     return baseline;
   }
 
 
   std::vector<std::byte> get_bytes() const noexcept {
-  	auto bytes = std::vector<std::byte>();
-  	bytes.reserve(this->size()); 
-  	//bytes.push_back(this->get_ext_int_bits())
-  	BinaryTools::append_big_endian_bytes(bytes, this->get_ext_int_bits());
-  	BinaryTools::append_big_endian_bytes(bytes, this->get_baseline());
-  	for (const auto& param_variant : camera_parameters) {
-  		std::visit([&bytes](const auto& param){
-  			BinaryTools::append_big_endian_bytes(bytes, param);
-  		}, param_variant);
-  	}
-  	return bytes;
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+    //bytes.push_back(this->get_ext_int_bits())
+    BinaryTools::append_big_endian_bytes(bytes, this->get_ext_int_bits());
+    BinaryTools::append_big_endian_bytes(bytes, this->get_baseline());
+    for (const auto& param_variant : camera_parameters) {
+      std::visit(
+          [&bytes](const auto& param) {
+            BinaryTools::append_big_endian_bytes(bytes, param);
+          },
+          param_variant);
+    }
+    return bytes;
+  }
+};
+
+/**
+ * \brief      Base virtual class for variable precision floating point coordinates.
+ */
+class VariablePrecisionFloatingPointCoordinates {
+ protected:
+  //PP = 0, precision = 16 == "short float" //unavailable
+  //PP = 1, precision = 32 == float
+  //PP = 2, precision = 64 == double
+  //PP = 3, precision = 128 == "long double" //unavailable (some implemetation uses 80 bits...)
+  // ...
+  uint8_t pp;  //!< Precision of coordinates
+
+ public:
+  /**
+   * \brief      Constructs the object storing the precision
+   *
+   * \param[in]  pp    Precision. 
+   *   <table>  
+      <tr><th> PP value <th> Precision (in bits) <th> FP Type
+      <tr><td> 0 <td> 16 <td> not available
+      <tr><td> 1 <td> 32 <td> <b>float</b>
+      <tr><td> 2 <td> 64 <td> <b>double</b>
+      <tr><td> 3 <td> 128 <td> not ensured
+      </table>
+   * 
+   */
+  VariablePrecisionFloatingPointCoordinates(uint8_t pp) : pp(pp) {
   }
 
+  /**
+   * \brief      Creates a new instance of the object with same properties than original.
+   *
+   * \return     Raw pointer to a copy of this object.
+   */
+  virtual VariablePrecisionFloatingPointCoordinates* clone() const = 0;
+
+
+  /**
+   * \brief      Gets the pp (precision).
+   *
+   * \return     The pp.
+   */
+  auto get_pp() const noexcept {
+    return pp;
+  }
+
+  /**
+   * \brief      Size of the contents (in bytes)
+   *
+   * \return     The size (in bytes)
+   */
+  virtual uint64_t size() const noexcept = 0;
+
+
+  /**
+   * \brief      Gets the bytes (std::byte) in the specified order within a std::vector.
+   * \details    Each value must be converted to a big endian sequence of bytes.
+   *
+   * \return     The bytes (vector of bytes).
+   */
+  virtual std::vector<std::byte> get_bytes() const noexcept = 0;
+};
+
+
+template<typename T>
+class FloatingPointCoordinates
+    : public VariablePrecisionFloatingPointCoordinates {
+ protected:
+  /**
+   * Tuple that contains \f$X_{LO}\f$, \f$Y_{LO}\f$ and \f$Z_{LO}\f$, respectively.
+   */
+  std::tuple<T, T, T> origin_position;  //x, y, z
+
+  /**
+   * Tuple that contains \f$\Theta_{XL}\f$, \f$\Theta_{YL}\f$ and \f$\Theta_{ZL}\f$, respectively.
+   */
+  std::tuple<T, T, T> rotation_around_axis;
+
+  /**
+   * Tuple that contains \f$S_{GLX}\f$, \f$S_{GLY}\f$ and \f$S_{GLZ}\f$, respectively.
+   */
+  std::tuple<T, T, T> scaling;
+  constexpr uint64_t my_size() const noexcept {
+    return sizeof(T) * 9;
+  }
+
+  constexpr uint8_t compute_p() const {
+    return std::log2(sizeof(T)) - 1;
+  }
+
+ public:
+  FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
+      const std::tuple<T, T, T>& rotation_around_axis,
+      const std::tuple<T, T, T>& scaling)
+      : VariablePrecisionFloatingPointCoordinates(compute_p()),
+        origin_position(origin_position),
+        rotation_around_axis(rotation_around_axis), scaling(scaling) {
+    static_assert(std::numeric_limits<T>::is_iec559,
+        "The coordinate type must be IEC559/IEEE 754");
+  }
+
+
+  virtual uint64_t size() const noexcept override {
+    return my_size();
+  }
+
+
+  std::tuple<T, T, T> get_origin_position() const {
+    return origin_position;
+  }
+
+
+  std::tuple<T, T, T> get_rotation_around_axis() const {
+    return rotation_around_axis;
+  }
+
+
+  std::tuple<T, T, T> get_scaling() const {
+    return scaling;
+  }
+
+  virtual FloatingPointCoordinates* clone() const override {
+    return new FloatingPointCoordinates(*this);
+  }
+
+
+  // std::ostream& write_to(std::ostream& stream) const {
+  //   stream << static_cast<const unsigned char>(this->get_pp());
+  //    split_in_big_endian_bytes
+  //   return stream;
+  // }
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+
+    bytes.emplace_back(std::byte{this->get_pp()});
+
+    BinaryTools::append_big_endian_bytes(bytes, origin_position);
+    BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
+    BinaryTools::append_big_endian_bytes(bytes, scaling);
+
+    return bytes;
+  }
 };
 
 
@@ -394,29 +467,28 @@ class CalibrationContents : public InMemoryDBox {
       "this is not true.");
   std::unique_ptr<VariablePrecisionFloatingPointCoordinates> coordinates;
   //uint16_t extInt; //(is this necessary?)
-  std::tuple<float, float> baseline;  //x, y
-  using camera_parameter = std::variant<float, std::vector<float>>;
-  std::array<camera_parameter, 12> camera_parameters;
+  CameraParametersArray camera_parameters;
 
 
  public:
   //! \todo implement this class (CalibrationConte  nts)
   CalibrationContents(
       const VariablePrecisionFloatingPointCoordinates& coordinates,
-      const std::tuple<float, float>& baseline,
-      const std::array<camera_parameter, 12>& camera_parameters)
+      const CameraParametersArray& camera_parameters)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             coordinates.clone())),
-        baseline(baseline), camera_parameters(camera_parameters) {
+        camera_parameters(camera_parameters) {
   }
 
 
   CalibrationContents(
       std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
-      std::tuple<float, float>&& baseline,
+      std::tuple<float, float>&& baseline, lightfield_dimension_type rows,
+      lightfield_dimension_type columns,
       std::array<camera_parameter, 12>&& camera_parameters)
-      : coordinates(std::move(coordinates)), baseline(std::move(baseline)),
-        camera_parameters(std::move(camera_parameters)) {
+      : coordinates(std::move(coordinates)),
+        camera_parameters(CameraParametersArray(
+            std::move(baseline), rows, columns, std::move(camera_parameters))) {
   }
 
 
@@ -426,7 +498,13 @@ class CalibrationContents : public InMemoryDBox {
   CalibrationContents(const CalibrationContents& other)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             other.coordinates->clone())),
-        baseline(other.baseline), camera_parameters(other.camera_parameters) {
+        camera_parameters(other.camera_parameters) {
+  }
+
+
+  CalibrationContents(CalibrationContents&& other)
+      : coordinates(std::move(other.coordinates)),
+        camera_parameters(std::move(other.camera_parameters)) {
   }
 
 
@@ -472,8 +550,25 @@ class CalibrationContents : public InMemoryDBox {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
     BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
+    // BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
     return bytes;
   }
 };
 
+// }  // namespace CameraParameters
+
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__ */
+
+/*! \page camera_parameter_box_info The Camera Parameter Box
+  \tableofcontents
+  This page will introduce briefly how use the CameraParameterBox.
+  \section Design
+  The organization of the CameraParameterContents is a bit different from the standard specification.
+
+  <table>	
+  <tr><th> Field Name <th> Size (bits) <th> Value
+  <tr><td> PP <td> 8 <td> 0 to 2^8-1
+  </table>
+
+
+  */
