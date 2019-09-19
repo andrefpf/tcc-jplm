@@ -31,15 +31,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CalibrationContents.h
+/** \file     CameraParameterContents.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-08-26
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERCONTENTS_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERCONTENTS_H__
 
 #include <assert.h>
 #include <cmath>
@@ -457,7 +457,7 @@ class FloatingPointCoordinates
 };
 
 
-class CalibrationContents : public InMemoryDBox {
+class CameraParameterContents : public InMemoryDBox {
  protected:
   static_assert(std::numeric_limits<float>::is_iec559,
       "Float must be IEC559/IEEE754. However it seems that in this compiler "
@@ -472,7 +472,7 @@ class CalibrationContents : public InMemoryDBox {
 
  public:
   //! \todo implement this class (CalibrationConte  nts)
-  CalibrationContents(
+  CameraParameterContents(
       const VariablePrecisionFloatingPointCoordinates& coordinates,
       const CameraParametersArray& camera_parameters)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
@@ -481,7 +481,7 @@ class CalibrationContents : public InMemoryDBox {
   }
 
 
-  CalibrationContents(
+  CameraParameterContents(
       std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
       std::tuple<float, float>&& baseline, lightfield_dimension_type rows,
       lightfield_dimension_type columns,
@@ -492,24 +492,24 @@ class CalibrationContents : public InMemoryDBox {
   }
 
 
-  virtual ~CalibrationContents() = default;
+  virtual ~CameraParameterContents() = default;
 
 
-  CalibrationContents(const CalibrationContents& other)
+  CameraParameterContents(const CameraParameterContents& other)
       : coordinates(std::unique_ptr<VariablePrecisionFloatingPointCoordinates>(
             other.coordinates->clone())),
         camera_parameters(other.camera_parameters) {
   }
 
 
-  CalibrationContents(CalibrationContents&& other)
+  CameraParameterContents(CameraParameterContents&& other)
       : coordinates(std::move(other.coordinates)),
         camera_parameters(std::move(other.camera_parameters)) {
   }
 
 
-  virtual CalibrationContents* clone() const override {
-    return new CalibrationContents(*this);
+  virtual CameraParameterContents* clone() const override {
+    return new CameraParameterContents(*this);
   }
 
 
@@ -531,17 +531,17 @@ class CalibrationContents : public InMemoryDBox {
   virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other = dynamic_cast<const CalibrationContents&>(other);
+    const auto& cast_other = dynamic_cast<const CameraParameterContents&>(other);
     return *this == cast_other;
   }
 
 
-  bool operator==(const CalibrationContents&) const noexcept {  //other
+  bool operator==(const CameraParameterContents&) const noexcept {  //other
     return true;
   }
 
 
-  bool operator!=(const CalibrationContents& other) const noexcept {
+  bool operator!=(const CameraParameterContents& other) const noexcept {
     return !this->operator==(other);
   }
 
@@ -550,14 +550,14 @@ class CalibrationContents : public InMemoryDBox {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
     BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
-    // BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
+    BinaryTools::byte_vector_cat(bytes, camera_parameters.get_bytes());
     return bytes;
   }
 };
 
 // }  // namespace CameraParameters
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONCONTENTS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERCONTENTS_H__ */
 
 /*! \page camera_parameter_box_info The Camera Parameter Box
   \tableofcontents

@@ -42,13 +42,13 @@
 #define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
 
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/CalibrationContents.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterContents.h"
 
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Calibration Box
- * \tparam CalibrationContents
+ * \tparam CameraParameterContents
  */
-using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
+using CalibrationBox = GenericBox<0x6c666361, CameraParameterContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__ */
