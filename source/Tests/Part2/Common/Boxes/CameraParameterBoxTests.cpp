@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CalibrationBoxTests.cpp
+/** \file     CameraParameterBoxTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -40,11 +40,12 @@
 
 
 #include <iostream>
-#include "Lib/Part2/Common/Boxes/CalibrationBox.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterBox.h"
 #include "gtest/gtest.h"
 
+
 TEST(BasicTests, HasCorrectId) {
-	EXPECT_EQ(CalibrationBox::id, 0x6c666361);
+	EXPECT_EQ(CameraParameterBox::id, 0x6c666370);
 }
 
 
@@ -503,6 +504,8 @@ TEST_F(SimpleCameraParameterContentsTestFloat,
     }
   }
 }
+
+//! \todo if possible it would be nice to implement more tests. Also possible to use a double
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
