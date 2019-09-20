@@ -50,31 +50,11 @@
 #include <variant>
 #include <vector>
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterType.h"
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
-
-/**
- * \brief      Enumeration of Camera Parameter Types
- * \note    This enum is not part of the standard.
- *             It is used to access the various camera parameter types within the 
- *             CameraParameterBoxContents;
- */
-enum CameraParameterType : uint8_t {
-  XCC = 0,  //!< Camera centre along XL coordinate axis
-  YCC = 1,  //!< Camera centre along YL coordinate axis
-  ZCC = 2,  //!< Camera centre along ZL coordinate axis
-  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
-  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
-  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal lenght (mm)
-  SW = 7,  //!< Sensor width (mm)
-  SH = 8,  //!< Sensor width (mm)
-  SK = 9,  //!< Sensor skew
-  U0 = 10,  //!< Horizontal principle point offset
-  V0 = 11  //!< Vertical principle point offset
-};
 
 // namespace CameraParameters {
 using camera_parameter = std::variant<float, std::vector<float>>;
@@ -373,7 +353,7 @@ class VariablePrecisionFloatingPointCoordinates {
    */
   virtual std::vector<std::byte> get_bytes() const noexcept = 0;
 
-  
+
   virtual VariablePrecisionFloatingPointCoordinates& test() = 0;
 };
 
@@ -397,7 +377,7 @@ class FloatingPointCoordinates
    */
   std::tuple<T, T, T> scaling;
   constexpr uint64_t my_size() const noexcept {
-    return sizeof(T) * 9 +1; //1 for pp
+    return sizeof(T) * 9 + 1;  //1 for pp
   }
 
   constexpr uint8_t compute_p() const {
@@ -408,7 +388,7 @@ class FloatingPointCoordinates
   virtual FloatingPointCoordinates<T>& test() {
     return *this;
   }
-  
+
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
       const std::tuple<T, T, T>& rotation_around_axis,
       const std::tuple<T, T, T>& scaling)

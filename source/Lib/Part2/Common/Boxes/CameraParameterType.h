@@ -1,0 +1,61 @@
+/* The copyright in this software is being made available under the BSD
+ * License, included below. This software may be subject to other third party
+ * and contributor rights, including patent rights, and no such rights are
+ * granted under this license.
+ *
+ * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *  * Neither the name of the ITU/ISO/IEC nor the names of its contributors may
+ *    be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** \file     CameraParameterType.h
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \date     2019-09-20
+ */
+
+
+/**
+ * \brief      Enumeration of Camera Parameter Types
+ * \note    This enum is not part of the standard.
+ *             It is used to access the various camera parameter types within the 
+ *             CameraParameterBoxContents;
+ */
+enum CameraParameterType : uint8_t {
+  XCC = 0,  //!< Camera centre along XL coordinate axis
+  YCC = 1,  //!< Camera centre along YL coordinate axis
+  ZCC = 2,  //!< Camera centre along ZL coordinate axis
+  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
+  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
+  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
+  F = 6,  //!< Focal lenght (mm)
+  SW = 7,  //!< Sensor width (mm)
+  SH = 8,  //!< Sensor width (mm)
+  SK = 9,  //!< Sensor skew
+  U0 = 10,  //!< Horizontal principle point offset
+  V0 = 11  //!< Vertical principle point offset
+};
