@@ -50,7 +50,7 @@
  *             It is used to access the various camera parameter types within the 
  *             CameraParameterBoxContents;
  */
-enum CameraParameterType : uint8_t {
+enum class CameraParameterType : uint8_t {
   XCC = 0,  //!< Camera centre along XL coordinate axis
   YCC = 1,  //!< Camera centre along YL coordinate axis
   ZCC = 2,  //!< Camera centre along ZL coordinate axis

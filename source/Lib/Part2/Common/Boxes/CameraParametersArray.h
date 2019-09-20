@@ -198,7 +198,7 @@ class CameraParametersArray {
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
           position) const {
     const auto& [t, s] = position;
-    const auto& value = std::get<camera_parameter_type>(camera_parameters);
+    const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(camera_parameters);
     if (std::holds_alternative<float>(value)) {
       if constexpr (camera_parameter_type == CameraParameterType::XCC) {
         return std::get<0>(value) + s * std::get<0>(baseline);
