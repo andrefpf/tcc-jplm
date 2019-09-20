@@ -413,25 +413,56 @@ class FloatingPointCoordinates
   }
 
 
+  /**
+   * \brief      Gets the size of the data (in bytes)
+   * \details    There are 9 values. Thus, the total size in bytes depends on the data type 
+                 of each value. 
+   *
+   * \return     The size (in bytes)
+   */
   virtual uint64_t size() const noexcept override {
     return my_size();
   }
 
 
+  /**
+   * \brief      Gets the origin position.
+   *
+   * \return     The origin position tuple (x, y, z).
+   * \note       It is possible to use structured binding
+   */
   std::tuple<T, T, T> get_origin_position() const {
     return origin_position;
   }
 
 
+  /**
+   * \brief      Gets the rotation around axis angles.
+   *
+   * \return     The rotation around axis angle tuple (x, y, z).
+   * \note       It is possible to use structured binding
+   */
   std::tuple<T, T, T> get_rotation_around_axis() const {
     return rotation_around_axis;
   }
 
 
+  /**
+   * \brief      Gets the scaling for all axis.
+   *
+   * \return     The scaling tuple (x, y, z).
+   * \note       It is possible to use structured binding
+   */
   std::tuple<T, T, T> get_scaling() const {
     return scaling;
   }
 
+
+  /**
+   * \brief      Creates a new instance of the object with same properties than original.
+   *
+   * \return     Copy of this object.
+   */
   virtual FloatingPointCoordinates* clone() const override {
     return new FloatingPointCoordinates(*this);
   }
@@ -552,8 +583,7 @@ class CameraParameterContents : public InMemoryDBox {
     BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
     BinaryTools::byte_vector_cat(bytes, camera_parameters.get_bytes());
     return bytes;
-  }
-};
+  } };
 
 // }  // namespace CameraParameters
 
