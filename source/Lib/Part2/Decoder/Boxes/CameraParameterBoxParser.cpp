@@ -39,3 +39,17 @@
  */
 
 #include "CameraParameterBoxParser.h"
+
+
+std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
+    BoxParserHelperBase& box_parser_helper) {
+  std::unique_ptr<VariablePrecisionFloatingPointCoordinates> fp_coordinates;
+  
+  // auto cam_param_array = CameraParametersArray(
+  //     {baseline_x, baseline_y}, rows, columns, camera_parameters);
+  
+  // return std::make_unique<CameraParameterContents>(
+  //     fp_coordinates, cam_param_array);
+
+  return nullptr;
+}

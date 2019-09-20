@@ -41,4 +41,19 @@
 #ifndef JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__
 #define JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__
 
+
+#include <memory>
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterBox.h"
+
+namespace JPLMBoxParser {
+class CameraParameterBoxParser {
+ public:
+  using ParsingBox = CameraParameterBox;
+  static std::unique_ptr<Box> parse(
+      BoxParserHelperBase& box_parser_helper);  //box parser helper
+};
+}  // namespace JPLMBoxParser
+
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__ */
