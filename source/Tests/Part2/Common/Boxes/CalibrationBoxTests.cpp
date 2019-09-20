@@ -477,6 +477,33 @@ TEST_F(SimpleCameraParameterContentsTestFloat,
 }
 
 
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetYCCValuesInCameraContents) {
+  auto camera_parameter_contents = get_contents();
+  const auto& params =
+      camera_parameter_contents->get_ref_to_camera_parameters();
+  auto baseline_y = params.get_baseline_y();
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(camera_parameter_contents->get<CameraParameterType::YCC>({i, j}), i*baseline_y+y00);
+    }
+  }
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetYCCValuesInCameraParameters) {
+  auto camera_parameter_contents = get_contents();
+  const auto& params =
+      camera_parameter_contents->get_ref_to_camera_parameters();
+  auto baseline_y = params.get_baseline_y();
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(params.get<CameraParameterType::YCC>({i, j}), i*baseline_y+y00);
+    }
+  }
+}
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
