@@ -38,8 +38,12 @@
  *  \date     2019-09-20
  */
 
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERSARRAY_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERSARRAY_H__
+
 #include <assert.h>
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <ostream>
@@ -283,3 +287,5 @@ class CameraParametersArray {
     return bytes;
   }
 };
+
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERSARRAY_H__ */

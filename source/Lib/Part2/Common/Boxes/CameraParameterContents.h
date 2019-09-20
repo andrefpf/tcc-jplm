@@ -54,76 +54,8 @@
 #include "Lib/Part2/Common/Boxes/CameraParametersArray.h"
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
+#include "Lib/Part2/Common/Boxes/VariablePrecisionFloatingPointCoordinates.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
-
-
-
-
-/**
- * \brief      Base virtual class for variable precision floating point coordinates.
- */
-class VariablePrecisionFloatingPointCoordinates {
- protected:
-  //PP = 0, precision = 16 == "short float" //unavailable
-  //PP = 1, precision = 32 == float
-  //PP = 2, precision = 64 == double
-  //PP = 3, precision = 128 == "long double" //unavailable (some implemetation uses 80 bits...)
-  // ...
-  uint8_t pp;  //!< Precision of coordinates
-
- public:
-  /**
-   * \brief      Constructs the object storing the precision
-   *
-   * \param[in]  pp    Precision. 
-   *   <table>  
-      <tr><th> PP value <th> Precision (in bits) <th> FP Type
-      <tr><td> 0 <td> 16 <td> not available
-      <tr><td> 1 <td> 32 <td> <b>float</b>
-      <tr><td> 2 <td> 64 <td> <b>double</b>
-      <tr><td> 3 <td> 128 <td> not ensured
-      </table>
-   * 
-   */
-  VariablePrecisionFloatingPointCoordinates(uint8_t pp) : pp(pp) {
-  }
-
-  /**
-   * \brief      Creates a new instance of the object with same properties than original.
-   *
-   * \return     Raw pointer to a copy of this object.
-   */
-  virtual VariablePrecisionFloatingPointCoordinates* clone() const = 0;
-
-
-  /**
-   * \brief      Gets the pp (precision).
-   *
-   * \return     The pp.
-   */
-  auto get_pp() const noexcept {
-    return pp;
-  }
-
-  /**
-   * \brief      Size of the contents (in bytes)
-   *
-   * \return     The size (in bytes)
-   */
-  virtual uint64_t size() const noexcept = 0;
-
-
-  /**
-   * \brief      Gets the bytes (std::byte) in the specified order within a std::vector.
-   * \details    Each value must be converted to a big endian sequence of bytes.
-   *
-   * \return     The bytes (vector of bytes).
-   */
-  virtual std::vector<std::byte> get_bytes() const noexcept = 0;
-
-
-  virtual VariablePrecisionFloatingPointCoordinates& test() = 0;
-};
 
 
 template<typename T>

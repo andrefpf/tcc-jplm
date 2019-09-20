@@ -39,6 +39,11 @@
  */
 
 
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+
+#include <cstdint>
+
 /**
  * \brief      Enumeration of Camera Parameter Types
  * \note    This enum is not part of the standard.
@@ -59,3 +64,5 @@ enum CameraParameterType : uint8_t {
   U0 = 10,  //!< Horizontal principle point offset
   V0 = 11  //!< Vertical principle point offset
 };
+
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */
