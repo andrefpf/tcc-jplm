@@ -160,7 +160,6 @@ TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
 }
 
 
-
 std::size_t count_ones(uint16_t value) {
 	std::size_t ones = 0;
 	for(auto i = 0; i<16; ++i) {
@@ -382,6 +381,34 @@ TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfSizeRight) {
 	auto camera_parameter_contents = get_contents();
 	EXPECT_EQ(camera_parameter_contents->get_bytes().size(), expected_size());
 }
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesOriginPosition) {
+	auto camera_parameter_contents = get_contents();
+	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+	//need to cast :(
+	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+	EXPECT_EQ(cast_coordinates.get_origin_position(), xyz_coordinates);
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesRotationArondAxis) {
+	auto camera_parameter_contents = get_contents();
+	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+	//need to cast :(
+	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+	EXPECT_EQ(cast_coordinates.get_rotation_around_axis(), xyz_angles);
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesScaling) {
+	auto camera_parameter_contents = get_contents();
+	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+	//need to cast :(
+	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+	EXPECT_EQ(cast_coordinates.get_scaling(), xyz_scalings);
+}
+
 
 
 int main(int argc, char *argv[]) {

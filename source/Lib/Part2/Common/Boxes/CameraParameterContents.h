@@ -372,6 +372,9 @@ class VariablePrecisionFloatingPointCoordinates {
    * \return     The bytes (vector of bytes).
    */
   virtual std::vector<std::byte> get_bytes() const noexcept = 0;
+
+  
+  virtual VariablePrecisionFloatingPointCoordinates& test() = 0;
 };
 
 
@@ -402,6 +405,10 @@ class FloatingPointCoordinates
   }
 
  public:
+  virtual FloatingPointCoordinates<T>& test() {
+    return *this;
+  }
+  
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
       const std::tuple<T, T, T>& rotation_around_axis,
       const std::tuple<T, T, T>& scaling)
