@@ -366,6 +366,24 @@ TEST_F(SimpleCameraParameterContentsTestFloat, GetsSizeRight) {
 }
 
 
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfFPCoordinatesSizeRight) {
+	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->get_ref_to_coordinates().get_bytes().size(), expected_fp_coordinates_size());
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfCameraParametersSizeRight) {
+	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters().get_bytes().size(), expected_camera_parameter_size());
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfSizeRight) {
+	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->get_bytes().size(), expected_size());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
