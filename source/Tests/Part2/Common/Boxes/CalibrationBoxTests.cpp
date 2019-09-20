@@ -237,11 +237,11 @@ TEST(CameraParametersArrayBaselineTests, GetsTheYCCUsingBaselineAndTValue) {
 template<typename T>
 struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
  protected:
-  std::tuple<T,T,T> xyz_coordinates;
-  std::tuple<T,T,T> xyz_angles;
-  std::tuple<T,T,T> xyz_scalings;
-  float baseline_x = 3.1415; //dummy, just to check if io works
-  float baseline_y = 55.625; 
+  std::tuple<T, T, T> xyz_coordinates;
+  std::tuple<T, T, T> xyz_angles;
+  std::tuple<T, T, T> xyz_scalings;
+  float baseline_x = 3.1415;  //dummy, just to check if io works
+  float baseline_y = 55.625;
   float y00 = 115.0;
   float z00 = 42.0;
   float theta_x = 1.25;
@@ -249,7 +249,7 @@ struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
   float u0 = 0.111;
   uint32_t rows = 3;  //3x4 lightfield
   uint32_t columns = 4;  //3x4 lightfield
-  uint16_t ExtInt = 0x9F1; //is 100111110001
+  uint16_t ExtInt = 0x9F1;  //is 100111110001
   float initial_value = 0.789101112;
   const float const_add_value = 0.042;
   std::vector<float> xcc_vec;
@@ -259,159 +259,203 @@ struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
   std::vector<float> sW_vec;
   std::vector<float> sH_vec;
   std::vector<float> v0_vec;
-  
-  SimpleCameraParameterContentsTest() : 
-  xyz_coordinates({1.5, 2.25, 3.125}),
-  xyz_angles({0.0, 3.1415, 3.125}),
-  xyz_scalings({1.0,0.5,2.0}) {
-  	xcc_vec.resize(rows*columns);
-	theta_y_vec.resize(rows*columns);
-	theta_z_vec.resize(rows*columns);
-	f_vec.resize(rows*columns);
-	sW_vec.resize(rows*columns);
-	sH_vec.resize(rows*columns);
-	v0_vec.resize(rows*columns);
 
-  	for(auto& value: xcc_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: theta_y_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: theta_z_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: f_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: sW_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: sH_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}
-  	for(auto& value: v0_vec) {
-  		value=initial_value;
-  		initial_value+=const_add_value;
-  	}  	
+  SimpleCameraParameterContentsTest()
+      : xyz_coordinates({1.5, 2.25, 3.125}), xyz_angles({0.0, 3.1415, 3.125}),
+        xyz_scalings({1.0, 0.5, 2.0}) {
+    xcc_vec.resize(rows * columns);
+    theta_y_vec.resize(rows * columns);
+    theta_z_vec.resize(rows * columns);
+    f_vec.resize(rows * columns);
+    sW_vec.resize(rows * columns);
+    sH_vec.resize(rows * columns);
+    v0_vec.resize(rows * columns);
+
+    for (auto& value : xcc_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : theta_y_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : theta_z_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : f_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : sW_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : sH_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
+    for (auto& value : v0_vec) {
+      value = initial_value;
+      initial_value += const_add_value;
+    }
   };
 
 
   std::unique_ptr<CameraParameterContents> get_contents() {
-  	auto fp_coordinates = FloatingPointCoordinates<T>(
-  		xyz_coordinates, xyz_angles, xyz_scalings);
-  	std::array<camera_parameter, 12> camera_parameters;
-  	camera_parameters[0].emplace<std::vector<float>>(xcc_vec);
-  	camera_parameters[1].emplace<float>(y00);
-  	camera_parameters[2].emplace<float>(z00);
-  	camera_parameters[3].emplace<float>(theta_x);
-  	camera_parameters[4].emplace<std::vector<float>>(theta_y_vec);
-  	camera_parameters[5].emplace<std::vector<float>>(theta_z_vec);
-  	camera_parameters[6].emplace<std::vector<float>>(f_vec);
-  	camera_parameters[7].emplace<std::vector<float>>(sW_vec);
-  	camera_parameters[8].emplace<std::vector<float>>(sH_vec);
-  	camera_parameters[9].emplace<float>(sk);
-  	camera_parameters[10].emplace<float>(u0);
-  	camera_parameters[11].emplace<std::vector<float>>(v0_vec);
+    auto fp_coordinates =
+        FloatingPointCoordinates<T>(xyz_coordinates, xyz_angles, xyz_scalings);
+    std::array<camera_parameter, 12> camera_parameters;
+    camera_parameters[0].emplace<std::vector<float>>(xcc_vec);
+    camera_parameters[1].emplace<float>(y00);
+    camera_parameters[2].emplace<float>(z00);
+    camera_parameters[3].emplace<float>(theta_x);
+    camera_parameters[4].emplace<std::vector<float>>(theta_y_vec);
+    camera_parameters[5].emplace<std::vector<float>>(theta_z_vec);
+    camera_parameters[6].emplace<std::vector<float>>(f_vec);
+    camera_parameters[7].emplace<std::vector<float>>(sW_vec);
+    camera_parameters[8].emplace<std::vector<float>>(sH_vec);
+    camera_parameters[9].emplace<float>(sk);
+    camera_parameters[10].emplace<float>(u0);
+    camera_parameters[11].emplace<std::vector<float>>(v0_vec);
 
-  	auto cam_param_array = CameraParametersArray({baseline_x, baseline_y}, rows, columns, camera_parameters);
-  	return std::make_unique<CameraParameterContents>(fp_coordinates, cam_param_array);
+    auto cam_param_array = CameraParametersArray(
+        {baseline_x, baseline_y}, rows, columns, camera_parameters);
+    return std::make_unique<CameraParameterContents>(
+        fp_coordinates, cam_param_array);
   }
 
   std::uint64_t expected_fp_coordinates_size() const {
-  	return 9*sizeof(T)+1; // 9 coordinates + pp
+    return 9 * sizeof(T) + 1;  // 9 coordinates + pp
   }
 
-  
+
   std::uint64_t expected_camera_parameter_size() const {
-  	return 2*sizeof(float) + //baselines
-  	sizeof(uint16_t) + //ExtInt
-  	5*sizeof(float) + // floats that appear only once
-  	7*12*sizeof(float);
+    return 2 * sizeof(float) +  //baselines
+           sizeof(uint16_t) +  //ExtInt
+           5 * sizeof(float) +  // floats that appear only once
+           7 * 12 * sizeof(float);
   }
-  
+
 
   std::uint64_t expected_size() const {
-  	return expected_fp_coordinates_size()+expected_camera_parameter_size();
+    return expected_fp_coordinates_size() + expected_camera_parameter_size();
   }
 };
 
 
-struct SimpleCameraParameterContentsTestFloat : public SimpleCameraParameterContentsTest<float> {
-};
+struct SimpleCameraParameterContentsTestFloat
+    : public SimpleCameraParameterContentsTest<float> {};
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsFPCoordinatesSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->get_ref_to_coordinates().size(), expected_fp_coordinates_size());
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(camera_parameter_contents->get_ref_to_coordinates().size(),
+      expected_fp_coordinates_size());
 }
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsCameraParametersSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters().size(), expected_camera_parameter_size());
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters().size(),
+      expected_camera_parameter_size());
 }
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->size(), expected_size());
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(camera_parameter_contents->size(), expected_size());
 }
 
 
-TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfFPCoordinatesSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->get_ref_to_coordinates().get_bytes().size(), expected_fp_coordinates_size());
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetsByteVectorOfFPCoordinatesSizeRight) {
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(
+      camera_parameter_contents->get_ref_to_coordinates().get_bytes().size(),
+      expected_fp_coordinates_size());
 }
 
 
-TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfCameraParametersSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters().get_bytes().size(), expected_camera_parameter_size());
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetsByteVectorOfCameraParametersSizeRight) {
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters()
+                .get_bytes()
+                .size(),
+      expected_camera_parameter_size());
 }
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsByteVectorOfSizeRight) {
-	auto camera_parameter_contents = get_contents();
-	EXPECT_EQ(camera_parameter_contents->get_bytes().size(), expected_size());
+  auto camera_parameter_contents = get_contents();
+  EXPECT_EQ(camera_parameter_contents->get_bytes().size(), expected_size());
 }
 
 
-TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesOriginPosition) {
-	auto camera_parameter_contents = get_contents();
-	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
-	//need to cast :(
-	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-	EXPECT_EQ(cast_coordinates.get_origin_position(), xyz_coordinates);
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetsRefToCoordinatesOriginPosition) {
+  auto camera_parameter_contents = get_contents();
+  const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+  //need to cast :(
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+  EXPECT_EQ(cast_coordinates.get_origin_position(), xyz_coordinates);
 }
 
 
-TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesRotationArondAxis) {
-	auto camera_parameter_contents = get_contents();
-	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
-	//need to cast :(
-	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-	EXPECT_EQ(cast_coordinates.get_rotation_around_axis(), xyz_angles);
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetsRefToCoordinatesRotationArondAxis) {
+  auto camera_parameter_contents = get_contents();
+  const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+  //need to cast :(
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+  EXPECT_EQ(cast_coordinates.get_rotation_around_axis(), xyz_angles);
 }
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesScaling) {
-	auto camera_parameter_contents = get_contents();
-	const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
-	//need to cast :(
-	const auto& cast_coordinates = static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-	EXPECT_EQ(cast_coordinates.get_scaling(), xyz_scalings);
+  auto camera_parameter_contents = get_contents();
+  const auto& coordinates = camera_parameter_contents->get_ref_to_coordinates();
+  //need to cast :(
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+  EXPECT_EQ(cast_coordinates.get_scaling(), xyz_scalings);
 }
 
 
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetValuesFromXCCVecInCameraContents) {
+  auto camera_parameter_contents = get_contents();
+  // using ;
+  // xcc_vec
+  auto count = 0;
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(camera_parameter_contents->get<CameraParameterType::XCC>({i, j}), xcc_vec[count++]);
+    }
+  }
+}
 
-int main(int argc, char *argv[]) {
+
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetValuesFromXCCVecInCameraParameters) {
+  auto camera_parameter_contents = get_contents();
+  const auto& params =
+      camera_parameter_contents->get_ref_to_camera_parameters();
+  // using ;
+  // xcc_vec
+  auto count = 0;
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(params.get<CameraParameterType::XCC>({i, j}), xcc_vec[count++]);
+    }
+  }
+}
+
+
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
