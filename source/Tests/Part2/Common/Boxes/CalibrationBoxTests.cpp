@@ -428,8 +428,6 @@ TEST_F(SimpleCameraParameterContentsTestFloat, GetsRefToCoordinatesScaling) {
 TEST_F(SimpleCameraParameterContentsTestFloat,
     GetValuesFromXCCVecInCameraContents) {
   auto camera_parameter_contents = get_contents();
-  // using ;
-  // xcc_vec
   auto count = 0;
   for (auto i = decltype(rows){0}; i < rows; ++i) {
     for (auto j = decltype(columns){0}; j < columns; ++j) {
@@ -444,12 +442,36 @@ TEST_F(SimpleCameraParameterContentsTestFloat,
   auto camera_parameter_contents = get_contents();
   const auto& params =
       camera_parameter_contents->get_ref_to_camera_parameters();
-  // using ;
-  // xcc_vec
   auto count = 0;
   for (auto i = decltype(rows){0}; i < rows; ++i) {
     for (auto j = decltype(columns){0}; j < columns; ++j) {
       EXPECT_EQ(params.get<CameraParameterType::XCC>({i, j}), xcc_vec[count++]);
+    }
+  }
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetValuesFromThetaYVecInCameraContents) {
+  auto camera_parameter_contents = get_contents();
+  auto count = 0;
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(camera_parameter_contents->get<CameraParameterType::THETA_Y_CAM>({i, j}), theta_y_vec[count++]);
+    }
+  }
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat,
+    GetValuesFromThetaYVecInCameraParameters) {
+  auto camera_parameter_contents = get_contents();
+  const auto& params =
+      camera_parameter_contents->get_ref_to_camera_parameters();
+  auto count = 0;
+  for (auto i = decltype(rows){0}; i < rows; ++i) {
+    for (auto j = decltype(columns){0}; j < columns; ++j) {
+      EXPECT_EQ(params.get<CameraParameterType::THETA_Y_CAM>({i, j}), theta_y_vec[count++]);
     }
   }
 }
