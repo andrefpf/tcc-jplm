@@ -106,9 +106,6 @@ class VariablePrecisionFloatingPointCoordinates {
    * \return     The bytes (vector of bytes).
    */
   virtual std::vector<std::byte> get_bytes() const noexcept = 0;
-
-
-  virtual VariablePrecisionFloatingPointCoordinates& test() = 0;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_VARIABLEPRECISIONFLOATINGPOINTCOORDINATES_H__ */
