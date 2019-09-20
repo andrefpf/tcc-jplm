@@ -394,7 +394,7 @@ class FloatingPointCoordinates
    */
   std::tuple<T, T, T> scaling;
   constexpr uint64_t my_size() const noexcept {
-    return sizeof(T) * 9;
+    return sizeof(T) * 9 +1; //1 for pp
   }
 
   constexpr uint8_t compute_p() const {
@@ -500,7 +500,6 @@ class CameraParameterContents : public InMemoryDBox {
   //uint16_t extInt; //(is this necessary?)
   CameraParametersArray camera_parameters;
 
-
  public:
   //! \todo implement this class (CalibrationConte  nts)
   CameraParameterContents(
@@ -544,25 +543,45 @@ class CameraParameterContents : public InMemoryDBox {
   }
 
 
+  const VariablePrecisionFloatingPointCoordinates& get_ref_to_coordinates()
+      const {
+    return *coordinates;
+  }
+
+
+  VariablePrecisionFloatingPointCoordinates& get_ref_to_coordinates() {
+    return *coordinates;
+  }
+
+
+  const CameraParametersArray& get_ref_to_camera_parameters() const {
+    return camera_parameters;
+  }
+
+
+  CameraParametersArray& get_ref_to_camera_parameters() {
+    return camera_parameters;
+  }
+
+
   template<CameraParameterType camera_parameter_type>
-  float get(uint64_t linear_position) const {
-    const auto& value = std::get<camera_parameter_type>(camera_parameters);
-    if (std::holds_alternative<float>(value)) {
-      return std::get<0>(value);
-    }
-    return std::get<1>(value).at(linear_position);
+  float get(
+      const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
+          position) const {
+    return camera_parameters.get<camera_parameter_type>(position);
   }
 
 
   uint64_t size() const noexcept override {
-    return coordinates->size() + 2 * sizeof(float) + 2;  //
+    return coordinates->size() + camera_parameters.size();  //
   }
 
 
   virtual bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
-    const auto& cast_other = dynamic_cast<const CameraParameterContents&>(other);
+    const auto& cast_other =
+        dynamic_cast<const CameraParameterContents&>(other);
     return *this == cast_other;
   }
 
@@ -583,7 +602,8 @@ class CameraParameterContents : public InMemoryDBox {
     BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
     BinaryTools::byte_vector_cat(bytes, camera_parameters.get_bytes());
     return bytes;
-  } };
+  }
+};
 
 // }  // namespace CameraParameters
 

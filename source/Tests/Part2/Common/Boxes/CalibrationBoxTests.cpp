@@ -54,9 +54,9 @@ TEST(FloatingPointCoordinatesTests, FloatPPis1) {
 }
 
 
-TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4) {
+TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4Plus1) {
 	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.size(), 36);
+	EXPECT_EQ(coordinates.size(), 37);
 }
 
 
@@ -93,9 +93,9 @@ TEST(FloatingPointCoordinatesTests, DoublePPis2) {
 }
 
 
-TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8) {
+TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8Plus1) {
 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.size(), 72);
+	EXPECT_EQ(coordinates.size(), 73);
 }
 
 
@@ -324,15 +324,45 @@ struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
   	auto cam_param_array = CameraParametersArray({baseline_x, baseline_y}, rows, columns, camera_parameters);
   	return std::make_unique<CameraParameterContents>(fp_coordinates, cam_param_array);
   }
+
+  std::uint64_t expected_fp_coordinates_size() const {
+  	return 9*sizeof(T)+1; // 9 coordinates + pp
+  }
+
+  
+  std::uint64_t expected_camera_parameter_size() const {
+  	return 2*sizeof(float) + //baselines
+  	sizeof(uint16_t) + //ExtInt
+  	5*sizeof(float) + // floats that appear only once
+  	7*12*sizeof(float);
+  }
+  
+
+  std::uint64_t expected_size() const {
+  	return expected_fp_coordinates_size()+expected_camera_parameter_size();
+  }
 };
+
 
 struct SimpleCameraParameterContentsTestFloat : public SimpleCameraParameterContentsTest<float> {
-
 };
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsFPCoordinatesSizeRight) {
+	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->get_ref_to_coordinates().size(), expected_fp_coordinates_size());
+}
+
+
+TEST_F(SimpleCameraParameterContentsTestFloat, GetsCameraParametersSizeRight) {
+	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->get_ref_to_camera_parameters().size(), expected_camera_parameter_size());
+}
 
 
 TEST_F(SimpleCameraParameterContentsTestFloat, GetsSizeRight) {
 	auto camera_parameter_contents = get_contents();
+	EXPECT_EQ(camera_parameter_contents->size(), expected_size());
 }
 
 
