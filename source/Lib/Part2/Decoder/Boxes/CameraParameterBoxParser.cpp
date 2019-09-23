@@ -44,12 +44,48 @@
 template<typename T>
 std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
     BoxParserHelperBase& box_parser_helper) {
-  const auto& origin_position =      box_parser_helper.get_next<T, T, T>();
+  const auto& origin_position = box_parser_helper.get_next<T, T, T>();
   const auto& rotation_around_axis = box_parser_helper.get_next<T, T, T>();
-  const auto& scaling =              box_parser_helper.get_next<T, T, T>();
-  return std::make_unique<FloatingPointCoordinates>(origin_position, rotation_around_axis, scaling);
+  const auto& scaling = box_parser_helper.get_next<T, T, T>();
+  return std::make_unique<FloatingPointCoordinates>(
+      origin_position, rotation_around_axis, scaling);
 }
 
+
+// std::array<camera_parameter, 12> get_camera_parameters(
+//     BoxParserHelperBase& box_parser_helper,
+//     uint16_t ext_int){
+
+	// auto param_0 = (ext_int & 1) ? camera_parameter(std::vector<float>(n_views, 0.0)) : camera_parameter(0.0);
+
+    // camera_parameters({(ext_int & 1) ? camera_parameter(
+    //                                                          std::vector<float>(
+    //                                                              n_views, 0.0))
+    //                                                    : camera_parameter(0.0),
+    // ((ext_int >> 1) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 2) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 3) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 4) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 5) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 6) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 7) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 8) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 9) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                      : camera_parameter(0.0),
+    // ((ext_int >> 10) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                       : camera_parameter(0.0),
+    // ((ext_int >> 11) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
+    //                       : camera_parameter(0.0)})
+	
+// }
 
 std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
@@ -63,13 +99,15 @@ std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
   if (precision_of_coordinates == 1) {  //float
     fp_coordinates = get_fp_coordinates<float>(box_parser_helper);
   } else {
-  	assert(precision_of_coordinates == 2);
-  	fp_coordinates = get_fp_coordinates<double>(box_parser_helper);
+    assert(precision_of_coordinates == 2);
+    fp_coordinates = get_fp_coordinates<double>(box_parser_helper);
   }
 
-  auto ext_int = box_parser_helper.get_next<uint16_t>(); //ExtInt
+  auto ext_int = box_parser_helper.get_next<uint16_t>();  //ExtInt
 
-  
+  const auto baseline = box_parser_helper.get_next<float, float>();
+
+  // std::array<camera_parameter, 12> camera_parameter;
 
   // auto cam_param_array = CameraParametersArray(
   //     {baseline_x, baseline_y}, rows, columns, camera_parameters);
