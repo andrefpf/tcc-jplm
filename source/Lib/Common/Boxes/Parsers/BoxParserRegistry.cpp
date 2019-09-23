@@ -47,9 +47,9 @@ BoxParserRegistry& BoxParserRegistry::get_instance() {
 }
 
 
-std::map<uint32_t, BoxParserRegistry::ParsingFunction>&
+std::map<t_box_id_type, BoxParserRegistry::ParsingFunction>&
 BoxParserRegistry::get_ref_to_parser_map() {
-  static std::map<uint32_t, BoxParserRegistry::ParsingFunction> parser_map;
+  static std::map<t_box_id_type, BoxParserRegistry::ParsingFunction> parser_map;
   return parser_map;
 }
 

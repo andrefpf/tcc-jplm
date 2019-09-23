@@ -47,7 +47,7 @@ std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
   const auto& origin_position = box_parser_helper.get_next<T, T, T>();
   const auto& rotation_around_axis = box_parser_helper.get_next<T, T, T>();
   const auto& scaling = box_parser_helper.get_next<T, T, T>();
-  return std::make_unique<FloatingPointCoordinates>(
+  return std::make_unique<FloatingPointCoordinates<T>>(
       origin_position, rotation_around_axis, scaling);
 }
 
@@ -84,7 +84,7 @@ std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
     //                       : camera_parameter(0.0),
     // ((ext_int >> 11) & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
     //                       : camera_parameter(0.0)})
-	
+
 // }
 
 std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(

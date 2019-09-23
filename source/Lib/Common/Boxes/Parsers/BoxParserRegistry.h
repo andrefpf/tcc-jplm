@@ -80,7 +80,7 @@ class BoxParserRegistry {
   static BoxParserRegistry& get_instance();
 
 
-  static std::map<uint32_t, ParsingFunction>& get_ref_to_parser_map();
+  static std::map<t_box_id_type, ParsingFunction>& get_ref_to_parser_map();
 
 
   ParsedBox parse(ManagedStream&& managed_stream) const;
@@ -123,6 +123,11 @@ class BoxParserRegistry {
     //           << std::setw(8) << id << std::endl;
     map[id] = parsing_function;
   }
+
+
+  
+
+
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__ */

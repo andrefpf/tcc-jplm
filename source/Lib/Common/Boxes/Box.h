@@ -164,6 +164,9 @@ class Box {
   TBox get_tbox() const noexcept;
 
 
+  t_box_id_type get_id() const noexcept;
+
+
   /**
    * \brief      Gets the XLBox (if used by this box).
    *

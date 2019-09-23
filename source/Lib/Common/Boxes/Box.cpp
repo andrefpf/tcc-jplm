@@ -75,6 +75,11 @@ TBox Box::get_tbox() const noexcept {
 }
 
 
+t_box_id_type Box::get_id() const noexcept {
+  return this->t_box.get_value();
+}
+
+
 std::optional<XLBox> Box::get_xlbox() const noexcept {
   auto lenght = this->get_lenght();
   if (lenght.index() == 0) {  //the lbox
