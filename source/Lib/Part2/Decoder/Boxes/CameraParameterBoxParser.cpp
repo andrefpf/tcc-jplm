@@ -41,13 +41,39 @@
 #include "CameraParameterBoxParser.h"
 
 
+template<typename T>
+std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
+    BoxParserHelperBase& box_parser_helper) {
+  const auto& origin_position =      box_parser_helper.get_next<T, T, T>();
+  const auto& rotation_around_axis = box_parser_helper.get_next<T, T, T>();
+  const auto& scaling =              box_parser_helper.get_next<T, T, T>();
+  return std::make_unique<FloatingPointCoordinates>(origin_position, rotation_around_axis, scaling);
+}
+
+
 std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   std::unique_ptr<VariablePrecisionFloatingPointCoordinates> fp_coordinates;
+
+  auto precision_of_coordinates = box_parser_helper.get_next<uint16_t>();  //pp
+  if ((1 < precision_of_coordinates) || (precision_of_coordinates > 2)) {
+    //throw Precision not supported
+  }
+
+  if (precision_of_coordinates == 1) {  //float
+    fp_coordinates = get_fp_coordinates<float>(box_parser_helper);
+  } else {
+  	assert(precision_of_coordinates == 2);
+  	fp_coordinates = get_fp_coordinates<double>(box_parser_helper);
+  }
+
+  auto ext_int = box_parser_helper.get_next<uint16_t>(); //ExtInt
+
   
+
   // auto cam_param_array = CameraParametersArray(
   //     {baseline_x, baseline_y}, rows, columns, camera_parameters);
-  
+
   // return std::make_unique<CameraParameterContents>(
   //     fp_coordinates, cam_param_array);
 

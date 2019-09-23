@@ -162,6 +162,23 @@ class BoxParserHelperBase {
   }
 
 
+
+  /**
+   * \brief      Gets the next value with type T from the stream.
+   *
+   * \tparam     T     The type that must be read from the stream
+   *
+   * \return     The value readed from the stream.
+   * \sideeffect{The stream position is sizeof(T) bytes ahead its position before calling this method}
+   */
+  template<typename... Args>
+  std::enable_if_t<(sizeof...(Args) > 1), std::tuple<Args...> > get_next() {
+    using namespace BinaryTools;
+    return get_tuple_from_big_endian_byte_vector<Args...>(
+        managed_stream.get_bytes<(sizeof(Args) + ... + 0)>());
+  }
+
+
   // template<class BoxToParse> 
   // std::unique_ptr<BoxToParse> get_next_box() {
   //     auto managed_substream = managed_stream.get_remaining_sub_managed_stream();

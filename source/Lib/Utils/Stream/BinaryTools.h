@@ -170,6 +170,10 @@ std::tuple<Args...> get_tuple_from_big_endian_byte_vector(
   return tuple;
 }
 
+
+
+
+
 std::vector<std::byte>& byte_vector_cat(std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b);
 
 
