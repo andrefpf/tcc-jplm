@@ -83,6 +83,14 @@ class CameraParameterContents : public InMemoryDBox {
 
   CameraParameterContents(
       std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
+      CameraParametersArray&& camera_parameters)
+      : coordinates(std::move(coordinates)),
+        camera_parameters(std::move(camera_parameters)) {
+  }
+
+
+  CameraParameterContents(
+      std::unique_ptr<VariablePrecisionFloatingPointCoordinates>&& coordinates,
       std::tuple<float, float>&& baseline, lightfield_dimension_type rows,
       lightfield_dimension_type columns,
       std::array<camera_parameter, 12>&& camera_parameters)

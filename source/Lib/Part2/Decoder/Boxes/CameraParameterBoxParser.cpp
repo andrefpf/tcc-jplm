@@ -63,16 +63,15 @@ std::size_t determine_the_number_of_views(
 
 std::array<camera_parameter, 12> get_camera_parameters(
     BoxParserHelperBase& box_parser_helper, uint16_t ext_int,
-    std::size_t camera_parameter_bytes) {
-  auto n_views = determine_the_number_of_views(ext_int, camera_parameter_bytes);
-
+    std::size_t n_views) {
   auto camera_parameters = std::array<camera_parameter, 12>();
 
-  for(int i = 0; i < 12; ++i) {
-  	camera_parameters[i] = (ext_int & 1)
-                     ? camera_parameter(box_parser_helper.get_next<float>(n_views))
-                     : camera_parameter(box_parser_helper.get_next<float>());
-    ext_int>>=1;
+  for (int i = 0; i < 12; ++i) {
+    camera_parameters[i] =
+        (ext_int & 1)
+            ? camera_parameter(box_parser_helper.get_next<float>(n_views))
+            : camera_parameter(box_parser_helper.get_next<float>());
+    ext_int >>= 1;
   }
 
   return camera_parameters;
@@ -102,13 +101,14 @@ std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
                                       fp_coordinates->size() -
                                       sizeof(uint16_t) - 2 * sizeof(float);
 
-  const auto camera_parameter_array = get_camera_parameters(box_parser_helper, ext_int, camera_parameter_bytes);
+  auto n_views = determine_the_number_of_views(ext_int, camera_parameter_bytes);
 
-  // auto cam_param_array = CameraParametersArray(
-  //     {baseline_x, baseline_y}, rows, columns, camera_parameters);
+  const auto camera_parameter_array =
+      get_camera_parameters(box_parser_helper, ext_int, n_views);
 
-  // return std::make_unique<CameraParameterContents>(
-  //     fp_coordinates, cam_param_array);
+  auto cam_param_array = CameraParametersArray(
+      baseline, n_views, std::move(camera_parameter_array));
 
-  return nullptr;
+  return std::make_unique<CameraParameterBox>(CameraParameterContents(
+      std::move(fp_coordinates), std::move(cam_param_array)));
 }
