@@ -99,5 +99,6 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<JpegPlenoLightFieldHeaderBoxParser>();
   register_parser<JpegPlenoLightFieldBoxParser>();
   register_parser<ContiguousCodestreamBoxParser>();
+  register_parser<CameraParameterBoxParser>();
   // register_parser<...>();  
 }

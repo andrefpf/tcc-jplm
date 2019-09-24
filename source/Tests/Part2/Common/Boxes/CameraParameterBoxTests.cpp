@@ -162,8 +162,6 @@ TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
 
 
 
-
-
 TEST(CameraParametersArrayTests, InitializationWithExtOnes) {
 	uint16_t ext_int = 0x4d;
 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
