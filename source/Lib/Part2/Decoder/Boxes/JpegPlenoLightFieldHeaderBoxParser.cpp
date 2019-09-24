@@ -98,5 +98,6 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
   auto jpeg_pleno_light_field_header_box =
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
           std::move(jpeg_pleno_light_field_header_contents));
+      
   return jpeg_pleno_light_field_header_box;
 }
