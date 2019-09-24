@@ -63,17 +63,23 @@ class CameraParametersArray {
    */
   std::tuple<float, float> baseline;  //x, y
   /**
-   * \warning Such value is on the CameraParameterBox bitstream!
+   * \warning Such value is not on the CameraParameterBox bitstream!
    */
   lightfield_dimension_type n_view_rows;
   /**
-   * \warning Such value is on the CameraParameterBox bitstream!
+   * \warning Such value is not on the CameraParameterBox bitstream!
    */
   lightfield_dimension_type n_view_columns;
   /**
-   * \warning Such value is on the CameraParameterBox bitstream!
+   * \warning Such value is not on the CameraParameterBox bitstream!
    */
   std::size_t n_views;
+  /**
+   * \brief indicates if the camera parameter array is fully initialized
+   * \details By fully initialized we mean that there is enough data to 
+   * \warning Such value is not on the CameraParameterBox bitstream!
+   */
+  bool fully_initialized;
   std::array<camera_parameter, 12> camera_parameters;
 
  public:
@@ -82,7 +88,64 @@ class CameraParametersArray {
       const lightfield_dimension_type& columns,
       std::array<camera_parameter, 12> camera_parameters)
       : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
-        n_views(rows * columns), camera_parameters(camera_parameters) {
+        n_views(rows * columns), fully_initialized(true),
+        camera_parameters(camera_parameters) {
+    //checking if camera parameters are correctly initialized
+    for (const auto& param : camera_parameters) {
+      if (param.index() == 1) {
+        const auto& vec = std::get<1>(param);
+        if (vec.size() != n_views) {
+          throw CameraParameterBoxExceptions::
+              InvalidCameraParameterArrayVectorSizeException(
+                  n_views, vec.size());
+        }
+      }
+    }
+  }
+
+
+  /**
+   * \brief      Lazzy constructs the object.
+   * 
+   * \details    The actual parameters can only be acessed after the number of rows and columns be set.
+   *
+   * \param[in]  baseline           The baseline
+   * \param[in]  n_views            The total number of views (TxS)
+   * \param[in]  camera_parameters  The camera parameters
+   */
+  CameraParametersArray(const std::tuple<float, float>& baseline,
+      const std::size_t& n_views,
+      const std::array<camera_parameter, 12>& camera_parameters)
+      : baseline(baseline), n_views(n_views), fully_initialized(false),
+        camera_parameters(camera_parameters) {
+    //checking if camera parameters are correctly initialized
+    for (const auto& param : camera_parameters) {
+      if (param.index() == 1) {
+        const auto& vec = std::get<1>(param);
+        if (vec.size() != n_views) {
+          throw CameraParameterBoxExceptions::
+              InvalidCameraParameterArrayVectorSizeException(
+                  n_views, vec.size());
+        }
+      }
+    }
+  }
+
+
+  /**
+   * \brief      Lazzy constructs the object.
+   * 
+   * \details    The actual parameters can only be acessed after the number of rows and columns be set.
+   *
+   * \param[in]  baseline           The baseline
+   * \param[in]  n_views            The total number of views (TxS)
+   * \param[in]  camera_parameters  The camera parameters
+   */
+  CameraParametersArray(const std::tuple<float, float>& baseline,
+      const std::size_t& n_views,
+      std::array<camera_parameter, 12>&& camera_parameters)
+      : baseline(baseline), n_views(n_views), fully_initialized(false),
+        camera_parameters(std::move(camera_parameters)) {
     //checking if camera parameters are correctly initialized
     for (const auto& param : camera_parameters) {
       if (param.index() == 1) {
@@ -109,7 +172,7 @@ class CameraParametersArray {
       lightfield_dimension_type rows, lightfield_dimension_type columns,
       uint16_t ext_int)
       : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
-        n_views(rows * columns),
+        n_views(rows * columns), fully_initialized(true),
         camera_parameters(
             {(ext_int & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
                            : camera_parameter(0.0),
@@ -185,6 +248,24 @@ class CameraParametersArray {
 
 
   /**
+   * \brief      Finishes the initialization of this camera parameters array
+   *
+   * \param[in]  rows     The number of view rows in the light field
+   * \param[in]  columns  The number of view columns in the light field
+   */
+  void initialize_missing_row_and_column(
+      lightfield_dimension_type rows, lightfield_dimension_type columns) {
+    std::size_t n_views_from_param = rows * columns;
+    if (n_views != n_views_from_param) {
+      // throw; Wrong number of views from the specified number of rows and columns
+    }
+    n_view_rows = rows;
+    n_view_columns = columns;
+    fully_initialized = true;
+  }
+
+
+  /**
    * \brief      Compile time getter function for any available camera parameter 
    *
    * \param[in]  position               The position (t, s)
@@ -197,8 +278,12 @@ class CameraParametersArray {
   float get(
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
           position) const {
+    if (!fully_initialized) {
+      // throw ;
+    }
     const auto& [t, s] = position;
-    const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(camera_parameters);
+    const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(
+        camera_parameters);
     if (std::holds_alternative<float>(value)) {
       if constexpr (camera_parameter_type == CameraParameterType::XCC) {
         return std::get<0>(value) + s * std::get<0>(baseline);
@@ -209,6 +294,9 @@ class CameraParametersArray {
       return std::get<0>(value);
     }
     auto linear_position = t * n_view_columns + s;
+    if (linear_position > n_views) {
+      //throw
+    }
     return std::get<1>(value).at(linear_position);
   }
 
