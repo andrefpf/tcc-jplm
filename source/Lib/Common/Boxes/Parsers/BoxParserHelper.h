@@ -162,6 +162,36 @@ class BoxParserHelperBase {
   }
 
 
+  template<typename T, std::size_t n>
+  std::vector<T> get_next() {
+    using namespace BinaryTools;
+    auto ret_vect = std::vector<T>();
+    ret_vect.reserve(n);
+    constexpr auto bytes_to_read = sizeof(T)*n;
+    auto readed_vector_from_stream = managed_stream.get_bytes<bytes_to_read>();
+    std::size_t pos=0;
+    for(auto i=decltype(n){0}; i<n; ++i) {
+      ret_vect.push_back(get_value_from_big_endian_byte_vector<T>(readed_vector_from_stream, pos));
+      pos+=sizeof(T);
+    }
+    return ret_vect;
+  }
+
+
+  template<typename T>
+  std::vector<T> get_next(const std::size_t n) {
+    using namespace BinaryTools;
+    auto ret_vect = std::vector<T>();
+    ret_vect.reserve(n);
+    auto readed_vector_from_stream = managed_stream.get_n_bytes(n);
+    std::size_t pos=0;
+    for(auto i=decltype(n){0}; i<n; ++i) {
+      ret_vect.push_back(get_value_from_big_endian_byte_vector<T>(readed_vector_from_stream, pos));
+      pos+=sizeof(T);
+    }
+    return ret_vect;
+  }
+
 
   /**
    * \brief      Gets the next value with type T from the stream.
