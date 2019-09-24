@@ -2,6 +2,7 @@ function(add_jplm_part2_common_boxes_lib_test TEST_NAME TEST_BIN_NAME TEST_SOURC
 	add_executable(${TEST_BIN_NAME} ${TEST_SOURCE})
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE gtest_main)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_common_boxes)
+	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_part2_common_boxes)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE jplm_common_boxes_generic)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE stream)
 	target_link_libraries(${TEST_BIN_NAME} PRIVATE image)
@@ -24,3 +25,4 @@ add_jplm_part2_common_boxes_lib_test(JpegPlenoLightFieldPredictionParameterBoxTe
 add_jplm_part2_common_boxes_lib_test(JpegPlenoLightFieldViewPredictionResidualDescriptionBoxTests jpeg_pleno_light_field_view_prediction_residual_description_box_tests JpegPlenoLightFieldViewPredictionResidualDescriptionBoxTests.cpp)
 add_jplm_part2_common_boxes_lib_test(CommonCodestreamElementsBoxTests common_codestream_elements_box_tests CommonCodestreamElementsBoxTests.cpp)
 add_jplm_part2_common_boxes_lib_test(JpegPlenoLightFieldViewDescriptionBoxTests jpeg_pleno_light_field_view_description_box_tests JpegPlenoLightFieldViewDescriptionBoxTests.cpp)
+

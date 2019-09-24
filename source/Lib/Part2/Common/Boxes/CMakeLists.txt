@@ -1,0 +1,2 @@
+set(PART2_COMMON_BOX_SOURCES CameraParametersArray.cpp)
+add_library(jplm_part2_common_boxes ${PART2_COMMON_BOX_SOURCES})

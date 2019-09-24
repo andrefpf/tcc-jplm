@@ -161,16 +161,7 @@ TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
 }
 
 
-std::size_t count_ones(uint16_t value) {
-	std::size_t ones = 0;
-	for(auto i = 0; i<16; ++i) {
-		if(value&0x1){
-			ones++;
-		}
-		value>>=1;
-	}
-	return ones;
-}
+
 
 
 TEST(CameraParametersArrayTests, InitializationWithExtOnes) {

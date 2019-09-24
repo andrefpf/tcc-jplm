@@ -51,10 +51,15 @@
 #include <variant>
 #include <vector>
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterType.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
 using camera_parameter = std::variant<float, std::vector<float>>;
+
+
+std::size_t count_ones(uint16_t ext_int);
+
 
 class CameraParametersArray {
  protected:
@@ -245,6 +250,8 @@ class CameraParametersArray {
     }
     return (size * sizeof(float)) + sizeof(uint16_t);
   }
+
+
 
 
   /**
