@@ -55,7 +55,7 @@ std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
 std::size_t determine_the_number_of_views(
     uint16_t ext_int, std::size_t camera_parameter_bytes) {
   auto number_of_ones = count_ones(ext_int);
-  auto number_of_zeros = number_of_ones - 12;
+  auto number_of_zeros = 12-number_of_ones;
   return (camera_parameter_bytes - number_of_zeros * sizeof(float)) /
          (number_of_ones * sizeof(float));
 }
@@ -81,7 +81,7 @@ std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   std::unique_ptr<VariablePrecisionFloatingPointCoordinates> fp_coordinates;
 
-  auto precision_of_coordinates = box_parser_helper.get_next<uint16_t>();  //pp
+  auto precision_of_coordinates = box_parser_helper.get_next<uint8_t>();  //pp
   if ((1 < precision_of_coordinates) || (precision_of_coordinates > 2)) {
     //throw Precision not supported
   }
@@ -101,7 +101,9 @@ std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
                                       fp_coordinates->size() -
                                       sizeof(uint16_t) - 2 * sizeof(float);
 
+
   auto n_views = determine_the_number_of_views(ext_int, camera_parameter_bytes);
+
 
   const auto camera_parameter_array =
       get_camera_parameters(box_parser_helper, ext_int, n_views);

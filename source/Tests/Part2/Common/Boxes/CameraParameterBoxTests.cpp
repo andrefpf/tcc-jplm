@@ -45,184 +45,184 @@
 std::string resources_path = "../resources";
 
 
-TEST(BasicTests, HasCorrectId) {
-	EXPECT_EQ(CameraParameterBox::id, 0x6c666370);
-}
+// TEST(BasicTests, HasCorrectId) {
+// 	EXPECT_EQ(CameraParameterBox::id, 0x6c666370);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatPPis1) {
-	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.get_pp(), 1);
-}
+// TEST(FloatingPointCoordinatesTests, FloatPPis1) {
+// 	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
+// 	EXPECT_EQ(coordinates.get_pp(), 1);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4Plus1) {
-	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.size(), 37);
-}
+// TEST(FloatingPointCoordinatesTests, FloatSizeIs9Times4Plus1) {
+// 	auto coordinates = FloatingPointCoordinates<float>({0,0,0}, {0,0,0}, {1,1,1});
+// 	EXPECT_EQ(coordinates.size(), 37);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatGetOriginPosition) {
-	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
-	const auto& [x, y, z] = coordinates.get_origin_position();
-	EXPECT_EQ(x, 1.0);
-	EXPECT_EQ(y, 2.0);
-	EXPECT_EQ(z, 3.0);
-}
+// TEST(FloatingPointCoordinatesTests, FloatGetOriginPosition) {
+// 	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
+// 	const auto& [x, y, z] = coordinates.get_origin_position();
+// 	EXPECT_EQ(x, 1.0);
+// 	EXPECT_EQ(y, 2.0);
+// 	EXPECT_EQ(z, 3.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatGetRotationAroundAxis) {
-	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
-	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
-	EXPECT_EQ(x, 4.0);
-	EXPECT_EQ(y, 5.0);
-	EXPECT_EQ(z, 6.0);
-}
+// TEST(FloatingPointCoordinatesTests, FloatGetRotationAroundAxis) {
+// 	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,1,1});
+// 	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
+// 	EXPECT_EQ(x, 4.0);
+// 	EXPECT_EQ(y, 5.0);
+// 	EXPECT_EQ(z, 6.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatGetScaling) {
-	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,2,4});
-	const auto& [x, y, z] = coordinates.get_scaling();
-	EXPECT_EQ(x, 1.0);
-	EXPECT_EQ(y, 2.0);
-	EXPECT_EQ(z, 4.0);
-}
+// TEST(FloatingPointCoordinatesTests, FloatGetScaling) {
+// 	auto coordinates = FloatingPointCoordinates<float>({1,2,3}, {4,5,6}, {1,2,4});
+// 	const auto& [x, y, z] = coordinates.get_scaling();
+// 	EXPECT_EQ(x, 1.0);
+// 	EXPECT_EQ(y, 2.0);
+// 	EXPECT_EQ(z, 4.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, DoublePPis2) {
-	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.get_pp(), 2);
-}
+// TEST(FloatingPointCoordinatesTests, DoublePPis2) {
+// 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
+// 	EXPECT_EQ(coordinates.get_pp(), 2);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8Plus1) {
-	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
-	EXPECT_EQ(coordinates.size(), 73);
-}
+// TEST(FloatingPointCoordinatesTests, DoubleSizeIs9Times8Plus1) {
+// 	auto coordinates = FloatingPointCoordinates<double>({0,0,0}, {0,0,0}, {1,1,1});
+// 	EXPECT_EQ(coordinates.size(), 73);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, DoubleGetOriginPosition) {
-	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
-	const auto& [x, y, z] = coordinates.get_origin_position();
-	EXPECT_EQ(x, 1.0);
-	EXPECT_EQ(y, 2.0);
-	EXPECT_EQ(z, 3.0);
-}
+// TEST(FloatingPointCoordinatesTests, DoubleGetOriginPosition) {
+// 	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
+// 	const auto& [x, y, z] = coordinates.get_origin_position();
+// 	EXPECT_EQ(x, 1.0);
+// 	EXPECT_EQ(y, 2.0);
+// 	EXPECT_EQ(z, 3.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, DoubleGetRotationAroundAxis) {
-	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
-	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
-	EXPECT_EQ(x, 4.0);
-	EXPECT_EQ(y, 5.0);
-	EXPECT_EQ(z, 6.0);
-}
+// TEST(FloatingPointCoordinatesTests, DoubleGetRotationAroundAxis) {
+// 	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,1,1});
+// 	const auto& [x, y, z] = coordinates.get_rotation_around_axis();
+// 	EXPECT_EQ(x, 4.0);
+// 	EXPECT_EQ(y, 5.0);
+// 	EXPECT_EQ(z, 6.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, DoubleGetScaling) {
-	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,2,4});
-	const auto& [x, y, z] = coordinates.get_scaling();
-	EXPECT_EQ(x, 1.0);
-	EXPECT_EQ(y, 2.0);
-	EXPECT_EQ(z, 4.0);
-}
+// TEST(FloatingPointCoordinatesTests, DoubleGetScaling) {
+// 	auto coordinates = FloatingPointCoordinates<double>({1,2,3}, {4,5,6}, {1,2,4});
+// 	const auto& [x, y, z] = coordinates.get_scaling();
+// 	EXPECT_EQ(x, 1.0);
+// 	EXPECT_EQ(y, 2.0);
+// 	EXPECT_EQ(z, 4.0);
+// }
 
 
-TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
-	auto coordinates = FloatingPointCoordinates<float>({12,2,3}, {4,5,6}, {1,2,4});
-	const auto& [x, y, z] = coordinates.get_origin_position();
-	auto bytes = coordinates.get_bytes();
-	// the 1 is necessary because the first byte represents pp;
-	const auto& [a, b, c] = BinaryTools::get_tuple_from_big_endian_byte_vector<float, float, float>(bytes, 1);
-	EXPECT_EQ(x, a);
-	EXPECT_EQ(y, b);
-	EXPECT_EQ(z, c);
+// TEST(FloatingPointCoordinatesTests, FloatGetCoordinatesFromBytes) {
+// 	auto coordinates = FloatingPointCoordinates<float>({12,2,3}, {4,5,6}, {1,2,4});
+// 	const auto& [x, y, z] = coordinates.get_origin_position();
+// 	auto bytes = coordinates.get_bytes();
+// 	// the 1 is necessary because the first byte represents pp;
+// 	const auto& [a, b, c] = BinaryTools::get_tuple_from_big_endian_byte_vector<float, float, float>(bytes, 1);
+// 	EXPECT_EQ(x, a);
+// 	EXPECT_EQ(y, b);
+// 	EXPECT_EQ(z, c);
 
-	// auto count = 0;
-	// for(const auto& byte: bytes) {
-	// 	std::cout << std::to_integer<int>(byte) << " ";
-	// 	++count;
-	// 	if(count == 1)
-	// 		count+=3;
-	// 	if(count%4 == 0)
-	// 		std::cout << std::endl;
-	// }
-}
-
-
-TEST(CameraParametersArrayTests, InitializationWithExtInt) {
-	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
-}
+// 	// auto count = 0;
+// 	// for(const auto& byte: bytes) {
+// 	// 	std::cout << std::to_integer<int>(byte) << " ";
+// 	// 	++count;
+// 	// 	if(count == 1)
+// 	// 		count+=3;
+// 	// 	if(count%4 == 0)
+// 	// 		std::cout << std::endl;
+// 	// }
+// }
 
 
-TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
-	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x2);
-	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
-}
+// TEST(CameraParametersArrayTests, InitializationWithExtInt) {
+// 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x1);
+// 	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
+// }
+
+
+// TEST(CameraParametersArrayTests, InitializationWithExtInt2) {
+// 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, 0x2);
+// 	EXPECT_EQ(camera_parameter_array.size(), ((13*13)+11+2)*sizeof(float)+2);
+// }
 
 
 
-TEST(CameraParametersArrayTests, InitializationWithExtOnes) {
-	uint16_t ext_int = 0x4d;
-	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
-	auto ones = count_ones(ext_int);
-	EXPECT_EQ(ones, 4);
-	EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
-}
+// TEST(CameraParametersArrayTests, InitializationWithExtOnes) {
+// 	uint16_t ext_int = 0x4d;
+// 	auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+// 	auto ones = count_ones(ext_int);
+// 	EXPECT_EQ(ones, 4);
+// 	EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
+// }
 
 
-class ExtIntTest : public ::testing::TestWithParam<int> {
- public:
-  ExtIntTest() = default;
-  ~ExtIntTest() = default;
-};
+// class ExtIntTest : public ::testing::TestWithParam<int> {
+//  public:
+//   ExtIntTest() = default;
+//   ~ExtIntTest() = default;
+// };
 
 
-INSTANTIATE_TEST_SUITE_P(AUTO_GEN_OH, ExtIntTest,
-    ::testing::Range(
-        0, 4095, 1));
+// INSTANTIATE_TEST_SUITE_P(AUTO_GEN_OH, ExtIntTest,
+//     ::testing::Range(
+//         0, 4095, 1));
 
 
-TEST_P(ExtIntTest, GetExtIntIsEqualItsInitialization) {
-  uint16_t ext_int = static_cast<uint16_t>(GetParam());
-  auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
-  EXPECT_EQ(ext_int, camera_parameter_array.get_ext_int_bits());
-}
+// TEST_P(ExtIntTest, GetExtIntIsEqualItsInitialization) {
+//   uint16_t ext_int = static_cast<uint16_t>(GetParam());
+//   auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+//   EXPECT_EQ(ext_int, camera_parameter_array.get_ext_int_bits());
+// }
 
 
-TEST_P(ExtIntTest, GetCorrectSize) {
-  uint16_t ext_int = static_cast<uint16_t>(GetParam());
-  auto ones = count_ones(ext_int);
-  auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
-  EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
-}
+// TEST_P(ExtIntTest, GetCorrectSize) {
+//   uint16_t ext_int = static_cast<uint16_t>(GetParam());
+//   auto ones = count_ones(ext_int);
+//   auto camera_parameter_array = CameraParametersArray({0.0,0.0}, 13, 13, ext_int);
+//   EXPECT_EQ(camera_parameter_array.size(), (((13*13)*(ones))+(12-ones)+2)*sizeof(float)+2);
+// }
 
 
-TEST(CameraParametersArrayBaselineTests, CorrectBaselineX) {
-	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.get_baseline_x(), 1.0);
-}
+// TEST(CameraParametersArrayBaselineTests, CorrectBaselineX) {
+// 	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
+// 	EXPECT_EQ(camera_parameter_array.get_baseline_x(), 1.0);
+// }
 
 
-TEST(CameraParametersArrayBaselineTests, CorrectBaselineY) {
-	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.get_baseline_y(), 2.0);
-}
+// TEST(CameraParametersArrayBaselineTests, CorrectBaselineY) {
+// 	auto camera_parameter_array = CameraParametersArray({1.0,2.0}, 13, 13, 0x1);
+// 	EXPECT_EQ(camera_parameter_array.get_baseline_y(), 2.0);
+// }
 
 
-TEST(CameraParametersArrayBaselineTests, CorrectBaselineTuple) {
-	auto baseline = std::tuple<float, float>(1.0,2.0);
-	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.get_baseline(), baseline);
-}
+// TEST(CameraParametersArrayBaselineTests, CorrectBaselineTuple) {
+// 	auto baseline = std::tuple<float, float>(1.0,2.0);
+// 	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
+// 	EXPECT_EQ(camera_parameter_array.get_baseline(), baseline);
+// }
 
 
-TEST(CameraParametersArrayBaselineTests, GetsTheYCCUsingBaselineAndTValue) {
-	auto baseline = std::tuple<float, float>(1.0,2.0);
-	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
-	EXPECT_EQ(camera_parameter_array.get<CameraParameterType::YCC>({11, 10}), 22.0);
-}
+// TEST(CameraParametersArrayBaselineTests, GetsTheYCCUsingBaselineAndTValue) {
+// 	auto baseline = std::tuple<float, float>(1.0,2.0);
+// 	auto camera_parameter_array = CameraParametersArray(baseline, 13, 13, 0x1);
+// 	EXPECT_EQ(camera_parameter_array.get<CameraParameterType::YCC>({11, 10}), 22.0);
+// }
 
 
 

@@ -52,17 +52,19 @@ std::string resources_path = "../resources";
 
 
 
-// TEST(BasicTest, ReadsAllDataFromStream) {
-//   std::string filename(
-//       resources_path + "/boxes/jpeg_pleno_box_with_no_codestream.bin");
-//   std::ifstream if_stream(filename, std::ifstream::binary);
-//   auto box =
-//       BoxParserRegistry::get_instance().parse<JpegPlenoLightFieldBox>(
-//           ManagedStream(if_stream, std::filesystem::file_size(filename)));
+TEST(BasicTest, ReadsAllDataFromStream) {
+  std::string filename(
+      resources_path + "/boxes/camera_parameters_box.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+  auto box =
+      BoxParserRegistry::get_instance().parse<CameraParameterBox>(
+          ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
-//   EXPECT_EQ(if_stream.tellg(), std::filesystem::file_size(filename));
-// }
-  
+  EXPECT_EQ(if_stream.tellg(), std::filesystem::file_size(filename));
+}
+
+
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);

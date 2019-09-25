@@ -183,7 +183,7 @@ class BoxParserHelperBase {
     using namespace BinaryTools;
     auto ret_vect = std::vector<T>();
     ret_vect.reserve(n);
-    auto readed_vector_from_stream = managed_stream.get_n_bytes(n);
+    auto readed_vector_from_stream = managed_stream.get_n_bytes(n*sizeof(T));
     std::size_t pos=0;
     for(auto i=decltype(n){0}; i<n; ++i) {
       ret_vect.push_back(get_value_from_big_endian_byte_vector<T>(readed_vector_from_stream, pos));
