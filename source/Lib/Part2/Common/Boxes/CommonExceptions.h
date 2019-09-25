@@ -43,6 +43,7 @@
 
 #include <exception>
 #include <string>
+#include <tuple>
 
 namespace CameraParameterBoxExceptions {
 class InvalidCameraParameterArrayVectorSizeException : public std::exception {
@@ -58,6 +59,8 @@ class InvalidCameraParameterArrayVectorSizeException : public std::exception {
                 std::to_string(obtained_size) +
                 std::string(" were available. ")) {
   }
+
+  
   const char* what() const noexcept override {
     return message.c_str();
   }
@@ -92,6 +95,31 @@ class InvalidLazzyInitializationException : public std::exception {
                 std::string(" (columns). This gives a total of ") +
                 std::to_string(rows * columns) + std::string(" views.")) {
   }
+
+
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
+
+class InvalidCoordinateException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  InvalidCoordinateException(const uint32_t rows, const uint32_t columns,
+      const std::tuple<uint32_t, uint16_t>& position)
+      : message(std::string("Invalid position exception.") +
+                std::string("Trying to access position (") +
+                std::to_string(std::get<0>(position)) +
+                std::to_string(std::get<1>(position)) +
+                std::string("). However, there are only ") +
+                std::to_string(rows) + std::string(" rows and ") +
+                std::to_string(columns) + std::string(" columns available.")) {
+  }
+
+
   const char* what() const noexcept override {
     return message.c_str();
   }

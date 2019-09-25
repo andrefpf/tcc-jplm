@@ -50,8 +50,8 @@
 #include <tuple>  //std::tie
 #include <variant>
 #include <vector>
-#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/CameraParameterType.h"
+#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
@@ -252,8 +252,6 @@ class CameraParametersArray {
   }
 
 
-
-
   /**
    * \brief      Finishes the initialization of this camera parameters array
    *
@@ -264,7 +262,8 @@ class CameraParametersArray {
       lightfield_dimension_type rows, lightfield_dimension_type columns) {
     std::size_t n_views_from_param = rows * columns;
     if (n_views != n_views_from_param) {
-      throw CameraParameterBoxExceptions::InvalidLazzyInitializationException(rows, columns, n_views);
+      throw CameraParameterBoxExceptions::InvalidLazzyInitializationException(
+          rows, columns, n_views);
     }
     n_view_rows = rows;
     n_view_columns = columns;
@@ -286,9 +285,14 @@ class CameraParametersArray {
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
           position) const {
     if (!fully_initialized) {
-      throw CameraParameterBoxExceptions::MissingCompleteInitializationException();
+      throw CameraParameterBoxExceptions::
+          MissingCompleteInitializationException();
     }
     const auto& [t, s] = position;
+    if ((t >= n_view_rows) || (s >= n_view_columns)) {
+      throw CameraParameterBoxExceptions::InvalidCoordinateException(
+          n_view_rows, n_view_columns, position);
+    }
     const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(
         camera_parameters);
     if (std::holds_alternative<float>(value)) {
@@ -301,9 +305,6 @@ class CameraParametersArray {
       return std::get<0>(value);
     }
     auto linear_position = t * n_view_columns + s;
-    if (linear_position > n_views) {
-      //throw
-    }
     return std::get<1>(value).at(linear_position);
   }
 

@@ -161,10 +161,36 @@ TEST_F(ParsingOfCameraParamAlone, GetsU0) {
   auto rows = SimpleCameraParameterContentsTest<float>::rows;
   auto columns = SimpleCameraParameterContentsTest<float>::columns;
   camera_parameters.initialize_missing_row_and_column(rows, columns);
-  EXPECT_FLOAT_EQ(
-      camera_parameters.get<CameraParameterType::U0>({1, 2}),
+  EXPECT_FLOAT_EQ(camera_parameters.get<CameraParameterType::U0>({1, 2}),
       SimpleCameraParameterContentsTest<float>::u0);
 }
+
+
+TEST_F(
+    ParsingOfCameraParamAlone, ThrowsExceptionWhenAccessingInvalidTPosition) {
+  auto box = parse_box(resources_path);
+  auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  auto rows = SimpleCameraParameterContentsTest<float>::rows;
+  auto columns = SimpleCameraParameterContentsTest<float>::columns;
+  camera_parameters.initialize_missing_row_and_column(rows, columns);
+  EXPECT_THROW(camera_parameters.get<CameraParameterType::U0>({3, 2}),
+      CameraParameterBoxExceptions::InvalidCoordinateException);
+}
+
+
+TEST_F(
+    ParsingOfCameraParamAlone, ThrowsExceptionWhenAccessingInvalidSPosition) {
+  auto box = parse_box(resources_path);
+  auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  auto rows = SimpleCameraParameterContentsTest<float>::rows;
+  auto columns = SimpleCameraParameterContentsTest<float>::columns;
+  camera_parameters.initialize_missing_row_and_column(rows, columns);
+  EXPECT_THROW(camera_parameters.get<CameraParameterType::U0>({2, 4}),
+      CameraParameterBoxExceptions::InvalidCoordinateException);
+}
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
