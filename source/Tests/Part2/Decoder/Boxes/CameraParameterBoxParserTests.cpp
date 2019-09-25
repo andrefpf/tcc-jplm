@@ -45,43 +45,39 @@
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part2/Decoder/Boxes/CameraParameterBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
-#include "gtest/gtest.h"
 #include "Tests/Part2/Common/Boxes/CameraParameterBoxTests.h"
+#include "gtest/gtest.h"
 
 std::string resources_path = "../resources";
 
 
-
 TEST(BasicTest, ReadsAllDataFromStream) {
-  std::string filename(
-      resources_path + "/boxes/camera_parameters_box.bin");
+  std::string filename(resources_path + "/boxes/camera_parameters_box.bin");
   std::ifstream if_stream(filename, std::ifstream::binary);
-  auto box =
-      BoxParserRegistry::get_instance().parse<CameraParameterBox>(
-          ManagedStream(if_stream, std::filesystem::file_size(filename)));
+  auto box = BoxParserRegistry::get_instance().parse<CameraParameterBox>(
+      ManagedStream(if_stream, std::filesystem::file_size(filename)));
 
   EXPECT_EQ(if_stream.tellg(), std::filesystem::file_size(filename));
 }
 
 
-
 struct ParsingOfCameraParamAlone : public testing::Test {
-public:
-	std::unique_ptr<CameraParameterBox> parse_box(const std::string& res_path) {
-		auto filename = std::string(res_path + "/boxes/camera_parameters_box.bin");
-		std::ifstream if_stream(filename, std::ifstream::binary);
-		return BoxParserRegistry::get_instance().parse<CameraParameterBox>(
-          ManagedStream(if_stream, std::filesystem::file_size(filename)));
-	}
+ public:
+  std::unique_ptr<CameraParameterBox> parse_box(const std::string& res_path) {
+    auto filename = std::string(res_path + "/boxes/camera_parameters_box.bin");
+    std::ifstream if_stream(filename, std::ifstream::binary);
+    return BoxParserRegistry::get_instance().parse<CameraParameterBox>(
+        ManagedStream(if_stream, std::filesystem::file_size(filename)));
+  }
 };
 
 
 TEST_F(ParsingOfCameraParamAlone, GetsOriginPosition) {
-	auto box = parse_box(resources_path);
-	const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
+  auto box = parse_box(resources_path);
+  const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
   const auto& cast_coordinates =
       static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-  
+
   const auto& [a, b, c] = cast_coordinates.get_origin_position();
   EXPECT_FLOAT_EQ(a, 1.5);
   EXPECT_FLOAT_EQ(b, 2.25);
@@ -94,7 +90,7 @@ TEST_F(ParsingOfCameraParamAlone, GetsRotationAroundAxis) {
   const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
   const auto& cast_coordinates =
       static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-  
+
   const auto& [a, b, c] = cast_coordinates.get_rotation_around_axis();
   EXPECT_FLOAT_EQ(a, 0.0);
   EXPECT_FLOAT_EQ(b, 3.1415);
@@ -107,7 +103,7 @@ TEST_F(ParsingOfCameraParamAlone, GetsScaling) {
   const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
   const auto& cast_coordinates =
       static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-  
+
   const auto& [a, b, c] = cast_coordinates.get_scaling();
   EXPECT_FLOAT_EQ(a, 1.0);
   EXPECT_FLOAT_EQ(b, 0.5);
@@ -117,7 +113,8 @@ TEST_F(ParsingOfCameraParamAlone, GetsScaling) {
 
 TEST_F(ParsingOfCameraParamAlone, GestBaseline) {
   auto box = parse_box(resources_path);
-  const auto& camera_parameters = box->get_ref_to_contents().get_ref_to_camera_parameters();
+  const auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
   const auto& [x, y] = camera_parameters.get_baseline();
   EXPECT_FLOAT_EQ(x, SimpleCameraParameterContentsTest<float>::baseline_x);
   EXPECT_FLOAT_EQ(y, SimpleCameraParameterContentsTest<float>::baseline_y);
@@ -126,8 +123,21 @@ TEST_F(ParsingOfCameraParamAlone, GestBaseline) {
 
 TEST_F(ParsingOfCameraParamAlone, MustThrowIfNotInitializedAndGettingAParam) {
   auto box = parse_box(resources_path);
-  const auto& camera_parameters = box->get_ref_to_contents().get_ref_to_camera_parameters();
-  EXPECT_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0,0}), CameraParameterBoxExceptions::MissingCompleteInitializationException);
+  const auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  EXPECT_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0, 0}),
+      CameraParameterBoxExceptions::MissingCompleteInitializationException);
+}
+
+
+
+
+TEST_F(ParsingOfCameraParamAlone, ShouldNotThrowIfInitializedAndGettingAParam) {
+  auto box = parse_box(resources_path);
+  auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  camera_parameters.initialize_missing_row_and_column(4,3);
+  EXPECT_NO_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0, 0}));
 }
 
 
