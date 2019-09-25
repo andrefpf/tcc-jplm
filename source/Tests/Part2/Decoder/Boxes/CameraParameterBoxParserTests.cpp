@@ -102,6 +102,19 @@ TEST_F(ParsingOfCameraParamAlone, GetsRotationAroundAxis) {
 }
 
 
+TEST_F(ParsingOfCameraParamAlone, GetsScaling) {
+  auto box = parse_box(resources_path);
+  const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+  
+  const auto& [a, b, c] = cast_coordinates.get_scaling();
+  EXPECT_FLOAT_EQ(a, 1.0);
+  EXPECT_FLOAT_EQ(b, 0.5);
+  EXPECT_FLOAT_EQ(c, 2.0);
+}
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
