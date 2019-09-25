@@ -81,7 +81,24 @@ TEST_F(ParsingOfCameraParamAlone, GetsOriginPosition) {
 	const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
   const auto& cast_coordinates =
       static_cast<const FloatingPointCoordinates<float>&>(coordinates);
-	EXPECT_EQ(cast_coordinates.get_origin_position(), std::make_tuple(1.5, 2.25, 3.125));
+  
+  const auto& [a, b, c] = cast_coordinates.get_origin_position();
+  EXPECT_FLOAT_EQ(a, 1.5);
+  EXPECT_FLOAT_EQ(b, 2.25);
+  EXPECT_FLOAT_EQ(c, 3.125);
+}
+
+
+TEST_F(ParsingOfCameraParamAlone, GetsRotationAroundAxis) {
+  auto box = parse_box(resources_path);
+  const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+  
+  const auto& [a, b, c] = cast_coordinates.get_rotation_around_axis();
+  EXPECT_FLOAT_EQ(a, 0.0);
+  EXPECT_FLOAT_EQ(b, 3.1415);
+  EXPECT_FLOAT_EQ(c, 3.125);
 }
 
 
