@@ -41,7 +41,6 @@
 
 #include "JpegPlenoLightFieldHeaderBoxParser.h"
 
-
 std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   //! [Parsing a box within a super box]
@@ -76,9 +75,17 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     //! \todo throw (at least one colour specification box must be present)
   }
 
+  //!\todo Change the implementation to allow some boxes to be anywhere within th
+  // the lightfield header box
+
   auto channel_definition_box =
       box_parser_helper.has_data_available()
           ? box_parser.parse<ChannelDefinitionBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;
+
+  auto camera_parameter_box = box_parser_helper.has_data_available()
+          ? box_parser.parse<CameraParameterBox, false>(
                 box_parser_helper.get_remaining_stream())
           : nullptr;
 
@@ -90,5 +97,6 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
   auto jpeg_pleno_light_field_header_box =
       std::make_unique<JpegPlenoLightFieldHeaderBox>(
           std::move(jpeg_pleno_light_field_header_contents));
+      
   return jpeg_pleno_light_field_header_box;
 }

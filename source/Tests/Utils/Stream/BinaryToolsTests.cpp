@@ -113,7 +113,116 @@ TEST(ValueFromByteVector, FourBytesOtherValue) {
   EXPECT_EQ(value, 65535);
 }
 
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectSizeFor3Uint8) {
+  auto tuple = std::tuple<uint8_t, uint8_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(bytes.size(), 3);
+}
+
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectSizeFor2Uint8And1Uint16) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(bytes.size(), 4);
+}
+
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectOrderUint8) {
+  auto tuple = std::tuple<uint8_t, uint8_t, uint8_t>(255,0,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 255);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 0);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 128);
+}
+
+
+TEST(ValueFromByteVector, ExtractsBytesFromTupleCorrectOrderUint8Uint16Uint8) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,1421,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 255);
+  std::rotate(bytes.begin(), bytes.begin()+1, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes), 1421);
+  std::rotate(bytes.begin(), bytes.begin()+2, bytes.end());
+  EXPECT_EQ(BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes), 128);
+}
+
+
+TEST(ValueFromByteVector, CanReadToATupple) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,1421,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  const auto& parsed_tuple = BinaryTools::get_tuple_from_big_endian_byte_vector<uint8_t, uint16_t, uint8_t>(bytes);
+  EXPECT_EQ(tuple, parsed_tuple);
+}
+
+
+TEST(ValueFromByteVector, CanReadToATiedTupple) {
+  auto tuple = std::tuple<uint8_t, uint16_t, uint8_t>(255,1421,128);
+  auto bytes = std::vector<std::byte>();
+  BinaryTools::append_big_endian_bytes(bytes, tuple);
+  uint8_t x;
+  uint16_t y;
+  uint8_t z;
+
+  std::tie(x, y, z) = BinaryTools::get_tuple_from_big_endian_byte_vector<uint8_t, uint16_t, uint8_t>(bytes);
+
+  EXPECT_EQ(x, std::get<0>(tuple));
+  EXPECT_EQ(y, std::get<1>(tuple));
+  EXPECT_EQ(z, std::get<2>(tuple));
+}
+
+
+TEST(CatVectors, ConcatenateByteVectorsCorrectFinalSize) {
+  auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
+  auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
+  BinaryTools::byte_vector_cat(vec_a, vec_b);
+  EXPECT_EQ(vec_a.size(), 5);
+}
+
+
+TEST(CatVectors, ConcatenateByteVectorsCorrectValuesInTheVector) {
+  auto vec_a = std::vector<std::byte>({std::byte{1}, std::byte{2}, std::byte{3}});
+  auto vec_b = std::vector<std::byte>({std::byte{4}, std::byte{5}});
+  BinaryTools::byte_vector_cat(vec_a, vec_b);
+  EXPECT_EQ(vec_a[0], std::byte{1});
+  EXPECT_EQ(vec_a[1], std::byte{2});
+  EXPECT_EQ(vec_a[2], std::byte{3});
+  EXPECT_EQ(vec_a[3], std::byte{4});
+  EXPECT_EQ(vec_a[4], std::byte{5});
+}
+
+
+TEST(Vectors, GenerateVectorofBytesFromAnUint16VectorGetsCorrectVectorSize) {
+  auto vec_a = std::vector<uint16_t>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(uint16_t));
+}
+
+
+TEST(Vectors, GenerateVectorofBytesFromAFloatVectorGetsCorrectVectorSize) {
+  auto vec_a = std::vector<float>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(float));
+}
+
+
+TEST(Vectors, GenerateVectorofBytesFromAnUint8VectorGetsCorrectBytes) {
+  auto vec_a = std::vector<uint16_t>({1,2,3,4});
+  auto bytes_vector = BinaryTools::get_big_endian_bytes_vector_from_vector(vec_a);
+  EXPECT_EQ(bytes_vector.size(), vec_a.size()*sizeof(uint16_t));
+}
+
+
 ///! \todo need to test for exceptions
+
+
 
 
 int main(int argc, char *argv[]) {

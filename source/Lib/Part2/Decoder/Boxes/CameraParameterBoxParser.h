@@ -31,24 +31,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CalibrationBoxTests.cpp
+/** \file     CameraParameterBoxParser.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-26
+ *  \date     2019-09-20
  */
 
-
-#include <iostream>
-#include "Lib/Part2/Common/Boxes/CalibrationBox.h"
-#include "gtest/gtest.h"
-
-TEST(BasicTests, HasCorrectId) {
-	EXPECT_EQ(CalibrationBox::id, 0x6c666361);
-}
+#ifndef JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__
+#define JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__
 
 
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
+#include <memory>
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterBox.h"
+
+namespace JPLMBoxParser {
+class CameraParameterBoxParser {
+ public:
+  using ParsingBox = CameraParameterBox;
+  static std::unique_ptr<Box> parse(
+      BoxParserHelperBase& box_parser_helper);  //box parser helper
+};
+}  // namespace JPLMBoxParser
+
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_BOXES_CAMERAPARAMETERBOXPARSER_H__ */

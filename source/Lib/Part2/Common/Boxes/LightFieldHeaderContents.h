@@ -44,8 +44,8 @@
 #include <tuple>  //std::tie
 #include "CompressionTypeLightField.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 using colour_space_unknown_flag_type = uint8_t;
 
@@ -65,13 +65,15 @@ enum class IntelectualPropertyFlag : intelectual_property_flag_type {
 };
 
 
+using lightfield_dimension_type = uint32_t;
+
 class LightFieldHeaderContents : public InMemoryDBox {
  protected:
   // uint32_t rows;  //T number of rows of the subaperture view array
   // uint32_t columns;  //S number of columns of the subaperture view array
   // uint32_t height;  //V subaperture view height
   // uint32_t width;  //U subaperture view width
-  LightfieldDimension<uint32_t> light_field_dimension;
+  LightfieldDimension<lightfield_dimension_type> light_field_dimension;
   uint16_t nc;  // number of components
   uint8_t bpc;  // bits per component
   //! \todo bits per component has a different synthax
@@ -79,9 +81,9 @@ class LightFieldHeaderContents : public InMemoryDBox {
   ColourSpaceUnknownFlag unkc;  //
   IntelectualPropertyFlag ipr;  //
  public:
-  LightFieldHeaderContents(
-      const LightfieldDimension<uint32_t>& light_field_dimension, uint16_t nc,
-      uint8_t bpc, CompressionTypeLightField c,
+  LightFieldHeaderContents(const LightfieldDimension<lightfield_dimension_type>&
+                               light_field_dimension,
+      uint16_t nc, uint8_t bpc, CompressionTypeLightField c,
       ColourSpaceUnknownFlag unkc = ColourSpaceUnknownFlag::known,
       IntelectualPropertyFlag ipr =
           IntelectualPropertyFlag::has_no_rights_information)
@@ -90,8 +92,10 @@ class LightFieldHeaderContents : public InMemoryDBox {
   }
 
 
-  LightFieldHeaderContents(uint32_t rows, uint32_t columns, uint32_t height,
-      uint32_t width, uint16_t nc, uint8_t bpc, CompressionTypeLightField c,
+  LightFieldHeaderContents(lightfield_dimension_type rows,
+      lightfield_dimension_type columns, lightfield_dimension_type height,
+      lightfield_dimension_type width, uint16_t nc, uint8_t bpc,
+      CompressionTypeLightField c,
       ColourSpaceUnknownFlag unkc = ColourSpaceUnknownFlag::known,
       IntelectualPropertyFlag ipr =
           IntelectualPropertyFlag::has_no_rights_information)
@@ -188,8 +192,6 @@ class LightFieldHeaderContents : public InMemoryDBox {
     return bytes;
   }
 };
-
-
 
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_LIGHTFIELDHEADERCONTENTS_H__ */

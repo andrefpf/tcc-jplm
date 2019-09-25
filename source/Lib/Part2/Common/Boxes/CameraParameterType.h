@@ -31,40 +31,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BinaryTools.cpp
+/** \file     CameraParameterType.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-30
+ *  \date     2019-09-20
  */
 
-#include "BinaryTools.h"
 
-uint8_t BinaryTools::swap_endianess(const uint8_t in) {
-  return in;
-}
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
 
+#include <cstdint>
 
-uint16_t BinaryTools::swap_endianess(const uint16_t in) {
-  return ((in >> 8) & 0x00FF) | ((in << 8) & 0xFF00);
-}
+/**
+ * \brief      Enumeration of Camera Parameter Types
+ * \note    This enum is not part of the standard.
+ *             It is used to access the various camera parameter types within the 
+ *             CameraParameterBoxContents;
+ */
+enum class CameraParameterType : uint8_t {
+  XCC = 0,  //!< Camera centre along XL coordinate axis
+  YCC = 1,  //!< Camera centre along YL coordinate axis
+  ZCC = 2,  //!< Camera centre along ZL coordinate axis
+  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
+  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
+  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
+  F = 6,  //!< Focal lenght (mm)
+  SW = 7,  //!< Sensor width (mm)
+  SH = 8,  //!< Sensor width (mm)
+  SK = 9,  //!< Sensor skew
+  U0 = 10,  //!< Horizontal principle point offset
+  V0 = 11  //!< Vertical principle point offset
+};
 
-
-uint32_t BinaryTools::swap_endianess(const uint32_t in) {
-  return ((in >> 24) & 0x000000FF) | ((in >> 8)  & 0x0000FF00) |
-         ((in << 8)  & 0x00FF0000) | ((in << 24) & 0xFF000000);
-}
-
-
-uint64_t BinaryTools::swap_endianess(const uint64_t in) {
-  return ((in >> 56) & 0x00000000000000FF) | ((in >> 40) & 0x000000000000FF00) |
-         ((in >> 24) & 0x0000000000FF0000) | ((in >> 8)  & 0x00000000FF000000) |
-         ((in << 8)  & 0x000000FF00000000) | ((in << 24) & 0x0000FF0000000000) |
-         ((in << 40) & 0x00FF000000000000) | ((in << 56) & 0xFF00000000000000);
-}
-
-std::vector<std::byte>& BinaryTools::byte_vector_cat(
-    std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b) {
-  vec_a.insert(vec_a.end(), vec_b.begin(), vec_b.end());
-  return vec_a;
-}
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */

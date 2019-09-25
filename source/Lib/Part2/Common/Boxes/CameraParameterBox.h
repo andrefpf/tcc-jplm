@@ -31,24 +31,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CalibrationBox.h
+/** \file     CameraParameterBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-06
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERBOX_H__
+#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERBOX_H__
 
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/CalibrationContents.h"
+#include "Lib/Part2/Common/Boxes/CameraParameterContents.h"
 
 /**
  * \ingroup DefinedBoxes
  * \brief Definition of the Calibration Box
- * \tparam CalibrationContents
+ * \tparam CameraParameterContents
  */
-using CalibrationBox = GenericBox<0x6c666361, CalibrationContents>;
+using CameraParameterBox = GenericBox<0x6c666370, CameraParameterContents>;
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CALIBRATIONBOX_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERBOX_H__ */

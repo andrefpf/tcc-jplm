@@ -96,6 +96,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
 # target_link_libraries(jplm_common_boxes_parsers jplm_part1_boxes_decoder)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/)
