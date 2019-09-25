@@ -130,14 +130,20 @@ TEST_F(ParsingOfCameraParamAlone, MustThrowIfNotInitializedAndGettingAParam) {
 }
 
 
-
-
 TEST_F(ParsingOfCameraParamAlone, ShouldNotThrowIfInitializedAndGettingAParam) {
   auto box = parse_box(resources_path);
   auto& camera_parameters =
       box->get_ref_to_contents().get_ref_to_camera_parameters();
   camera_parameters.initialize_missing_row_and_column(4,3);
   EXPECT_NO_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0, 0}));
+}
+
+
+TEST_F(ParsingOfCameraParamAlone, MustThrowIfInitializedWithInvalidValues) {
+  auto box = parse_box(resources_path);
+  auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  EXPECT_THROW(camera_parameters.initialize_missing_row_and_column(4,4),CameraParameterBoxExceptions::InvalidLazzyInitializationException);
 }
 
 

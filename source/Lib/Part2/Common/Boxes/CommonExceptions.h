@@ -63,6 +63,7 @@ class InvalidCameraParameterArrayVectorSizeException : public std::exception {
   }
 };
 
+
 class MissingCompleteInitializationException : public std::exception {
  public:
   const char* what() const noexcept override {
@@ -70,6 +71,29 @@ class MissingCompleteInitializationException : public std::exception {
            "Parameter Box. To get the desired data it is necessary to provide "
            "light field data throught initialize_missing_row_and_column "
            "method.";
+  }
+};
+
+
+class InvalidLazzyInitializationException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  InvalidLazzyInitializationException(
+      const uint32_t rows, const uint32_t columns, const std::size_t n_views)
+      : message(std::string("Camera Parameters array was partially initialized "
+                            "considering a total of ") +
+                std::to_string(n_views) +
+                std::string(" views. However, the missing rows and columns "
+                            "were initialized as ") +
+                std::to_string(rows) + std::string(" (rows) and ") +
+                std::to_string(columns) +
+                std::string(" (columns). This gives a total of ") +
+                std::to_string(rows * columns) + std::string(" views.")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
   }
 };
 

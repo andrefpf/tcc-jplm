@@ -264,7 +264,7 @@ class CameraParametersArray {
       lightfield_dimension_type rows, lightfield_dimension_type columns) {
     std::size_t n_views_from_param = rows * columns;
     if (n_views != n_views_from_param) {
-      // throw; Wrong number of views from the specified number of rows and columns
+      throw CameraParameterBoxExceptions::InvalidLazzyInitializationException(rows, columns, n_views);
     }
     n_view_rows = rows;
     n_view_columns = columns;
