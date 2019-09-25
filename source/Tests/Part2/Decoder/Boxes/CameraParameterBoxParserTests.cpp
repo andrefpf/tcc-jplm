@@ -46,7 +46,7 @@
 #include "Lib/Part2/Decoder/Boxes/CameraParameterBoxParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
-
+#include "Tests/Part2/Common/Boxes/CameraParameterBoxTests.h"
 
 std::string resources_path = "../resources";
 
@@ -64,6 +64,25 @@ TEST(BasicTest, ReadsAllDataFromStream) {
 }
 
 
+
+struct ParsingOfCameraParamAlone : public testing::Test {
+public:
+	std::unique_ptr<CameraParameterBox> parse_box(const std::string& res_path) {
+		auto filename = std::string(res_path + "/boxes/camera_parameters_box.bin");
+		std::ifstream if_stream(filename, std::ifstream::binary);
+		return BoxParserRegistry::get_instance().parse<CameraParameterBox>(
+          ManagedStream(if_stream, std::filesystem::file_size(filename)));
+	}
+};
+
+
+TEST_F(ParsingOfCameraParamAlone, GetsOriginPosition) {
+	auto box = parse_box(resources_path);
+	const auto& coordinates = box->get_ref_to_contents().get_ref_to_coordinates();
+  const auto& cast_coordinates =
+      static_cast<const FloatingPointCoordinates<float>&>(coordinates);
+	EXPECT_EQ(cast_coordinates.get_origin_position(), std::make_tuple(1.5, 2.25, 3.125));
+}
 
 
 int main(int argc, char* argv[]) {

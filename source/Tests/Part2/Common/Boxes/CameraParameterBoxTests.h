@@ -50,18 +50,18 @@ struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
   std::tuple<T, T, T> xyz_coordinates;
   std::tuple<T, T, T> xyz_angles;
   std::tuple<T, T, T> xyz_scalings;
-  float baseline_x = 3.1415;  //dummy, just to check if io works
-  float baseline_y = 55.625;
-  float y00 = 115.0;
-  float z00 = 42.0;
-  float theta_x = 1.25;
-  float sk = 1;
-  float u0 = 0.111;
-  uint32_t rows = 3;  //3x4 lightfield
-  uint32_t columns = 4;  //3x4 lightfield
-  uint16_t ExtInt = 0x9F1;  //is 100111110001
-  float initial_value = 0.789101112;
-  const float const_add_value = 0.042;
+  constexpr static float baseline_x = 3.1415;  //dummy, just to check if io works
+  constexpr static float baseline_y = 55.625;
+  constexpr static float y00 = 115.0;
+  constexpr static float z00 = 42.0;
+  constexpr static float theta_x = 1.25;
+  constexpr static float sk = 1;
+  constexpr static float u0 = 0.111;
+  constexpr static uint32_t rows = 3;  //3x4 lightfield
+  constexpr static uint32_t columns = 4;  //3x4 lightfield
+  constexpr static uint16_t ExtInt = 0x9F1;  //is 100111110001
+  constexpr static float initial_value = 0.789101112;
+  constexpr static float const_add_value = 0.042;
   std::vector<float> xcc_vec;
   std::vector<float> theta_y_vec;
   std::vector<float> theta_z_vec;
@@ -81,33 +81,35 @@ struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
     sH_vec.resize(rows * columns);
     v0_vec.resize(rows * columns);
 
+    auto value_source = initial_value;
+
     for (auto& value : xcc_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : theta_y_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : theta_z_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : f_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : sW_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : sH_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
     for (auto& value : v0_vec) {
-      value = initial_value;
-      initial_value += const_add_value;
+      value = value_source;
+      value_source += const_add_value;
     }
   };
 
