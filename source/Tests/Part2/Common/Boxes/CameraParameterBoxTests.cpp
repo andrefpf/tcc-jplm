@@ -402,6 +402,7 @@ TEST_F(SimpleCameraParameterContentsTestFloat, WritingToFileTheCorrectNumberOfBy
   std::filesystem::remove(filename);
 }
 
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

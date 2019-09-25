@@ -115,6 +115,16 @@ TEST_F(ParsingOfCameraParamAlone, GetsScaling) {
 }
 
 
+TEST_F(ParsingOfCameraParamAlone, GestBaseline) {
+  auto box = parse_box(resources_path);
+  const auto& camera_parameters = box->get_ref_to_contents().get_ref_to_camera_parameters();
+  const auto& [x, y] = camera_parameters.get_baseline();
+  EXPECT_FLOAT_EQ(x, SimpleCameraParameterContentsTest<float>::baseline_x);
+  EXPECT_FLOAT_EQ(y, SimpleCameraParameterContentsTest<float>::baseline_y);
+}
+
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

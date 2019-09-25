@@ -46,7 +46,7 @@
 
 template<typename T>
 struct SimpleCameraParameterContentsTest : public testing::TestWithParam<T> {
- protected:
+ public:
   std::tuple<T, T, T> xyz_coordinates;
   std::tuple<T, T, T> xyz_angles;
   std::tuple<T, T, T> xyz_scalings;
