@@ -111,7 +111,7 @@ TEST_F(ParsingOfCameraParamAlone, GetsScaling) {
 }
 
 
-TEST_F(ParsingOfCameraParamAlone, GestBaseline) {
+TEST_F(ParsingOfCameraParamAlone, GetsBaseline) {
   auto box = parse_box(resources_path);
   const auto& camera_parameters =
       box->get_ref_to_contents().get_ref_to_camera_parameters();
@@ -134,8 +134,11 @@ TEST_F(ParsingOfCameraParamAlone, ShouldNotThrowIfInitializedAndGettingAParam) {
   auto box = parse_box(resources_path);
   auto& camera_parameters =
       box->get_ref_to_contents().get_ref_to_camera_parameters();
-  camera_parameters.initialize_missing_row_and_column(4,3);
-  EXPECT_NO_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0, 0}));
+  auto rows = SimpleCameraParameterContentsTest<float>::rows;
+  auto columns = SimpleCameraParameterContentsTest<float>::columns;
+  camera_parameters.initialize_missing_row_and_column(rows, columns);
+  EXPECT_NO_THROW(
+      camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0, 0}));
 }
 
 
@@ -143,10 +146,25 @@ TEST_F(ParsingOfCameraParamAlone, MustThrowIfInitializedWithInvalidValues) {
   auto box = parse_box(resources_path);
   auto& camera_parameters =
       box->get_ref_to_contents().get_ref_to_camera_parameters();
-  EXPECT_THROW(camera_parameters.initialize_missing_row_and_column(4,4),CameraParameterBoxExceptions::InvalidLazzyInitializationException);
+  auto rows = SimpleCameraParameterContentsTest<float>::rows;
+  auto columns = SimpleCameraParameterContentsTest<float>::columns;
+  EXPECT_THROW(
+      camera_parameters.initialize_missing_row_and_column(rows + 1, columns),
+      CameraParameterBoxExceptions::InvalidLazzyInitializationException);
 }
 
 
+TEST_F(ParsingOfCameraParamAlone, GetsU0) {
+  auto box = parse_box(resources_path);
+  auto& camera_parameters =
+      box->get_ref_to_contents().get_ref_to_camera_parameters();
+  auto rows = SimpleCameraParameterContentsTest<float>::rows;
+  auto columns = SimpleCameraParameterContentsTest<float>::columns;
+  camera_parameters.initialize_missing_row_and_column(rows, columns);
+  EXPECT_FLOAT_EQ(
+      camera_parameters.get<CameraParameterType::U0>({1, 2}),
+      SimpleCameraParameterContentsTest<float>::u0);
+}
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
