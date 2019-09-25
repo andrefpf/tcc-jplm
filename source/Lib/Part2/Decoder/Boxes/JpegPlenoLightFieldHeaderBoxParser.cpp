@@ -41,7 +41,6 @@
 
 #include "JpegPlenoLightFieldHeaderBoxParser.h"
 
-
 std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldHeaderBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   //! [Parsing a box within a super box]

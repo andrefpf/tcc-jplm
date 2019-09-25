@@ -50,6 +50,8 @@
 
 std::string resources_path = "../resources";
 
+
+
 // TEST(BasicTest, ReadsAllDataFromStream) {
 //   std::string filename(
 //       resources_path + "/boxes/jpeg_pleno_box_with_no_codestream.bin");
@@ -68,6 +70,8 @@ int main(int argc, char* argv[]) {
   if (argc > 1) {
     resources_path = std::string(argv[1]);
   }
+
+  // CameraParameterBox;
 
   return RUN_ALL_TESTS();
 }
