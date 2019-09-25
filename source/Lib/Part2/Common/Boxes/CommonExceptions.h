@@ -41,22 +41,38 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__
 
+#include <exception>
+#include <string>
+
 namespace CameraParameterBoxExceptions {
 class InvalidCameraParameterArrayVectorSizeException : public std::exception {
  protected:
   std::string message;
 
  public:
-  InvalidCameraParameterArrayVectorSizeException(const std::size_t expected_size, const std::size_t obtained_size)
-      : message(
-            std::string("Camera Parameter array was expecting") + std::to_string(expected_size) +
-            std::string(" camera parameters. However, only ") + std::to_string(obtained_size) + 
-            std::string(" were available. ")) {
+  InvalidCameraParameterArrayVectorSizeException(
+      const std::size_t expected_size, const std::size_t obtained_size)
+      : message(std::string("Camera Parameter array was expecting") +
+                std::to_string(expected_size) +
+                std::string(" camera parameters. However, only ") +
+                std::to_string(obtained_size) +
+                std::string(" were available. ")) {
   }
   const char* what() const noexcept override {
     return message.c_str();
   }
 };
-}
+
+class MissingCompleteInitializationException : public std::exception {
+ public:
+  const char* what() const noexcept override {
+    return "Trying to access data from a partially initialized Camera "
+           "Parameter Box. To get the desired data it is necessary to provide "
+           "light field data throught initialize_missing_row_and_column "
+           "method.";
+  }
+};
+
+}  // namespace CameraParameterBoxExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__ */

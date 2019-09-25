@@ -286,7 +286,7 @@ class CameraParametersArray {
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
           position) const {
     if (!fully_initialized) {
-      // throw ;
+      throw CameraParameterBoxExceptions::MissingCompleteInitializationException();
     }
     const auto& [t, s] = position;
     const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(

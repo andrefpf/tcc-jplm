@@ -124,6 +124,13 @@ TEST_F(ParsingOfCameraParamAlone, GestBaseline) {
 }
 
 
+TEST_F(ParsingOfCameraParamAlone, MustThrowIfNotInitializedAndGettingAParam) {
+  auto box = parse_box(resources_path);
+  const auto& camera_parameters = box->get_ref_to_contents().get_ref_to_camera_parameters();
+  EXPECT_THROW(camera_parameters.get<CameraParameterType::THETA_Y_CAM>({0,0}), CameraParameterBoxExceptions::MissingCompleteInitializationException);
+}
+
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
