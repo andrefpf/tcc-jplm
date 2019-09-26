@@ -31,27 +31,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+/** \file     ParsedConfiguration.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#include <iostream>
+#include "Lib/Common/ParsedConfiguration.h"
+#include "Lib/Common/ParseExceptions.h"
 
-#include "ViewToFilenameTranslator.h"
+using namespace std;
+using json = nlohmann::json;
 
-std::string PPM3CharViewToFilename::view_position_to_filename(
-    const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  if (t > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  if (s > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
-                << '_' << std::setw(3) << std::setfill('0')
-                << std::get<1>(position) << ".ppm";
-  return string_stream.str();
+
+ParsedConfiguration::ParsedConfiguration(const int argc, const char** argv) {
+  parse_cli(argc, argv);
+  if (!config.empty())
+    parse_json(config);
+}
+
+void ParsedConfiguration::parse_cli(const int argc, const char** argv) {
+  CLI::App app{"JPLM"};
+  app.add_option("-i,--input", input,
+      "Input (If Part II, it is a directory containing a set of uncompressed "
+      "light-field images xxx_yyy.ppm).");
+  app.add_option("-o,--output", output, "Output compressed bitstream.");
+  app.add_option("-c,--config", config, "Path to config file");
+  app.add_set(
+         "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
+      ->type_name("enum/JpegPlenoPart in { LightField=2 }");
+  app.add_set("-t,--type", type, {Type::transform_mode, Type::prediction_mode},
+         "Codec type")
+      ->type_name(
+          "enum/CompressionTypeLightField in {transform_mode=0, "
+          "prediction_mode=1}");
+  app.parse(argc, argv);
+}
+
+void ParsedConfiguration::parse_json(string config_file_path) {
+  ifstream ifs(config_file_path);
+  json conf = json::parse(ifs);
+  parse_part(conf);
+}
+
+void ParsedConfiguration::parse_part(const json &conf) {
+  JpegPlenoPart p = conf["part"].get<JpegPlenoPart>();
+  if (p == JpegPlenoPart::LightField)
+    part = JpegPlenoPart::LightField;
+  else
+    throw NotImplementedYetInputTypeParseException(p);
 }

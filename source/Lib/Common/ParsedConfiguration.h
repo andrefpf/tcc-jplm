@@ -31,27 +31,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+/** \file     ParsedConfiguration.h
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#ifndef JPLM_PARSEDCONFIGURATION_H
+#define JPLM_PARSEDCONFIGURATION_H
 
-#include "ViewToFilenameTranslator.h"
 
-std::string PPM3CharViewToFilename::view_position_to_filename(
-    const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  if (t > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  if (s > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
-                << '_' << std::setw(3) << std::setfill('0')
-                << std::get<1>(position) << ".ppm";
-  return string_stream.str();
-}
+#include "CLI/CLI.hpp"
+#include "Lib/Part1/Common/JPLMConfiguration.h"
+#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "nlohmann/json.hpp"
+
+using namespace std;
+
+using Type = CompressionTypeLightField;
+
+class ParsedConfiguration {
+ private:
+  string input;
+  string output;
+  JpegPlenoPart part;
+  Type type;
+  string config;
+
+ protected:
+  void parse_cli(const int argc, const char** argv);
+  void parse_json(string path);
+
+ public:
+  ParsedConfiguration(const int argc, const char** argv);
+
+  void parse_part(const nlohmann::basic_json<> &conf);
+};
+
+
+#endif  //JPLM_PARSEDCONFIGURATION_H

@@ -42,6 +42,7 @@ include(JPLMCompilerOptimizations)
 
 #including external libraries by downloading them from git..
 include(ExternalGoogleTest)
+include(ExternalMagic_Enum)
 include(ExternalCLI11)
 include(ExternalCPPItertools)
 include(ExternalNlohmannJSON)

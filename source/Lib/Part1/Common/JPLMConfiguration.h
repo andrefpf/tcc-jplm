@@ -42,18 +42,17 @@
 #define JPLMCONFIGURATION_H__
 
 #include <string>
+#include "magic_enum.hpp"
 
 enum class JpegPlenoPart {
-	LightField = 2,
+  LightField = 2,
 };
 
 class JPLMConfiguration {
- public:
+ protected:
   JPLMConfiguration() = default;
   ~JPLMConfiguration() = default;
 };
-
-
 
 
 #endif /* end of include guard: JPLMCONFIGURATION_H__ */

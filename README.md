@@ -30,7 +30,7 @@ Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
 ## Prerequisites
 
 #### Compiler
-Tested with gcc 8
+Tested with gcc 9
 Must support CXX 17
 
 #### Cmake

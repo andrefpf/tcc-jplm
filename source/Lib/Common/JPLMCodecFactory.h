@@ -91,7 +91,7 @@ class JPLMCodecFactory {
     return nullptr;
   }
   static std::unique_ptr<JPLMCodec> get_decoder(
-     [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
+      [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
     return nullptr;
   }
 };

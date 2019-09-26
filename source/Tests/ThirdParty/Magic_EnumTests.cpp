@@ -31,27 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+/** \file     Magic_EnumTests.cpp
+ *  \brief    Tests for the external library Magic_Enum
+ *  \details  See more details about it at
+ *            https://github.com/Neargye/magic_enum
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
 
-#include "ViewToFilenameTranslator.h"
+#include <algorithm>
+#include <string>
+#include <vector>
+#include "magic_enum.hpp"
+#include "gtest/gtest.h"
 
-std::string PPM3CharViewToFilename::view_position_to_filename(
-    const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  if (t > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  if (s > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
-                << '_' << std::setw(3) << std::setfill('0')
-                << std::get<1>(position) << ".ppm";
-  return string_stream.str();
+using namespace std;
+
+enum class Color { RED = -12, GREEN = 7, BLUE = 15 };
+
+TEST(Magic_Enum, enum_integer) {
+  constexpr auto cr = magic_enum::enum_integer(Color::RED);
+  EXPECT_EQ(cr, -12);
+}
+
+TEST(Magic_Enum, enum_cast_to_string) {
+  Color color = Color::RED;
+  auto color_name = magic_enum::enum_name(color);
+  EXPECT_EQ(color_name, "RED");
+}
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

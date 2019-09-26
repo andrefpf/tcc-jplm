@@ -31,27 +31,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+/** \file     ParseExceptions.h
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#ifndef JPLM_PARSEEXCEPTIONS_H
+#define JPLM_PARSEEXCEPTIONS_H
 
-#include "ViewToFilenameTranslator.h"
+#include <exception>
+#include <string>
 
-std::string PPM3CharViewToFilename::view_position_to_filename(
-    const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  if (t > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+#include "Lib/Part1/Common/JPLMConfiguration.h"
+
+using namespace std;
+
+class NotImplementedYetInputTypeParseException : public std::exception {
+ private:
+  string msg;
+
+ public:
+  NotImplementedYetInputTypeParseException(const JpegPlenoPart m)
+      : msg("Invalid format. Check the PGM names in " + std::to_string(m) +
+            " light-field path.") {
   }
-  if (s > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+
+  const char* what() const throw() {
+    return msg.c_str();
   }
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
-                << '_' << std::setw(3) << std::setfill('0')
-                << std::get<1>(position) << ".ppm";
-  return string_stream.str();
-}
+};
+
+#endif  //JPLM_PARSEEXCEPTIONS_H

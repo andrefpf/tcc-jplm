@@ -38,24 +38,29 @@
  *  \date     2019-09-11
  */
 
+#include <string>
 #ifndef JPLMENCODERCONFIGURATION_H__
 #define JPLMENCODERCONFIGURATION_H__
 
 #include "Lib/Part1/Common/JPLMConfiguration.h"
 
+
+
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
-  JPLMEncoderConfiguration() = default;
-  ~JPLMEncoderConfiguration() = default;
-
   std::string get_output_filename() const {
     return std::string("NotImplementedYet.jpl");
   }
 
-
   JpegPlenoPart get_jpeg_pleno_part() const {
     return JpegPlenoPart::LightField;
   }
+
+ protected:
+  JPLMEncoderConfiguration() = default;
+  ~JPLMEncoderConfiguration() = default;
+
 };
+
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
