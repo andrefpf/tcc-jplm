@@ -1,0 +1,2 @@
+set(PART2_DECODER_TRANSFORM_MODE_SOURCES ABACDecoder.cpp)
+add_library(jplm_part2_decoder_transform_mode ${PART2_DECODER_TRANSFORM_MODE_SOURCES})
