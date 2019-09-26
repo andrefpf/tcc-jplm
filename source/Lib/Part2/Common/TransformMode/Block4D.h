@@ -42,14 +42,27 @@
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_BLOCK4D_H__
 
 #include <cstdint>
+#include <vector>
+#include "Lib/Part2/Common/LightfieldDimension.h"
 
-template<typename T = uint32_t>
+template<typename T = uint32_t, typename DimensionT = uint32_t>
 class Block4D {
-protected:
-	std::size_t number_of_elements = 0; //!< Number of elements within this 4D block
+ protected:
+  LightfieldDimension<DimensionT>
+      dimension;  //!< Dimension (t, s, v, u) of this Block4D
+  std::size_t number_of_elements =
+      0;  //!< Number of elements within this 4D block
+  std::vector<T> pixels;
  public:
-  Block4D();
-  ~Block4D();
+  // Block4D(); //should this be possible?
+  Block4D(const LightfieldDimension<DimensionT>& block_dimension)
+      : dimension(block_dimension),
+        number_of_elements(block_dimension.get_number_of_pixels_per_view()) {
+        	pixels.reserve(number_of_elements);
+  }
+
+
+  virtual ~Block4D() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_BLOCK4D_H__ */
