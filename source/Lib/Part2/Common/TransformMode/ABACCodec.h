@@ -45,9 +45,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits>
+#include <cstdint>
+
+// #define MAXINT 0xffff
 
 class ABACCodec {
  protected:
+  static constexpr uint32_t MAX_VALUE = std::numeric_limits<uint32_t>::max();
+  static constexpr uint32_t RESET_LSB_MASK = 0xfffe;
+  static constexpr uint32_t SET_LSB_MASK = 0x0001;
+  static constexpr uint32_t INTERVAL_PRECISION = 16;
+  static constexpr uint32_t MSB_MASK = 0x8000;
+  static constexpr uint32_t SECOND_MSB_MASK = 0x4000;
   unsigned int mLow; /*!< interval lower limit */
   unsigned int mHigh; /*!< interval upper limit */
   int mNumberOfBitsInBuffer; /*!< number of valid bits in buffer */
