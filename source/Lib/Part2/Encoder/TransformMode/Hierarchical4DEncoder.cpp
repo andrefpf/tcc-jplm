@@ -266,10 +266,10 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
     std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
   } else {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
-    std::tuple<int, int, int, int> half_lenghts = std::experimental::apply(
+    std::tuple<int, int, int, int> half_lenghts = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
         lengths);
-    auto number_of_subdivisions = std::experimental::apply(
+    auto number_of_subdivisions = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
 
     for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); t++) {
