@@ -43,9 +43,9 @@
 #include "gtest/gtest.h"
 
 
-TEST(BasicTest, ConstructionDoesNotThrow) {
-	EXPECT_NO_THROW(auto block4d = Block4D({1,2,3,4}));
-}
+// TEST(BasicTest, ConstructionDoesNotThrow) {
+// 	EXPECT_NO_THROW(auto block4d = Block4D({1,2,3,4}));
+// }
 
 
 int main(int argc, char *argv[]) {
