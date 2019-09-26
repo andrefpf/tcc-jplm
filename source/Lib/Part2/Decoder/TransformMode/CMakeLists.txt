@@ -1,2 +1,2 @@
-set(PART2_DECODER_TRANSFORM_MODE_SOURCES ABACDecoder.cpp)
+set(PART2_DECODER_TRANSFORM_MODE_SOURCES ABACDecoder.cpp Hierarchical4DDecoder.cpp)
 add_library(jplm_part2_decoder_transform_mode ${PART2_DECODER_TRANSFORM_MODE_SOURCES})
