@@ -52,6 +52,7 @@
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
+#include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
 private:

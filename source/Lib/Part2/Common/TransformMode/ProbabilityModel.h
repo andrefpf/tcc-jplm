@@ -57,17 +57,17 @@ class ProbabilityModel {
   ~ProbabilityModel() = default;
   void update(bool bit);
   void update();
+  
+
   template<bool bit>
   void update() {
     if (!bit)
       frequency_of_zeros++;
     frequency_of_ones++;
     update();
-  };
-  void reset();
-  auto get_frequency_of_zeros() const noexcept;
-  auto get_frequency_of_ones() const noexcept;
-  ProbabilityModel& operator=(const ProbabilityModel& other);
+  }
+
+  
   template<bool bit>
   double get_rate() const {
     double frequency_of_bit;
@@ -78,7 +78,16 @@ class ProbabilityModel {
       frequency_of_bit = static_cast<double>(frequency_of_zeros);
     }
     return -log2(frequency_of_bit / static_cast<double>(frequency_of_ones));
-  };
+  }
+
+
+  void reset();
+  decltype(ProbabilityModel::frequency_of_zeros) get_frequency_of_zeros() const noexcept;
+  decltype(ProbabilityModel::frequency_of_ones) get_frequency_of_ones() const noexcept;
+  ProbabilityModel& operator=(const ProbabilityModel& other);
+
+
+
   double get_rate(bool bit) const;
 };
 

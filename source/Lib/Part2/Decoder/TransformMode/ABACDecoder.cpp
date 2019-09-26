@@ -48,7 +48,7 @@ void ABACDecoder::start(FILE *ifp) {
     mLow = 0;
     mHigh = MAXINT;    
     mTag = 0;
-    for(int n = 0; n < INTERVAL_PRECISION; n++) {
+    for(auto n = decltype(INTERVAL_PRECISION){0}; n < INTERVAL_PRECISION; n++) {
         mTag = mTag << 1;
         int bit = ReadBitFromFile();
         if(bit == 1)

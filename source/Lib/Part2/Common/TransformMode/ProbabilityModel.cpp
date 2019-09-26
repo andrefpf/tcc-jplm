@@ -76,12 +76,12 @@ ProbabilityModel& ProbabilityModel::operator=(const ProbabilityModel& rhs) {
 }
 
 
-auto ProbabilityModel::get_frequency_of_zeros() const noexcept {
+decltype(ProbabilityModel::frequency_of_zeros) ProbabilityModel::get_frequency_of_zeros() const noexcept {
   return frequency_of_zeros;
 }
 
 
-auto ProbabilityModel::get_frequency_of_ones() const noexcept {
+decltype(ProbabilityModel::frequency_of_ones) ProbabilityModel::get_frequency_of_ones() const noexcept {
   return frequency_of_ones;
 }
 
