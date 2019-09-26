@@ -41,19 +41,28 @@
 #ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_ABACENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_ABACENCODER_H__
 
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include <memory>
+#include <fstream>      // std::ofstream
 
 class ABACEncoder : public ABACCodec {
-public:
-  unsigned char mBitBuffer;        /*!< bit-writable buffer */
-  int mScalingsCounter;            /*!< number of renormalizations performed */
+ protected:
+  std::unique_ptr<ContiguousCodestreamCode> codestream_code;
+  std::string filename;
+ public:
+  unsigned char mBitBuffer; /*!< bit-writable buffer */
+  int mScalingsCounter; /*!< number of renormalizations performed */
 
-  ABACEncoder() = default;
-  ~ABACEncoder() = default;
-  void start(FILE *ofp);
+  ABACEncoder() : codestream_code(std::make_unique<ContiguousCodestreamCodeInMemory>()) {
+  }
+  virtual ~ABACEncoder() = default;
+  // void start(FILE *ofp);
+  void start(const std::string& filename);
   void encode_bit(bool bit, const ProbabilityModel &mPmodel);
-  void finish() override;  
+  void finish() override;
   void output_bit(bool bit);
 };
 

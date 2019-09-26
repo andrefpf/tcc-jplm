@@ -52,7 +52,7 @@
 
 class ABACCodec {
  protected:
-  static constexpr uint32_t MAXINT = std::numeric_limits<uint32_t>::max();
+  static constexpr uint32_t MAXINT = 0xffff;//std::numeric_limits<uint32_t>::max();
   static constexpr uint32_t RESET_LSB_MASK = 0xfffe;
   static constexpr uint32_t SET_LSB_MASK = 0x0001;
   static constexpr uint32_t INTERVAL_PRECISION = 16;

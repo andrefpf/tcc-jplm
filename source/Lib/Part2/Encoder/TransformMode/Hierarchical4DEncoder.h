@@ -68,7 +68,7 @@ public:
     bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
-    void start(FILE *outputFilePointer);
+    void start(const std::string& filename);
     void EncodeBlock(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
     void encode_coefficient(int coefficient, int bitplane);
     void encode_segmentation_lowerBitPlane_flag(int bitplane);

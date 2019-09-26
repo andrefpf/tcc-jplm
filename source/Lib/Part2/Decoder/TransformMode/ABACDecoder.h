@@ -43,12 +43,12 @@
 
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 
 class ABACDecoder : public ABACCodec {
 private:
   int mNumberOfbitsreadAfterlastBitDecoded;
   unsigned int mTag;                  /*!< received tag */
-  
 public:  
   ABACDecoder()  = default;
   ~ABACDecoder() = default;

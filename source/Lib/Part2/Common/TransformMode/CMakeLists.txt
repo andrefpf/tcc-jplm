@@ -1,2 +1,3 @@
 set(PART2_COMMON_TRANSFORM_MODE_SOURCES Block4D.cpp DCT4DBlock.cpp DCT4DCoefficientsManager.cpp Hierarchical4DCodec.cpp ProbabilityModel.cpp Transformed4DBlock.cpp View.cpp LightField.cpp)
 add_library(jplm_part2_common_transform_mode ${PART2_COMMON_TRANSFORM_MODE_SOURCES})
+target_link_libraries(jplm_part2_common_transform_mode jplm_common_boxes_generic)

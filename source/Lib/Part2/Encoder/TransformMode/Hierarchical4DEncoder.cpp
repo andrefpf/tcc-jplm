@@ -41,8 +41,8 @@
 #include "Hierarchical4DEncoder.h"
 
 
-void Hierarchical4DEncoder::start(FILE* outputFilePointer) {
-  mEntropyCoder.start(outputFilePointer);  //opens output file
+void Hierarchical4DEncoder::start(const std::string& filename) {
+  mEntropyCoder.start(filename);  //opens output file
   reset_probability_models();
 }
 

@@ -75,7 +75,9 @@ MuleEncoder::MuleEncoder(ParameterHandler handler) :
 
     initialize_extension_lenghts();
 
-	hierarchical_4d_encoder.start(encoded_file_pointer);
+	fclose(encoded_file_pointer);
+    encoded_file_pointer=nullptr;
+	hierarchical_4d_encoder.start(parameter_handler.encoded_lightfield.string());
 }
 
 MuleEncoder::~MuleEncoder() {

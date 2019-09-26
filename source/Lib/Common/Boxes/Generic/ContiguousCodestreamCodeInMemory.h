@@ -55,7 +55,9 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
     return bytes.size();
   }
 
-  ContiguousCodestreamCodeInMemory() = default;
+  ContiguousCodestreamCodeInMemory() {
+    bytes.reserve(100000);
+  }
 
 
   ContiguousCodestreamCodeInMemory(uint64_t size) {
