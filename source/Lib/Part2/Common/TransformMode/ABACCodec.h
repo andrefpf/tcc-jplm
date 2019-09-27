@@ -60,11 +60,11 @@ class ABACCodec {
   static constexpr uint32_t SECOND_MSB_MASK = 0x4000;
   unsigned int mLow; /*!< interval lower limit */
   unsigned int mHigh; /*!< interval upper limit */
-  int mNumberOfBitsInBuffer; /*!< number of valid bits in buffer */
+  int number_of_bits_in_byte; /*!< number of valid bits in buffer */
   unsigned char mBitBuffer; /*!< bit-readable buffer */
   FILE *file_ptr = nullptr; /*!< pointer to file */
  public:
-  ABACCodec() = default;
+  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {}
   ~ABACCodec() = default;
   virtual void finish() = 0;
 };

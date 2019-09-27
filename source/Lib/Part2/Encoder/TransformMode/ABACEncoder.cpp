@@ -40,110 +40,109 @@
 
 
 #include "ABACEncoder.h"
+#include "assert.h"
 
 
 void ABACEncoder::start(const std::string& filename) {
-  /*! initializes arithmetic coding: sets the output file, sets the interval to [0,1) */
-  // file_ptr = ofp;
   this->filename = filename;
-  mLow = 0;
-  mHigh = MAXINT;
-  mNumberOfBitsInBuffer = 0;
-  mScalingsCounter = 0;
-  mBitBuffer = 0;
 }
 
-/*! encodes a binary symbol using the given probability model */
-void ABACEncoder::encode_bit(bool inputbit, const ProbabilityModel &mPmodel) {
-  unsigned long int acumFreq_0 = mPmodel.get_frequency_of_zeros();
-  unsigned long int acumFreq_1 = mPmodel.get_frequency_of_ones();
-  unsigned long int length_0 = (((mHigh - mLow + 1) * acumFreq_0) / acumFreq_1);
 
-  if (inputbit) {  //1
-    mLow = mLow + length_0;
+void ABACEncoder::mask_set_high_reset_low() {
+  mLow <<= 1;
+  mLow &= RESET_LSB_MASK;
+  mLow &= MAXINT;
+
+  mHigh <<= 1;
+  mHigh |= SET_LSB_MASK;
+  mHigh &= MAXINT;
+}
+
+
+void ABACEncoder::output_bit_pattern_according_to_condition(bool condition) {
+  if (condition) {
+    output_bit<1>();
+    output_n_bits<0>(number_of_scalings);
+  } else {
+    output_bit<0>();
+    output_n_bits<1>(number_of_scalings);
+  }
+  number_of_scalings = 0;
+}
+
+
+/*! encodes a binary symbol using the given probability model */
+void ABACEncoder::encode_bit(bool bit, const ProbabilityModel& probability_model) {
+  uint64_t length_0 = (((mHigh - mLow + 1) * probability_model.get_frequency_of_zeros()) /
+                       probability_model.get_frequency_of_ones());
+
+  if (bit) {  //1
+    mLow += length_0;
   } else {  //0
     mHigh = mLow + length_0 - 1;
   }
-
-  // std::cout << "called here" << std::endl;
 
   while (
       ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) ||
       ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
     if ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
-      int bit = 1;
-      if ((mLow & MSB_MASK) == 0)
-        bit = 0;
-
-      output_bit(bit);
-
-      mLow = mLow << 1;
-      mHigh = mHigh << 1;
-      mLow = mLow & RESET_LSB_MASK;
-      mHigh = mHigh | SET_LSB_MASK;
-      mHigh = mHigh & MAXINT;
-      mLow = mLow & MAXINT;
-      while (mScalingsCounter > 0) {
-        mScalingsCounter--;
-        output_bit(1 - bit);
-      }
+      output_bit_pattern_according_to_condition((mLow & MSB_MASK) != 0);
+      mask_set_high_reset_low();
     }
     if ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK))) {
-      mLow = mLow << 1;
-      mHigh = mHigh << 1;
-      mLow = mLow & RESET_LSB_MASK;
-      mHigh = mHigh | SET_LSB_MASK;
-      mLow = mLow ^ MSB_MASK;
-      mHigh = mHigh ^ MSB_MASK;
-      mScalingsCounter++;
-
-      mHigh = mHigh & MAXINT;
-      mLow = mLow & MAXINT;
+      number_of_scalings++;
+      mask_set_high_reset_low();
+      mLow ^= MSB_MASK;
+      mHigh ^= MSB_MASK;
     }
   }
-  mHigh = mHigh & MAXINT;
-  mLow = mLow & MAXINT;
 }
 
-void ABACEncoder::finish() {  //flush
-  /*! write remaining bits in the outputfile */
-  mScalingsCounter++;
-  int bit;
-  if (mLow >= SECOND_MSB_MASK)
-    bit = 1;
-  else
-    bit = 0;
 
-  output_bit(bit);
-  while (mScalingsCounter > 0) {
-    output_bit(1 - bit);
-    mScalingsCounter--;
+template<bool bit>
+void ABACEncoder::output_n_bits(std::size_t n) {
+  while (n > 0) {
+    output_bit<bit>();
+    n--;
   }
+}
 
-  if (mNumberOfBitsInBuffer > 0) {
-    for (int n = mNumberOfBitsInBuffer; n < 8; n++) {
-      mBitBuffer = mBitBuffer >> 1;
-    }
-    // mBitBuffer>>=mNumberOfBitsInBuffer;
-  }
-  codestream_code->push_byte(std::byte{mBitBuffer});
-  // fprintf(file_ptr, "%c", mBitBuffer);
-  mNumberOfBitsInBuffer = 0;
-  std::cout << "Number of bytes in the codestream: " << codestream_code->size() << std::endl;
-  std::ofstream ofs(filename, std::ofstream::binary | std::ofstream::out | std::ofstream::app);
-  ofs << *codestream_code;
+
+void write_to_file(const std::string& filename,
+    const ContiguousCodestreamCode& codestream_code) {
+  std::ofstream ofs(filename,
+      std::ofstream::binary | std::ofstream::out | std::ofstream::app);
+  ofs << codestream_code;
   ofs.close();
 }
 
-/*! write bits in the output file */
-void ABACEncoder::output_bit(bool bit) {
-  mBitBuffer = mBitBuffer >> 1;
-  if (bit)  //==1
-    mBitBuffer = mBitBuffer | 0x80;
 
-  mNumberOfBitsInBuffer++;
-  if (mNumberOfBitsInBuffer == 8) {
-    codestream_code->push_byte(std::byte{mBitBuffer});
-    mNumberOfBitsInBuffer = 0;
+/*! write remaining bits in the outputfile */
+void ABACEncoder::finish() {  //flush
+  number_of_scalings++;
+  output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
+  codestream_code->push_byte(byte_buffer);
+  write_to_file(filename, *codestream_code);
+}
+
+
+template<bool bit>
+void ABACEncoder::output_bit() {
+  if constexpr (bit) {  //==1
+    byte_buffer |= mask;
   }
+  mask <<= 1;
+  if (mask == std::byte{0x0}) {
+    mask = std::byte{0x01};
+    codestream_code->push_byte(byte_buffer);
+    byte_buffer = std::byte{0};
+  }
+}
+
+
+void ABACEncoder::output_bit(bool bit) {
+  if (bit) {
+    return output_bit<true>();
+  }
+  return output_bit<false>();
 }

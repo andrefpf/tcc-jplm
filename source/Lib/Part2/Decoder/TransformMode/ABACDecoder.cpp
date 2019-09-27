@@ -44,7 +44,7 @@
 
 void ABACDecoder::start(FILE *ifp) {
     file_ptr = ifp;
-    mNumberOfBitsInBuffer = 0;  
+    number_of_bits_in_byte = 0;  
     mLow = 0;
     mHigh = MAXINT;    
     mTag = 0;
@@ -123,12 +123,12 @@ void ABACDecoder::finish() {
 int ABACDecoder::ReadBitFromFile() {
     int bit;
     mNumberOfbitsreadAfterlastBitDecoded++;    
-    if (mNumberOfBitsInBuffer == 0) {  
+    if (number_of_bits_in_byte == 0) {  
         mBitBuffer = fgetc(file_ptr);
-        mNumberOfBitsInBuffer = 8;
+        number_of_bits_in_byte = 8;
     }
     bit = mBitBuffer&01;
     mBitBuffer = mBitBuffer >> 1;
-    mNumberOfBitsInBuffer--;
+    number_of_bits_in_byte--;
     return(bit);  
 }
