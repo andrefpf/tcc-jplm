@@ -76,32 +76,6 @@ class ViewIOPolicy {
 };
 
 
-
-
-
-template<typename T>
-class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
- protected:
-  View<T>* last = nullptr;
-
-  void load_image_if_necessary(View<T>& view) {
-    if (last != nullptr && last != &view) {
-      last->release_image();
-    }
-    view.load_image();
-    last = &view;
-  }
-
- public:
-
-  virtual ViewIOPolicyOneAtATime<T>* clone() const override {
-    return new ViewIOPolicyOneAtATime(*this);
-  }
-  
-
-};
-
-
 //abstract
 template<typename T>
 class ViewIOPolicyQueue : public ViewIOPolicy<T> {
