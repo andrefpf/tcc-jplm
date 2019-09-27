@@ -42,24 +42,34 @@
 
 #include <exception>
 #include <string>
-
+#include <type_traits>
 #include "Lib/Part1/Common/JPLMConfiguration.h"
+#include "magic_enum.hpp"
 
 using namespace std;
 
+template<typename T,
+    typename std::enable_if<std::is_enum<T>::value>::type* = nullptr>
 class NotImplementedYetInputTypeParseException : public std::exception {
  private:
   string msg;
 
  public:
-  NotImplementedYetInputTypeParseException(const JpegPlenoPart m)
-      : msg("Invalid format. Check the PGM names in " + std::to_string(m) +
-            " light-field path.") {
+  NotImplementedYetInputTypeParseException(const T& m)
+      : msg("Option " + std::string(magic_enum::enum_name(m)) +
+            " is not implemented yet.") {
   }
 
   const char* what() const throw() {
     return msg.c_str();
   }
 };
+
+class InconsistentOptionsException : public exception {
+  const char * what() const throw () {
+    return "Inconsistent Options.";
+  }
+};
+
 
 #endif  //JPLM_PARSEEXCEPTIONS_H

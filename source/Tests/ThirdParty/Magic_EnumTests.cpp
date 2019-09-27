@@ -42,8 +42,8 @@
 #include <algorithm>
 #include <string>
 #include <vector>
-#include "magic_enum.hpp"
 #include "gtest/gtest.h"
+#include "magic_enum.hpp"
 
 using namespace std;
 

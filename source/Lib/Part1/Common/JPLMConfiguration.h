@@ -42,7 +42,6 @@
 #define JPLMCONFIGURATION_H__
 
 #include <string>
-#include "magic_enum.hpp"
 
 enum class JpegPlenoPart {
   LightField = 2,
