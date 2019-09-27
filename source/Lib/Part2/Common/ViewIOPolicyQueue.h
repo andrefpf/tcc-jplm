@@ -38,11 +38,13 @@
  *  \date     2019-09-27
  */
 
-#ifndef VIEWIOPOLICYQUEUE_H__
-#define VIEWIOPOLICYQUEUE_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICYQUEUE_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICYQUEUE_H__
 
+
+#include <unordered_set>
 #include <queue>
-#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Part2/Common/ViewIOPolicy.h"
 
 //abstract
 template<typename T>
@@ -70,4 +72,4 @@ class ViewIOPolicyQueue : public ViewIOPolicy<T> {
 
 };
 
-#endif /* end of include guard: VIEWIOPOLICYQUEUE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYQUEUE_H__ */

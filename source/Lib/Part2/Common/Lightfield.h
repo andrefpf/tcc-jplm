@@ -44,7 +44,8 @@
 #include "Lib/Part2/Common/LightfieldCoordinate.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/View.h"
-#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Part2/Common/ViewIOPolicy.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
 #include "Lib/Utils/Image/Generic2DStructure.h"
 
 //template<class ViewT<typename>,

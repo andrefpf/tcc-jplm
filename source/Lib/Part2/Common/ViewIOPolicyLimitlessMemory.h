@@ -38,10 +38,10 @@
  *  \date     2019-09-27
  */
 
-#ifndef VIEWIOPOLICYLIMITLESSMEMORY_H__
-#define VIEWIOPOLICYLIMITLESSMEMORY_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITLESSMEMORY_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITLESSMEMORY_H__
 
-#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Part2/Common/ViewIOPolicy.h"
 
 template<typename T>
 class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
@@ -58,4 +58,4 @@ protected:
   }
 };
 
-#endif /* end of include guard: VIEWIOPOLICYLIMITLESSMEMORY_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITLESSMEMORY_H__ */

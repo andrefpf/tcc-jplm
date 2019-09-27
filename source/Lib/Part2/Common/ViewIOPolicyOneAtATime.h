@@ -38,10 +38,10 @@
  *  \date     2019-09-27
  */
 
-#ifndef VIEWIOPOLICYONEATATIME_H__
-#define VIEWIOPOLICYONEATATIME_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICYONEATATIME_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICYONEATATIME_H__
 
-#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Part2/Common/ViewIOPolicy.h"
 
 template<typename T>
 class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
@@ -65,4 +65,4 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
 
 };
 
-#endif /* end of include guard: VIEWIOPOLICYONEATATIME_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYONEATATIME_H__ */

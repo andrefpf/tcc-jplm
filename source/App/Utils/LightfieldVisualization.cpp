@@ -40,6 +40,8 @@
 
 #include <iostream>
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitedMemory.h"
 //X11:
 #include <X11/Xlib.h>
 #include <X11/Xos.h>

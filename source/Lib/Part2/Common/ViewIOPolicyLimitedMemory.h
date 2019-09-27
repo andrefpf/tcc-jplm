@@ -38,8 +38,8 @@
  *  \date     2019-09-27
  */
 
-#ifndef VIEWIOPOLICYLIMITEDMEMORY_H__
-#define VIEWIOPOLICYLIMITEDMEMORY_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__
 
 #include "Lib/Part2/Common/ViewIOPolicyQueue.h"
 
@@ -93,4 +93,4 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
   }
 };
 
-#endif /* end of include guard: VIEWIOPOLICYLIMITEDMEMORY_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__ */

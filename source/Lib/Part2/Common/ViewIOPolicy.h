@@ -31,18 +31,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewIOPolicies.h
+/** \file     ViewIOPolicy.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-06-06
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
-#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICY_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICY_H__
 
 
-#include <unordered_set>
 #include "Lib/Part2/Common/CommonExceptions.h"
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Utils/Image/Image.h"
@@ -75,11 +74,4 @@ class ViewIOPolicy {
   virtual ViewIOPolicy<T>* clone() const = 0;
 };
 
-
-
-
-
-
-
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICY_H__ */
