@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
 #define JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
 
-#include <queue>
+
 #include <unordered_set>
 #include "Lib/Part2/Common/CommonExceptions.h"
 #include "Lib/Part2/Common/View.h"
@@ -76,31 +76,7 @@ class ViewIOPolicy {
 };
 
 
-//abstract
-template<typename T>
-class ViewIOPolicyQueue : public ViewIOPolicy<T> {
- protected:
-  std::deque<View<T>*> queue;
-  std::unordered_set<const View<T>*> set;
 
-
-  bool is_loaded(const View<T>* view) const {
-    return set.count(view) > 0;
-  }
-
-  void release_view_image() {
-    if (queue.size() > 0) {
-      auto ref_to_view = queue.front();
-      ref_to_view->release_image();
-      queue.pop_front();
-      set.erase(ref_to_view);
-    }
-  }
-
-  public:
-  virtual ViewIOPolicyQueue<T>* clone() const = 0;
-
-};
 
 
 template<typename T>
