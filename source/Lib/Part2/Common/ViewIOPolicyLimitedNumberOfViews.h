@@ -49,7 +49,6 @@ class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
   std::size_t max_views = 3;
   std::size_t current_views = 0;
 
-
   void load_image_if_necessary(View<T>& view) override {
     if (!this->is_loaded(&view)) {
       if (current_views + 1 > max_views) {
