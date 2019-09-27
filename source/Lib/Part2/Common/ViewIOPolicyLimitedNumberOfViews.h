@@ -31,72 +31,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewIOPolicies.h
+/** \file     ViewIOPolicyLimitedNumberOfViews.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-06
+ *  \date     2019-09-27
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
-#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
+#ifndef VIEWIOPOLICYLIMITEDNUMBEROFVIEWS_H__
+#define VIEWIOPOLICYLIMITEDNUMBEROFVIEWS_H__
 
-
-#include <unordered_set>
-#include "Lib/Part2/Common/CommonExceptions.h"
-#include "Lib/Part2/Common/View.h"
-#include "Lib/Utils/Image/Image.h"
+#include "Lib/Part2/Common/ViewIOPolicyQueue.h"
 
 template<typename T>
-class ViewIOPolicy {
+class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
  protected:
-  virtual void load_image_if_necessary(View<T>& view) = 0;
-
- public:
-  ViewIOPolicy() = default;
-
-  ViewIOPolicy(const ViewIOPolicy<T>& other) = default;
-
-  virtual ~ViewIOPolicy() = default;
+  std::size_t max_views = 3;
+  std::size_t current_views = 0;
 
 
-  virtual T get_value_at(View<T>& view, const std::size_t channel,
-      const std::pair<std::size_t, std::size_t>& coordinate) {
-    load_image_if_necessary(view);
-    return view.get_value_at(channel, coordinate);
-  }
-
-
-  virtual const Image<T>& get_image_at(View<T>& view) {
-    load_image_if_necessary(view);
-    return *view.get_image_ptr();
-  }
-
-  virtual ViewIOPolicy<T>* clone() const = 0;
-};
-
-
-
-
-
-
-
-
-template<typename T>
-class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
- protected:
-  //value equivalent to 9 1920x1080 views with uint16_t
-  std::size_t max_bytes = 111974400;  //about 14 MB
-  std::size_t current_bytes = 0;
-
-  virtual void load_image_if_necessary(View<T>& view) override {
+  void load_image_if_necessary(View<T>& view) override {
     if (!this->is_loaded(&view)) {
-      auto expected_number_of_bytes =
-          view.get_number_of_pixels() * 3 * sizeof(T);
-      if (current_bytes + expected_number_of_bytes > max_bytes) {
+      if (current_views + 1 > max_views) {
         this->release_view_image();
       } else {
-        current_bytes += expected_number_of_bytes;
+        current_views++;
       }
       this->queue.push_back(&view);
       this->set.insert(&view);
@@ -104,32 +63,11 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
     }
   }
 
- public:
+public:
 
-  virtual ViewIOPolicyLimitedMemory<T>* clone() const override {
-    return new ViewIOPolicyLimitedMemory(*this);
-  }
-
-
-  void set_max_bytes(std::size_t bytes) {
-    max_bytes = bytes;
-    while (current_bytes > max_bytes) {
-      auto expected_number_of_bytes =
-          this->queue.front()->get_number_of_pixels() * 3 * sizeof(T);
-      this->release_view_image();
-      current_bytes -= expected_number_of_bytes;
-    }
-  }
-
-
-  auto get_max_bytes() const {
-    return max_bytes;
-  }
-
-
-  auto get_current_bytes() const {
-    return current_bytes;
+  virtual ViewIOPolicyLimitedNumberOfViews<T>* clone() const override {
+    return new ViewIOPolicyLimitedNumberOfViews(*this);
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__ */
+#endif /* end of include guard: VIEWIOPOLICYLIMITEDNUMBEROFVIEWS_H__ */
