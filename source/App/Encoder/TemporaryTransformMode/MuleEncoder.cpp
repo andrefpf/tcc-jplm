@@ -77,11 +77,13 @@ MuleEncoder::MuleEncoder(ParameterHandler handler) :
 
 	fclose(encoded_file_pointer);
     encoded_file_pointer=nullptr;
-	hierarchical_4d_encoder.start(parameter_handler.encoded_lightfield.string());
+	// hierarchical_4d_encoder.start(parameter_handler.encoded_lightfield.string());
 }
 
 MuleEncoder::~MuleEncoder() {
 	hierarchical_4d_encoder.finish();
+    std::ofstream ofs(parameter_handler.encoded_lightfield.string(),std::ofstream::binary | std::ofstream::out | std::ofstream::app);
+    ofs << hierarchical_4d_encoder.get_ref_to_codestream_code();
 }
 
 template <typename EncodedColorHolder>

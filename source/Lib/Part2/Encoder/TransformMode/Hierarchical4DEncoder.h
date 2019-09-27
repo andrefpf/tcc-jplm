@@ -68,7 +68,7 @@ public:
     bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
-    void start(const std::string& filename);
+    void start();
     void EncodeBlock(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
     void encode_coefficient(int coefficient, int bitplane);
     void encode_segmentation_lowerBitPlane_flag(int bitplane);
@@ -87,6 +87,8 @@ public:
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);
     void DeleteProbabilisticModelState(ProbabilityModel *state);
     void create_temporary_buffer(int size);
+
+    ContiguousCodestreamCode& get_ref_to_codestream_code() const;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_HIERARCHICAL4DENCODER_H__ */

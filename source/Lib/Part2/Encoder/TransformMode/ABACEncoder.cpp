@@ -43,11 +43,6 @@
 #include "assert.h"
 
 
-void ABACEncoder::start(const std::string& filename) {
-  this->filename = filename;
-}
-
-
 void ABACEncoder::mask_set_high_reset_low() {
   mLow <<= 1;
   mLow &= RESET_LSB_MASK;
@@ -108,21 +103,17 @@ void ABACEncoder::output_n_bits(std::size_t n) {
 }
 
 
-void write_to_file(const std::string& filename,
-    const ContiguousCodestreamCode& codestream_code) {
-  std::ofstream ofs(filename,
-      std::ofstream::binary | std::ofstream::out | std::ofstream::app);
-  ofs << codestream_code;
-  ofs.close();
-}
-
-
 /*! write remaining bits in the outputfile */
 void ABACEncoder::finish() {  //flush
   number_of_scalings++;
   output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
   codestream_code->push_byte(byte_buffer);
-  write_to_file(filename, *codestream_code);
+  // write_to_file(filename, *codestream_code);
+}
+
+
+ContiguousCodestreamCode& ABACEncoder::get_ref_to_codestream_code() const {
+    return *codestream_code;
 }
 
 

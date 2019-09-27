@@ -41,9 +41,12 @@
 #include "Hierarchical4DEncoder.h"
 
 
-void Hierarchical4DEncoder::start(const std::string& filename) {
-  mEntropyCoder.start(filename);  //opens output file
+void Hierarchical4DEncoder::start() {
   reset_probability_models();
+}
+
+ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() const {
+  return mEntropyCoder.get_ref_to_codestream_code();
 }
 
 void Hierarchical4DEncoder::reset_optimization_models() {
