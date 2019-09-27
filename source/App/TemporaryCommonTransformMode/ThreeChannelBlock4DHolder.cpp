@@ -90,6 +90,8 @@ void ThreeChannelBlock4DHolder::get_data_from_lightfield(LightField& lightfield,
                                                          int horizontalView,
                                                          int viewLine,
                                                          int viewColumn) {
+  
+
   lightfield.ReadBlock4DfromLightField(&std::get<0>(channels), verticalView,
                                        horizontalView, viewLine, viewColumn, 0);
   lightfield.ReadBlock4DfromLightField(&std::get<1>(channels), verticalView,

@@ -44,30 +44,37 @@
 #include <stdio.h>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 
 class ProbabilityModel {
  private:
-  double mRate[2]; /*> rates needed to encode each symbol.*/
   uint16_t frequency_of_zeros;
   uint16_t frequency_of_ones;
-  static constexpr decltype(frequency_of_zeros) MAXFREQUENCY = 4095;
+  static constexpr auto MAXFREQUENCY = 4095;
 
  public:
   ProbabilityModel();
-  ~ProbabilityModel() = default;
+
+
+  virtual ~ProbabilityModel() = default;
+
+
   void update(bool bit);
+
+
   void update();
-  
+
 
   template<bool bit>
   void update() {
-    if (!bit)
+    if constexpr (!bit) {
       frequency_of_zeros++;
+    }
     frequency_of_ones++;
     update();
   }
 
-  
+
   template<bool bit>
   double get_rate() const {
     double frequency_of_bit;
@@ -81,14 +88,21 @@ class ProbabilityModel {
   }
 
 
-  void reset();
-  decltype(ProbabilityModel::frequency_of_zeros) get_frequency_of_zeros() const noexcept;
-  decltype(ProbabilityModel::frequency_of_ones) get_frequency_of_ones() const noexcept;
-  ProbabilityModel& operator=(const ProbabilityModel& other);
-
-
-
   double get_rate(bool bit) const;
+
+
+  void reset();
+
+
+  decltype(ProbabilityModel::frequency_of_zeros) get_frequency_of_zeros() const
+      noexcept;
+
+
+  decltype(ProbabilityModel::frequency_of_ones) get_frequency_of_ones() const
+      noexcept;
+
+
+  ProbabilityModel& operator=(const ProbabilityModel& other);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_PROBABILITYMODEL_H__ */

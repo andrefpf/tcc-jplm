@@ -40,14 +40,17 @@
 
 #include "ProbabilityModel.h"
 
-ProbabilityModel::ProbabilityModel() {
-  reset();
+
+ProbabilityModel::ProbabilityModel()
+    : frequency_of_zeros(1), frequency_of_ones(2) {
 }
+
 
 void ProbabilityModel::reset() {
   frequency_of_zeros = 1;
   frequency_of_ones = 2;
 }
+
 
 void ProbabilityModel::update() {
   if (frequency_of_ones >= MAXFREQUENCY) {
@@ -57,14 +60,17 @@ void ProbabilityModel::update() {
       frequency_of_zeros++;
       frequency_of_ones++;
     }
-    if (frequency_of_zeros == frequency_of_ones)
+    if (frequency_of_zeros == frequency_of_ones) {
       frequency_of_ones++;
+    }
   }
 }
 
+
 void ProbabilityModel::update(bool bit) {
-  if (bit)
+  if (bit) {
     return update<1>();
+  }
   return update<0>();
 }
 
@@ -76,18 +82,21 @@ ProbabilityModel& ProbabilityModel::operator=(const ProbabilityModel& rhs) {
 }
 
 
-decltype(ProbabilityModel::frequency_of_zeros) ProbabilityModel::get_frequency_of_zeros() const noexcept {
+decltype(ProbabilityModel::frequency_of_zeros)
+ProbabilityModel::get_frequency_of_zeros() const noexcept {
   return frequency_of_zeros;
 }
 
 
-decltype(ProbabilityModel::frequency_of_ones) ProbabilityModel::get_frequency_of_ones() const noexcept {
+decltype(ProbabilityModel::frequency_of_ones)
+ProbabilityModel::get_frequency_of_ones() const noexcept {
   return frequency_of_ones;
 }
 
 
 double ProbabilityModel::get_rate(bool bit) const {
-  if (bit)
+  if (bit) {
     return get_rate<1>();
+  }
   return get_rate<0>();
 }
