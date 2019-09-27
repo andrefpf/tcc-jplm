@@ -39,7 +39,6 @@
  */
 
 
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -125,13 +124,11 @@ TEST_F(JPLFileFixture, Initialization) {
 
   auto jpl_file_from_file = JPLFileFromStream("tempJPLFile.bin");
 
-  EXPECT_EQ(jpl_file_from_file.get_number_of_decoded_boxes(), 3); 
-
+  EXPECT_EQ(jpl_file_from_file.get_number_of_decoded_boxes(), 3);
 }
 
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

@@ -31,52 +31,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ParsedConfiguration.h
+/** \file     ConfigurationParserTests.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2019-09-26
+ *  \date     2019-09-27
  */
-#ifndef JPLM_PARSEDCONFIGURATION_H
-#define JPLM_PARSEDCONFIGURATION_H
 
-#include <optional>
-#include <cstdint>
-#include "CLI/CLI.hpp"
-#include "Lib/Part1/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
-#include "nlohmann/json.hpp"
+#include <string>
+#include "Lib/Common/ConfigurationParser.h"
+#include "gtest/gtest.h"
 
 using namespace std;
 
-using Type = CompressionTypeLightField;
 
-class ParsedConfiguration {
-protected:
-  optional<string> input;
-  optional<string> output;
-  optional<JpegPlenoPart> part;
-  optional<Type> type;
-  optional<string> config;
-  optional<uint32_t> number_of_rows_t;
-  optional<uint32_t> number_of_columns_s;
-  optional<uint32_t> view_height_v;
-  optional<uint32_t> view_width_u;
-  optional<double> lambda;
-
-  void parse_cli(const int argc, const char** argv);
-  void parse_json(string path);
-  void parse_standard_part(const nlohmann::basic_json<> &conf);
-  void parse_mode_type(const nlohmann::basic_json<> &conf);
-  void parse_number_of_rows_t(const nlohmann::basic_json<> &conf);
-  void parse_number_of_columns_s(const nlohmann::basic_json<> &conf);
-  void parse_view_height_v(const nlohmann::basic_json<> &conf);
-  void parse_view_width_u(const nlohmann::basic_json<> &conf);
-  void parse_lambda(const nlohmann::basic_json<> &conf);
-  void check_inconsistencies(void);
- public:
-  ParsedConfiguration(const int argc, const char** argv);
-};
+TEST(ConfigurationParserTest, SimpleTest) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
+  int argc = 3;
+  ConfigurationParser config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
+}
 
 
-#endif  //JPLM_PARSEDCONFIGURATION_H
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

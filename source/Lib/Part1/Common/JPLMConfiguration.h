@@ -48,7 +48,7 @@ enum class JpegPlenoPart {
 };
 
 class JPLMConfiguration {
- protected:
+ public:
   JPLMConfiguration() = default;
   ~JPLMConfiguration() = default;
 };

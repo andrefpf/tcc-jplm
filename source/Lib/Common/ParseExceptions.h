@@ -48,16 +48,13 @@
 
 using namespace std;
 
-template<typename T,
-    typename std::enable_if<std::is_enum<T>::value>::type* = nullptr>
 class NotImplementedYetInputTypeParseException : public std::exception {
  private:
   string msg;
 
  public:
-  NotImplementedYetInputTypeParseException(const T& m)
-      : msg("Option " + std::string(magic_enum::enum_name(m)) +
-            " is not implemented yet.") {
+  NotImplementedYetInputTypeParseException(string m)
+      : msg("Option " + m + " is not implemented yet.") {
   }
 
   const char* what() const throw() {
@@ -66,7 +63,7 @@ class NotImplementedYetInputTypeParseException : public std::exception {
 };
 
 class InconsistentOptionsException : public exception {
-  const char * what() const throw () {
+  const char* what() const throw() {
     return "Inconsistent Options.";
   }
 };
