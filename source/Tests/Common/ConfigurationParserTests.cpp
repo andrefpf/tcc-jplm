@@ -38,6 +38,7 @@
  *  \date     2019-09-27
  */
 
+#include <exception>
 #include <string>
 #include "Lib/Common/ConfigurationParser.h"
 #include "gtest/gtest.h"
@@ -50,6 +51,13 @@ TEST(ConfigurationParserTest, SimpleTest) {
   int argc = 3;
   ConfigurationParser config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
+}
+
+TEST(ConfigurationParserTest, SimpleTestWithNonExpectedParameter) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
+  int argc = 4;
+  EXPECT_THROW({ ConfigurationParser config(argc, const_cast<char**>(argv)); },
+      std::runtime_error);
 }
 
 
