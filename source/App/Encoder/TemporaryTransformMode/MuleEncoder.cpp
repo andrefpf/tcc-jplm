@@ -127,26 +127,6 @@ void MuleEncoder::encode() {
                     rgb_4d_block.set_blocks_to_zero();
                     rgb_4d_block.get_data_from_lightfield(decoded_lightfield, t, s, v, u);
                     
-                    //this should be a pre-processing of the LF
-                    if(parameter_handler.is_lenslet_13x13) {
-                        if(t == 0) {
-                            if(s == 0) {
-                                rgb_4d_block.shift_uv_planes(2, 0, 0);
-                            }
-                            if((s + BLOCK_SIZE_s >= S)&&(s <= S)) { 
-                                rgb_4d_block.shift_uv_planes(2, 0, S-s-1);
-                            }
-                        }
-                        if((t + BLOCK_SIZE_t >= T)&&(t <= T)) {
-                            if(s == 0) {
-                                rgb_4d_block.shift_uv_planes(2, T-t-1, 0);
-                            }
-                            if((s + BLOCK_SIZE_s >= S)&&(s <= S)) {
-                                rgb_4d_block.shift_uv_planes(2, T-t-1, S-s-1);
-                            }
-                        }
-                    }
-                    // ------------
                     
                     rgb_4d_block.convert_to(spectral_4d_block);
 					spectral_4d_block.add_constant_to_pels(-(decoded_lightfield.mPGMScale+1)/2);

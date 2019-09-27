@@ -35,6 +35,7 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \author   Murilo
  *  \date     2019-09-26
  */
 
