@@ -31,51 +31,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     MuleCodec.h
+/** \file     LightFieldTransformMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2019-09-27
  */
 
-#ifndef MULECODEC_H__
-#define MULECODEC_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <iostream>
-#include <memory>
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
-#include "Lib/Part2/Common/TransformMode/LightField.h"
-#include "App/TemporaryCommonTransformMode/ParameterHandler.h"
-#include "App/TemporaryCommonTransformMode/ThreeChannelBlock4DHolder.h"
-#include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
+#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/TransformMode/Block4D.h"
 
-class MuleCodec {
- protected:
-  ParameterHandler parameter_handler;
-  FILE* encoded_file_pointer = nullptr;
-  LightField decoded_lightfield;
-  std::unique_ptr<LightFieldTransformMode<>> raw_lightfield;
-  Block4D r_block, g_block, b_block, y_block, cb_block, cr_block;
-  int extension_length_t = 0;
-  int extension_length_s = 0;
-  int extension_length_v = 0;
-  int extension_length_u = 0;
-  bool needs_block_extension = false;
-  void open_encoded_lightfield(const char* modes);
-  void open_decoded_lightfield(char mode);
-  void setup_transform_coefficients(bool forward);
-  void initialize_extension_lenghts();
+template<typename T=uint16_t>
+class LightFieldTransformMode : public LightfieldFromPPMFile<T>
+{
+public:
+	LightFieldTransformMode(const LightfieldIOConfiguration& configuration) : LightfieldFromPPMFile<T>(configuration) {
+	}
 
- public:
-  MuleCodec(ParameterHandler handler) : parameter_handler(handler) {
-    std::cout << "maybe:" << handler.transform_length_v << std::endl;
-  };
-  ~MuleCodec();
+	~LightFieldTransformMode() = default;
+
+	Block4D get_block_4D_from(const int channel, const LightfieldCoordinate<uint32_t>& coordinate_4d, const LightfieldDimension<uint32_t>& size) {
+		// const auto& image = get_image_at<T>();
+		auto block = Block4D(size);
+		const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
+		// const auto& [t_size, s_size] = size.get_t_and_s();
+		const auto [t_max, s_max, v_max, u_max] = coordinate_4d+size;
+		for(auto t=t_initial; t<t_max; ++t) {
+			for(auto s=s_initial; s<s_max; ++s) {
+				const auto& image_channel = this->get_image_at({t, s}).get_channel(channel);
+				for(auto v=v_initial; v<v_max; ++v) {
+					for(auto u=u_initial; u<u_max; ++u) {
+						block.mPixel[t][s][v][u] = image_channel[v][u];
+					}
+				}
+			}
+		}
+
+		return block;
+	}
 };
 
-#endif /* end of include guard: MULECODEC_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__ */

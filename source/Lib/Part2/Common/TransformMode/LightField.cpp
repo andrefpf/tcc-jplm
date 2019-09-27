@@ -56,9 +56,9 @@ void LightField::set_configurations(
     mNumberOfCacheHorizontalViews = numberOfCacheHorizontalViews;
     mNumberOfCacheVerticalViews = numberOfCacheVerticalViews;
     
-    mViewCache = new View * [mNumberOfCacheVerticalViews];
+    mViewCache = new ViewOLD * [mNumberOfCacheVerticalViews];
     for(int index_t = 0; index_t < mNumberOfCacheVerticalViews; index_t++) {
-        mViewCache[index_t] = new View [mNumberOfCacheHorizontalViews];
+        mViewCache[index_t] = new ViewOLD [mNumberOfCacheHorizontalViews];
         for(int index_s = 0; index_s < mNumberOfCacheHorizontalViews; index_s++) {
             mViewCache[index_t][index_s].SetCacheSize(numberOfViewCacheLines);
         }
@@ -109,7 +109,7 @@ void LightField :: OpenLightFieldPGM(
         for(int index_s = 0; index_s < mNumberOfCacheHorizontalViews && index_s < mNumberOfHorizontalViews; index_s++) {
             
             FindViewFileName(ViewFileName, index_t+mFirstCacheVerticalView, index_s+mFirstCacheHorizontalView);
-            //printf("Opening %s view file\n", ViewFileName);
+            //printf("Opening %s ViewOLD file\n", ViewFileName);
             if(mReadOrWriteLightField == 'w') {
                 mViewCache[index_t][index_s].mLines = mNumberOfViewLines;
                 mViewCache[index_t][index_s].mColumns = mNumberOfViewColumns;
@@ -158,7 +158,7 @@ void LightField :: OpenLightFieldPPM(
         for(int index_s = 0; index_s < mNumberOfCacheHorizontalViews && index_s < mNumberOfHorizontalViews; index_s++) {
             
             FindViewFileName(ViewFileName, index_t+mFirstCacheVerticalView, index_s+mFirstCacheHorizontalView);
-            //printf("Opening %s view file\n", ViewFileName);
+            //printf("Opening %s ViewOLD file\n", ViewFileName);
             if(mReadOrWriteLightField == 'w') {
                 mViewCache[index_t][index_s].mLines = mNumberOfViewLines;
                 mViewCache[index_t][index_s].mColumns = mNumberOfViewColumns;
@@ -176,7 +176,7 @@ void LightField :: OpenLightFieldPPM(
 }
 
 void LightField :: CloseLightField() {
-/*! closes all opened view files*/
+/*! closes all opened ViewOLD files*/
     
     for(int index_t = 0; index_t < mNumberOfCacheVerticalViews; index_t++) {
         for(int index_s = 0; index_s < mNumberOfCacheHorizontalViews; index_s++) {
@@ -202,8 +202,8 @@ void LightField :: CloseLightField() {
 }
 void LightField :: ReadBlock4DfromLightField(Block4D *targetBlock, int position_t, int position_s, int position_v, int position_u, int component) {
 /*! reads a 4 dimensional block from the lightfield at position (position_t,position_s,position_v,position_u). */
-/*! position_t is the vertical view index; */
-/*! position_s is the horizontal view index; */
+/*! position_t is the vertical ViewOLD index; */
+/*! position_s is the horizontal ViewOLD index; */
 /*! position_v is the line index; */
 /*! position_u is the column index. */    
 
@@ -620,8 +620,8 @@ void LightField :: ReadBlock4DfromLightField(Block4D *targetBlock, int position_
 }
 void LightField :: WriteBlock4DtoLightField(Block4D *targetBlock, int position_t, int position_s, int position_v, int position_u, int component) {
 /*! writes a 4 dimensional block to the lightfield at position (position_t,position_s,position_v,position_u). */
-/*! position_t is the vertical view index; */
-/*! position_s is the horizontal view index; */
+/*! position_t is the vertical ViewOLD index; */
+/*! position_s is the horizontal ViewOLD index; */
 /*! position_v is the line index; */
 /*! position_u is the column index. */    
     

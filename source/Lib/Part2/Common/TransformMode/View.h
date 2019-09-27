@@ -56,7 +56,7 @@
 
 #define DefaultPixelValue 0
 
-class View
+class ViewOLD
 {
 public:
     FILE *mViewFilePointer;                     /*!< pointer to view file */
@@ -75,8 +75,8 @@ public:
     long int mPGMDataOffset;                    /*!< PGM header size in bytes */
     char mUnavailable;                          /*!< if set the view contains no data */
     char mVerbosity;                            /*!< indicates the verbosity level for console messages */
-    View(void);
-    ~View(void);
+    ViewOLD(void);
+    ~ViewOLD(void);
     void SetCacheSize(int maxBlockLines);
     void OpenViewFilePGM(char *name, char readOrWriteView);
     int OpenViewFilePPM(char *name, char readOrWriteView);

@@ -52,7 +52,7 @@ public:
     int mNumberOfVerticalDigits = 3;      /*!< number of digits used to represent the vertical index in the view file names */
     int mNumberOfHorizontalViews = 0;     /*!< total number of horizontal views of the lightfield */
     int mNumberOfVerticalViews = 0;       /*!< total number of vertical views of the lightfield */
-    View **mViewCache=nullptr;            /*!< pointer to the two dimensional circular separable cache of views*/
+    ViewOLD **mViewCache=nullptr;            /*!< pointer to the two dimensional circular separable cache of views*/
     int mNumberOfCacheHorizontalViews=0;  /*!< number of horizontal views of the lightfield in the cache */
     int mNumberOfCacheVerticalViews=0;    /*!< number of vertical views of the lightfield in the cache */
     int mFirstCacheHorizontalView=0;      /*!< horizontal index of the first cached view */

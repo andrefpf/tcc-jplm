@@ -51,7 +51,7 @@
 #include <locale>  //std::tolower
 #include <map>
 #include <memory>
-#include "ColorSpaces.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 
 namespace fs = std::filesystem;

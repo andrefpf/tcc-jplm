@@ -43,7 +43,7 @@
 
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/LightField.h"
-#include "App/TemporaryCommonTransformMode/ColorSpaces.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
 #include "assert.h"
 
 class YCbCrBlock4DHolder;

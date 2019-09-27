@@ -52,7 +52,7 @@ inline unsigned short change_endianness_16b(unsigned short val)
 }
 
 
-View :: View(void) {
+ViewOLD :: ViewOLD(void) {
     mPixelData = NULL;
     mLines = 0;
     mColumns = 0;
@@ -68,7 +68,7 @@ View :: View(void) {
     mVerbosity = 1;
 }
 
-View :: ~View(void) {
+ViewOLD :: ~ViewOLD(void) {
     if(mPixelData != NULL) {
         delete [] mPixelData;
 	mPixelData = NULL;
@@ -76,13 +76,13 @@ View :: ~View(void) {
     if(mViewFilePointer != NULL) fclose(mViewFilePointer);
 }
 
-void View :: SetCacheSize(int maxBlockLines) {
+void ViewOLD :: SetCacheSize(int maxBlockLines) {
 /*! sets the maximum number of view lines contained in the cache */   
     
     mNumberCacheLines = maxBlockLines;
 
 }
-PixelType View :: GetPixel(int position_v, int position_u, int component) {
+PixelType ViewOLD :: GetPixel(int position_v, int position_u, int component) {
 /*! returns the pixel value at position_v line and position_u column of the view */   
     
     if(mUnavailable == 1) 
@@ -140,7 +140,7 @@ PixelType View :: GetPixel(int position_v, int position_u, int component) {
     }
 }
 
-void View :: PutPixel(PixelType pixelValue, int position_v, int position_u, int component) {
+void ViewOLD :: PutPixel(PixelType pixelValue, int position_v, int position_u, int component) {
 /*! writes pixelValue at position_v line and position_u column of the view */   
 /*! each component of a musltispectral pixel is independently stored and the operation is finished after the component 0 is written */   
    
@@ -181,7 +181,7 @@ void View :: PutPixel(PixelType pixelValue, int position_v, int position_u, int 
     
 }
 
-void View :: GetBlock2D(block4DElementType **pixel, int position_v, int position_u, int length_v, int length_u, int component) {
+void ViewOLD :: GetBlock2D(block4DElementType **pixel, int position_v, int position_u, int length_v, int length_u, int component) {
 /*! returns the pixel values of a 2D length_v x length_u region starting at position_v line and position_u column of the view */   
          
     if(mUnavailable == 1) {
@@ -259,7 +259,7 @@ void View :: GetBlock2D(block4DElementType **pixel, int position_v, int position
     }    
 }
 
-void View :: PutBlock2D(block4DElementType **pixelValue, int position_v, int position_u, int length_v, int length_u, int component) {
+void ViewOLD :: PutBlock2D(block4DElementType **pixelValue, int position_v, int position_u, int length_v, int length_u, int component) {
 /*! writes the pixels contained in the array pixelValue of a 2D length_v x length_u region starting at position_v line and position_u column of the view */   
 /*! each component of a musltispectral image is independently stored and the operation is finished after the component 0 is written */   
    
@@ -320,7 +320,7 @@ void View :: PutBlock2D(block4DElementType **pixelValue, int position_v, int pos
     
 }
 
-void View :: OpenViewFilePGM(char *name, char readOrWriteView) {
+void ViewOLD :: OpenViewFilePGM(char *name, char readOrWriteView) {
 /*! opens the view file for reading or writing */  
     
     char tag[256];
@@ -385,7 +385,7 @@ void View :: OpenViewFilePGM(char *name, char readOrWriteView) {
     
 }
 
-int View :: OpenViewFilePPM(char *name, char readOrWriteView) {
+int ViewOLD :: OpenViewFilePPM(char *name, char readOrWriteView) {
   
     char tag[256];
     if(readOrWriteView == 'r') {
@@ -457,7 +457,7 @@ int View :: OpenViewFilePPM(char *name, char readOrWriteView) {
 }
 
 
-void View :: ReadPixelFromFile(int pixelPositionInCache) {
+void ViewOLD :: ReadPixelFromFile(int pixelPositionInCache) {
     
     for(int component_index = 0; component_index < mNumberOfBands; component_index++) {
         PixelType pixelValue=0; 
@@ -473,7 +473,7 @@ void View :: ReadPixelFromFile(int pixelPositionInCache) {
     
 }
 
-void View :: WritePixelToFile(int pixelPositionInCache) {
+void ViewOLD :: WritePixelToFile(int pixelPositionInCache) {
     
     for(int component_index = 0; component_index < mNumberOfBands; component_index++) {
         int ClippedPixelValue = mPixelData[mNumberOfBands*(pixelPositionInCache)+component_index];
@@ -487,7 +487,7 @@ void View :: WritePixelToFile(int pixelPositionInCache) {
     
 }
 
-void View :: CloseViewFile(void) {
+void ViewOLD :: CloseViewFile(void) {
 /*! flushes the cache and closes the view file */
     
     if(mUnavailable == 1)

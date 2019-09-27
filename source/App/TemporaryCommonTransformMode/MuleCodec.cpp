@@ -46,6 +46,7 @@
 */
 #include "MuleCodec.h"
 
+
 void MuleCodec::initialize_extension_lenghts() {
     extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
     extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
@@ -70,6 +71,17 @@ void MuleCodec::open_encoded_lightfield(const char* modes) {
 }
 
 void MuleCodec::open_decoded_lightfield(char mode) {
+
+    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
+                parameter_handler.number_of_horizontal_views, 
+                3, 3);
+    auto config = LightfieldIOConfiguration(
+        parameter_handler.decoded_lightfield.string(),
+        dimension
+        );
+
+	raw_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+
     char viewFileNameSuffix[] = ".ppm";
     decoded_lightfield.OpenLightFieldPPM(
         parameter_handler.decoded_lightfield.string().c_str(), 
