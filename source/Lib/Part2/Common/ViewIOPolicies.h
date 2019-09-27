@@ -76,25 +76,7 @@ class ViewIOPolicy {
 };
 
 
-template<typename T>
-class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
-protected:
 
-  void load_image_if_necessary(View<T>& view) override {
-    if (!view.has_image())
-      view.load_image();
-  }
-
- public:
-
-  virtual ViewIOPolicyLimitlessMemory<T>* clone() const override {
-    return new ViewIOPolicyLimitlessMemory(*this);
-  }
-
-
-
-
-};
 
 
 template<typename T>
