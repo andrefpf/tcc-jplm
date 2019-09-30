@@ -118,7 +118,7 @@ void Block4D::set_dimension(int length_t, int length_s, int length_v, int length
     number_of_allocated_elements = number_of_elements;
 
     if(number_of_elements != 0) {
-        mPixelData = new block4DElementType [number_of_elements];    
+        mPixelData = new block4DElementType [number_of_elements];
         mPixel = new block4DElementType *** [mlength_t];
         for(int t = 0; t < mlength_t; t++) {
             mPixel[t] = new block4DElementType ** [mlength_s];

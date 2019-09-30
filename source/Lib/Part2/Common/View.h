@@ -113,7 +113,12 @@ class View {
   }
 
 
-  void set_image(Image<T>&& image) {
+//  void set_image(Image<T>&& image) {
+ //   image_ = std::move(image);
+  //}
+
+
+  void set_image(std::unique_ptr<Image<T>>&& image) {
     image_ = std::move(image);
   }
 
@@ -254,7 +259,6 @@ class View {
               << "with initial point at (" << std::get<0>(initial) << ", "
               << std::get<1>(initial) << ")" << std::endl;
   }
-
 
   void load_image() const {
     // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';

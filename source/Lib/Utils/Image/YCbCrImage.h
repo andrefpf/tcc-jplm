@@ -83,8 +83,10 @@ class YCbCrImage : public ThreeChannelImage<T> {
 template<typename T>
 class BT601Image : public YCbCrImage<T> {
  public:
+  static constexpr auto image_type = ImageType::BT601;
+
   BT601Image(std::size_t width, std::size_t height, std::size_t bpp)
-      : YCbCrImage<T>(width, height, bpp, ImageType::BT601){};
+      : YCbCrImage<T>(width, height, bpp, image_type){};
 
 
   BT601Image(BT601Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
@@ -116,8 +118,9 @@ class BT601Image : public YCbCrImage<T> {
 template<typename T>
 class BT709Image : public YCbCrImage<T> {
  public:
+  static constexpr auto image_type = ImageType::BT709;
   BT709Image(std::size_t width, std::size_t height, std::size_t bpp)
-      : YCbCrImage<T>(width, height, bpp, ImageType::BT709){};
+      : YCbCrImage<T>(width, height, bpp, image_type){};
 
 
   BT709Image(BT709Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {

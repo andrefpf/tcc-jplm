@@ -43,6 +43,7 @@
 
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/LightField.h"
+#include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "assert.h"
 
@@ -50,77 +51,104 @@ class YCbCrBlock4DHolder;
 class YCoCgBlock4DHolder;
 class RGBBlock4DHolder;
 
-class ThreeChannelBlock4DHolder
-{
-protected:
-	int scale;
-public:
-	std::tuple<Block4D&, Block4D&, Block4D&> channels;
-	std::array<Block4D*, 3> channels_ptr_array;
-	ThreeChannelBlock4DHolder(Block4D& channel_0, Block4D& channel_1, Block4D& channel_2, int scale):
-	scale(scale), channels(channel_0, channel_1, channel_2), channels_ptr_array{&channel_0, &channel_1, &channel_2} {};
-	~ThreeChannelBlock4DHolder() = default;
+class ThreeChannelBlock4DHolder {
+ protected:
+  int scale;
 
-	void copy_to(ThreeChannelBlock4DHolder& dest) const;
-	void shift_uv_planes(int shift, int position_t, int position_s) const;
-	void clip(int min, int max) const;
-	void set_blocks_to_zero() const;
-	void add_constant_to_pels(int value) const;
-	void set_block_dimensions(int length_t, int length_s, int length_v, int length_u) const;
-	void resize_blocks(int length_t, int length_s, int length_v, int length_u) const;
-	void convert_to(ThreeChannelBlock4DHolder& dest_color_space) const;
-	const std::array<Block4D*, 3>& as_ptr_array() const {return channels_ptr_array;};
+ public:
+  std::tuple<Block4D&, Block4D&, Block4D&> channels;
+  std::array<Block4D*, 3> channels_ptr_array;
+  ThreeChannelBlock4DHolder(
+      Block4D& channel_0, Block4D& channel_1, Block4D& channel_2, int scale)
+      : scale(scale),
+        channels(channel_0, channel_1, channel_2), channels_ptr_array{
+                                                       &channel_0, &channel_1,
+                                                       &channel_2} {};
+  ~ThreeChannelBlock4DHolder() = default;
 
-	virtual void convert_to(RGBBlock4DHolder& dest_color_space) const = 0;
-	virtual void convert_to(YCbCrBlock4DHolder& dest_color_space) const = 0;
-	virtual void convert_to(YCoCgBlock4DHolder& dest_color_space) const = 0;
+  void copy_to(ThreeChannelBlock4DHolder& dest) const;
+  void shift_uv_planes(int shift, int position_t, int position_s) const;
+  void clip(int min, int max) const;
+  void set_blocks_to_zero() const;
+  void add_constant_to_pels(int value) const;
+  void set_block_dimensions(
+      int length_t, int length_s, int length_v, int length_u) const;
+  void resize_blocks(
+      int length_t, int length_s, int length_v, int length_u) const;
+  void convert_to(ThreeChannelBlock4DHolder& dest_color_space) const;
+  const std::array<Block4D*, 3>& as_ptr_array() const {
+    return channels_ptr_array;
+  };
 
-	virtual ColorSpaces::ColorSpace get_my_type() const = 0;
+  virtual void convert_to(RGBBlock4DHolder& dest_color_space) const = 0;
+  virtual void convert_to(YCbCrBlock4DHolder& dest_color_space) const = 0;
+  virtual void convert_to(YCoCgBlock4DHolder& dest_color_space) const = 0;
 
-	void get_data_from_lightfield(LightField& lightfield, int verticalView, int horizontalView, int viewLine, int viewColumn);
-	void set_data_into_lightfield(LightField& lightfield, int verticalView, int horizontalView, int viewLine, int viewColumn);
+  virtual ColorSpaces::ColorSpace get_my_type() const = 0;
+
+  void get_data_from_lightfield(LightField& lightfield, int verticalView,
+      int horizontalView, int viewLine, int viewColumn);
+
+  void get_data_from_lightfield(LightFieldTransformMode<>& lightfield,
+      int verticalView, int horizontalView, int viewLine, int viewColumn,
+      const LightfieldDimension<uint32_t>& size);
+  
+  void set_data_into_lightfield(LightField& lightfield, int verticalView,
+      int horizontalView, int viewLine, int viewColumn);
 };
 
-class RGBBlock4DHolder : public ThreeChannelBlock4DHolder
-{
-public:
-	RGBBlock4DHolder(Block4D& r_block, Block4D& g_block, Block4D& b_block, int scale) : 
-	ThreeChannelBlock4DHolder(r_block, g_block, b_block, scale) {};
-	~RGBBlock4DHolder() = default;
+class RGBBlock4DHolder : public ThreeChannelBlock4DHolder {
+ public:
+  RGBBlock4DHolder(
+      Block4D& r_block, Block4D& g_block, Block4D& b_block, int scale)
+      : ThreeChannelBlock4DHolder(r_block, g_block, b_block, scale){};
+  ~RGBBlock4DHolder() = default;
 
-	void convert_to(RGBBlock4DHolder& dest_color_space) const override {copy_to(dest_color_space);};
-	void convert_to(YCbCrBlock4DHolder& dest_color_space) const override;
-	void convert_to(YCoCgBlock4DHolder& dest_color_space) const override;
+  void convert_to(RGBBlock4DHolder& dest_color_space) const override {
+    copy_to(dest_color_space);
+  };
+  void convert_to(YCbCrBlock4DHolder& dest_color_space) const override;
+  void convert_to(YCoCgBlock4DHolder& dest_color_space) const override;
 
-	ColorSpaces::ColorSpace get_my_type() const override {return ColorSpaces::ColorSpace::RGB;};
+  ColorSpaces::ColorSpace get_my_type() const override {
+    return ColorSpaces::ColorSpace::RGB;
+  };
 };
 
-class YCbCrBlock4DHolder : public ThreeChannelBlock4DHolder
-{
-public:
-	YCbCrBlock4DHolder(Block4D& y_block, Block4D& cb_block, Block4D& cr_block, int scale) : 
-	ThreeChannelBlock4DHolder(y_block, cb_block, cr_block, scale) {};
-	~YCbCrBlock4DHolder() = default;
+class YCbCrBlock4DHolder : public ThreeChannelBlock4DHolder {
+ public:
+  YCbCrBlock4DHolder(
+      Block4D& y_block, Block4D& cb_block, Block4D& cr_block, int scale)
+      : ThreeChannelBlock4DHolder(y_block, cb_block, cr_block, scale){};
+  ~YCbCrBlock4DHolder() = default;
 
-	void convert_to(RGBBlock4DHolder& dest_color_space) const override;
-	void convert_to(YCbCrBlock4DHolder& dest_color_space) const override {copy_to(dest_color_space);};
-	void convert_to(YCoCgBlock4DHolder& dest_color_space) const override;
+  void convert_to(RGBBlock4DHolder& dest_color_space) const override;
+  void convert_to(YCbCrBlock4DHolder& dest_color_space) const override {
+    copy_to(dest_color_space);
+  };
+  void convert_to(YCoCgBlock4DHolder& dest_color_space) const override;
 
-	ColorSpaces::ColorSpace get_my_type() const override {return ColorSpaces::ColorSpace::BT601;};
+  ColorSpaces::ColorSpace get_my_type() const override {
+    return ColorSpaces::ColorSpace::BT601;
+  };
 };
 
-class YCoCgBlock4DHolder : public ThreeChannelBlock4DHolder
-{
-public:
-	YCoCgBlock4DHolder(Block4D& y_block, Block4D& co_block, Block4D& cg_block, int scale) : 
-	ThreeChannelBlock4DHolder(y_block, co_block, cg_block, scale) {};
-	~YCoCgBlock4DHolder() = default;
-	
-	void convert_to(RGBBlock4DHolder& dest_color_space) const override;
-	void convert_to(YCbCrBlock4DHolder& dest_color_space) const override;
-	void convert_to(YCoCgBlock4DHolder& dest_color_space) const override {copy_to(dest_color_space);};
+class YCoCgBlock4DHolder : public ThreeChannelBlock4DHolder {
+ public:
+  YCoCgBlock4DHolder(
+      Block4D& y_block, Block4D& co_block, Block4D& cg_block, int scale)
+      : ThreeChannelBlock4DHolder(y_block, co_block, cg_block, scale){};
+  ~YCoCgBlock4DHolder() = default;
 
-	ColorSpaces::ColorSpace get_my_type() const override {return ColorSpaces::ColorSpace::YCoCg;};
+  void convert_to(RGBBlock4DHolder& dest_color_space) const override;
+  void convert_to(YCbCrBlock4DHolder& dest_color_space) const override;
+  void convert_to(YCoCgBlock4DHolder& dest_color_space) const override {
+    copy_to(dest_color_space);
+  };
+
+  ColorSpaces::ColorSpace get_my_type() const override {
+    return ColorSpaces::ColorSpace::YCoCg;
+  };
 };
 
 #endif /* end of include guard: THREECHANNELBLOCK4DHOLDER_H__ */

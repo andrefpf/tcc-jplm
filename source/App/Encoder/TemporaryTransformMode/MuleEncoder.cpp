@@ -107,6 +107,8 @@ void MuleEncoder::encode() {
         spectral_4d_block.set_block_dimensions(BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
     }
 
+    int pel_shift = -(decoded_lightfield.mPGMScale+1)/2;
+
     for(auto t = 0; t < T; t += BLOCK_SIZE_t) {
         auto used_size_t = (t + BLOCK_SIZE_t > T)? T%BLOCK_SIZE_t : BLOCK_SIZE_t;
         for(auto s = 0; s < S; s += BLOCK_SIZE_s) {
@@ -116,40 +118,43 @@ void MuleEncoder::encode() {
                 for(auto u = 0; u < U; u += BLOCK_SIZE_u) {
                     auto used_size_u = (u + BLOCK_SIZE_u > U)? U%BLOCK_SIZE_u : BLOCK_SIZE_u;
 
-                    if(parameter_handler.verbose)
-                        printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
-                    
-                    if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-                        rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                        spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                    }
+                    //std::cout << "BLOCK_SIZE_t " << BLOCK_SIZE_t << std::endl;
+                    //std::cout << "used_size_t  " <<  used_size_t << std::endl;
+                    //std::cout << "BLOCK_SIZE_s " << BLOCK_SIZE_s << std::endl;
+                    //std::cout << "used_size_s  " <<  used_size_s << std::endl;
+                    //std::cout << "BLOCK_SIZE_v " << BLOCK_SIZE_v << std::endl;
+                    //std::cout << "used_size_v  " <<  used_size_v << std::endl;
+                    //std::cout << "BLOCK_SIZE_u " << BLOCK_SIZE_u << std::endl;
+                    //std::cout << "used_size_u  " <<  used_size_u << std::endl;
 
-                    rgb_4d_block.set_blocks_to_zero();
-                    rgb_4d_block.get_data_from_lightfield(decoded_lightfield, t, s, v, u);
+                    //if(parameter_handler.verbose)
+                    // printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
                     
+                    //if (parameter_handler.extension_method == SHRINK_TO_FIT) {
+                    //    rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+                    //    spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+                    //}
+
+                    //rgb_4d_block.set_blocks_to_zero();
+                    //rgb_4d_block.get_data_from_lightfield(decoded_lightfield, t, s, v, u);
+                    //rgb_4d_block.get_data_from_lightfield(*raw_lightfield, t, s, v, u, {used_size_t, used_size_s, used_size_v, used_size_u});
+                    auto size = LightfieldDimension<uint32_t>(used_size_t, used_size_s, used_size_v, used_size_u);
                     
-                    rgb_4d_block.convert_to(spectral_4d_block);
-					spectral_4d_block.add_constant_to_pels(-(decoded_lightfield.mPGMScale+1)/2);
 
-                    // hierarchical_4d_encoder.reset_probability_models();
+                    // rgb_4d_block.convert_to(spectral_4d_block);
+					//spectral_4d_block.add_constant_to_pels(-(decoded_lightfield.mPGMScale+1)/2);
+                    // if (needs_block_extension) {
+                    //    std::cout << "NEEDS EXTENSIONNNN" << std::endl;
+                    // }
 
-                    for(auto current_block: spectral_4d_block.as_ptr_array()){
-                        if (needs_block_extension) {
-                            if(used_size_u != BLOCK_SIZE_u)
-                                current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
-                            if(used_size_v != BLOCK_SIZE_v) 
-                                current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
-                            if(used_size_s != BLOCK_SIZE_s)
-                                current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
-                            if(used_size_t != BLOCK_SIZE_t)
-                                current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
-                        }
+                    for(auto i=0;i<3;++i) {
+                        auto block_4d = raw_lightfield->get_block_4D_from(i, {t, s, v, u}, size);
+                        block_4d+=pel_shift;
 
                         hierarchical_4d_encoder.reset_probability_models();
-
-                        tp.rd_optimize_transform(*current_block, hierarchical_4d_encoder, parameter_handler.lambda);
+                        tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, parameter_handler.lambda);
                         tp.encode_partition(hierarchical_4d_encoder, parameter_handler.lambda);
-		            }
+                    }
                 }
             }
         }

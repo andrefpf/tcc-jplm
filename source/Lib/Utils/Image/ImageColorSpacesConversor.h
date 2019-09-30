@@ -247,9 +247,16 @@ ImageOut<T> to(const ImageIn<T>& source) {
       }
       break;
     }
+    //case ImageType::BT601: {
+    //  if constexpr (std::is_same_v<BT601Image<T>, ImageOut<T>>) {
+    //  	return BT601Image(source);
+    //  }
+    //  break;	
+    //}
 
     default:
       std::cerr << "Conversion from this type is not yet supported..."
+      			<< "Type is: " << source.get_type() 
                 << std::endl;
       exit(2);
   }
@@ -264,6 +271,7 @@ std::unique_ptr<ImageOut<T>> to(const std::unique_ptr<ImageIn<T>>& source) {
   auto out_image = to<ImageOut>(*(source.get()));
   return std::make_unique<ImageOut<T>>(std::move(out_image));
 }
+
 
 
 template<template<typename> class ImageOut, template<typename> class ImageIn,

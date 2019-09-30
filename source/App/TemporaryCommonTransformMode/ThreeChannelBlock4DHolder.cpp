@@ -101,6 +101,18 @@ void ThreeChannelBlock4DHolder::get_data_from_lightfield(LightField& lightfield,
 }
 
 
+void ThreeChannelBlock4DHolder::get_data_from_lightfield(LightFieldTransformMode<>& lightfield,
+                                                         int verticalView,
+                                                         int horizontalView,
+                                                         int viewLine,
+                                                         int viewColumn,
+                                                         const LightfieldDimension<uint32_t>& size) {
+  std::get<0>(channels) = lightfield.get_block_4D_from(0, {verticalView, horizontalView, viewLine, viewColumn}, size);
+  std::get<1>(channels) = lightfield.get_block_4D_from(1, {verticalView, horizontalView, viewLine, viewColumn}, size);
+  std::get<2>(channels) = lightfield.get_block_4D_from(2, {verticalView, horizontalView, viewLine, viewColumn}, size);
+}
+
+
 void ThreeChannelBlock4DHolder::set_data_into_lightfield(LightField& lightfield,
                                                          int verticalView,
                                                          int horizontalView,

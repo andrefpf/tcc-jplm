@@ -176,6 +176,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  template<template<typename> typename ImageType>
+  const ImageType<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->template get_image_at<ImageType>(view);
+  }
+  
+
+
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {

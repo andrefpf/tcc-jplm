@@ -45,6 +45,7 @@
 #include "Lib/Part2/Common/CommonExceptions.h"
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 
 template<typename T>
 class ViewIOPolicy {
@@ -70,6 +71,30 @@ class ViewIOPolicy {
     load_image_if_necessary(view);
     return *view.get_image_ptr();
   }
+
+
+  
+  template<template<typename> class ImageType>
+  const ImageType<T>& get_image_at(View<T>& view) {
+    load_image_if_necessary(view);
+    using namespace ImageColorSpaceConversion;
+    auto image_ptr = view.get_image_ptr();
+    if(const auto image_ptr = view.get_image_ptr(); image_ptr->get_type() == ImageType<T>::image_type) {
+      return static_cast<ImageType<T>&>(*image_ptr);       
+    }
+    auto view_image = view.release_image();
+    auto converted_image = convert::to<ImageType>(view_image);
+    view.set_image(std::move(converted_image));
+
+    return static_cast<ImageType<T>&>(*view.get_image_ptr()); 
+  }
+  //void convert_view_image(View<T>& view) {
+  //  load_image_if_necessary(view);
+  //  using namespace ImageColorSpaceConversion;
+  //  auto view_image = view.release_image();
+  //  view.set_image(std::move(convert::to<BT601Image>(view_image)));
+  //}
+
 
   virtual ViewIOPolicy<T>* clone() const = 0;
 };
