@@ -31,29 +31,63 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField4DTransformMode.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     JPLMConfiguration.h
+ *  \brief    General configuration data object
+ *  \details  JPLMConfiguration is the most basic abstraction of configuration
+ *            data object for being used by the JPLM Encoder and Decoders. It
+ *            contains only the input and output paths extracted from the
+ *            command line interface. All configuration objects are derived
+ *            from JPLMConfiguration.
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#ifndef JPLM_JPLMConfiguration_H
+#define JPLM_JPLMConfiguration_H
+#include <string>
+#include "CLI/CLI.hpp"
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
+using namespace std;
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
-
-
-class JPLMEncoderConfigurationLightField4DTransformMode
-    : public JPLMEncoderConfigurationLightField {
-  public:
-  JPLMEncoderConfigurationLightField4DTransformMode(const std::string& path)
-      : JPLMEncoderConfigurationLightField(path) {
-  }
-
-  virtual CompressionTypeLightField get_compression_type() const override {
-    return CompressionTypeLightField::transform_mode;
-  }
+enum class JpegPlenoPart {
+  LightField = 2,
 };
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__ */
+
+class JPLMConfiguration {
+ public:
+  const string &getInput() const;
+
+  JPLMConfiguration();
+
+  const string &getOutput() const;
+  JPLMConfiguration(int argc, char **argv);
+
+ protected:
+  CLI::App app{"JPLM"};
+  string input;
+  string output;
+
+  void parse_cli(int argc, char **argv);
+};
+
+const string &JPLMConfiguration::getInput() const {
+  return input;
+}
+
+const string &JPLMConfiguration::getOutput() const {
+  return output;
+}
+
+JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
+  parse_cli(argc, argv);
+}
+
+void JPLMConfiguration::parse_cli(int argc, char **argv) {
+  app.add_option("-i,--input", input,
+                 "Input (If Part II, it is a directory containing a set of uncompressed "
+                 "light-field images xxx_yyy.ppm).");
+  app.add_option("-o,--output", output, "Output compressed bitstream");
+  app.parse(argc, argv);
+}
+
+#endif  //JPLM_JPLMConfiguration_H

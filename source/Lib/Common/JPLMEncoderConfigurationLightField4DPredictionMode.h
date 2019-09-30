@@ -31,27 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
+/** \file     JPLMEncoderConfigurationLightField4DPredictionMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMCONFIGURATION_H__
-#define JPLMCONFIGURATION_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 
-#include <string>
+#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "JPLMEncoderConfigurationLightField.h"
 
-enum class JpegPlenoPart {
-  LightField = 2,
-};
-
-class JPLMConfiguration {
+class JPLMEncoderConfigurationLightField4DPredictionMode
+    : public JPLMEncoderConfigurationLightField {
  public:
-  JPLMConfiguration() = default;
-  ~JPLMConfiguration() = default;
+  CompressionTypeLightField get_compression_type() const override;
+
+  JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv);
 };
 
+JPLMEncoderConfigurationLightField4DPredictionMode::
+JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
+    : JPLMEncoderConfigurationLightField(argc, argv) {
+  throw NotImplementedYetModeException();
+}
 
-#endif /* end of include guard: JPLMCONFIGURATION_H__ */
+CompressionTypeLightField
+JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type() const {
+  return CompressionTypeLightField::prediction_mode;
+}
+
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */

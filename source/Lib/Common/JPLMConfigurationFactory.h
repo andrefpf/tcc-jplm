@@ -44,20 +44,32 @@
 #include <any>
 #include <memory>
 #include <unordered_map>
-#include "Lib/Part1/Decoder/JPLMDecoderConfiguration.h"
-#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 
 
 class JPLMConfigurationFactory {
  public:
   static std::unique_ptr<JPLMConfiguration> get_configuration(
       [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
+
+ protected:
+  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
+      int argc, char const* argv[], CompressionTypeLightField type);
 };
 
 std::unique_ptr<JPLMConfiguration> JPLMConfigurationFactory::get_configuration(
     int argc, const char** argv) {
-  return nullptr;
+  JPLMConfiguration basic_config =
+      JPLMConfiguration(argc, const_cast<char**>(argv));
+//  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
+//    CompressionTypeLightField type = basic_config.getType();
+//    return get_part2_configuration(argc, argv, type);
+//  } else {
+//    throw NotImplementedYetPartException();
+//  }
 }
+
 
 
 #endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */

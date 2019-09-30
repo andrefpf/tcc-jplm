@@ -31,18 +31,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfigurationTests.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     ConfigurationParserTests.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-27
  */
 
-#include <iostream>
-#include "Lib/Part1/Common/JPLMConfiguration.h"
+#include <exception>
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "gtest/gtest.h"
+
+using namespace std;
+
+
+TEST(JPLMConfiguration, SimpleTest) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
+  int argc = 3;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
+  int argc = 4;
+  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
+      std::runtime_error);
+}
+
+
+TEST(JPLMEncoderConfiguration, SimpleCLITest) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
+      "../cfg/part2/mule/I01Bikes.cfg", "-p", "2", "-t", "13", "-s", "13", "-v",
+      "434", "-u", "626"};
+  int argc = 15;
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
+  EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
+  EXPECT_EQ(13, config.getNumberOfRowsT());
+  EXPECT_EQ(13, config.getNumberOfColumnsS());
+  EXPECT_EQ(434, config.getViewHeightV());
+  EXPECT_EQ(626, config.getViewWidthU());
+}
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+

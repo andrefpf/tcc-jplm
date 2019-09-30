@@ -31,21 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ParsedConfiguration.h
- *  \brief    Brief description
- *  \details  Detailed description
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2019-09-26
+/** \file     JPLMEncoderConfiguration.h
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \date     2019-09-11
  */
-#ifndef JPLM_CONFIGURATIONPARSER_H
-#define JPLM_CONFIGURATIONPARSER_H
+
+#ifndef JPLMENCODERCONFIGURATION_H__
+#define JPLMENCODERCONFIGURATION_H__
 
 #include <cstdint>
 #include <optional>
 #include "CLI/CLI.hpp"
-#include "Lib/Common/ParseExceptions.h"
-#include "Lib/Part1/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
@@ -54,15 +55,10 @@ using namespace std;
 using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 
-class ConfigurationParser {
+
+class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
-  const string &getInput() const;
-
-  const string &getOutput() const;
-
-  const JpegPlenoPart &getPart() const;
-
-  const Type &getType() const;
+  const JpegPlenoPart &get_jpeg_pleno_part() const;
 
   const string &getConfig() const;
 
@@ -74,59 +70,45 @@ class ConfigurationParser {
 
   const uint32_t &getViewWidthU() const;
 
-  const double &getLambda() const;
 
   const ColorSpaces::ColorSpace &getColorspace() const;
 
-  ConfigurationParser(int argc, char **argv);
+  JPLMEncoderConfiguration(int argc, char **argv);
 
  protected:
-  string input;
-  string output;
   JpegPlenoPart part;
-  Type type;
   string config;
   uint32_t number_of_rows_t;
   uint32_t number_of_columns_s;
   uint32_t view_height_v;
   uint32_t view_width_u;
-  double lambda;
   ColorSpaces::ColorSpace colorspace;
 
   void parse_cli(int argc, char **argv);
   void parse_json(string path);
-  void parse_standard_part(const nlohmann::basic_json<> &conf);
-  void parse_mode_type(const nlohmann::basic_json<> &conf);
+  void parse_jpeg_pleno_part(const nlohmann::basic_json<> &conf);
+
   void parse_number_of_rows_t(const nlohmann::basic_json<> &conf);
   void parse_number_of_columns_s(const nlohmann::basic_json<> &conf);
   void parse_view_height_v(const nlohmann::basic_json<> &conf);
   void parse_view_width_u(const nlohmann::basic_json<> &conf);
-  void parse_lambda(const nlohmann::basic_json<> &conf);
   void parse_colorspace(const nlohmann::basic_json<> &conf);
-  void check_inconsistencies(void);
+
 };
 
-ConfigurationParser::ConfigurationParser(int argc, char **argv) {
+JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
+    : JPLMConfiguration(argc, argv) {
   parse_cli(argc, argv);
   if (!config.empty())
     parse_json(config);
 }
 
-void ConfigurationParser::parse_cli(int argc, char **argv) {
-  CLI::App app{"JPLM"};
-  app.add_option("-i,--input", input,
-      "Input (If Part II, it is a directory containing a set of uncompressed "
-      "light-field images xxx_yyy.ppm).");
-  app.add_option("-o,--output", output, "Output compressed bitstream");
+void JPLMEncoderConfiguration::parse_cli(int argc, char **argv) {
   app.add_option("-c,--config", config, "Path to config file");
   app.add_set(
          "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
       ->type_name("enum/JpegPlenoPart in { LightField=2 }");
-  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
-         "Codec type")
-      ->type_name(
-          "enum/CompressionTypeLightField in {transform_mode=0, "
-          "prediction_mode=1}");
+
   app.add_option(
       "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
   app.add_option("-s,--number_of_columns", number_of_columns_s,
@@ -135,27 +117,22 @@ void ConfigurationParser::parse_cli(int argc, char **argv) {
       "-v,--view_height", view_height_v, "Single-view height dimension");
   app.add_option(
       "-u,--view_width", view_width_u, "Single-view width dimension");
-  app.add_option("-l,--lambda", lambda,
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
+
   app.parse(argc, argv);
 }
 
-void ConfigurationParser::parse_json(string config_file_path) {
+void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
-  parse_standard_part(conf);
-  parse_mode_type(conf);
+  parse_jpeg_pleno_part(conf);
   parse_number_of_columns_s(conf);
   parse_number_of_rows_t(conf);
   parse_view_height_v(conf);
   parse_view_width_u(conf);
-  parse_lambda(conf);
   parse_colorspace(conf);
-
-  check_inconsistencies();
 }
 
-void ConfigurationParser::parse_standard_part(const json &conf) {
+void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
   if (conf.contains("part")) {
     string p = conf["part"].get<string>();
     std::transform(p.begin(), p.end(), p.begin(),
@@ -166,46 +143,30 @@ void ConfigurationParser::parse_standard_part(const json &conf) {
   }
 }
 
-void ConfigurationParser::parse_mode_type(const json &conf) {
-  if (conf.contains("type")) {
-    string t = conf["type"].get<string>();
-    std::transform(t.begin(), t.end(), t.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (t == "transform mode" || t == "transform_mode" || t == "mule")
-      type = Type::transform_mode;
-    else if (t == "prediction mode" || t == "prediction_mode" || t == "wasp")
-      type = Type::prediction_mode;
-    else
-      throw NotImplementedYetInputTypeParseException(t);
-  }
-}
 
-void ConfigurationParser::parse_number_of_rows_t(const json &conf) {
+
+void JPLMEncoderConfiguration::parse_number_of_rows_t(const json &conf) {
   if (conf.contains("number_of_rows"))
     number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
 }
 
-void ConfigurationParser::parse_number_of_columns_s(const json &conf) {
+void JPLMEncoderConfiguration::parse_number_of_columns_s(const json &conf) {
   if (conf.contains("number_of_columns"))
     number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
 }
 
-void ConfigurationParser::parse_view_height_v(const json &conf) {
+void JPLMEncoderConfiguration::parse_view_height_v(const json &conf) {
   if (conf.contains("view_height"))
     view_height_v = conf["view_height"].get<uint32_t>();
 }
 
-void ConfigurationParser::parse_view_width_u(const json &conf) {
+void JPLMEncoderConfiguration::parse_view_width_u(const json &conf) {
   if (conf.contains("view_width"))
     view_width_u = conf["view_width"].get<uint32_t>();
 }
 
-void ConfigurationParser::parse_lambda(const nlohmann::basic_json<> &conf) {
-  if (conf.contains("lambda"))
-    lambda = conf["lambda"].get<double>();
-}
-
-void ConfigurationParser::parse_colorspace(const nlohmann::basic_json<> &conf) {
+void JPLMEncoderConfiguration::parse_colorspace(
+    const nlohmann::basic_json<> &conf) {
   if (conf.contains("colorspace")) {
     string c = conf["colorspace"].get<string>();
     std::transform(c.begin(), c.end(), c.begin(),
@@ -226,58 +187,36 @@ void ConfigurationParser::parse_colorspace(const nlohmann::basic_json<> &conf) {
 }
 
 
-void ConfigurationParser::check_inconsistencies(void) {
-  bool rule1 = lambda && (part != JpegPlenoPart::LightField);
-  bool rule2 = lambda && (type != Type::transform_mode);
-  bool rule3 =
-      (part != JpegPlenoPart::LightField) && (type != Type::transform_mode);
-  if (rule1 || rule2 || rule3)
-    throw InconsistentOptionsException();
-}
 
-const string &ConfigurationParser::getInput() const {
-  return input;
-}
 
-const string &ConfigurationParser::getOutput() const {
-  return output;
-}
-
-const JpegPlenoPart &ConfigurationParser::getPart() const {
+const JpegPlenoPart &JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
   return part;
 }
 
-const Type &ConfigurationParser::getType() const {
-  return type;
-}
 
-const string &ConfigurationParser::getConfig() const {
+
+const string &JPLMEncoderConfiguration::getConfig() const {
   return config;
 }
 
-const uint32_t &ConfigurationParser::getNumberOfRowsT() const {
+const uint32_t &JPLMEncoderConfiguration::getNumberOfRowsT() const {
   return number_of_rows_t;
 }
 
-const uint32_t &ConfigurationParser::getNumberOfColumnsS() const {
+const uint32_t &JPLMEncoderConfiguration::getNumberOfColumnsS() const {
   return number_of_columns_s;
 }
 
-const uint32_t &ConfigurationParser::getViewHeightV() const {
+const uint32_t &JPLMEncoderConfiguration::getViewHeightV() const {
   return view_height_v;
 }
 
-const uint32_t &ConfigurationParser::getViewWidthU() const {
+const uint32_t &JPLMEncoderConfiguration::getViewWidthU() const {
   return view_width_u;
 }
 
-const double &ConfigurationParser::getLambda() const {
-  return lambda;
-}
-
-const ColorSpaces::ColorSpace &ConfigurationParser::getColorspace()
-    const {
+const ColorSpaces::ColorSpace &JPLMEncoderConfiguration::getColorspace() const {
   return colorspace;
 }
 
-#endif  //JPLM_CONFIGURATIONPARSER_H
+#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */

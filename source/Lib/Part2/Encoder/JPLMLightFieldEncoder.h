@@ -49,7 +49,7 @@
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "source/Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
 template<typename T = uint16_t>

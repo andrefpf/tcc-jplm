@@ -31,42 +31,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     ParseExceptions.h
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#ifndef JPLM_PARSEEXCEPTIONS_H
+#define JPLM_PARSEEXCEPTIONS_H
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#include <exception>
+#include <string>
+#include <type_traits>
+#include "magic_enum.hpp"
 
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
+using namespace std;
 
-//stub
-class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
- protected:
-  std::string path;
+class NotImplementedYetInputTypeParseException : public std::exception {
+ private:
+  string msg;
 
  public:
-  JPLMEncoderConfigurationLightField(const std::string& path) : path(path) {
+  NotImplementedYetInputTypeParseException(string m)
+      : msg("Option " + m + " is not implemented yet.") {
   }
 
-
-  LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
-
-  
-  auto get_lightfield_io_configurations() const {
-    LightfieldDimension<std::size_t> size(3, 3, 32, 32);
-    LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-    return LightfieldIOConfiguration(path, initial, size);
+  const char* what() const throw() {
+    return msg.c_str();
   }
-
-
-  virtual CompressionTypeLightField get_compression_type() const = 0;
 };
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */
+class InconsistentOptionsException : public exception {
+  const char* what() const throw() {
+    return "Inconsistent Options.";
+  }
+};
+
+
+class NotImplementedYetPartException : public exception {
+  const char* what() const throw() {
+    return "Chosen part not implemented yet.";
+  }
+};
+
+class NotImplementedYetModeException : public exception {
+  const char* what() const throw() {
+    return "Mode not implemented yet.";
+  }
+};
+
+
+#endif  //JPLM_PARSEEXCEPTIONS_H

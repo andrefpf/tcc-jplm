@@ -31,20 +31,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMDecoderConfiguration.h
+/** \file     JPLMEncoderConfigurationLightField4DTransformMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMDECODERCONFIGURATION_H__
-#define JPLMDECODERCONFIGURATION_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 
-class JPLMDecoderConfiguration {
+#include "JPLMEncoderConfigurationLightField.h"
+
+
+class JPLMEncoderConfigurationLightField4DTransformMode
+    : public JPLMEncoderConfigurationLightField {
  public:
-  JPLMDecoderConfiguration() = default;
-  virtual ~JPLMDecoderConfiguration() = default;
+  JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
+  double getLambda() const;
+
+  CompressionTypeLightField get_compression_type() const override;
+
+
+ protected:
+  void parse_cli_transform_mode(int argc, char **argv);
+  double lambda;
 };
 
-#endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */
+JPLMEncoderConfigurationLightField4DTransformMode::
+    JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
+    : JPLMEncoderConfigurationLightField(argc, argv) {
+  parse_cli_transform_mode(argc, argv);
+}
+
+void JPLMEncoderConfigurationLightField4DTransformMode::
+    parse_cli_transform_mode(int argc, char **argv) {
+  app.add_option("-l,--lambda", lambda,
+      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
+
+  app.parse(argc, argv);
+}
+
+double JPLMEncoderConfigurationLightField4DTransformMode::getLambda() const {
+  return lambda;
+}
+
+CompressionTypeLightField
+JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
+    const {
+  return CompressionTypeLightField::transform_mode;
+}
+
+
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__ */
