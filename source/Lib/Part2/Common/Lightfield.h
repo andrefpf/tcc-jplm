@@ -243,6 +243,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
   template<typename Type = std::size_t>
   LightfieldDimension<Type> get_dimensions() const {
+    
     if (!lightfield_dimension) {
       lightfield_dimension =
           std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),
