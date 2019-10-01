@@ -102,9 +102,11 @@ void JPLMEncoderConfigurationLightField::parse_json(string path) {
 }
 
 void JPLMEncoderConfigurationLightField::check_inconsistencies(void) {
-  bool rule3 =
-      (part != JpegPlenoPart::LightField) && (type != Type::transform_mode);
-  if (rule3)
+  vector<bool> rules({
+      !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
+      !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
+  });
+  if (std::any_of(rules.begin(), rules.end(), [](bool t) { return t; }))
     throw InconsistentOptionsException();
 }
 

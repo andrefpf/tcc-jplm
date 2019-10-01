@@ -42,6 +42,7 @@
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "gtest/gtest.h"
 
 using namespace std;
@@ -64,9 +65,8 @@ TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
-  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
-                        a.c_str(), "-p", "2", "-t",
-      "13", "-s", "13", "-v", "434", "-u", "626"};
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
+      "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
@@ -86,6 +86,16 @@ TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
   EXPECT_THROW(
       { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
       ConfigFileDoesNotExistException);
+}
+
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode, TestLambdaFromCLI) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "12"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(12, config.get_lambda());
 }
 
 

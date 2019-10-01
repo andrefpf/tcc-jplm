@@ -89,11 +89,13 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
-  if (!config.empty())
-    if (fs::exists(config))
+  if (!config.empty()) {
+    if (fs::exists(config)) {
       parse_json(config);
-    else
+    } else {
       throw ConfigFileDoesNotExistException(config);
+    }
+  }
 }
 
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {
@@ -162,38 +164,39 @@ void JPLMEncoderConfiguration::parse_colorspace(
 }
 
 
-
-
-
-
 const JpegPlenoPart &JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
   return part;
 }
-
 
 
 const string &JPLMEncoderConfiguration::getConfig() const {
   return config;
 }
 
+
 const uint32_t &JPLMEncoderConfiguration::getNumberOfRowsT() const {
   return number_of_rows_t;
 }
+
 
 const uint32_t &JPLMEncoderConfiguration::getNumberOfColumnsS() const {
   return number_of_columns_s;
 }
 
+
 const uint32_t &JPLMEncoderConfiguration::getViewHeightV() const {
   return view_height_v;
 }
+
 
 const uint32_t &JPLMEncoderConfiguration::getViewWidthU() const {
   return view_width_u;
 }
 
+
 const ColorSpaces::ColorSpace &JPLMEncoderConfiguration::getColorspace() const {
   return colorspace;
 }
+
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
