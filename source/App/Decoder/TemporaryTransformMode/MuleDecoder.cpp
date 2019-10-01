@@ -23,7 +23,7 @@ MuleDecoder::~MuleDecoder() {
     hierarchical_4d_decoder.finish();
 }
 
-template <typename encodedColorHolder>
+// template <typename encodedColorHolder>
 void MuleDecoder::decode() {
     auto T = decoded_lightfield.mNumberOfVerticalViews;
     auto S = decoded_lightfield.mNumberOfHorizontalViews;
@@ -36,14 +36,13 @@ void MuleDecoder::decode() {
     auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
 
     PartitionDecoder partition_decoder;
-    auto rgb_4d_block = RGBBlock4DHolder(r_block,  g_block,  b_block, decoded_lightfield.mPGMScale);
-    encodedColorHolder spectral_4d_block(y_block, cb_block, cr_block, decoded_lightfield.mPGMScale);
+    // auto rgb_4d_block = RGBBlock4DHolder(r_block,  g_block,  b_block, decoded_lightfield.mPGMScale);
+    // encodedColorHolder spectral_4d_block(y_block, cb_block, cr_block, decoded_lightfield.mPGMScale);
 
     if (parameter_handler.extension_method != SHRINK_TO_FIT) {
-        rgb_4d_block.set_block_dimensions(              BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-        spectral_4d_block.set_block_dimensions(         BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
+        // rgb_4d_block.set_block_dimensions(              BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
+        // spectral_4d_block.set_block_dimensions(         BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
         partition_decoder.mPartitionData.set_dimension( BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-
     }
 
    
@@ -58,72 +57,43 @@ void MuleDecoder::decode() {
                 for(auto u = 0; u < U; u += BLOCK_SIZE_u) {
                     auto used_size_u = (u + BLOCK_SIZE_u > U)? U%BLOCK_SIZE_u : BLOCK_SIZE_u;
                     
-                    if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-                        partition_decoder.mPartitionData.resize_avoiding_free(used_size_t, used_size_s, used_size_v, used_size_u);
-                        rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                        spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                        // std::cout << "Shrink" << std::endl;
-                    }
+                    //! \todo Treat decoding of shrinked blocks
+                    // if (parameter_handler.extension_method == SHRINK_TO_FIT) {
+                    //     partition_decoder.mPartitionData.resize_avoiding_free(used_size_t, used_size_s, used_size_v, used_size_u);
+                    //     rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+                    //     spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+                    // }
 
-                    //hierarchical_4d_decoder.reset_probability_models();
-
-                    for(auto current_block: spectral_4d_block.as_ptr_array()){
+                    // for(auto current_block: spectral_4d_block.as_ptr_array()){
+                    for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
                         if(parameter_handler.verbose) {
                             printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
                         }
                         hierarchical_4d_decoder.reset_probability_models();
 
-                        current_block->fill_with_zeros();
-                        // std::cout << "current_block->mlength_t " << current_block->mlength_t << std::endl;
+                        // current_block->fill_with_zeros();
                         partition_decoder.mPartitionData.fill_with_zeros();
-                        // std::cout << "partition_decoder " << partition_decoder.mPartitionData.mlength_t << std::endl;
                         partition_decoder.decode_partition(hierarchical_4d_decoder);
-                        // std::cout << "partition_decoder2 " << partition_decoder.mPartitionData.mlength_t << std::endl;
-                        current_block->swap_data_with(partition_decoder.mPartitionData);
-                        // std::cout << "partition_decoder3 " << partition_decoder.mPartitionData.mlength_t << std::endl;
-                        // std::cout << "hierarchical_4d_decoder " << hierarchical_4d_decoder.mSubbandLF.mlength_t << std::endl;
-                        // current_block->copy_sub_block_from(partition_decoder.mPartitionData, 0, 0, 0, 0);
+                        // current_block->swap_data_with(partition_decoder.mPartitionData);
 
-                        if (needs_block_extension) {
-                            if(used_size_u != BLOCK_SIZE_u)
-                                current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
-                            if(used_size_v != BLOCK_SIZE_v) 
-                                current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
-                            if(used_size_s != BLOCK_SIZE_s)
-                                current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
-                            if(used_size_t != BLOCK_SIZE_t)
-                                current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
-                        }
+                        // if (needs_block_extension) {
+                        //     if(used_size_u != BLOCK_SIZE_u)
+                        //         current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
+                        //     if(used_size_v != BLOCK_SIZE_v) 
+                        //         current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
+                        //     if(used_size_s != BLOCK_SIZE_s)
+                        //         current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
+                        //     if(used_size_t != BLOCK_SIZE_t)
+                        //         current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
+                        // }
                                                                         
                     }
                     
-                    spectral_4d_block.add_constant_to_pels((decoded_lightfield.mPGMScale+1)/2);
-                    spectral_4d_block.convert_to(rgb_4d_block);
+                    // spectral_4d_block.add_constant_to_pels((decoded_lightfield.mPGMScale+1)/2);
+                    // spectral_4d_block.convert_to(rgb_4d_block);
 
-                    //this should be a post-processing of the LF
-                    if(parameter_handler.is_lenslet_13x13) {
-                        if(t == 0) {
-                            if(s == 0) {
-                                rgb_4d_block.shift_uv_planes(-2, 0, 0);
-                            }
-                            if((s + BLOCK_SIZE_s >= S)&&(s <= S)) { 
-                                rgb_4d_block.shift_uv_planes(-2, 0, S-s-1);
-                            }
-                        }
-                        if((t + BLOCK_SIZE_t >= T)&&(t <= T)) {
-                            if(s == 0) {
-                                rgb_4d_block.shift_uv_planes(-2, T-t-1, 0);
-                            }
-                            if((s + BLOCK_SIZE_s >= S)&&(s <= S)) {
-                                rgb_4d_block.shift_uv_planes(-2, T-t-1, S-s-1);
-                            }
-                        }
-                    }
-                    // ------------    
-                    rgb_4d_block.clip(0, decoded_lightfield.mPGMScale);
-                    // std::cerr << "before" << std::endl;
-                    rgb_4d_block.set_data_into_lightfield(decoded_lightfield, t, s, v, u);
-                    // std::cerr << "after" << std::endl;
+                    // rgb_4d_block.clip(0, decoded_lightfield.mPGMScale);
+                    // rgb_4d_block.set_data_into_lightfield(decoded_lightfield, t, s, v, u);
                 }
             }
         }
@@ -220,10 +190,10 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
 }
 
 //choses the required decoder according to the parameters
-void MuleDecoder::decode() {
-    switch(parameter_handler.color_transform) {
-        case ColorSpaces::ColorSpace::BT601: return decode<YCbCrBlock4DHolder>();
-        case ColorSpaces::ColorSpace::YCoCg: return decode<YCoCgBlock4DHolder>();
-        default: std::cerr << "Unknown color space. Exiting now"; exit(2);
-    }
-}
+// void MuleDecoder::decode() {
+//     switch(parameter_handler.color_transform) {
+//         case ColorSpaces::ColorSpace::BT601: return decode<YCbCrBlock4DHolder>();
+//         case ColorSpaces::ColorSpace::YCoCg: return decode<YCoCgBlock4DHolder>();
+//         default: std::cerr << "Unknown color space. Exiting now"; exit(2);
+//     }
+// }
