@@ -56,7 +56,9 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
 
  protected:
   void parse_json(string path);
-  void parse_mode_type(const nlohmann::basic_json<> &conf);
+
+ private:
+  void parse_mode_type(const json &conf);
   void check_inconsistencies(void);
 };
 

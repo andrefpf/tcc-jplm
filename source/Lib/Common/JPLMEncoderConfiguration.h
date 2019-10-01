@@ -78,13 +78,13 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
  protected:
   void parse_json(string path);
-  void parse_jpeg_pleno_part(const nlohmann::basic_json<> &conf);
+  void parse_jpeg_pleno_part(const json &conf);
 
-  void parse_number_of_rows_t(const nlohmann::basic_json<> &conf);
-  void parse_number_of_columns_s(const nlohmann::basic_json<> &conf);
-  void parse_view_height_v(const nlohmann::basic_json<> &conf);
-  void parse_view_width_u(const nlohmann::basic_json<> &conf);
-  void parse_colorspace(const nlohmann::basic_json<> &conf);
+  void parse_number_of_rows_t(const json &conf);
+  void parse_number_of_columns_s(const json &conf);
+  void parse_view_height_v(const json &conf);
+  void parse_view_width_u(const json &conf);
+  void parse_colorspace(const json &conf);
 };
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
@@ -143,7 +143,7 @@ void JPLMEncoderConfiguration::parse_view_width_u(const json &conf) {
 }
 
 void JPLMEncoderConfiguration::parse_colorspace(
-    const nlohmann::basic_json<> &conf) {
+    const json &conf) {
   if (conf.contains("colorspace")) {
     string c = conf["colorspace"].get<string>();
     std::transform(c.begin(), c.end(), c.begin(),
