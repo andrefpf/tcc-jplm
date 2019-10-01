@@ -45,7 +45,7 @@
 #include "gtest/gtest.h"
 
 using namespace std;
-
+std::string root_path = "../";
 
 TEST(JPLMConfiguration, SimpleTest) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
@@ -63,8 +63,9 @@ TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
 
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
+  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
-      "../cfg/part2/4DTransformMode/I01_Bikes_22016.json", "-p", "2", "-t",
+                        a.c_str(), "-p", "2", "-t",
       "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
@@ -90,5 +91,8 @@ TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
+  if (argc > 1) {
+    root_path = std::string(argv[1]);
+  }
   return RUN_ALL_TESTS();
 }
