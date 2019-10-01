@@ -51,7 +51,6 @@
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "Lib/Part2/Common/TransformMode/LightField.h"
 #include "App/TemporaryCommonTransformMode/ParameterHandler.h"
-#include "App/TemporaryCommonTransformMode/ThreeChannelBlock4DHolder.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 
 class MuleCodec {

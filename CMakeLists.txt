@@ -79,6 +79,7 @@ target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-decoder-bin PRIVATE image) 
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Encoder/TemporaryTransformMode)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Decoder/TemporaryTransformMode)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
