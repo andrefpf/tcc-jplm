@@ -53,14 +53,14 @@ TEST(ViewToFilenameTranslatorBasicTests, ZeroZeroView) {
 TEST(ViewToFilenameTranslatorBasicTests, ZeroOneView) {
   PPM3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "000_001.ppm", filename_translator.view_position_to_filename({0, 1}));
+      "000_001.ppm", filename_translator.view_position_to_filename({1, 0}));
 }
 
 
 TEST(ViewToFilenameTranslatorBasicTests, OneZeroView) {
   PPM3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "001_000.ppm", filename_translator.view_position_to_filename({1, 0}));
+      "001_000.ppm", filename_translator.view_position_to_filename({0, 1}));
 }
 
 
@@ -74,7 +74,7 @@ TEST(ViewToFilenameTranslatorBasicTests, OneOneView) {
 TEST(ViewToFilenameTranslatorBasicTests, One42View) {
   PPM3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "001_042.ppm", filename_translator.view_position_to_filename({1, 42}));
+      "001_042.ppm", filename_translator.view_position_to_filename({42, 1}));
 }
 
 

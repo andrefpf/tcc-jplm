@@ -50,9 +50,10 @@ std::string PPM3CharViewToFilename::view_position_to_filename(
 	{
 		throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
 	}
+  //the view is acessed as s_t 
   std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << std::get<0>(position)
+  string_stream << std::setw(3) << std::setfill('0') << s
                 << '_' << std::setw(3) << std::setfill('0')
-                << std::get<1>(position) << ".ppm";
+                << t << ".ppm";
   return string_stream.str();
 }

@@ -60,7 +60,7 @@ public:
 		auto c=0;
 		for(auto t=t_initial; t<t_max; ++t) {
 			for(auto s=s_initial; s<s_max; ++s) {
-				const auto& image_channel = this->template get_image_at<BT601Image>({s, t}).get_channel(channel);
+				const auto& image_channel = this->template get_image_at<BT601Image>({t, s}).get_channel(channel);
 				for(auto v=v_initial; v<v_max; ++v) {
 					for(auto u=u_initial; u<u_max; ++u) {
 						block.mPixelData[c++] = image_channel[v][u];
