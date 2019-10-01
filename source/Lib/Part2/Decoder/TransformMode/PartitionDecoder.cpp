@@ -49,6 +49,8 @@ Block4D PartitionDecoder::decode_partition(
   uint32_t length[4];
   std::tie(length[0], length[1], length[2], length[3]) = size.as_tuple();
   
+  mPartitionData = Block4D(size);
+
   hierarchical_decoder.mInferiorBitPlane = hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
   
   decode_partition(position, length, hierarchical_decoder);
@@ -56,21 +58,6 @@ Block4D PartitionDecoder::decode_partition(
   return Block4D(size);
 }
 
-void PartitionDecoder::decode_transform_partition(
-    int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
-  hierarchical_decoder.mSubbandLF.set_dimension(
-      length[0], length[1], length[2], length[3]);
-  hierarchical_decoder.mSubbandLF.fill_with_zeros();
-  hierarchical_decoder.decode_block(0, 0, 0, 0, length[0], length[1], length[2],
-      length[3], hierarchical_decoder.mSuperiorBitPlane);
-  DCT4DBlock dctblock(std::move(
-      hierarchical_decoder
-          .mSubbandLF));  //uses move in the initialization of transformed block.
-  hierarchical_decoder.mSubbandLF =
-      dctblock.inverse();  //hopefully using move (copy elision)
-  mPartitionData.copy_sub_block_from(hierarchical_decoder.mSubbandLF, 0, 0, 0,
-      0, position[0], position[1], position[2], position[3]);
-}
 
 void PartitionDecoder::decode_partition(
     int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
@@ -125,4 +112,21 @@ void PartitionDecoder::decode_partition(
       return;
     }
   }
+}
+
+
+void PartitionDecoder::decode_transform_partition(
+    int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
+  hierarchical_decoder.mSubbandLF.set_dimension(
+      length[0], length[1], length[2], length[3]);
+  hierarchical_decoder.mSubbandLF.fill_with_zeros();
+  hierarchical_decoder.decode_block(0, 0, 0, 0, length[0], length[1], length[2],
+      length[3], hierarchical_decoder.mSuperiorBitPlane);
+  DCT4DBlock dctblock(std::move(
+      hierarchical_decoder
+          .mSubbandLF));  //uses move in the initialization of transformed block.
+  hierarchical_decoder.mSubbandLF =
+      dctblock.inverse();  //hopefully using move (copy elision)
+  mPartitionData.copy_sub_block_from(hierarchical_decoder.mSubbandLF, 0, 0, 0,
+      0, position[0], position[1], position[2], position[3]);
 }
