@@ -58,12 +58,24 @@ Example:
 TODO
 
 ## Build instructions
+
   ```bash
   ~$ cd jplm
   ~/jplm/$ mkdir build; cd build
   ~/jplm/build/$ cmake ..
   ~/jplm/build/$ make -j
   ```
+
+## Library dependencies
+
+The included lightfield visualization tool depends on the X11 libraries. 
+If they are not present the compilation will fail. 
+In this case, to avoid failing one needs to call cmake as follows: 
+  ```bash
+  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
+  ```  
+
+
 ## Testing instructions
 
   ```bash
