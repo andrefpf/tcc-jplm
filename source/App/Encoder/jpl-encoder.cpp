@@ -7,7 +7,7 @@
 
 
 int main(int argc, char const* argv[]) {
-//  auto configuration = JPLMConfigurationFactory::get_configuration(argc, argv);
+//  auto configuration = JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
 //  std::ofstream of_stream(
 //      configuration->get_output_filename(), std::ofstream::binary);
 //  if (!of_stream.is_open()) {

@@ -82,7 +82,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
   double get_lambda() const;
-  CompressionTypeLightField get_compression_type() const override;
+  const Type &get_compression_type() const;
   uint32_t get_minimal_transform_size_intra_view_vertical() const;
   uint32_t get_maximal_transform_size_intra_view_vertical() const;
   uint32_t get_minimal_transform_size_intra_view_horizontal() const;
@@ -102,15 +102,14 @@ JPLMEncoderConfigurationLightField4DTransformMode::
   init_transform_size();
 }
 
+const Type &
+JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
+    const {
+  return Type::transform_mode;
+}
 
 double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
   return lambda;
-}
-
-CompressionTypeLightField
-JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
-    const {
-  return CompressionTypeLightField::transform_mode;
 }
 
 void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(string p) {
@@ -243,7 +242,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
     if (conf["transform_size"].contains("minimum"))
       if (conf["transform_size"]["minimum"].contains("inter-view"))
         if (conf["transform_size"]["minimum"]["inter-view"].contains(
-            "vertical"))
+                "vertical"))
           minimal_transform_size_intra_view_horizontal_u =
               conf["transform_size"]["minimum"]["inter-view"]["vertical"]
                   .get<uint32_t>();
@@ -255,7 +254,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
     if (conf["transform_size"].contains("maximum"))
       if (conf["transform_size"]["maximum"].contains("inter-view"))
         if (conf["transform_size"]["maximum"]["inter-view"].contains(
-            "vertical"))
+                "vertical"))
           minimal_transform_size_intra_view_horizontal_u =
               conf["transform_size"]["maximum"]["inter-view"]["vertical"]
                   .get<uint32_t>();
@@ -267,7 +266,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
     if (conf["transform_size"].contains("minimum"))
       if (conf["transform_size"]["minimum"].contains("inter-view"))
         if (conf["transform_size"]["minimum"]["inter-view"].contains(
-            "horizontal"))
+                "horizontal"))
           minimal_transform_size_intra_view_horizontal_u =
               conf["transform_size"]["minimum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();
@@ -279,7 +278,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
     if (conf["transform_size"].contains("maximum"))
       if (conf["transform_size"]["maximum"].contains("inter-view"))
         if (conf["transform_size"]["maximum"]["inter-view"].contains(
-            "horizontal"))
+                "horizontal"))
           minimal_transform_size_intra_view_horizontal_u =
               conf["transform_size"]["maximum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();

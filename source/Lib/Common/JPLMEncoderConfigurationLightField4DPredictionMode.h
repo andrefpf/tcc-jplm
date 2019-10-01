@@ -41,26 +41,27 @@
 #ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
 
 class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
  public:
-  CompressionTypeLightField get_compression_type() const override;
+  const Type &get_compression_type() const;
 
   JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv);
 };
 
 JPLMEncoderConfigurationLightField4DPredictionMode::
-JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
+    JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
   throw NotImplementedYetModeException();
 }
 
-CompressionTypeLightField
-JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type() const {
-  return CompressionTypeLightField::prediction_mode;
+const Type &
+JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
+    const {
+  return Type::prediction_mode;
 }
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */

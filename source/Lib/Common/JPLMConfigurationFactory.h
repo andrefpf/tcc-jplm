@@ -45,12 +45,17 @@
 #include <memory>
 #include <unordered_map>
 #include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 
 
+using Type = CompressionTypeLightField;
+
 class JPLMConfigurationFactory {
  public:
-  static std::unique_ptr<JPLMConfiguration> get_configuration(
+  static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
       [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
 
  protected:
@@ -58,18 +63,22 @@ class JPLMConfigurationFactory {
       int argc, char const* argv[], CompressionTypeLightField type);
 };
 
-std::unique_ptr<JPLMConfiguration> JPLMConfigurationFactory::get_configuration(
+// \todo: refactor this function and split it into specialized functions
+std::unique_ptr<JPLMConfiguration>
+JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
-  JPLMConfiguration basic_config =
-      JPLMConfiguration(argc, const_cast<char**>(argv));
-//  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
-//    CompressionTypeLightField type = basic_config.getType();
-//    return get_part2_configuration(argc, argv, type);
-//  } else {
-//    throw NotImplementedYetPartException();
-//  }
-}
+  auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
+  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
+    auto light_field_config =
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+    Type type = light_field_config.get_type();
+    if (light_field_config.get_type() == Type::transform_mode)
+      return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+          argc, const_cast<char**>(argv));
 
+  }
+  throw NotImplementedYetPartException();
+}
 
 
 #endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */
