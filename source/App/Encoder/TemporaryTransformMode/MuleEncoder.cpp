@@ -81,12 +81,9 @@ MuleEncoder::MuleEncoder(ParameterHandler handler) :
 }
 
 MuleEncoder::~MuleEncoder() {
-	hierarchical_4d_encoder.finish();
-    std::ofstream ofs(parameter_handler.encoded_lightfield.string(),std::ofstream::binary | std::ofstream::out | std::ofstream::app);
-    ofs << hierarchical_4d_encoder.get_ref_to_codestream_code();
 }
 
-void MuleEncoder::encode() {
+std::unique_ptr<ContiguousCodestreamCode> MuleEncoder::encode() {
 
     const auto& [T, S, V, U] = raw_lightfield->get_dimensions<uint32_t>();
 
@@ -121,20 +118,17 @@ void MuleEncoder::encode() {
                     
                     for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
                         auto block_4d = raw_lightfield->get_block_4D_from(color_channel_index, {t, s, v, u}, size);
-
-
                         block_4d+=level_shift;
-                        // std::cout << block_4d;
-
                         hierarchical_4d_encoder.reset_probability_models();
                         tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, parameter_handler.lambda);
                         tp.encode_partition(hierarchical_4d_encoder, parameter_handler.lambda);
                     }
-                    // exit(0);
                 }
             }
         }
     }
+    hierarchical_4d_encoder.finish();
+    return hierarchical_4d_encoder.move_codestream_code_out();
 }
 
 void MuleEncoder::setup_hierarchical_4d_encoder() {

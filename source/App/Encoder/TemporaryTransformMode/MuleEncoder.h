@@ -46,6 +46,7 @@
 
 #include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/TransformPartition.h"
+#include <memory>
 
 
 class MuleEncoder : public MuleCodec
@@ -60,9 +61,8 @@ public:
 	void setup_hierarchical_4d_encoder();
 	void write_initial_data_to_encoded_file();
 
-	void encode();
-	template <typename encodedColorHolder>
-	void encode();
+	std::unique_ptr<ContiguousCodestreamCode> encode() ;
+	
 
 };
 

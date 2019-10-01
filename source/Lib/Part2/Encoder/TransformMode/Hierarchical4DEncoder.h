@@ -89,6 +89,8 @@ public:
     void create_temporary_buffer(int size);
 
     ContiguousCodestreamCode& get_ref_to_codestream_code() const;
+
+    std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out();
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_HIERARCHICAL4DENCODER_H__ */

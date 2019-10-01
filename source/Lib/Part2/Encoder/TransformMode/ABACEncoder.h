@@ -74,6 +74,9 @@ class ABACEncoder : public ABACCodec {
   void encode_bit(bool bit, const ProbabilityModel& probability_model);
   void finish() override;
   ContiguousCodestreamCode& get_ref_to_codestream_code() const;
+  std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
+    return std::move(codestream_code);
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_ABACENCODER_H__ */

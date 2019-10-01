@@ -48,5 +48,7 @@ int main(int argc, char **argv) {
     handler.print_configurations(); 
 
     MuleEncoder encoder(handler);
-    encoder.encode();
+    auto encoded_codestream_code = encoder.encode();
+    std::ofstream ofs(handler.encoded_lightfield.string(),std::ofstream::binary | std::ofstream::out | std::ofstream::app);
+    ofs << *encoded_codestream_code;
 } 

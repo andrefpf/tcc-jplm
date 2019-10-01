@@ -49,6 +49,12 @@ ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() co
   return mEntropyCoder.get_ref_to_codestream_code();
 }
 
+std::unique_ptr<ContiguousCodestreamCode>&& Hierarchical4DEncoder::move_codestream_code_out() {
+  return mEntropyCoder.move_codestream_code_out();
+}
+
+
+
 void Hierarchical4DEncoder::reset_optimization_models() {
   for (auto& probability_model : optimization_probability_models) {
     probability_model.reset();
