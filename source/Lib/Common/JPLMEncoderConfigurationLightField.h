@@ -55,8 +55,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   const Type &getType() const;
 
  protected:
-  Type type;
-  void parse_cli(int argc, char **argv);
   void parse_json(string path);
   void parse_mode_type(const nlohmann::basic_json<> &conf);
   void check_inconsistencies(void);
@@ -65,7 +63,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfiguration(argc, argv) {
-  parse_cli(argc, argv);
   if (!config.empty())
     parse_json(config);
   check_inconsistencies();
@@ -83,23 +80,11 @@ const Type &JPLMEncoderConfigurationLightField::getType() const {
   return type;
 }
 
-void JPLMEncoderConfigurationLightField::parse_cli(int argc, char **argv) {
-  JPLMEncoderConfiguration::parse_cli(argc, argv);
-
-  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
-              "Codec type")
-      ->type_name(
-          "enum/CompressionTypeLightField in {transform_mode=0, "
-          "prediction_mode=1}");
-
-  app.parse(argc, argv);
-}
-
 void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
   if (conf.contains("type")) {
     string t = conf["type"].get<string>();
     std::transform(t.begin(), t.end(), t.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
+        [](unsigned char c) { return std::tolower(c); });
     if (t == "transform mode" || t == "transform_mode" || t == "mule")
       type = Type::transform_mode;
     else if (t == "prediction mode" || t == "prediction_mode" || t == "wasp")

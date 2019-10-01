@@ -76,15 +76,6 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   JPLMEncoderConfiguration(int argc, char **argv);
 
  protected:
-  JpegPlenoPart part;
-  string config;
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-  ColorSpaces::ColorSpace colorspace;
-
-  void parse_cli(int argc, char **argv);
   void parse_json(string path);
   void parse_jpeg_pleno_part(const nlohmann::basic_json<> &conf);
 
@@ -93,32 +84,12 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   void parse_view_height_v(const nlohmann::basic_json<> &conf);
   void parse_view_width_u(const nlohmann::basic_json<> &conf);
   void parse_colorspace(const nlohmann::basic_json<> &conf);
-
 };
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
-  parse_cli(argc, argv);
   if (!config.empty())
     parse_json(config);
-}
-
-void JPLMEncoderConfiguration::parse_cli(int argc, char **argv) {
-  app.add_option("-c,--config", config, "Path to config file");
-  app.add_set(
-         "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
-      ->type_name("enum/JpegPlenoPart in { LightField=2 }");
-
-  app.add_option(
-      "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
-  app.add_option("-s,--number_of_columns", number_of_columns_s,
-      "Number of light-field columns");
-  app.add_option(
-      "-v,--view_height", view_height_v, "Single-view height dimension");
-  app.add_option(
-      "-u,--view_width", view_width_u, "Single-view width dimension");
-
-  app.parse(argc, argv);
 }
 
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {
@@ -185,6 +156,8 @@ void JPLMEncoderConfiguration::parse_colorspace(
       throw NotImplementedYetInputTypeParseException(c);
   }
 }
+
+
 
 
 

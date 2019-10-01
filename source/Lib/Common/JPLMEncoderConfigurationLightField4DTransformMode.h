@@ -48,31 +48,18 @@ class JPLMEncoderConfigurationLightField4DTransformMode
     : public JPLMEncoderConfigurationLightField {
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
-  double getLambda() const;
+  double get_lambda() const;
 
   CompressionTypeLightField get_compression_type() const override;
-
-
- protected:
-  void parse_cli_transform_mode(int argc, char **argv);
-  double lambda;
 };
 
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
-  parse_cli_transform_mode(argc, argv);
 }
 
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_cli_transform_mode(int argc, char **argv) {
-  app.add_option("-l,--lambda", lambda,
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
 
-  app.parse(argc, argv);
-}
-
-double JPLMEncoderConfigurationLightField4DTransformMode::getLambda() const {
+double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
   return lambda;
 }
 

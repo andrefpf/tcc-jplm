@@ -45,8 +45,13 @@
 #define JPLM_JPLMConfiguration_H
 #include <string>
 #include "CLI/CLI.hpp"
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "nlohmann/json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
+using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {
   LightField = 2,
@@ -66,7 +71,17 @@ class JPLMConfiguration {
   CLI::App app{"JPLM"};
   string input;
   string output;
+  JpegPlenoPart part;
+  string config;
+  uint32_t number_of_rows_t;
+  uint32_t number_of_columns_s;
+  uint32_t view_height_v;
+  uint32_t view_width_u;
+  ColorSpaces::ColorSpace colorspace;
+  double lambda;
+  Type type;
 
+ private:
   void parse_cli(int argc, char **argv);
 };
 
@@ -83,10 +98,39 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
+  // Belongs to JPLMConfiguration
   app.add_option("-i,--input", input,
-                 "Input (If Part II, it is a directory containing a set of uncompressed "
-                 "light-field images xxx_yyy.ppm).");
+      "Input (If Part II, it is a directory containing a set of uncompressed "
+      "light-field images xxx_yyy.ppm).");
   app.add_option("-o,--output", output, "Output compressed bitstream");
+
+  // Belongs to JPLMEncoderConfiguration
+  app.add_option("-c,--config", config, "Path to config file");
+  app.add_set(
+         "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
+      ->type_name("enum/JpegPlenoPart in { LightField=2 }");
+
+  app.add_option(
+      "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
+  app.add_option("-s,--number_of_columns", number_of_columns_s,
+      "Number of light-field columns");
+  app.add_option(
+      "-v,--view_height", view_height_v, "Single-view height dimension");
+  app.add_option(
+      "-u,--view_width", view_width_u, "Single-view width dimension");
+
+  // Belongs to JPLMEncoderConfigurationLightField4DTransformMode
+  app.add_option("-l,--lambda", lambda,
+      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
+
+  // Belongs to JPLMEncoderConfigurationLightField
+  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
+         "Codec type")
+      ->type_name(
+          "enum/CompressionTypeLightField in {transform_mode=0, "
+          "prediction_mode=1}");
+
+
   app.parse(argc, argv);
 }
 

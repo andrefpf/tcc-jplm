@@ -63,7 +63,7 @@ TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
-      "../cfg/part2/mule/I01Bikes.cfg", "-p", "2", "-t", "13", "-s", "13", "-v",
+      "../cfg/part2/4DTransformMode/I01_Bikes_22016.json", "-p", "2", "-t", "13", "-s", "13", "-v",
       "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
