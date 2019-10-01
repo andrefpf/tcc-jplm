@@ -36,6 +36,8 @@ Must support CXX 17
 #### Cmake
 Minimum version: 3.10
 
+#### latex (optional)
+Latex is required for generating the documentation.
 
 ## Quick start 
 After building this project, you can use the provided software to encode and decode plenoptic images. 
