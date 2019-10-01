@@ -50,6 +50,12 @@
 
 //template<class ViewT<typename>,
 
+enum class LightFieldDimensions {
+  T = 0,
+  S = 1,
+  V = 2,
+  U = 3,
+};
 
 template<typename T>
 class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {

@@ -7,12 +7,25 @@
 
 #include "MuleDecoder.h"
 
+void MuleDecoder::open_decoded_lightfield() {
+
+    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
+                parameter_handler.number_of_horizontal_views, 
+                3, 3);
+    auto config = LightfieldIOConfiguration(
+        parameter_handler.decoded_lightfield.string(),
+        dimension
+        );
+
+    decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+}
+
 MuleDecoder::MuleDecoder(ParameterHandler handler) : MuleCodec(handler) {
     open_encoded_lightfield("rb"); //oppening in read binary mode
     read_initial_data_from_compressed_file();
 
     setup_header_data_into_decoded_lightfield();
-    open_decoded_lightfield('w'); //oppening in write mode
+    open_decoded_lightfield(); 
     setup_transform_coefficients(false);
 
     //initializes possible extension lenghs
@@ -25,10 +38,7 @@ MuleDecoder::~MuleDecoder() {
 
 // template <typename encodedColorHolder>
 void MuleDecoder::decode() {
-    auto T = decoded_lightfield.mNumberOfVerticalViews;
-    auto S = decoded_lightfield.mNumberOfHorizontalViews;
-    auto V = decoded_lightfield.mNumberOfViewLines;
-    auto U = decoded_lightfield.mNumberOfViewColumns;
+    const auto& [T, S, V, U] = decoded_lightfield->get_dimensions<uint32_t>();
 
     auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
     auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
@@ -39,14 +49,15 @@ void MuleDecoder::decode() {
     // auto rgb_4d_block = RGBBlock4DHolder(r_block,  g_block,  b_block, decoded_lightfield.mPGMScale);
     // encodedColorHolder spectral_4d_block(y_block, cb_block, cr_block, decoded_lightfield.mPGMScale);
 
-    if (parameter_handler.extension_method != SHRINK_TO_FIT) {
+    // if (parameter_handler.extension_method != SHRINK_TO_FIT) {
         // rgb_4d_block.set_block_dimensions(              BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
         // spectral_4d_block.set_block_dimensions(         BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-        partition_decoder.mPartitionData.set_dimension( BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-    }
+        // partition_decoder.mPartitionData.set_dimension( BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
+    // }
 
    
     hierarchical_4d_decoder.start(encoded_file_pointer);
+    const auto half_dinamic_range = 512;
 
     for(auto t = 0; t < T; t += BLOCK_SIZE_t) {
         auto used_size_t = (t + BLOCK_SIZE_t > T)? T%BLOCK_SIZE_t : BLOCK_SIZE_t;
@@ -63,18 +74,17 @@ void MuleDecoder::decode() {
                     //     rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
                     //     spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
                     // }
+                    
 
-                    // for(auto current_block: spectral_4d_block.as_ptr_array()){
                     for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
                         if(parameter_handler.verbose) {
                             printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
                         }
+                        
                         hierarchical_4d_decoder.reset_probability_models();
 
-                        // current_block->fill_with_zeros();
-                        partition_decoder.mPartitionData.fill_with_zeros();
-                        partition_decoder.decode_partition(hierarchical_4d_decoder);
-                        // current_block->swap_data_with(partition_decoder.mPartitionData);
+                        auto decoded_block = partition_decoder.decode_partition(hierarchical_4d_decoder);
+                        decoded_block+=half_dinamic_range;
 
                         // if (needs_block_extension) {
                         //     if(used_size_u != BLOCK_SIZE_u)
@@ -86,7 +96,8 @@ void MuleDecoder::decode() {
                         //     if(used_size_t != BLOCK_SIZE_t)
                         //         current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
                         // }
-                                                                        
+                        
+                        // decoded_lightfield->add_4d_block(decoded_block, color_channel_index, {t, s, v, u});
                     }
                     
                     // spectral_4d_block.add_constant_to_pels((decoded_lightfield.mPGMScale+1)/2);
@@ -115,28 +126,17 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
     hierarchical_4d_decoder.mNumberOfVerticalViews = parameter_handler.number_of_vertical_views;
     hierarchical_4d_decoder.mNumberOfHorizontalViews = parameter_handler.number_of_horizontal_views;
 
-    decoded_lightfield.set_configurations(parameter_handler.number_of_vertical_views,
-                                        parameter_handler.number_of_horizontal_views, 
-                                        parameter_handler.transform_length_v);
+    // decoded_lightfield.set_configurations(parameter_handler.number_of_vertical_views,
+    //                                     parameter_handler.number_of_horizontal_views, 
+    //                                     parameter_handler.transform_length_v);
 
-    std::cout << "The configurations were: " << std::endl;
 
-    std::cout << parameter_handler.number_of_vertical_views << std::endl;
-    std::cout << parameter_handler.number_of_horizontal_views << std::endl; 
-    std::cout << parameter_handler.transform_length_v << std::endl;
+    // decoded_lightfield.mPGMScale = hierarchical_4d_decoder.mPGMScale;
+    // decoded_lightfield.mNumberOfViewColumns = hierarchical_4d_decoder.mNumberOfViewColumns;
+    // decoded_lightfield.mNumberOfViewLines = hierarchical_4d_decoder.mNumberOfViewLines;
+    // decoded_lightfield.mVerticalViewNumberOffset = parameter_handler.first_vertical_view_number;
+    // decoded_lightfield.mHorizontalViewNumberOffset = parameter_handler.first_horizontal_view_number;
 
-    decoded_lightfield.mPGMScale = hierarchical_4d_decoder.mPGMScale;
-    decoded_lightfield.mNumberOfViewColumns = hierarchical_4d_decoder.mNumberOfViewColumns;
-    decoded_lightfield.mNumberOfViewLines = hierarchical_4d_decoder.mNumberOfViewLines;
-    decoded_lightfield.mVerticalViewNumberOffset = parameter_handler.first_vertical_view_number;
-    decoded_lightfield.mHorizontalViewNumberOffset = parameter_handler.first_horizontal_view_number;
-
-    std::cout << "Other configurations were: " << std::endl;
-    std::cout << decoded_lightfield.mPGMScale << std::endl;
-    std::cout << decoded_lightfield.mNumberOfViewColumns << std::endl;
-    std::cout << decoded_lightfield.mNumberOfViewLines << std::endl;
-    std::cout << decoded_lightfield.mVerticalViewNumberOffset << std::endl;
-    std::cout << decoded_lightfield.mHorizontalViewNumberOffset << std::endl;
 }
 
 void read_int_from_file(int* dest, FILE* fp) {
@@ -188,12 +188,3 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
     //     default: parameter_handler.extension_method = ExtensionMethod::REPEAT_LAST;
     // }
 }
-
-//choses the required decoder according to the parameters
-// void MuleDecoder::decode() {
-//     switch(parameter_handler.color_transform) {
-//         case ColorSpaces::ColorSpace::BT601: return decode<YCbCrBlock4DHolder>();
-//         case ColorSpaces::ColorSpace::YCoCg: return decode<YCoCgBlock4DHolder>();
-//         default: std::cerr << "Unknown color space. Exiting now"; exit(2);
-//     }
-// }

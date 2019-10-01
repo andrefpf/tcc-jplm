@@ -11,7 +11,9 @@ void read_int_from_file(int* dest, FILE* fp);
 class MuleDecoder : public MuleCodec
 {
 private:
+	std::unique_ptr<LightFieldTransformMode<>> decoded_lightfield;
 	Hierarchical4DDecoder hierarchical_4d_decoder;
+	void open_decoded_lightfield();
 public:
 	MuleDecoder(ParameterHandler handler);
 	~MuleDecoder();
@@ -19,8 +21,6 @@ public:
 	void setup_header_data_into_decoded_lightfield();
 	void read_initial_data_from_compressed_file();	
 
-	void decode();
-	template <typename encodedColorHolder>
 	void decode();
 
 };

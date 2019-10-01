@@ -41,14 +41,20 @@
 #include "PartitionDecoder.h"
 
 
-void PartitionDecoder::decode_partition(
+Block4D PartitionDecoder::decode_partition(
     Hierarchical4DDecoder &hierarchical_decoder) {
+
   int position[] = {0, 0, 0, 0};
+
   int length[] = {mPartitionData.mlength_t, mPartitionData.mlength_s,
       mPartitionData.mlength_v, mPartitionData.mlength_u};
-  hierarchical_decoder.mInferiorBitPlane =
-      hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
+  
+  hierarchical_decoder.mInferiorBitPlane = hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
+  
   decode_partition(position, length, hierarchical_decoder);
+
+  return Block4D({mPartitionData.mlength_t, mPartitionData.mlength_s,
+        mPartitionData.mlength_v, mPartitionData.mlength_u});
 }
 
 void PartitionDecoder::decode_transform_partition(

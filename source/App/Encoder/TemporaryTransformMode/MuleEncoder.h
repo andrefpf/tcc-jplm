@@ -52,8 +52,11 @@
 class MuleEncoder : public MuleCodec
 {
 private:
+	std::unique_ptr<LightFieldTransformMode<>> raw_lightfield;
 	Hierarchical4DEncoder hierarchical_4d_encoder;
 	TransformPartition tp;
+
+    void open_raw_lightfield();
 public:
 	MuleEncoder(ParameterHandler handler);
 	~MuleEncoder();

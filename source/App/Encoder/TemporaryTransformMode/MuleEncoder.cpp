@@ -46,6 +46,19 @@
 */
 #include "MuleEncoder.h"
 
+void MuleEncoder::open_raw_lightfield() {
+
+    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
+                parameter_handler.number_of_horizontal_views, 
+                3, 3);
+    auto config = LightfieldIOConfiguration(
+        parameter_handler.decoded_lightfield.string(),
+        dimension
+        );
+
+    raw_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+}
+
 MuleEncoder::MuleEncoder(ParameterHandler handler) : 
 	MuleCodec(handler),
 	tp(	parameter_handler.min_transform_length_t,

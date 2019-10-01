@@ -44,25 +44,25 @@
 
 void DCT4DCoefficientsManager::set_transform_max_sizes(int max_size_u, int max_size_v, int max_size_s, int max_size_t) {
 	size_to_transform_weights_map.clear();
-	max_sizes[LightFieldDimension::U]=max_size_u;
-	max_sizes[LightFieldDimension::V]=max_size_v;
-	max_sizes[LightFieldDimension::S]=max_size_s;
-	max_sizes[LightFieldDimension::T]=max_size_t;
+	max_sizes[static_cast<uint32_t>(LightFieldDimensions::U)]=max_size_u;
+	max_sizes[static_cast<uint32_t>(LightFieldDimensions::V)]=max_size_v;
+	max_sizes[static_cast<uint32_t>(LightFieldDimensions::S)]=max_size_s;
+	max_sizes[static_cast<uint32_t>(LightFieldDimensions::T)]=max_size_t;
 }
 
 void DCT4DCoefficientsManager::set_transform_gains(double transform_gain_u, double transform_gain_v, double transform_gain_s, double transform_gain_t) {
 	size_to_transform_weights_map.clear();//all data that is there is now invalid
-	gains[LightFieldDimension::U]=transform_gain_u;
-	gains[LightFieldDimension::V]=transform_gain_v;
-	gains[LightFieldDimension::S]=transform_gain_s;
-	gains[LightFieldDimension::T]=transform_gain_t;
+	gains[static_cast<uint32_t>(LightFieldDimensions::U)]=transform_gain_u;
+	gains[static_cast<uint32_t>(LightFieldDimensions::V)]=transform_gain_v;
+	gains[static_cast<uint32_t>(LightFieldDimensions::S)]=transform_gain_s;
+	gains[static_cast<uint32_t>(LightFieldDimensions::T)]=transform_gain_t;
 }
 
-double DCT4DCoefficientsManager::compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimension> size_dimension_pair) {
+double DCT4DCoefficientsManager::compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimensions> size_dimension_pair) {
 	int size  = std::get<0>(size_dimension_pair);
-	LightFieldDimension dimension_name = std::get<1>(size_dimension_pair);
+	LightFieldDimensions dimension_name = std::get<1>(size_dimension_pair);
 
-	double transform_gain =gains[dimension_name]*sqrt(max_sizes[dimension_name]/static_cast<double>(size));
+	double transform_gain =gains[static_cast<uint32_t>(dimension_name)]*sqrt(max_sizes[static_cast<uint32_t>(dimension_name)]/static_cast<double>(size));
 	//used to test correctness of corner block shrinking: 
 	//double transform_gain =gains[dimension_name]*sqrt(2.0/static_cast<double>(size));
 
@@ -71,7 +71,7 @@ double DCT4DCoefficientsManager::compute_weight_for_size_in_dimension(std::pair<
 	return transform_gain;
 }
 
-double DCT4DCoefficientsManager::get_weight_for_size_in_dimension(int size, LightFieldDimension dimension_name) {
+double DCT4DCoefficientsManager::get_weight_for_size_in_dimension(int size, LightFieldDimensions dimension_name) {
 	auto key = std::make_pair(size, dimension_name);
 	auto it = size_to_transform_weights_map.find(key);
 	if (it != size_to_transform_weights_map.end()) { 

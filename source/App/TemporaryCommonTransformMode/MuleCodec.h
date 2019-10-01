@@ -49,7 +49,6 @@
 #include <memory>
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
-#include "Lib/Part2/Common/TransformMode/LightField.h"
 #include "App/TemporaryCommonTransformMode/ParameterHandler.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 
@@ -57,16 +56,12 @@ class MuleCodec {
  protected:
   ParameterHandler parameter_handler;
   FILE* encoded_file_pointer = nullptr;
-  LightField decoded_lightfield;
-  std::unique_ptr<LightFieldTransformMode<>> raw_lightfield;
-  Block4D r_block, g_block, b_block, y_block, cb_block, cr_block;
   int extension_length_t = 0;
   int extension_length_s = 0;
   int extension_length_v = 0;
   int extension_length_u = 0;
   bool needs_block_extension = false;
   void open_encoded_lightfield(const char* modes);
-  void open_decoded_lightfield(char mode);
   void setup_transform_coefficients(bool forward);
   void initialize_extension_lenghts();
 

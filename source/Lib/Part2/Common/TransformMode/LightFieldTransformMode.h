@@ -70,6 +70,9 @@ public:
 		}
 		return block;
 	}
+
+
+	void set_block_4D_at(const Block4D& block_4d, const LightfieldCoordinate<uint32_t>& coordinate_4d);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__ */

@@ -59,7 +59,7 @@ class PartitionDecoder {
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   PartitionDecoder() = default;
   ~PartitionDecoder() = default;
-  void decode_partition(Hierarchical4DDecoder &entropyDecoder);
+  Block4D decode_partition(Hierarchical4DDecoder &entropyDecoder);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */

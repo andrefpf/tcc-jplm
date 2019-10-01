@@ -46,7 +46,7 @@
 #include <map>
 #include <tuple>
 
-#include "LightField.h"
+#include "Lib/Part2/Common/Lightfield.h"
 
 class DCT4DCoefficientsManager
 {
@@ -58,13 +58,13 @@ private:
 	bool forward;
 	std::map<std::pair<int, int>, std::unique_ptr<double[]> > size_to_coefficients_map;
 	
-	std::map<std::pair<int, LightFieldDimension>, double> size_to_transform_weights_map;
+	std::map<std::pair<int, LightFieldDimensions>, double> size_to_transform_weights_map;
 	int max_sizes[4];
 	double gains[4];
 
 
 	const double* generate_coeffients_for_size(std::pair<int, int> size);
-	double compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimension> size_dimension_pair);
+	double compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimensions> size_dimension_pair);
 	DCT4DCoefficientsManager(bool is_forward) : forward(is_forward) {};
 	~DCT4DCoefficientsManager()= default;
 	DCT4DCoefficientsManager(const DCT4DCoefficientsManager&)= delete;
@@ -77,7 +77,7 @@ public:
 	const double* get_coefficients_for_size(int size);
 	void set_transform_max_sizes(int max_size_u, int max_size_v, int max_size_s, int max_size_t);
 	void set_transform_gains(double transform_gain_u, double transform_gain_v, double transform_gain_s, double transform_gain_t);
-	double get_weight_for_size_in_dimension(int size, LightFieldDimension dimension_name); //
+	double get_weight_for_size_in_dimension(int size, LightFieldDimensions dimension_name); //
 
 };
 

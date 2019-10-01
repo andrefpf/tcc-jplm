@@ -48,17 +48,16 @@
 
 
 void MuleCodec::initialize_extension_lenghts() {
-    extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
-    extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
-    extension_length_v = decoded_lightfield.mNumberOfViewLines%parameter_handler.transform_length_v;
-    extension_length_u = decoded_lightfield.mNumberOfViewColumns%parameter_handler.transform_length_u;
+    // extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
+    // extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
+    // extension_length_v = decoded_lightfield.mNumberOfViewLines%parameter_handler.transform_length_v;
+    // extension_length_u = decoded_lightfield.mNumberOfViewColumns%parameter_handler.transform_length_u;
 
-    if(parameter_handler.extension_method != SHRINK_TO_FIT && extension_length_t+extension_length_s+extension_length_v+extension_length_u > 0)
-        needs_block_extension=true;
+    // if(parameter_handler.extension_method != SHRINK_TO_FIT && extension_length_t+extension_length_s+extension_length_v+extension_length_u > 0)
+    //     needs_block_extension=true;
 }
 
 MuleCodec::~MuleCodec() {
-    decoded_lightfield.CloseLightField();
     if (encoded_file_pointer != nullptr)
         fclose(encoded_file_pointer);
 }
@@ -70,26 +69,7 @@ void MuleCodec::open_encoded_lightfield(const char* modes) {
     }
 }
 
-void MuleCodec::open_decoded_lightfield(char mode) {
 
-    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
-                parameter_handler.number_of_horizontal_views, 
-                3, 3);
-    auto config = LightfieldIOConfiguration(
-        parameter_handler.decoded_lightfield.string(),
-        dimension
-        );
-
-	raw_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
-
-    char viewFileNameSuffix[] = ".ppm";
-    decoded_lightfield.OpenLightFieldPPM(
-        parameter_handler.decoded_lightfield.string().c_str(), 
-        viewFileNameSuffix, 
-        parameter_handler.number_of_vertical_views, 
-        parameter_handler.number_of_horizontal_views, 
-        3, 3, mode);
-}
 
 void MuleCodec::setup_transform_coefficients(bool forward) {
     DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
