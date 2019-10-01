@@ -60,28 +60,48 @@ enum YCbCr { Y = 0, Cb = 1, Cr = 2 };
 enum YCoCg { Yy, Co, Cg };  //cannot reuse the name Y :(
 enum ColorCoefs { kb, kr };
 
+//! \todo Change the implementation to have less errors
+// class BT601Coefficients {
+//  public:
+//   static constexpr double kb = 0.114;
+//   static constexpr double kr = 0.299;
+//   static constexpr double kg = 1.0 - kb - kr;
+// };
+
+// class BT709Coefficients {
+//  public:
+//   static constexpr double kb = 0.0722;
+//   static constexpr double kr = 0.2126;
+//   static constexpr double kg = 1.0 - kb - kr;
+// };
+
+// class BT2020Coefficients {
+//  public:
+//   static constexpr double kb = 0.0593;
+//   static constexpr double kr = 0.2627;
+//   static constexpr double kg = 1.0 - kb - kr;
+// };
+
+
 class BT601Coefficients {
  public:
   static constexpr double kb = 0.114;
   static constexpr double kr = 0.299;
-  // static constexpr double kg = 0.587;
-  static constexpr double kg = 1.0 - kb - kr;
+  static constexpr double kg = 0.587;
 };
 
 class BT709Coefficients {
  public:
   static constexpr double kb = 0.0722;
   static constexpr double kr = 0.2126;
-  // static constexpr double kg = 0.7152;
-  static constexpr double kg = 1.0 - kb - kr;
+  static constexpr double kg = 0.7152;
 };
 
 class BT2020Coefficients {
  public:
   static constexpr double kb = 0.0593;
   static constexpr double kr = 0.2627;
-  // static constexpr double kg = 0.678;
-  static constexpr double kg = 1.0 - kb - kr;
+  static constexpr double kg = 0.678;
 };
 
 

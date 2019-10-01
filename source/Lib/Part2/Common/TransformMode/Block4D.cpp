@@ -378,3 +378,25 @@ block4DElementType Block4D::get_pixel_at(int position_t, int position_s, int pos
 void Block4D::set_pixel_at(block4DElementType pixel_value, int position_t, int position_s, int position_v, int position_u) {
     *(mPixelData+get_linear_position(position_t, position_s, position_v, position_u)) = pixel_value;
 }
+
+
+std::ostream& operator<<(std::ostream& o_stream, const Block4D& block) {
+    o_stream << "## Block4D ##" << std::endl;
+    for(auto t=0; t<block.mlength_t; ++t) {
+        for(auto s=0; s<block.mlength_s; ++s) {
+            for(auto v=0; v<block.mlength_v; ++v) {
+                for(auto u=0; u<block.mlength_u; ++u) {
+                    o_stream << block.mPixel[t][s][v][u] << " ";
+                }
+                o_stream << std::endl;
+            }
+            o_stream << std::endl;
+        }
+        o_stream << std::endl;
+    }
+    // for(auto i=decltype(block.number_of_elements){0}; i<block.number_of_elements;++i) {
+    //   o_stream << i << ": " << block.mPixelData[i] << "\n";
+    // }
+    o_stream << "END Block4D" << std::endl;
+    return o_stream;
+  }
