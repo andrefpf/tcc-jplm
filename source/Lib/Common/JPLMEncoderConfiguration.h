@@ -43,6 +43,7 @@
 
 #include <cstdint>
 #include <optional>
+#include <filesystem>
 #include "CLI/CLI.hpp"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
@@ -54,7 +55,7 @@ using namespace std;
 
 using json = nlohmann::json;
 using Type = CompressionTypeLightField;
-
+namespace fs = std::filesystem;
 
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
@@ -89,7 +90,10 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
   if (!config.empty())
-    parse_json(config);
+    if (fs::exists(config))
+      parse_json(config);
+    else
+      throw ConfigFileDoesNotExistException(config);
 }
 
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {

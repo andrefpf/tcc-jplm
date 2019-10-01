@@ -80,5 +80,18 @@ class NotImplementedYetModeException : public exception {
   }
 };
 
+class ConfigFileDoesNotExistException : public std::exception {
+private:
+  string msg;
+
+public:
+  ConfigFileDoesNotExistException(string m)
+      : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
 
 #endif  //JPLM_PARSEEXCEPTIONS_H

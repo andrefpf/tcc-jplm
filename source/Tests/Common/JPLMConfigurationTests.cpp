@@ -40,6 +40,7 @@
 
 #include <exception>
 #include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "gtest/gtest.h"
 
@@ -63,8 +64,8 @@ TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
-      "../cfg/part2/4DTransformMode/I01_Bikes_22016.json", "-p", "2", "-t", "13", "-s", "13", "-v",
-      "434", "-u", "626"};
+      "../cfg/part2/4DTransformMode/I01_Bikes_22016.json", "-p", "2", "-t",
+      "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
@@ -76,8 +77,18 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 
 
+TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
+      "/tmp/donotcreateme/I01Bikes.cfg"};
+  int argc = 5;
+
+  EXPECT_THROW(
+      { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
+      ConfigFileDoesNotExistException);
+}
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
-
