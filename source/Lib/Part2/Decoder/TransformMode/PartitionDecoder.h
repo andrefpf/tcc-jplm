@@ -51,15 +51,15 @@ class PartitionDecoder {
  private:
   static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
   void decode_transform_partition(
-      int *position, int *length, Hierarchical4DDecoder &hierarchical_decoder);
+      int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder);
   void decode_partition(
-      int *position, int *length, Hierarchical4DDecoder &entropyDecoder);
+      int *position, uint32_t *length, Hierarchical4DDecoder &entropyDecoder);
 
  public:
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   PartitionDecoder() = default;
   ~PartitionDecoder() = default;
-  Block4D decode_partition(Hierarchical4DDecoder &entropyDecoder);
+  Block4D decode_partition(Hierarchical4DDecoder &entropyDecoder, const LightfieldDimension<uint32_t>& size);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */

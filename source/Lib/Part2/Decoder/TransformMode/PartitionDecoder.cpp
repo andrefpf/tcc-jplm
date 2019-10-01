@@ -42,23 +42,22 @@
 
 
 Block4D PartitionDecoder::decode_partition(
-    Hierarchical4DDecoder &hierarchical_decoder) {
+    Hierarchical4DDecoder &hierarchical_decoder, const LightfieldDimension<uint32_t>& size) {
 
   int position[] = {0, 0, 0, 0};
 
-  int length[] = {mPartitionData.mlength_t, mPartitionData.mlength_s,
-      mPartitionData.mlength_v, mPartitionData.mlength_u};
+  uint32_t length[4];
+  std::tie(length[0], length[1], length[2], length[3]) = size.as_tuple();
   
   hierarchical_decoder.mInferiorBitPlane = hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
   
   decode_partition(position, length, hierarchical_decoder);
 
-  return Block4D({mPartitionData.mlength_t, mPartitionData.mlength_s,
-        mPartitionData.mlength_v, mPartitionData.mlength_u});
+  return Block4D(size);
 }
 
 void PartitionDecoder::decode_transform_partition(
-    int *position, int *length, Hierarchical4DDecoder &hierarchical_decoder) {
+    int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
   hierarchical_decoder.mSubbandLF.set_dimension(
       length[0], length[1], length[2], length[3]);
   hierarchical_decoder.mSubbandLF.fill_with_zeros();
@@ -74,14 +73,14 @@ void PartitionDecoder::decode_transform_partition(
 }
 
 void PartitionDecoder::decode_partition(
-    int *position, int *length, Hierarchical4DDecoder &hierarchical_decoder) {
+    int *position, uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
   switch (hierarchical_decoder.decode_partition_flag()) {
     case PartitionFlag::transform: {
       return decode_transform_partition(position, length, hierarchical_decoder);
     }
     case PartitionFlag::spatialSplit: {
       int new_position[] = {position[0], position[1], position[2], position[3]};
-      int new_length[] = {length[0], length[1], length[2] / 2, length[3] / 2};
+      uint32_t new_length[] = {length[0], length[1], length[2] / 2, length[3] / 2};
 
       //Decode four spatial subblocks
       decode_partition(new_position, new_length, hierarchical_decoder);
@@ -104,7 +103,7 @@ void PartitionDecoder::decode_partition(
     }
     case PartitionFlag::viewSplit: {
       int new_position[] = {position[0], position[1], position[2], position[3]};
-      int new_length[] = {length[0] / 2, length[1] / 2, length[2], length[3]};
+      uint32_t new_length[] = {length[0] / 2, length[1] / 2, length[2], length[3]};
 
       //Decode four view subblocks
       decode_partition(new_position, new_length, hierarchical_decoder);

@@ -46,8 +46,6 @@ void MuleDecoder::decode() {
     auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
 
     PartitionDecoder partition_decoder;
-    // auto rgb_4d_block = RGBBlock4DHolder(r_block,  g_block,  b_block, decoded_lightfield.mPGMScale);
-    // encodedColorHolder spectral_4d_block(y_block, cb_block, cr_block, decoded_lightfield.mPGMScale);
 
     // if (parameter_handler.extension_method != SHRINK_TO_FIT) {
         // rgb_4d_block.set_block_dimensions(              BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
@@ -68,13 +66,9 @@ void MuleDecoder::decode() {
                 for(auto u = 0; u < U; u += BLOCK_SIZE_u) {
                     auto used_size_u = (u + BLOCK_SIZE_u > U)? U%BLOCK_SIZE_u : BLOCK_SIZE_u;
                     
-                    //! \todo Treat decoding of shrinked blocks
-                    // if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-                    //     partition_decoder.mPartitionData.resize_avoiding_free(used_size_t, used_size_s, used_size_v, used_size_u);
-                    //     rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                    //     spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                    // }
+                    //! \todo Treat decoding of extended blocks
                     
+                    auto size = LightfieldDimension<uint32_t>(used_size_t, used_size_s, used_size_v, used_size_u);
 
                     for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
                         if(parameter_handler.verbose) {
@@ -83,8 +77,10 @@ void MuleDecoder::decode() {
                         
                         hierarchical_4d_decoder.reset_probability_models();
 
-                        auto decoded_block = partition_decoder.decode_partition(hierarchical_4d_decoder);
+                        auto decoded_block = partition_decoder.decode_partition(hierarchical_4d_decoder, size);
                         decoded_block+=half_dinamic_range;
+
+
 
                         // if (needs_block_extension) {
                         //     if(used_size_u != BLOCK_SIZE_u)
@@ -174,10 +170,10 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
     //reads the bit precision of each component of the pixels of the views
     read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer);
 
-    std::cerr << "Checking: " << std::endl;
-    std::cerr << hierarchical_4d_decoder.mPGMScale << std::endl;
-    std::cerr << hierarchical_4d_decoder.mNumberOfViewLines << std::endl;
-    std::cerr << hierarchical_4d_decoder.mNumberOfViewColumns << std::endl;
+    // std::cerr << "Checking: " << std::endl;
+    // std::cerr << hierarchical_4d_decoder.mPGMScale << std::endl;
+    // std::cerr << hierarchical_4d_decoder.mNumberOfViewLines << std::endl;
+    // std::cerr << hierarchical_4d_decoder.mNumberOfViewColumns << std::endl;
 
     //reads the extension_method from file...
     // int extension_method_code;

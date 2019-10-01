@@ -99,6 +99,11 @@ class LightfieldCoordinate {
   ~LightfieldCoordinate() = default;
 
 
+  std::tuple<T, T, T, T> as_tuple() const noexcept {
+    return dimensions;
+  }
+
+
   bool operator==(const LightfieldCoordinate<T>& other) const noexcept {
     return this->dimensions == other.dimensions;
   }
