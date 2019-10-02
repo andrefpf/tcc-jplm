@@ -50,12 +50,19 @@
 template<typename T>
 class ViewIOPolicyQueue : public ViewIOPolicy<T> {
  protected:
-  std::deque<View<T>*> queue;
-  std::unordered_set<const View<T>*> set;
+  std::deque<View<T>*> queue; //!< The queue must keep the least accessed item at the front
+  // std::unordered_set<const View<T>*> set; //!< the set is used to find faster a given view...
 
 
-  bool is_loaded(const View<T>* view) const {
-    return set.count(view) > 0;
+  bool is_loaded(const View<T>* view) {
+    if(auto it = std::find(queue.begin(), queue.end(), view); it != queue.end()) {
+      auto view_ref = *it;
+      queue.erase(it);
+      queue.push_back(view_ref);
+      return true;
+    }
+    return false;
+    // return set.count(view) > 0;
   }
 
   void release_view_image() {
@@ -63,7 +70,7 @@ class ViewIOPolicyQueue : public ViewIOPolicy<T> {
       auto ref_to_view = queue.front();
       ref_to_view->release_image();
       queue.pop_front();
-      set.erase(ref_to_view);
+      // set.erase(ref_to_view);
     }
   }
 

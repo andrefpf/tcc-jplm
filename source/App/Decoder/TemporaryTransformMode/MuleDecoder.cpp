@@ -93,7 +93,7 @@ void MuleDecoder::decode() {
                         //         current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
                         // }
                         
-                        // decoded_lightfield->add_4d_block(decoded_block, color_channel_index, {t, s, v, u});
+                        decoded_lightfield->set_block_4D_at(decoded_block, color_channel_index, {t, s, v, u});
                     }
                     
                     // spectral_4d_block.add_constant_to_pels((decoded_lightfield.mPGMScale+1)/2);

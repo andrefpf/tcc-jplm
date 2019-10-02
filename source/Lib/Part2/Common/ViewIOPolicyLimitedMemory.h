@@ -61,7 +61,7 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
         current_bytes += expected_number_of_bytes;
       }
       this->queue.push_back(&view);
-      this->set.insert(&view);
+      // this->set.insert(&view);
       view.load_image();
     }
   }
