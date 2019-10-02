@@ -82,8 +82,10 @@ void imwrite(const Image<T>& image, const std::string& filename,
   if (!overwrite && fs::exists(filename)) {
     throw ImageIOExceptions::FileAlreadyExistsException();
   }
+  std::cout << "Aquiii" << std::endl;
 
   if (name.extension() == fpath(".ppm")) {
+    std::cout << "Aquiii2" << std::endl;
     auto max_value =
         static_cast<std::size_t>(std::pow(2.0, image.get_bpp())) - 1;
     auto oppened_image = PixelMapFileIO::open(filename, PixelMapType::P6,

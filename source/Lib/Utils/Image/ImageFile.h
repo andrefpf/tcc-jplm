@@ -155,6 +155,11 @@ class ImageFile {
   }
 
 
+  auto get_filename() const noexcept {
+    return filename;
+  }
+
+
   void open();
 
   /**

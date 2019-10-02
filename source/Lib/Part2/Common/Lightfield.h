@@ -182,6 +182,13 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  virtual Image<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->get_image_at(view);
+  }
+
+
   template<template<typename> typename ImageType>
   const ImageType<T>& get_image_at(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
@@ -190,10 +197,18 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
   
 
+  template<template<typename> typename ImageType>
+  ImageType<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->template get_image_at<ImageType>(view);
+  }
+
 
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
+    std::cout << "set view&" << std::endl;
     this->set_element_at(
         std::move(std::make_unique<ViewType>(view)), coordinate);
   }
@@ -202,8 +217,14 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType&& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    this->set_element_at(
-        std::move(std::make_unique<ViewType>(std::move(view))), coordinate);
+    std::cout << "set view&&" << std::endl;
+    this->set_element_at(std::make_unique<ViewType>(std::move(view)), coordinate);
+  }
+
+
+  template<typename ViewType = View<T>>
+  void set_view_at(std::unique_ptr<ViewType>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
+    this->set_element_at(std::move(view), coordinate);
   }
 
 

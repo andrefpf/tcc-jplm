@@ -114,6 +114,9 @@ class Block4D {
   std::tuple<int, int, int, int> get_dimension() {
     return std::make_tuple(mlength_t, mlength_s, mlength_v, mlength_u);
   }
+  LightfieldDimension<uint32_t> get_dimension() const {
+    return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s), static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
+  }
   std::size_t get_linear_position(
       int position_t, int position_s, int position_v, int position_u) const;
   void set_pixel_at(block4DElementType pixel_value, int position_t,

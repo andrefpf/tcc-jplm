@@ -87,6 +87,23 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
 
   void set_block_4D_at(const Block4D& block_4d, const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d) {
+
+    const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
+    const auto [t_max, s_max, v_max, u_max] = coordinate_4d + block_4d.get_dimension();
+    auto c = 0;
+    for (auto t = t_initial; t < t_max; ++t) {
+      for (auto s = s_initial; s < s_max; ++s) {
+            auto& image_channel =
+            this->template get_image_at<BT601Image>({t, s}).get_channel(
+                channel);
+             for (auto v = v_initial; v < v_max; ++v) {
+	          for (auto u = u_initial; u < u_max; ++u) {
+	            image_channel[v][u] = block_4d.mPixelData[c++];
+	          }
+	        }
+        }        
+    }
+
   }
 };
 

@@ -247,12 +247,15 @@ ImageOut<T> to(const ImageIn<T>& source) {
       }
       break;
     }
-    //case ImageType::BT601: {
-    //  if constexpr (std::is_same_v<BT601Image<T>, ImageOut<T>>) {
-    //  	return BT601Image(source);
-    //  }
-    //  break;	
-    //}
+    case ImageType::BT601: {
+      std::cout << "Image is BT601" << std::endl;
+      std::cout << source.get_bpp() << std::endl;
+      if constexpr (std::is_same_v<Image<T>, ImageIn<T>>) {
+        std::cout << "aqui" << std::endl;
+        return to<ImageOut>(static_cast<const BT601Image<T>&>(source));
+      }
+      [[fallthrough]];
+    }
 
     default:
       std::cerr << "Conversion from this type is not yet supported..."

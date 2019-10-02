@@ -67,7 +67,7 @@ class ViewIOPolicy {
   }
 
 
-  virtual const Image<T>& get_image_at(View<T>& view) {
+  virtual Image<T>& get_image_at(View<T>& view) {
     load_image_if_necessary(view);
     return *view.get_image_ptr();
   }
@@ -75,7 +75,7 @@ class ViewIOPolicy {
 
   
   template<template<typename> class ImageType>
-  const ImageType<T>& get_image_at(View<T>& view) {
+  ImageType<T>& get_image_at(View<T>& view) {
     load_image_if_necessary(view);
     using namespace ImageColorSpaceConversion;
     auto image_ptr = view.get_image_ptr();

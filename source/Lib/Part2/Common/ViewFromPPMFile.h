@@ -44,6 +44,7 @@
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Part2/Common/ViewToFilenameTranslator.h"
 #include "Lib/Utils/Image/ImageUtils.h"
+#include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/PixelMapFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
 
@@ -54,6 +55,7 @@ class ViewFromPPMFile : public View<T> {
   const std::pair<std::size_t, std::size_t> position;
   std::unique_ptr<ViewToFilenameTranslator> name_translator;
   std::unique_ptr<PixelMapFile> ppm_file;
+  bool overwrite_ppm_file_in_destructor = false;
 
  public:
   ViewFromPPMFile(const std::string& path,
@@ -77,7 +79,7 @@ class ViewFromPPMFile : public View<T> {
         ppm_file(PixelMapFileIO::open(
             {path + name_translator->view_position_to_filename(position)}, type,
             std::get<1>(dimension_v_u), std::get<0>(dimension_v_u),
-            max_value)) {
+            max_value)), overwrite_ppm_file_in_destructor(true) {
   }
 
 
@@ -86,6 +88,7 @@ class ViewFromPPMFile : public View<T> {
         name_translator(std::make_unique<PPM3CharViewToFilename>()),
         ppm_file(PixelMapFileIO::open(
             {path + name_translator->view_position_to_filename(position)})) {
+          std::cout << "Copy constructor of view from ppm file" << std::endl;
   }
 
 
@@ -95,9 +98,11 @@ class ViewFromPPMFile : public View<T> {
 
 
   ViewFromPPMFile(ViewFromPPMFile&& other) noexcept
-      : View<T>(std::move(other)) {
+      : View<T>(std::move(other)), path(std::move(other.path)), position(other.position) {
+        std::cout << "Move constructor of view from ppm file" << std::endl;
     std::swap(name_translator, other.name_translator);
     std::swap(ppm_file, other.ppm_file);
+    overwrite_ppm_file_in_destructor=other.overwrite_ppm_file_in_destructor;
   }
 
 
@@ -118,7 +123,14 @@ class ViewFromPPMFile : public View<T> {
     }
   }
 
-  ~ViewFromPPMFile() = default;
+  void write_image(const bool overwrite_file = false) {
+    ImageIO::imwrite(*this->image_, this->ppm_file->get_filename(), overwrite_file);
+  }
+
+  ~ViewFromPPMFile() {
+    std::cout << "Destructor of ViewFromPPMFile " << overwrite_ppm_file_in_destructor << std::endl;
+    write_image(overwrite_ppm_file_in_destructor);
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWFROMPPMFILE_H__ */

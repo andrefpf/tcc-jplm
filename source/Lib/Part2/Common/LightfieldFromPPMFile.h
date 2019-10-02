@@ -73,7 +73,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
             std::move(view_io_policy), true) {
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
       this->set_view_at(
-          std::move(ViewFromPPMFile<T>(configuration.get_path(), coordinate)),
+          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate)),
           coordinate);
     }
   }
@@ -86,7 +86,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
             std::move(view_io_policy), true) {
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
       this->set_view_at(
-          std::move(ViewFromPPMFile<T>(configuration.get_path(), coordinate, configuration.get_size().get_v_and_u(), max_value, type)),
+          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate, configuration.get_size().get_v_and_u(), max_value, type)),
           coordinate);
     }
     this->lightfield_dimension = std::make_unique<LightfieldDimension<std::size_t>>(configuration.get_size());
