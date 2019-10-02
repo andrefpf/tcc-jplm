@@ -89,6 +89,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
           std::move(ViewFromPPMFile<T>(configuration.get_path(), coordinate, configuration.get_size().get_v_and_u(), max_value, type)),
           coordinate);
     }
+    this->lightfield_dimension = std::make_unique<LightfieldDimension<std::size_t>>(configuration.get_size());
   }
 
 
