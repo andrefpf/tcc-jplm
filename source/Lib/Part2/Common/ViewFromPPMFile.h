@@ -68,6 +68,24 @@ class ViewFromPPMFile : public View<T> {
   };
 
 
+  ViewFromPPMFile(const std::string& path,
+      const std::pair<std::size_t, std::size_t>& position,
+      const std::pair<std::size_t, std::size_t>& dimension_v_u,
+      std::size_t max_value, const PixelMapType type)
+      : View<T>(), path(path), position(position),
+        ppm_file(PixelMapFileIO::open(
+            {path + name_translator->view_position_to_filename(position)}, type,
+            std::get<1>(dimension_v_u), std::get<0>(dimension_v_u),
+            max_value)) {
+  }
+
+  //   filename
+  // type
+  // width
+  // height
+  // max_value
+
+
   ViewFromPPMFile(const ViewFromPPMFile& other)
       : View<T>(other), path(other.path), position(other.position),
         name_translator(std::make_unique<PPM3CharViewToFilename>()),
@@ -89,7 +107,8 @@ class ViewFromPPMFile : public View<T> {
 
 
   void load_image(const std::pair<std::size_t, std::size_t>& size,
-      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const override {
+      const std::pair<std::size_t, std::size_t>& initial = {
+          0, 0}) const override {
     const auto& [i, j] = initial;
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //loads the entire image

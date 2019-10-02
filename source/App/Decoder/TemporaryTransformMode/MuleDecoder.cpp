@@ -11,13 +11,15 @@ void MuleDecoder::open_decoded_lightfield() {
 
     auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
                 parameter_handler.number_of_horizontal_views, 
-                3, 3);
+                512, 512);
     auto config = LightfieldIOConfiguration(
         parameter_handler.decoded_lightfield.string(),
         dimension
         );
 
+    std::cout << "Oppening LF" << std::endl;
     decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+    std::cout << "Done Oppening LF" << std::endl;
 }
 
 MuleDecoder::MuleDecoder(ParameterHandler handler) : MuleCodec(handler) {
@@ -71,9 +73,9 @@ void MuleDecoder::decode() {
                     auto size = LightfieldDimension<uint32_t>(used_size_t, used_size_s, used_size_v, used_size_u);
 
                     for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
-                        if(parameter_handler.verbose) {
+                        // if(parameter_handler.verbose) {
                             printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
-                        }
+                        // }
                         
                         hierarchical_4d_decoder.reset_probability_models();
 

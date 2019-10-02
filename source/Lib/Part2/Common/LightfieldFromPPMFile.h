@@ -72,6 +72,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
+      std::cout << "Setting view" << std::endl;
       this->set_view_at(
           std::move(ViewFromPPMFile<T>(configuration.get_path(), coordinate)),
           coordinate);
