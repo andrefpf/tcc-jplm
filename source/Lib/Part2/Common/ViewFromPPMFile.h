@@ -73,6 +73,7 @@ class ViewFromPPMFile : public View<T> {
       const std::pair<std::size_t, std::size_t>& dimension_v_u,
       std::size_t max_value, const PixelMapType type)
       : View<T>(), path(path), position(position),
+        name_translator(std::make_unique<PPM3CharViewToFilename>()),
         ppm_file(PixelMapFileIO::open(
             {path + name_translator->view_position_to_filename(position)}, type,
             std::get<1>(dimension_v_u), std::get<0>(dimension_v_u),

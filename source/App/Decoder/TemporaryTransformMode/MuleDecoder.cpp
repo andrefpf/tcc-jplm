@@ -9,8 +9,8 @@
 
 void MuleDecoder::open_decoded_lightfield() {
 
-    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
-                parameter_handler.number_of_horizontal_views, 
+    auto dimension = LightfieldDimension<std::size_t>(9, 
+                9, 
                 512, 512);
     auto config = LightfieldIOConfiguration(
         parameter_handler.decoded_lightfield.string(),
@@ -41,6 +41,7 @@ MuleDecoder::~MuleDecoder() {
 // template <typename encodedColorHolder>
 void MuleDecoder::decode() {
     const auto& [T, S, V, U] = decoded_lightfield->get_dimensions<uint32_t>();
+    std::cout << "After getting dimensions" << std::endl;
 
     auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
     auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
