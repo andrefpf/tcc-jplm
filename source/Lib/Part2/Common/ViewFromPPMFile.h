@@ -79,12 +79,6 @@ class ViewFromPPMFile : public View<T> {
             max_value)) {
   }
 
-  //   filename
-  // type
-  // width
-  // height
-  // max_value
-
 
   ViewFromPPMFile(const ViewFromPPMFile& other)
       : View<T>(other), path(other.path), position(other.position),
