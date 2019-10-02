@@ -18,7 +18,7 @@ void MuleDecoder::open_decoded_lightfield() {
         );
 
     std::cout << "Oppening LF" << std::endl;
-    decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+    decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config, 1023, PixelMapType::P6);
     std::cout << "Done Oppening LF" << std::endl;
 }
 

@@ -44,37 +44,50 @@
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 
-template<typename T=uint16_t>
-class LightFieldTransformMode : public LightfieldFromPPMFile<T>
-{
-public:
-	LightFieldTransformMode(const LightfieldIOConfiguration& configuration) : LightfieldFromPPMFile<T>(configuration) {
-	}
+template<typename T = uint16_t>
+class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
+ public:
+  LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
+      ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
+      : LightfieldFromPPMFile<T>(configuration, std::move(view_io_policy)) {
+  }
 
-	~LightFieldTransformMode() = default;
+  LightFieldTransformMode(
+      const LightfieldIOConfiguration& configuration, std::size_t max_value,
+      const PixelMapType type,
+      ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
+      : LightfieldFromPPMFile<T>(
+            configuration, max_value, type, std::move(view_io_policy)) {
+  }
 
-	Block4D get_block_4D_from(const int channel, const LightfieldCoordinate<uint32_t>& coordinate_4d, const LightfieldDimension<uint32_t>& size) {
-		auto block = Block4D(size);
-		const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
-		const auto [t_max, s_max, v_max, u_max] = coordinate_4d+size;
-		auto c=0;
-		for(auto t=t_initial; t<t_max; ++t) {
-			for(auto s=s_initial; s<s_max; ++s) {
-				const auto& image_channel = this->template get_image_at<BT601Image>({t, s}).get_channel(channel);
-				for(auto v=v_initial; v<v_max; ++v) {
-					for(auto u=u_initial; u<u_max; ++u) {
-						block.mPixelData[c++] = image_channel[v][u];
-					}
-				}
-			}
-		}
-		return block;
-	}
+  ~LightFieldTransformMode() = default;
+
+  Block4D get_block_4D_from(const int channel,
+      const LightfieldCoordinate<uint32_t>& coordinate_4d,
+      const LightfieldDimension<uint32_t>& size) {
+    auto block = Block4D(size);
+    const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
+    const auto [t_max, s_max, v_max, u_max] = coordinate_4d + size;
+    auto c = 0;
+    for (auto t = t_initial; t < t_max; ++t) {
+      for (auto s = s_initial; s < s_max; ++s) {
+        const auto& image_channel =
+            this->template get_image_at<BT601Image>({t, s}).get_channel(
+                channel);
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            block.mPixelData[c++] = image_channel[v][u];
+          }
+        }
+      }
+    }
+    return block;
+  }
 
 
-	void set_block_4D_at(const Block4D& block_4d, const int channel, const LightfieldCoordinate<uint32_t>& coordinate_4d) {
-		
-	}
+  void set_block_4D_at(const Block4D& block_4d, const int channel,
+      const LightfieldCoordinate<uint32_t>& coordinate_4d) {
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__ */
