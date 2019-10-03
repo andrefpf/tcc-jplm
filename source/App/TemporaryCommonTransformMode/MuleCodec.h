@@ -55,7 +55,6 @@
 class MuleCodec {
  protected:
   ParameterHandler parameter_handler;
-  FILE* encoded_file_pointer = nullptr;
   int extension_length_t = 0;
   int extension_length_s = 0;
   int extension_length_v = 0;
@@ -68,7 +67,7 @@ class MuleCodec {
  public:
   MuleCodec(ParameterHandler handler) : parameter_handler(handler) {
   };
-  ~MuleCodec();
+  ~MuleCodec() = default;
 };
 
 #endif /* end of include guard: MULECODEC_H__ */

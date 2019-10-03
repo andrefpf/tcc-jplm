@@ -126,8 +126,9 @@ class ViewFromPPMFile : public View<T> {
   }
 
   ~ViewFromPPMFile() {
-    // std::cout << "Destructor of ViewFromPPMFile " << overwrite_ppm_file_in_destructor << std::endl;
-    write_image(overwrite_ppm_file_in_destructor);
+    if(overwrite_ppm_file_in_destructor) {
+      write_image(overwrite_ppm_file_in_destructor);
+    }
   }
 };
 

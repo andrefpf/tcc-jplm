@@ -53,6 +53,7 @@
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
 private:
@@ -87,6 +88,8 @@ public:
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);
     void DeleteProbabilisticModelState(ProbabilityModel *state);
     void create_temporary_buffer(int size);
+
+    void write_initial_data();
 
     ContiguousCodestreamCode& get_ref_to_codestream_code() const;
 

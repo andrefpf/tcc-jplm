@@ -125,8 +125,8 @@ uint16_t read_int_from_codestream_code(const ContiguousCodestreamCode& codestrea
     auto bytes = std::vector<std::byte>();
     auto byte_0 = codestream_code.get_next_byte();
     auto byte_1 = codestream_code.get_next_byte();
-    bytes.push_back(byte_1);
     bytes.push_back(byte_0);
+    bytes.push_back(byte_1);
     return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
 }
 

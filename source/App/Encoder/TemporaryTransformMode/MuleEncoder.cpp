@@ -82,15 +82,11 @@ MuleEncoder::MuleEncoder(ParameterHandler handler) :
 									parameter_handler.transform_length_u);
  	setup_hierarchical_4d_encoder();
 
- 	setup_transform_coefficients(true); 	
+ 	setup_transform_coefficients(true);
 
-	open_encoded_lightfield("wb");
 	write_initial_data_to_encoded_file();
 
     initialize_extension_lenghts();
-
-	fclose(encoded_file_pointer);
-    encoded_file_pointer=nullptr;
 }
 
 MuleEncoder::~MuleEncoder() {
@@ -141,6 +137,7 @@ std::unique_ptr<ContiguousCodestreamCode> MuleEncoder::encode() {
         }
     }
     hierarchical_4d_encoder.finish();
+    std::cout << "done" << std::endl ;
     return hierarchical_4d_encoder.move_codestream_code_out();
 }
 
@@ -169,37 +166,7 @@ void MuleEncoder::setup_hierarchical_4d_encoder() {
     hierarchical_4d_encoder.mPGMScale = std::pow(2, raw_lightfield->get_views_bpp())-1;
 }
 
-void write_int16_into_file(int value, FILE* fp) {
-	fwrite(&value, 2, 1, fp);
-}
 
 void MuleEncoder::write_initial_data_to_encoded_file() {//read_initial_data_from_encoded_file
-	write_int16_into_file(hierarchical_4d_encoder.mSuperiorBitPlane, encoded_file_pointer);
-    
-    //writes the maximum transform sizes
-    write_int16_into_file(hierarchical_4d_encoder.mTransformLength_t, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mTransformLength_s, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mTransformLength_v, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mTransformLength_u, encoded_file_pointer);
-    
-    //writes the minimum transform sizes
-    write_int16_into_file(hierarchical_4d_encoder.mMinimumTransformLength_t, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mMinimumTransformLength_s, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mMinimumTransformLength_v, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mMinimumTransformLength_u, encoded_file_pointer);
-    
-
-    //writes the number of views of the lightfield
-    write_int16_into_file(hierarchical_4d_encoder.mNumberOfVerticalViews, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mNumberOfHorizontalViews, encoded_file_pointer);
-    
-    //writes the number of lines and columns of each view
-    write_int16_into_file(hierarchical_4d_encoder.mNumberOfViewLines, encoded_file_pointer);
-    write_int16_into_file(hierarchical_4d_encoder.mNumberOfViewColumns, encoded_file_pointer);
-    
-    //writes the bit precision of each component of the pixels of the views
-    write_int16_into_file(hierarchical_4d_encoder.mPGMScale, encoded_file_pointer);
-
-    //writes the extension_method to file...
-    // write_int16_into_file(parameter_handler.extension_method, encoded_file_pointer);
+    hierarchical_4d_encoder.write_initial_data();
 }

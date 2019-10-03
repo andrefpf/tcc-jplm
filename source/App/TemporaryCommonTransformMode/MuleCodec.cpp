@@ -57,20 +57,6 @@ void MuleCodec::initialize_extension_lenghts() {
     //     needs_block_extension=true;
 }
 
-MuleCodec::~MuleCodec() {
-    if (encoded_file_pointer != nullptr)
-        fclose(encoded_file_pointer);
-}
-
-void MuleCodec::open_encoded_lightfield(const char* modes) {
-    if((encoded_file_pointer = fopen(parameter_handler.encoded_lightfield.string().c_str(), modes)) == NULL) {
-        std::cerr << "Error: input file " << parameter_handler.encoded_lightfield << "was not found" << std::endl;
-        exit(1);
-    }
-}
-
-
-
 void MuleCodec::setup_transform_coefficients(bool forward) {
 
     DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
