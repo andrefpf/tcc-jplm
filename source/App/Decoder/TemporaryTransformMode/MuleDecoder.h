@@ -5,6 +5,7 @@
 
 #include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 void read_int_from_file(int* dest, FILE* fp);
 

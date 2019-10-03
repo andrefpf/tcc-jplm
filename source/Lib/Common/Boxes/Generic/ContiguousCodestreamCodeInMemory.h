@@ -102,7 +102,9 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
 
 
   virtual std::byte get_next_byte() const override {
-    return bytes.at(current_pos++);
+    auto byte = bytes.at(current_pos);
+    ++current_pos;
+    return byte;
   }
 
 

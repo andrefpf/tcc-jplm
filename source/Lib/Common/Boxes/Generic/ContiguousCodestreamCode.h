@@ -77,6 +77,11 @@ class ContiguousCodestreamCode {
   virtual std::byte peek_next_byte() const = 0;
 
 
+  // virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
+
+  
+
+
   bool operator==(const ContiguousCodestreamCode& other) const {
     return this->is_equal(other);
   }

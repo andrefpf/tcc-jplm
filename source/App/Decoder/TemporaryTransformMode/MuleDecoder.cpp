@@ -122,7 +122,16 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
     hierarchical_4d_decoder.mNumberOfHorizontalViews = parameter_handler.number_of_horizontal_views;
 }
 
-void read_int_from_file(int* dest, FILE* fp) {
+uint16_t read_int_from_codestream_code(const ContiguousCodestreamCode& codestream_code) {
+    auto bytes = std::vector<std::byte>();
+    auto byte_0 = codestream_code.get_next_byte();
+    auto byte_1 = codestream_code.get_next_byte();
+    bytes.push_back(byte_1);
+    bytes.push_back(byte_0);
+    return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
+}
+
+void read_int_from_file(int* dest, FILE* fp, const ContiguousCodestreamCode& codestream_code) {
     *dest=0;   //why is this initialization necessary?
     if (fread(dest, 2, 1, fp) != 1) {
         std::cerr << "Error while reading file." << std::endl;
@@ -131,31 +140,48 @@ void read_int_from_file(int* dest, FILE* fp) {
 }
 
 void MuleDecoder::read_initial_data_from_compressed_file() {
+
     //reads the superior bit plane value
-    read_int_from_file(&(hierarchical_4d_decoder.mSuperiorBitPlane), encoded_file_pointer);
+    read_int_from_file(&(hierarchical_4d_decoder.mSuperiorBitPlane), encoded_file_pointer, codestream_code);
 
     //reads the maximum transform sizes
-    read_int_from_file(&(parameter_handler.transform_length_t), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.transform_length_s), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.transform_length_v), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.transform_length_u), encoded_file_pointer);
+    read_int_from_file(&(parameter_handler.transform_length_t), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.transform_length_s), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.transform_length_v), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.transform_length_u), encoded_file_pointer, codestream_code);
 
     //reads the minimum transform sizes
-    read_int_from_file(&(parameter_handler.min_transform_length_t), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.min_transform_length_s), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.min_transform_length_v), encoded_file_pointer);
-    read_int_from_file(&(parameter_handler.min_transform_length_u), encoded_file_pointer);
+    read_int_from_file(&(parameter_handler.min_transform_length_t), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.min_transform_length_s), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.min_transform_length_v), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(parameter_handler.min_transform_length_u), encoded_file_pointer, codestream_code);
 
     //reads the number of views of the lightfield
-    read_int_from_file(&(parameter_handler.number_of_vertical_views), encoded_file_pointer);    
-    read_int_from_file(&(parameter_handler.number_of_horizontal_views), encoded_file_pointer);
+    read_int_from_file(&(parameter_handler.number_of_vertical_views), encoded_file_pointer, codestream_code);    
+    read_int_from_file(&(parameter_handler.number_of_horizontal_views), encoded_file_pointer, codestream_code);
 
     //reads the number of lines and columns of each view
-    read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewLines), encoded_file_pointer);
-    read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewColumns), encoded_file_pointer);
+    read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewLines), encoded_file_pointer, codestream_code);
+    read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewColumns), encoded_file_pointer, codestream_code);
     
     //reads the bit precision of each component of the pixels of the views
-    read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer);
+    read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer, codestream_code);
+
+
+    hierarchical_4d_decoder.mSuperiorBitPlane = read_int_from_codestream_code(codestream_code);
+    parameter_handler.transform_length_t = read_int_from_codestream_code(codestream_code);
+    parameter_handler.transform_length_s = read_int_from_codestream_code(codestream_code);
+    parameter_handler.transform_length_v = read_int_from_codestream_code(codestream_code);
+    parameter_handler.transform_length_u = read_int_from_codestream_code(codestream_code);
+    parameter_handler.min_transform_length_t = read_int_from_codestream_code(codestream_code);
+    parameter_handler.min_transform_length_s = read_int_from_codestream_code(codestream_code);
+    parameter_handler.min_transform_length_v = read_int_from_codestream_code(codestream_code);
+    parameter_handler.min_transform_length_u = read_int_from_codestream_code(codestream_code);
+    parameter_handler.number_of_vertical_views = read_int_from_codestream_code(codestream_code);
+    parameter_handler.number_of_horizontal_views = read_int_from_codestream_code(codestream_code);
+    hierarchical_4d_decoder.mNumberOfViewLines = read_int_from_codestream_code(codestream_code);
+    hierarchical_4d_decoder.mNumberOfViewColumns = read_int_from_codestream_code(codestream_code);
+    hierarchical_4d_decoder.mPGMScale = read_int_from_codestream_code(codestream_code);
 
     //reads the extension_method from file...
     // int extension_method_code;
