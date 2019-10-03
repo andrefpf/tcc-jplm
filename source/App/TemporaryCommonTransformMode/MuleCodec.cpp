@@ -72,6 +72,7 @@ void MuleCodec::open_encoded_lightfield(const char* modes) {
 
 
 void MuleCodec::setup_transform_coefficients(bool forward) {
+
     DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
         parameter_handler.transform_length_u, 
         parameter_handler.transform_length_v, 

@@ -173,10 +173,10 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
     //reads the bit precision of each component of the pixels of the views
     read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer);
 
-    // std::cerr << "Checking: " << std::endl;
-    // std::cerr << hierarchical_4d_decoder.mPGMScale << std::endl;
-    // std::cerr << hierarchical_4d_decoder.mNumberOfViewLines << std::endl;
-    // std::cerr << hierarchical_4d_decoder.mNumberOfViewColumns << std::endl;
+    std::cerr << "Checking: " << std::endl;
+    std::cerr << hierarchical_4d_decoder.mPGMScale << std::endl;
+    std::cerr << hierarchical_4d_decoder.mNumberOfViewLines << std::endl;
+    std::cerr << hierarchical_4d_decoder.mNumberOfViewColumns << std::endl;
 
     //reads the extension_method from file...
     // int extension_method_code;
