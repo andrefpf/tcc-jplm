@@ -17,15 +17,11 @@ void MuleDecoder::open_decoded_lightfield() {
         dimension
         );
 
-//     parameter_handler.number_of_vertical_views
-// parameter_handler.number_of_horizontal_views
-// hierarchical_4d_decoder.mNumberOfViewLines
-// hierarchical_4d_decoder.mNumberOfViewColumns
-
     decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config, 1023, PixelMapType::P6);
 }
 
-MuleDecoder::MuleDecoder(ParameterHandler handler) : MuleCodec(handler) {
+MuleDecoder::MuleDecoder(ParameterHandler handler, const ContiguousCodestreamCode& codestream_code) 
+: MuleCodec(handler), codestream_code(codestream_code) {
     open_encoded_lightfield("rb"); //oppening in read binary mode
     read_initial_data_from_compressed_file();
 

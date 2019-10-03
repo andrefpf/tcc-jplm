@@ -67,7 +67,6 @@ class MuleCodec {
 
  public:
   MuleCodec(ParameterHandler handler) : parameter_handler(handler) {
-    std::cout << "maybe:" << handler.transform_length_v << std::endl;
   };
   ~MuleCodec();
 };
