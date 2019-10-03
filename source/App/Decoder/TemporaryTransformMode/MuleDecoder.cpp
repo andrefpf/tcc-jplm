@@ -21,7 +21,7 @@ void MuleDecoder::open_decoded_lightfield() {
 }
 
 MuleDecoder::MuleDecoder(ParameterHandler handler, const ContiguousCodestreamCode& codestream_code) 
-: MuleCodec(handler), codestream_code(codestream_code) {
+: MuleCodec(handler), codestream_code(codestream_code), hierarchical_4d_decoder(codestream_code) {
     open_encoded_lightfield("rb"); //oppening in read binary mode
     read_initial_data_from_compressed_file();
 
@@ -55,7 +55,7 @@ void MuleDecoder::decode() {
     // }
 
    
-    hierarchical_4d_decoder.start(encoded_file_pointer);
+    hierarchical_4d_decoder.start();
     const auto half_dinamic_range = 512;
 
     for(auto t = 0; t < T; t += BLOCK_SIZE_t) {

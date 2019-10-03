@@ -57,12 +57,17 @@ private:
     int decode_coefficient(int bitplane);
 public:
     ABACDecoder entropy_decoder;
-    Hierarchical4DDecoder(): Hierarchical4DCodec(entropy_decoder) {};
+    Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
+    : entropy_decoder(codestream_code), Hierarchical4DCodec(entropy_decoder) {
+
+    }
+
+
     ~Hierarchical4DDecoder() = default;
     void decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
     PartitionFlag decode_partition_flag();
     int decode_integer(int precision);
-    void start(FILE *inputFilePointer);
+    void start();
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__ */

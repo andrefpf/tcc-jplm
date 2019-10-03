@@ -47,12 +47,13 @@
 
 class ABACDecoder : public ABACCodec {
 private:
+  const ContiguousCodestreamCode& codestream_code;
   int mNumberOfbitsreadAfterlastBitDecoded;
   unsigned int mTag;                  /*!< received tag */
 public:  
-  ABACDecoder()  = default;
+  ABACDecoder(const ContiguousCodestreamCode& codestream_code) : ABACCodec(), codestream_code(codestream_code) {}
   ~ABACDecoder() = default;
-  void start(FILE *ifp);
+  void start();
   int decode_bit(const ProbabilityModel& mPmodel);
   void finish() override;  
   int ReadBitFromFile();

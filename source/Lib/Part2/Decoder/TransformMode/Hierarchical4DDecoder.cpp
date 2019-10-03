@@ -40,8 +40,8 @@
 
 #include "Hierarchical4DDecoder.h"
 
-void Hierarchical4DDecoder::start(FILE *inputFilePointer) {
-    entropy_decoder.start(inputFilePointer);  //initializes entropy decoder
+void Hierarchical4DDecoder::start() {
+    entropy_decoder.start();  //initializes entropy decoder
     reset_probability_models();   
 }
 
