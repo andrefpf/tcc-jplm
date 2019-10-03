@@ -7,7 +7,7 @@
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
-void read_int_from_file(int* dest, FILE* fp);
+// void read_int_from_file(int* dest, FILE* fp);
 
 class MuleDecoder : public MuleCodec
 {
