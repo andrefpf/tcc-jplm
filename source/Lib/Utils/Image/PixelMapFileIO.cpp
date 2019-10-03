@@ -175,8 +175,6 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     throw ImageIOExceptions::UnableToOpenFileException();
   }
 
-  std::cout << "Oppening here" << std::endl;
-
   auto type = get_file_type(file);
   auto width = get_next_size(file);
   if (width == 0) {
@@ -219,7 +217,6 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
       throw PixelMapFileIOExceptions::
           NoImplementedYetPixelMapFileException();  //return std::make_unique<PGMBinaryFile>(filename, raster_begin, width, height, max_value);
     case PixelMapType::P6:
-      std::cout << "Openig as P6" << std::endl;
       return std::make_unique<PPMBinaryFile>(
           filename, raster_begin, width, height, max_value);
     default: {

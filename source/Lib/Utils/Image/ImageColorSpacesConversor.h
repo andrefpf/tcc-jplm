@@ -248,10 +248,7 @@ ImageOut<T> to(const ImageIn<T>& source) {
       break;
     }
     case ImageType::BT601: {
-      std::cout << "Image is BT601" << std::endl;
-      std::cout << source.get_bpp() << std::endl;
       if constexpr (std::is_same_v<Image<T>, ImageIn<T>>) {
-        std::cout << "aqui" << std::endl;
         return to<ImageOut>(static_cast<const BT601Image<T>&>(source));
       }
       [[fallthrough]];
@@ -262,6 +259,7 @@ ImageOut<T> to(const ImageIn<T>& source) {
       			<< "Type is: " << source.get_type() 
                 << std::endl;
       exit(2);
+      //! \todo change this exit by an exception in ImageColorSpacesConversor
   }
 
   return ImageOut<T>(source.get_width(), source.get_height(), source.get_bpp());

@@ -88,7 +88,6 @@ class ViewFromPPMFile : public View<T> {
         name_translator(std::make_unique<PPM3CharViewToFilename>()),
         ppm_file(PixelMapFileIO::open(
             {path + name_translator->view_position_to_filename(position)})) {
-          std::cout << "Copy constructor of view from ppm file" << std::endl;
   }
 
 
@@ -99,7 +98,6 @@ class ViewFromPPMFile : public View<T> {
 
   ViewFromPPMFile(ViewFromPPMFile&& other) noexcept
       : View<T>(std::move(other)), path(std::move(other.path)), position(other.position) {
-        std::cout << "Move constructor of view from ppm file" << std::endl;
     std::swap(name_translator, other.name_translator);
     std::swap(ppm_file, other.ppm_file);
     overwrite_ppm_file_in_destructor=other.overwrite_ppm_file_in_destructor;
@@ -128,7 +126,7 @@ class ViewFromPPMFile : public View<T> {
   }
 
   ~ViewFromPPMFile() {
-    std::cout << "Destructor of ViewFromPPMFile " << overwrite_ppm_file_in_destructor << std::endl;
+    // std::cout << "Destructor of ViewFromPPMFile " << overwrite_ppm_file_in_destructor << std::endl;
     write_image(overwrite_ppm_file_in_destructor);
   }
 };

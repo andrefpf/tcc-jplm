@@ -50,7 +50,7 @@ Block4D PartitionDecoder::decode_partition(
   std::tie(length[0], length[1], length[2], length[3]) = size.as_tuple();
   
   mPartitionData = Block4D(size);
-  mPartitionData.fill_with_zeros();
+  // mPartitionData.fill_with_zeros();
 
   hierarchical_decoder.mInferiorBitPlane = hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
   

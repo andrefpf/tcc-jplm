@@ -208,7 +208,6 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    std::cout << "set view&" << std::endl;
     this->set_element_at(
         std::move(std::make_unique<ViewType>(view)), coordinate);
   }
@@ -217,7 +216,6 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType&& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    std::cout << "set view&&" << std::endl;
     this->set_element_at(std::make_unique<ViewType>(std::move(view)), coordinate);
   }
 

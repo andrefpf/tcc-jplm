@@ -9,17 +9,20 @@
 
 void MuleDecoder::open_decoded_lightfield() {
 
-    auto dimension = LightfieldDimension<std::size_t>(9, 
-                9, 
-                512, 512);
+    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
+                parameter_handler.number_of_horizontal_views, 
+                hierarchical_4d_decoder.mNumberOfViewLines, hierarchical_4d_decoder.mNumberOfViewColumns);
     auto config = LightfieldIOConfiguration(
         parameter_handler.decoded_lightfield.string(),
         dimension
         );
 
-    std::cout << "Oppening LF" << std::endl;
+//     parameter_handler.number_of_vertical_views
+// parameter_handler.number_of_horizontal_views
+// hierarchical_4d_decoder.mNumberOfViewLines
+// hierarchical_4d_decoder.mNumberOfViewColumns
+
     decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config, 1023, PixelMapType::P6);
-    std::cout << "Done Oppening LF" << std::endl;
 }
 
 MuleDecoder::MuleDecoder(ParameterHandler handler) : MuleCodec(handler) {
@@ -41,7 +44,6 @@ MuleDecoder::~MuleDecoder() {
 // template <typename encodedColorHolder>
 void MuleDecoder::decode() {
     const auto& [T, S, V, U] = decoded_lightfield->get_dimensions<uint32_t>();
-    std::cout << "After getting dimensions" << std::endl;
 
     auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
     auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
@@ -74,9 +76,9 @@ void MuleDecoder::decode() {
                     auto size = LightfieldDimension<uint32_t>(used_size_t, used_size_s, used_size_v, used_size_u);
 
                     for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
-                        // if(parameter_handler.verbose) {
+                        if(parameter_handler.verbose) {
                             printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
-                        // }
+                        }
                         
                         hierarchical_4d_decoder.reset_probability_models();
 
@@ -99,8 +101,6 @@ void MuleDecoder::decode() {
                         decoded_lightfield->set_block_4D_at(decoded_block, color_channel_index, {t, s, v, u});
                     }
                     
-                    // spectral_4d_block.add_constant_to_pels((decoded_lightfield.mPGMScale+1)/2);
-                    // spectral_4d_block.convert_to(rgb_4d_block);
 
                     // rgb_4d_block.clip(0, decoded_lightfield.mPGMScale);
                     // rgb_4d_block.set_data_into_lightfield(decoded_lightfield, t, s, v, u);
@@ -124,18 +124,6 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
 
     hierarchical_4d_decoder.mNumberOfVerticalViews = parameter_handler.number_of_vertical_views;
     hierarchical_4d_decoder.mNumberOfHorizontalViews = parameter_handler.number_of_horizontal_views;
-
-    // decoded_lightfield.set_configurations(parameter_handler.number_of_vertical_views,
-    //                                     parameter_handler.number_of_horizontal_views, 
-    //                                     parameter_handler.transform_length_v);
-
-
-    // decoded_lightfield.mPGMScale = hierarchical_4d_decoder.mPGMScale;
-    // decoded_lightfield.mNumberOfViewColumns = hierarchical_4d_decoder.mNumberOfViewColumns;
-    // decoded_lightfield.mNumberOfViewLines = hierarchical_4d_decoder.mNumberOfViewLines;
-    // decoded_lightfield.mVerticalViewNumberOffset = parameter_handler.first_vertical_view_number;
-    // decoded_lightfield.mHorizontalViewNumberOffset = parameter_handler.first_horizontal_view_number;
-
 }
 
 void read_int_from_file(int* dest, FILE* fp) {
@@ -172,11 +160,6 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
     
     //reads the bit precision of each component of the pixels of the views
     read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer);
-
-    std::cerr << "Checking: " << std::endl;
-    std::cerr << hierarchical_4d_decoder.mPGMScale << std::endl;
-    std::cerr << hierarchical_4d_decoder.mNumberOfViewLines << std::endl;
-    std::cerr << hierarchical_4d_decoder.mNumberOfViewColumns << std::endl;
 
     //reads the extension_method from file...
     // int extension_method_code;
