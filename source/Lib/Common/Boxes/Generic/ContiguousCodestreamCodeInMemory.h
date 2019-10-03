@@ -49,6 +49,7 @@
 class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
  protected:
   std::vector<std::byte> bytes;
+  mutable std::size_t current_pos = 0;
 
  public:
   virtual uint64_t size() const noexcept override {
@@ -77,12 +78,12 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
 
   ContiguousCodestreamCodeInMemory(
       const ContiguousCodestreamCodeInMemory& other)
-      : bytes(other.bytes) {
+      : bytes(other.bytes), current_pos(other.current_pos) {
   }
 
 
   ContiguousCodestreamCodeInMemory(ContiguousCodestreamCodeInMemory&& other)
-      : bytes(std::move(other.bytes)) {
+      : bytes(std::move(other.bytes)), current_pos(other.current_pos) {
   }
 
 
@@ -91,11 +92,27 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
 
   virtual void push_byte(const std::byte byte) override {
     bytes.emplace_back(byte);
+    ++current_pos;
   }
 
 
   virtual std::byte get_byte_at(const uint64_t pos) const override {
     return bytes.at(pos);
+  }
+
+
+  virtual std::byte get_next_byte() const override {
+    return bytes.at(current_pos++);
+  }
+
+
+  virtual std::byte peek_next_byte() const override {
+    return bytes.at(current_pos);
+  }
+
+
+  virtual bool is_next_valid() const override {
+    return current_pos < bytes.size(); 
   }
 
 

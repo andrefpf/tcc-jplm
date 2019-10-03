@@ -68,6 +68,15 @@ class ContiguousCodestreamCode {
   virtual std::byte get_byte_at(const uint64_t pos) const = 0;
 
 
+  virtual std::byte get_next_byte() const = 0;
+
+
+  virtual bool is_next_valid() const = 0;
+
+
+  virtual std::byte peek_next_byte() const = 0;
+
+
   bool operator==(const ContiguousCodestreamCode& other) const {
     return this->is_equal(other);
   }
