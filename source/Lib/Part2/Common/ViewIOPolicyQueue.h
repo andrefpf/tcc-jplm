@@ -67,8 +67,9 @@ class ViewIOPolicyQueue : public ViewIOPolicy<T> {
 
   void release_view_image() {
     if (queue.size() > 0) {
-      auto ref_to_view = queue.front();
-      ref_to_view->release_image();
+      auto ptr_to_view = queue.front();
+      // ptr_to_view->release_image();
+      this->release_image_from_view(*ptr_to_view);
       queue.pop_front();
       // set.erase(ref_to_view);
     }
