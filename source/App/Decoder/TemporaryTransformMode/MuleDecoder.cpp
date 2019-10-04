@@ -20,6 +20,7 @@ void MuleDecoder::open_decoded_lightfield() {
     decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config, 1023, PixelMapType::P6);
 }
 
+
 MuleDecoder::MuleDecoder(ParameterHandler handler, const ContiguousCodestreamCode& codestream_code) 
 : MuleCodec(handler), codestream_code(codestream_code), hierarchical_4d_decoder(codestream_code) {
     read_initial_data_from_compressed_file();
@@ -32,9 +33,11 @@ MuleDecoder::MuleDecoder(ParameterHandler handler, const ContiguousCodestreamCod
     initialize_extension_lenghts();
 }
 
+
 MuleDecoder::~MuleDecoder() {
     hierarchical_4d_decoder.finish();
 }
+
 
 // template <typename encodedColorHolder>
 void MuleDecoder::decode() {
@@ -106,6 +109,7 @@ void MuleDecoder::decode() {
 
 }
 
+
 void MuleDecoder::setup_header_data_into_decoded_lightfield() {
     hierarchical_4d_decoder.mTransformLength_t = parameter_handler.transform_length_t;
     hierarchical_4d_decoder.mTransformLength_s = parameter_handler.transform_length_s;
@@ -121,6 +125,7 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
     hierarchical_4d_decoder.mNumberOfHorizontalViews = parameter_handler.number_of_horizontal_views;
 }
 
+
 uint16_t read_int_from_codestream_code(const ContiguousCodestreamCode& codestream_code) {
     auto bytes = std::vector<std::byte>();
     auto byte_0 = codestream_code.get_next_byte();
@@ -130,13 +135,6 @@ uint16_t read_int_from_codestream_code(const ContiguousCodestreamCode& codestrea
     return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
 }
 
-// void read_int_from_file(int* dest, FILE* fp, const ContiguousCodestreamCode& codestream_code) {
-//     *dest=0;   //why is this initialization necessary?
-//     if (fread(dest, 2, 1, fp) != 1) {
-//         std::cerr << "Error while reading file." << std::endl;
-//         exit(1);
-//     }
-// }
 
 void MuleDecoder::read_initial_data_from_compressed_file() { 
 
