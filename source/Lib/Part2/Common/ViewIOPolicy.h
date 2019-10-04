@@ -71,13 +71,15 @@ class ViewIOPolicy {
   virtual ~ViewIOPolicy() = default;
 
 
-  void set_save_image_when_release(bool save) {
+  ViewIOPolicy& set_save_image_when_release(bool save) {
     save_image_when_release = save;
+    return *this;
   }
 
 
-  void set_overwrite_image_when_save_if_file_already_exists(bool overwrite) {
+  ViewIOPolicy& set_overwrite_image_when_save_if_file_already_exists(bool overwrite) {
     overwrite_image_when_save_if_file_already_exists = overwrite;
+    return *this;
   }
 
 
@@ -111,9 +113,14 @@ class ViewIOPolicy {
   }
 
 
+  void save_image(View<T>& view) {
+    view.write_image(overwrite_image_when_save_if_file_already_exists);
+  }
+
+
   void release_image_from_view(View<T>& view) {
     if(save_image_when_release) {
-      view.write_image(overwrite_image_when_save_if_file_already_exists);
+      this->save_image(view);
     }
     auto view_image = view.release_image();
   }

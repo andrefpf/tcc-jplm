@@ -153,6 +153,23 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  ViewIOPolicy<T>& get_ref_to_view_io_policy() {
+    return *view_io_policy;
+  }
+
+
+  const ViewIOPolicy<T>& get_ref_to_view_io_policy() const {
+    return *view_io_policy;
+  }
+
+
+  void save_views_according_to_view_io_policies() {
+    for(auto& view: *this) {
+      view_io_policy->save_image(*view);
+    }
+  }
+
+
   virtual T get_value_at(const std::size_t channel,
       const LightfieldCoordinate<std::size_t>& coordinate) const {
     auto& view = get_view_at(coordinate.get_t_and_s());

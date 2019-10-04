@@ -18,6 +18,8 @@ void MuleDecoder::open_decoded_lightfield() {
         );
 
     decoded_lightfield = std::make_unique<LightFieldTransformMode<>>(config, 1023, PixelMapType::P6);
+    auto& view_io_policy = decoded_lightfield->get_ref_to_view_io_policy();
+    view_io_policy.set_save_image_when_release(true).set_overwrite_image_when_save_if_file_already_exists(true);
 }
 
 
@@ -106,6 +108,8 @@ void MuleDecoder::decode() {
             }
         }
     }
+
+    decoded_lightfield->save_views_according_to_view_io_policies();
 
 }
 

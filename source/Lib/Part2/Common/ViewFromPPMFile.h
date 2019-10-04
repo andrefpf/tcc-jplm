@@ -124,13 +124,15 @@ class ViewFromPPMFile : public View<T> {
 
 
   virtual void write_image(const bool overwrite_file = false) override {
-    ImageIO::imwrite(*this->image_, this->ppm_file->get_filename(), overwrite_file);
+    if(this->image_) {
+      ImageIO::imwrite(*this->image_, this->ppm_file->get_filename(), overwrite_file);
+    }
   }
 
   ~ViewFromPPMFile() {
-    if(overwrite_ppm_file_in_destructor) {
-      write_image(overwrite_ppm_file_in_destructor);
-    }
+    // if(overwrite_ppm_file_in_destructor) {
+    //   write_image(overwrite_ppm_file_in_destructor);
+    // }
   }
 };
 
