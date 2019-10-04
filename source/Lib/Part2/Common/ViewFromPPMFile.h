@@ -121,7 +121,9 @@ class ViewFromPPMFile : public View<T> {
     }
   }
 
-  void write_image(const bool overwrite_file = false) {
+
+
+  virtual void write_image(const bool overwrite_file = false) override {
     ImageIO::imwrite(*this->image_, this->ppm_file->get_filename(), overwrite_file);
   }
 

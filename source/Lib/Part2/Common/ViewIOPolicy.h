@@ -111,6 +111,14 @@ class ViewIOPolicy {
   }
 
 
+  void release_image_from_view(View<T>& view) {
+    if(save_image_when_release) {
+      view.write_image(overwrite_image_when_save_if_file_already_exists);
+    }
+    auto view_image = view.release_image();
+  }
+
+
   virtual ViewIOPolicy<T>* clone() const = 0;
 };
 

@@ -113,8 +113,8 @@ class View {
   }
 
 
-//  void set_image(Image<T>&& image) {
- //   image_ = std::move(image);
+  //  void set_image(Image<T>&& image) {
+  //   image_ = std::move(image);
   //}
 
 
@@ -252,6 +252,12 @@ class View {
   }
 
 
+  virtual void write_image([[maybe_unused]]const bool overwrite_file = false) {
+    std::cout << "I'm a simple view and I have no idea on how to write an "
+                 "image to file. Need specialized view for that operation"
+              << std::endl;
+  }
+
   virtual void load_image(const std::pair<std::size_t, std::size_t>& size,
       const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const {
     std::cout << "Im not sure how to load a image with size "
@@ -260,14 +266,11 @@ class View {
               << std::get<1>(initial) << ")" << std::endl;
   }
 
-  
+
   void load_image() const {
     // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';
     load_image(this->view_size);
   }
-
-
-
 };
 
 
