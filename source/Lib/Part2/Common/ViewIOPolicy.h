@@ -51,13 +51,34 @@ template<typename T>
 class ViewIOPolicy {
  protected:
   virtual void load_image_if_necessary(View<T>& view) = 0;
+  bool save_image_when_release = false;
+  bool overwrite_image_when_save_if_file_already_exists = false;
 
  public:
   ViewIOPolicy() = default;
 
+
   ViewIOPolicy(const ViewIOPolicy<T>& other) = default;
 
+
+  ViewIOPolicy(ViewIOPolicy<T>&& other)
+      : save_image_when_release(other.save_image_when_release),
+        overwrite_image_when_save_if_file_already_exists(
+            other.overwrite_image_when_save_if_file_already_exists) {
+  }
+
+
   virtual ~ViewIOPolicy() = default;
+
+
+  void set_save_image_when_release(bool save) {
+    save_image_when_release = save;
+  }
+
+
+  void set_overwrite_image_when_save_if_file_already_exists(bool overwrite) {
+    overwrite_image_when_save_if_file_already_exists = overwrite;
+  }
 
 
   virtual T get_value_at(View<T>& view, const std::size_t channel,
@@ -73,27 +94,21 @@ class ViewIOPolicy {
   }
 
 
-  
   template<template<typename> class ImageType>
   ImageType<T>& get_image_at(View<T>& view) {
     load_image_if_necessary(view);
     using namespace ImageColorSpaceConversion;
     auto image_ptr = view.get_image_ptr();
-    if(const auto image_ptr = view.get_image_ptr(); image_ptr->get_type() == ImageType<T>::image_type) {
-      return static_cast<ImageType<T>&>(*image_ptr);       
+    if (const auto image_ptr = view.get_image_ptr();
+        image_ptr->get_type() == ImageType<T>::image_type) {
+      return static_cast<ImageType<T>&>(*image_ptr);
     }
     auto view_image = view.release_image();
     auto converted_image = convert::to<ImageType>(view_image);
     view.set_image(std::move(converted_image));
 
-    return static_cast<ImageType<T>&>(*view.get_image_ptr()); 
+    return static_cast<ImageType<T>&>(*view.get_image_ptr());
   }
-  //void convert_view_image(View<T>& view) {
-  //  load_image_if_necessary(view);
-  //  using namespace ImageColorSpaceConversion;
-  //  auto view_image = view.release_image();
-  //  view.set_image(std::move(convert::to<BT601Image>(view_image)));
-  //}
 
 
   virtual ViewIOPolicy<T>* clone() const = 0;

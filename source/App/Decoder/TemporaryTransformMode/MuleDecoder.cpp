@@ -138,28 +138,7 @@ uint16_t read_int_from_codestream_code(const ContiguousCodestreamCode& codestrea
 //     }
 // }
 
-void MuleDecoder::read_initial_data_from_compressed_file() {
-
-    // read_int_from_file(&(hierarchical_4d_decoder.mSuperiorBitPlane), encoded_file_pointer, codestream_code);
-
-    // read_int_from_file(&(parameter_handler.transform_length_t), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.transform_length_s), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.transform_length_v), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.transform_length_u), encoded_file_pointer, codestream_code);
-
-    // read_int_from_file(&(parameter_handler.min_transform_length_t), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.min_transform_length_s), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.min_transform_length_v), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(parameter_handler.min_transform_length_u), encoded_file_pointer, codestream_code);
-
-    // read_int_from_file(&(parameter_handler.number_of_vertical_views), encoded_file_pointer, codestream_code);    
-    // read_int_from_file(&(parameter_handler.number_of_horizontal_views), encoded_file_pointer, codestream_code);
-
-    // read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewLines), encoded_file_pointer, codestream_code);
-    // read_int_from_file(&(hierarchical_4d_decoder.mNumberOfViewColumns), encoded_file_pointer, codestream_code);
-    
-    // //reads the bit precision of each component of the pixels of the views
-    // read_int_from_file(&(hierarchical_4d_decoder.mPGMScale), encoded_file_pointer, codestream_code);
+void MuleDecoder::read_initial_data_from_compressed_file() { 
 
 
     // //reads the superior bit plane value

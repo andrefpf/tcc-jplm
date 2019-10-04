@@ -260,10 +260,14 @@ class View {
               << std::get<1>(initial) << ")" << std::endl;
   }
 
+  
   void load_image() const {
     // std::cout << "load image with size " << std::get<0>(this->view_size) << "x" << std::get<1>(this->view_size) << '\n';
     load_image(this->view_size);
   }
+
+
+
 };
 
 
