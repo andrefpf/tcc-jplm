@@ -96,7 +96,7 @@ std::unique_ptr<ImageTout<Tout>> get_image_with_new_container_type(
     output_image_iterator++;
   }
 
-  return std::move(output_image);
+  return output_image;
 }
 
 

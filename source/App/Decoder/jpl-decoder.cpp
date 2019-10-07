@@ -6,7 +6,7 @@
 #include "Lib/Common/JPLMCodecFactory.h"
 
 
-int main(int argc, char const* argv[]) {
+int main([[maybe_unused]]int argc, [[maybe_unused]]char const* argv[]) {
 //  auto configuration = JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
   //auto decoder = JPLMCodecFactory::get_decoder(std::move(configuration));
   //decoder->run();
