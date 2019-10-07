@@ -41,21 +41,22 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "gtest/gtest.h"
 #include "Lib/Part2/Encoder/JPLM4DTransformModeLightFieldEncoder.h"
-
+#include "gtest/gtest.h"
 
 
 std::string resources_path = "../resources";
 
 
 TEST(BasicTest, Unknown) {
-	auto configuration = std::make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(resources_path+"/small_greek/");
-	auto encoder = JPLM4DTransformModeLightFieldEncoder(std::move(configuration));
-	encoder.run();
-	// const auto& jpl_file = encoder.get_ref_to_jpl_file();
-	// std::ofstream of_stream("~/testLF.jpl", std::ofstream::binary);
-	// of_stream << jpl_file;
+  //auto configuration =
+  //    std::make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+  //        resources_path + "/small_greek/");
+  //auto encoder = JPLM4DTransformModeLightFieldEncoder(std::move(configuration));
+  //encoder.run();
+  // const auto& jpl_file = encoder.get_ref_to_jpl_file();
+  // std::ofstream of_stream("~/testLF.jpl", std::ofstream::binary);
+  // of_stream << jpl_file;
 }
 
 

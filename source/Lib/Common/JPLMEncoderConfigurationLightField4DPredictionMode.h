@@ -31,29 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField4DTransformMode.h
+/** \file     JPLMEncoderConfigurationLightField4DPredictionMode.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
+#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
+#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
 
-
-class JPLMEncoderConfigurationLightField4DTransformMode
+class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
-  public:
-  JPLMEncoderConfigurationLightField4DTransformMode(const std::string& path)
-      : JPLMEncoderConfigurationLightField(path) {
-  }
+ public:
+  const Type &get_compression_type() const;
 
-  virtual CompressionTypeLightField get_compression_type() const override {
-    return CompressionTypeLightField::transform_mode;
-  }
+  JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv);
 };
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__ */
+JPLMEncoderConfigurationLightField4DPredictionMode::
+    JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
+    : JPLMEncoderConfigurationLightField(argc, argv) {
+  throw NotImplementedYetModeException();
+}
+
+const Type &
+JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
+    const {
+  return Type::prediction_mode;
+}
+
+#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */

@@ -31,28 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField4DPredictionMode.h
+/** \file     JPLMDecoderConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
+#ifndef JPLMDECODERCONFIGURATION_H__
+#define JPLMDECODERCONFIGURATION_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMConfiguration.h"
 
-class JPLMEncoderConfigurationLightField4DPredictionMode
-    : public JPLMEncoderConfigurationLightField {
+class JPLMDecoderConfiguration : public JPLMConfiguration {
  public:
-  JPLMEncoderConfigurationLightField4DPredictionMode(const std::string& path)
-      : JPLMEncoderConfigurationLightField(path) {
-  }
-
-  virtual CompressionTypeLightField get_compression_type() const override {
-    return CompressionTypeLightField::prediction_mode;
-  }
+  JPLMDecoderConfiguration() = default;
+  virtual ~JPLMDecoderConfiguration() = default;
 };
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */
+#endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */

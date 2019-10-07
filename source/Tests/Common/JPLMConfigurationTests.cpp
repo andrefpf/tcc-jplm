@@ -31,18 +31,157 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfigurationTests.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     ConfigurationParserTests.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-27
  */
 
-#include <iostream>
-#include "Lib/Part1/Common/JPLMConfiguration.h"
+#include <exception>
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "gtest/gtest.h"
+
+using namespace std;
+std::string root_path = "../";
+
+TEST(JPLMConfiguration, SimpleTest) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
+  int argc = 3;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
+  int argc = 4;
+  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
+      std::runtime_error);
+}
+
+
+TEST(JPLMEncoderConfiguration, SimpleCLITest) {
+  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
+      "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
+  int argc = 15;
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
+  EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
+  EXPECT_EQ(13, config.getNumberOfRowsT());
+  EXPECT_EQ(13, config.getNumberOfColumnsS());
+  EXPECT_EQ(434, config.getViewHeightV());
+  EXPECT_EQ(626, config.getViewWidthU());
+}
+
+
+TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
+      "/tmp/donotcreateme/I01Bikes.cfg"};
+  int argc = 5;
+
+  EXPECT_THROW(
+      { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
+      ConfigFileDoesNotExistException);
+}
+
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "12"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(12, config.get_lambda());
+}
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+    TransformParametersFromCLI_Basic) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "0.5",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_maximum_intra_view_horizontal", "31",
+      "--transform_size_minimum_intra_view_horizontal", "4",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_vertical", "13",
+      "--transform_size_maximum_inter_view_horizontal", "13",
+      "--transform_size_minimum_inter_view_horizontal", "13"};
+  int argc = 23;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
+}
+
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+     TransformParametersFromCLI_BasicWithPropertiesBinding) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "-l", "0.5",
+                        "--transform_size_maximum_intra_view_vertical", "31",
+                        "--transform_size_minimum_intra_view_vertical", "4",
+                        "--transform_size_maximum_intra_view_horizontal", "31",
+                        "--transform_size_minimum_intra_view_horizontal", "4",
+                        "--transform_size_maximum_inter_view_vertical", "13",
+                        "--transform_size_minimum_inter_view_vertical", "13",
+                        "--transform_size_maximum_inter_view_horizontal", "13",
+                        "--transform_size_minimum_inter_view_horizontal", "13"};
+  int argc = 23;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
+}
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+     TransformParametersFromCLI_DifferentWithPropertiesBinding) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "-l", "0.5",
+                        "--transform_size_maximum_intra_view_vertical", "31",
+                        "--transform_size_minimum_intra_view_vertical", "4",
+                        "--transform_size_maximum_intra_view_horizontal", "30",
+                        "--transform_size_minimum_intra_view_horizontal", "8",
+                        "--transform_size_maximum_inter_view_vertical", "13",
+                        "--transform_size_minimum_inter_view_vertical", "1",
+                        "--transform_size_maximum_inter_view_horizontal", "7",
+                        "--transform_size_minimum_inter_view_horizontal", "3"};
+  int argc = 23;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
+  EXPECT_EQ(30, config.transform_size.maximum.intra_view.horizontal);
+  EXPECT_EQ(8, config.transform_size.minimum.intra_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
+  EXPECT_EQ(1, config.transform_size.minimum.inter_view.vertical);
+  EXPECT_EQ(7, config.transform_size.maximum.inter_view.horizontal);
+  EXPECT_EQ(3, config.transform_size.minimum.inter_view.horizontal);
+}
+
 
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
+  if (argc > 1) {
+    root_path = std::string(argv[1]);
+  }
   return RUN_ALL_TESTS();
 }
