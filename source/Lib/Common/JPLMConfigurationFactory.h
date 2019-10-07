@@ -56,7 +56,7 @@ using Type = CompressionTypeLightField;
 class JPLMConfigurationFactory {
  public:
   static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
-      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
+      int argc, char const* argv[]);
 
  protected:
   static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
