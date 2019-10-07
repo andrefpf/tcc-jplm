@@ -71,8 +71,8 @@ JPLMConfigurationFactory::get_encoder_configuration(
   if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
     auto light_field_config =
         JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
-    Type type = light_field_config.get_type();
-    if (light_field_config.get_type() == Type::transform_mode)
+    auto type = light_field_config.get_type();
+    if (type == Type::transform_mode)
       return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
           argc, const_cast<char**>(argv));
 
