@@ -47,10 +47,11 @@
 class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
  public:
-  const Type &get_compression_type() const;
+  virtual Type get_compression_type() const override;
 
   JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv);
 };
+
 
 JPLMEncoderConfigurationLightField4DPredictionMode::
     JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
@@ -58,9 +59,9 @@ JPLMEncoderConfigurationLightField4DPredictionMode::
   throw NotImplementedYetModeException();
 }
 
-const Type &
-JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
-    const {
+
+Type JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
+    const  {
   return Type::prediction_mode;
 }
 

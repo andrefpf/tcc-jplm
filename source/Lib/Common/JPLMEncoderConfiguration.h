@@ -42,8 +42,8 @@
 #define JPLMENCODERCONFIGURATION_H__
 
 #include <cstdint>
-#include <optional>
 #include <filesystem>
+#include <optional>
 #include "CLI/CLI.hpp"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
@@ -59,20 +59,20 @@ namespace fs = std::filesystem;
 
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
-  const JpegPlenoPart &get_jpeg_pleno_part() const;
+  JpegPlenoPart get_jpeg_pleno_part() const;
 
-  const string &getConfig() const;
+  const string &get_config() const;
 
-  const uint32_t &getNumberOfRowsT() const;
+  uint32_t get_number_of_rows_t() const;
 
-  const uint32_t &getNumberOfColumnsS() const;
+  uint32_t get_number_of_columns_s() const;
 
-  const uint32_t &getViewHeightV() const;
+  uint32_t get_view_height_v() const;
 
-  const uint32_t &getViewWidthU() const;
+  uint32_t get_view_width_u() const;
 
 
-  const ColorSpaces::ColorSpace &getColorspace() const;
+  ColorSpaces::ColorSpace get_colorspace() const;
 
   JPLMEncoderConfiguration(int argc, char **argv);
 
@@ -87,6 +87,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   void parse_colorspace(const json &conf);
 };
 
+
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
   if (!config.empty()) {
@@ -98,6 +99,7 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
   }
 }
 
+
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
@@ -108,6 +110,7 @@ void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   parse_view_width_u(conf);
   parse_colorspace(conf);
 }
+
 
 void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
   if (conf.contains("part")) {
@@ -121,29 +124,31 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
 }
 
 
-
 void JPLMEncoderConfiguration::parse_number_of_rows_t(const json &conf) {
   if (conf.contains("number_of_rows"))
     number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
 }
+
 
 void JPLMEncoderConfiguration::parse_number_of_columns_s(const json &conf) {
   if (conf.contains("number_of_columns"))
     number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
 }
 
+
 void JPLMEncoderConfiguration::parse_view_height_v(const json &conf) {
   if (conf.contains("view_height"))
     view_height_v = conf["view_height"].get<uint32_t>();
 }
+
 
 void JPLMEncoderConfiguration::parse_view_width_u(const json &conf) {
   if (conf.contains("view_width"))
     view_width_u = conf["view_width"].get<uint32_t>();
 }
 
-void JPLMEncoderConfiguration::parse_colorspace(
-    const json &conf) {
+
+void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
   if (conf.contains("colorspace")) {
     string c = conf["colorspace"].get<string>();
     std::transform(c.begin(), c.end(), c.begin(),
@@ -164,37 +169,37 @@ void JPLMEncoderConfiguration::parse_colorspace(
 }
 
 
-const JpegPlenoPart &JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
+JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
   return part;
 }
 
 
-const string &JPLMEncoderConfiguration::getConfig() const {
+const string& JPLMEncoderConfiguration::get_config() const {
   return config;
 }
 
 
-const uint32_t &JPLMEncoderConfiguration::getNumberOfRowsT() const {
+uint32_t JPLMEncoderConfiguration::get_number_of_rows_t() const {
   return number_of_rows_t;
 }
 
 
-const uint32_t &JPLMEncoderConfiguration::getNumberOfColumnsS() const {
+uint32_t JPLMEncoderConfiguration::get_number_of_columns_s() const {
   return number_of_columns_s;
 }
 
 
-const uint32_t &JPLMEncoderConfiguration::getViewHeightV() const {
+uint32_t JPLMEncoderConfiguration::get_view_height_v() const {
   return view_height_v;
 }
 
 
-const uint32_t &JPLMEncoderConfiguration::getViewWidthU() const {
+uint32_t JPLMEncoderConfiguration::get_view_width_u() const {
   return view_width_u;
 }
 
 
-const ColorSpaces::ColorSpace &JPLMEncoderConfiguration::getColorspace() const {
+ColorSpaces::ColorSpace JPLMEncoderConfiguration::get_colorspace() const {
   return colorspace;
 }
 

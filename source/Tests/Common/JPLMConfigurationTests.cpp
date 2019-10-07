@@ -48,12 +48,14 @@
 using namespace std;
 std::string root_path = "../";
 
+
 TEST(JPLMConfiguration, SimpleTest) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
   int argc = 3;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
 }
+
 
 TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
@@ -71,10 +73,10 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
-  EXPECT_EQ(13, config.getNumberOfRowsT());
-  EXPECT_EQ(13, config.getNumberOfColumnsS());
-  EXPECT_EQ(434, config.getViewHeightV());
-  EXPECT_EQ(626, config.getViewWidthU());
+  EXPECT_EQ(13, config.get_number_of_rows_t());
+  EXPECT_EQ(13, config.get_number_of_columns_s());
+  EXPECT_EQ(434, config.get_view_height_v());
+  EXPECT_EQ(626, config.get_view_width_u());
 }
 
 
@@ -97,6 +99,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
       argc, const_cast<char**>(argv));
   EXPECT_EQ(12, config.get_lambda());
 }
+
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode,
     TransformParametersFromCLI_Basic) {
@@ -150,6 +153,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
   EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
   EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
 }
+
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode,
      TransformParametersFromCLI_DifferentWithPropertiesBinding) {

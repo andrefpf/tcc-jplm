@@ -82,7 +82,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
   double get_lambda() const;
-  const Type &get_compression_type() const;
+  virtual Type get_compression_type() const override;
   uint32_t get_minimal_transform_size_intra_view_vertical() const;
   uint32_t get_maximal_transform_size_intra_view_vertical() const;
   uint32_t get_minimal_transform_size_intra_view_horizontal() const;
@@ -102,8 +102,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
   init_transform_size();
 }
 
-const Type &
-JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
+Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
     const {
   return Type::transform_mode;
 }

@@ -51,8 +51,8 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
  public:
   JPLMEncoderConfigurationLightField(int argc, char **argv);
   LightfieldIOConfiguration get_lightfield_io_configurations() const;
-  const Type &get_type() const;
-  const Type &get_compression_type() const;
+  virtual Type get_type() const;
+  virtual Type get_compression_type() const;
 
  protected:
   void parse_json(string path);
@@ -78,7 +78,7 @@ JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
   return LightfieldIOConfiguration(input, initial, size);
 }
 
-const Type &JPLMEncoderConfigurationLightField::get_type() const {
+Type JPLMEncoderConfigurationLightField::get_type() const {
   return type;
 }
 
@@ -112,7 +112,7 @@ void JPLMEncoderConfigurationLightField::check_inconsistencies(void) {
     throw InconsistentOptionsException();
 }
 
-const Type &JPLMEncoderConfigurationLightField::get_compression_type() const {
+Type JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
 }
 
