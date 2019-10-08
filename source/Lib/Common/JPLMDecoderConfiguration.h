@@ -31,29 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
+/** \file     JPLMDecoderConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-11
  */
 
-#ifndef JPLMCONFIGURATION_H__
-#define JPLMCONFIGURATION_H__
+#ifndef JPLMDECODERCONFIGURATION_H__
+#define JPLMDECODERCONFIGURATION_H__
 
-#include <string>
+#include "Lib/Common/JPLMConfiguration.h"
 
-enum class JpegPlenoPart {
-	LightField = 2,
-};
-
-class JPLMConfiguration {
+class JPLMDecoderConfiguration : public JPLMConfiguration {
  public:
-  JPLMConfiguration() = default;
-  ~JPLMConfiguration() = default;
+  JPLMDecoderConfiguration() = default;
+  virtual ~JPLMDecoderConfiguration() = default;
 };
 
-
-
-
-#endif /* end of include guard: JPLMCONFIGURATION_H__ */
+#endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */

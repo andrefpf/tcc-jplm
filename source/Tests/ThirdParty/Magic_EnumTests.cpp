@@ -31,28 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField4DPredictionMode.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     Magic_EnumTests.cpp
+ *  \brief    Tests for the external library Magic_Enum
+ *  \details  See more details about it at
+ *            https://github.com/Neargye/magic_enum
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
+#include <algorithm>
+#include <string>
+#include <vector>
+#include "gtest/gtest.h"
+#include "magic_enum.hpp"
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField.h"
+using namespace std;
 
-class JPLMEncoderConfigurationLightField4DPredictionMode
-    : public JPLMEncoderConfigurationLightField {
- public:
-  JPLMEncoderConfigurationLightField4DPredictionMode(const std::string& path)
-      : JPLMEncoderConfigurationLightField(path) {
-  }
+enum class Color { RED = -12, GREEN = 7, BLUE = 15 };
 
-  virtual CompressionTypeLightField get_compression_type() const override {
-    return CompressionTypeLightField::prediction_mode;
-  }
-};
+TEST(Magic_Enum, enum_integer) {
+  constexpr auto cr = magic_enum::enum_integer(Color::RED);
+  EXPECT_EQ(cr, -12);
+}
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */
+TEST(Magic_Enum, enum_cast_to_string) {
+  Color color = Color::RED;
+  auto color_name = magic_enum::enum_name(color);
+  EXPECT_EQ(color_name, "RED");
+}
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

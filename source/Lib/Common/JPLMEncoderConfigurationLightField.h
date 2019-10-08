@@ -41,32 +41,79 @@
 #ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 
+#include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
 
 //stub
 class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
- protected:
-  std::string path;
-
  public:
-  JPLMEncoderConfigurationLightField(const std::string& path) : path(path) {
-  }
+  JPLMEncoderConfigurationLightField(int argc, char **argv);
+  LightfieldIOConfiguration get_lightfield_io_configurations() const;
+  virtual Type get_type() const;
+  virtual Type get_compression_type() const;
 
+ protected:
+  void parse_json(string path);
 
-  LightfieldDimension<uint32_t> get_lightfield_dimensions() const;
-
-  
-  auto get_lightfield_io_configurations() const {
-    LightfieldDimension<std::size_t> size(3, 3, 32, 32);
-    LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-    return LightfieldIOConfiguration(path, initial, size);
-  }
-
-
-  virtual CompressionTypeLightField get_compression_type() const = 0;
+ private:
+  void parse_mode_type(const json &conf);
+  void check_inconsistencies(void);
 };
+
+JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
+    int argc, char **argv)
+    : JPLMEncoderConfiguration(argc, argv) {
+  if (!config.empty())
+    parse_json(config);
+  check_inconsistencies();
+}
+
+LightfieldIOConfiguration
+JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
+  // \todo check this constants
+  LightfieldDimension<std::size_t> size(3, 3, 32, 32);
+  LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+  return LightfieldIOConfiguration(input, initial, size);
+}
+
+Type JPLMEncoderConfigurationLightField::get_type() const {
+  return type;
+}
+
+void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
+  if (conf.contains("type")) {
+    string t = conf["type"].get<string>();
+    std::transform(t.begin(), t.end(), t.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    if (t == "transform mode" || t == "transform_mode" || t == "mule")
+      type = Type::transform_mode;
+    else if (t == "prediction mode" || t == "prediction_mode" || t == "wasp")
+      type = Type::prediction_mode;
+    else
+      throw NotImplementedYetInputTypeParseException(t);
+  }
+}
+
+void JPLMEncoderConfigurationLightField::parse_json(string path) {
+  JPLMEncoderConfiguration::parse_json(path);
+  ifstream ifs(path);
+  json conf = json::parse(ifs);
+  parse_mode_type(conf);
+}
+
+void JPLMEncoderConfigurationLightField::check_inconsistencies(void) {
+  vector<bool> rules({
+      !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
+      !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
+  });
+  if (std::any_of(rules.begin(), rules.end(), [](bool t) { return t; }))
+    throw InconsistentOptionsException();
+}
+
+Type JPLMEncoderConfigurationLightField::get_compression_type() const {
+  return type;
+}
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */

@@ -142,7 +142,7 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
     auto image = ppm_file->read_full_image();
     auto converted_image =
         PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(image);
-    return std::move(converted_image);
+    return converted_image;
   }
   throw std::logic_error(
       "Not fully implemented (for types other than ppm): ImageIO::imread");
@@ -175,7 +175,7 @@ std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
       auto converted_image =
           PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
               image);
-      return std::move(converted_image);
+      return converted_image;
     }
   }
 

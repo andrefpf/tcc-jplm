@@ -31,31 +31,67 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfiguration.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     ParseExceptions.h
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-26
  */
+#ifndef JPLM_PARSEEXCEPTIONS_H
+#define JPLM_PARSEEXCEPTIONS_H
 
-#ifndef JPLMENCODERCONFIGURATION_H__
-#define JPLMENCODERCONFIGURATION_H__
+#include <exception>
+#include <string>
+#include <type_traits>
+#include "magic_enum.hpp"
 
-#include "Lib/Part1/Common/JPLMConfiguration.h"
+using namespace std;
 
-class JPLMEncoderConfiguration : public JPLMConfiguration {
+class NotImplementedYetInputTypeParseException : public std::exception {
+ private:
+  string msg;
+
  public:
-  JPLMEncoderConfiguration() = default;
-  ~JPLMEncoderConfiguration() = default;
-
-  std::string get_output_filename() const {
-    return std::string("NotImplementedYet.jpl");
+  NotImplementedYetInputTypeParseException(string m)
+      : msg("Option " + m + " is not implemented yet.") {
   }
 
-
-  JpegPlenoPart get_jpeg_pleno_part() const {
-    return JpegPlenoPart::LightField;
+  const char* what() const throw() {
+    return msg.c_str();
   }
 };
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
+class InconsistentOptionsException : public exception {
+  const char* what() const throw() {
+    return "Inconsistent Options.";
+  }
+};
+
+
+class NotImplementedYetPartException : public exception {
+  const char* what() const throw() {
+    return "Chosen part not implemented yet.";
+  }
+};
+
+class NotImplementedYetModeException : public exception {
+  const char* what() const throw() {
+    return "Mode not implemented yet.";
+  }
+};
+
+class ConfigFileDoesNotExistException : public std::exception {
+private:
+  string msg;
+
+public:
+  ConfigFileDoesNotExistException(string m)
+      : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+#endif  //JPLM_PARSEEXCEPTIONS_H

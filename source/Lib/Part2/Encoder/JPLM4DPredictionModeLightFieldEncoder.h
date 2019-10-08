@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 
 

@@ -30,12 +30,14 @@ Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
 ## Prerequisites
 
 #### Compiler
-Tested with gcc 8
+Tested with gcc 9
 Must support CXX 17
 
 #### Cmake
 Minimum version: 3.10
 
+#### latex (optional)
+Latex is required for generating the documentation.
 
 ## Quick start 
 After building this project, you can use the provided software to encode and decode plenoptic images. 
@@ -58,12 +60,24 @@ Example:
 TODO
 
 ## Build instructions
+
   ```bash
   ~$ cd jplm
   ~/jplm/$ mkdir build; cd build
   ~/jplm/build/$ cmake ..
   ~/jplm/build/$ make -j
   ```
+
+## Library dependencies
+
+The included lightfield visualization tool depends on the X11 libraries. 
+If they are not present the compilation will fail. 
+In this case, to avoid failing one needs to call cmake as follows: 
+  ```bash
+  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
+  ```  
+
+
 ## Testing instructions
 
   ```bash

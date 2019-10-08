@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
-#include "Lib/Part2/Encoder/JPLMEncoderConfigurationLightField4DTransformMode.h"
+#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 
 

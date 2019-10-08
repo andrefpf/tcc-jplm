@@ -41,18 +41,44 @@
 #ifndef JPLMCONFIGURATIONFACTORY_H__
 #define JPLMCONFIGURATIONFACTORY_H__
 
+#include <any>
 #include <memory>
-#include "Lib/Part1/Encoder/JPLMEncoderConfiguration.h"
-#include "Lib/Part1/Decoder/JPLMDecoderConfiguration.h"
+#include <unordered_map>
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
+#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+
+
+using Type = CompressionTypeLightField;
 
 class JPLMConfigurationFactory {
  public:
+  static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
+      int argc, char const* argv[]);
 
-  template<class Configuration>	
-  static std::unique_ptr<Configuration> get_configuration(
-      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
-  	return nullptr;
-  }
+ protected:
+  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
+      int argc, char const* argv[], CompressionTypeLightField type);
 };
+
+// \todo: refactor this function and split it into specialized functions
+std::unique_ptr<JPLMConfiguration>
+JPLMConfigurationFactory::get_encoder_configuration(
+    int argc, const char** argv) {
+  auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
+  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
+    auto light_field_config =
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+    auto type = light_field_config.get_type();
+    if (type == Type::transform_mode)
+      return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+          argc, const_cast<char**>(argv));
+
+  }
+  throw NotImplementedYetPartException();
+}
+
 
 #endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */

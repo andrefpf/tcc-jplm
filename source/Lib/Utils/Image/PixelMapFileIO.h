@@ -91,7 +91,7 @@ std::unique_ptr<ImageTout<Tout>> extract_image_with_type_from_variant(
   auto image_uint16_t = std::visit(VariantImageExtractorToUint16T(), input);
   auto ret_image = ImageUtils::get_image_with_new_container_type<ImageTout,
       RGBImage, Tout, uint16_t>(std::move(image_uint16_t));
-  return std::move(ret_image);
+  return ret_image;
 }
 
 }  // namespace PixelMapFileIO

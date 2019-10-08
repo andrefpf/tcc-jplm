@@ -31,20 +31,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMDecoderConfiguration.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     CXXPropertiesTests.cpp
+ *  \brief    Unit tests of cxxproperties library.
+ *  \details  cxxproperties is a header only C++ library that offers an
+ *            easy-to-use Properties class. You just need to include the header
+ *            file cxxproperties.hpp and that's it. You can already instantiate
+ *            cxxproperties::Properties objects in your C++ code.
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2019-09-30
  */
 
-#ifndef JPLMDECODERCONFIGURATION_H__
-#define JPLMDECODERCONFIGURATION_H__
+#include "cxxproperties.hpp"
+#include "gtest/gtest.h"
 
-class JPLMDecoderConfiguration {
- public:
-  JPLMDecoderConfiguration() = default;
-  virtual ~JPLMDecoderConfiguration() = default;
-};
 
-#endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */
+TEST(CXXProperties, PropertiesSize) {
+  cxxproperties::Properties properties;
+  properties.add("key_1", "A string value...");
+  properties.add("key_2", 10);
+  properties.add("key_3", 3.1415);
+  properties.add("key_4", true);
+
+  EXPECT_EQ(4, properties.size());
+}
+
+TEST(CXXProperties, AddAndGet) {
+  cxxproperties::Properties properties;
+  properties.add("key 1", "A string value...");
+  properties.add("key 2", 10);
+  properties.add("key 3", 3.1415);
+  properties.add("key 4", true);
+
+  std::string value_1 = properties.get<std::string>("key 1");
+  int value_2 = properties.get<int>("key 2");
+  double value_3 = properties.get<double>("key 3");
+  bool value_4 = properties.get<bool>("key 4");
+
+  EXPECT_EQ("A string value...", value_1);
+  EXPECT_EQ(10, value_2);
+  EXPECT_EQ(3.1415, value_3);
+  EXPECT_EQ(true, value_4);
+}
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
