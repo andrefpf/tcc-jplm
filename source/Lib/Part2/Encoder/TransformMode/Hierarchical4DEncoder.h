@@ -64,7 +64,7 @@ public:
     ABACEncoder mEntropyCoder;
     std::array<ProbabilityModel, number_of_probability_models> optimization_probability_models;
     std::vector<HexadecaTreeFlag> hexadecatree_flags;
-    Hierarchical4DEncoder() : Hierarchical4DCodec(mEntropyCoder), optimization_probability_models(probability_models) {};
+    Hierarchical4DEncoder() : optimization_probability_models(probability_models) {};
     ~Hierarchical4DEncoder() = default;
     bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
                                      const std::tuple<int, int, int, int>& range) const;

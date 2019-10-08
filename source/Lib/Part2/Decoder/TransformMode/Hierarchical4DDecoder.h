@@ -58,7 +58,7 @@ private:
 public:
     ABACDecoder entropy_decoder;
     Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
-    : entropy_decoder(codestream_code), Hierarchical4DCodec(entropy_decoder) {
+    : entropy_decoder(codestream_code) {
 
     }
 

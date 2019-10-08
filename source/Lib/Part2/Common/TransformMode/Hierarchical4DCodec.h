@@ -52,8 +52,6 @@ enum class HexadecaTreeFlag {lowerBitPlane=0, splitBlock=1, zeroBlock=2}; //Tabl
 
 class Hierarchical4DCodec
 {
-private:
-    ABACCodec& entropy_codec;
 protected:
 	static constexpr auto MINIMUM_BITPLANE_PRECISION=5;
 	static constexpr auto BITPLANE_BYPASS=-1;
@@ -73,7 +71,7 @@ public:
     int mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
     int mNumberOfVerticalViews, mNumberOfHorizontalViews;
     int mNumberOfViewLines, mNumberOfViewColumns;
-	Hierarchical4DCodec(ABACCodec& entropy) : entropy_codec(entropy) {};
+	Hierarchical4DCodec() = default;
 	~Hierarchical4DCodec() = default;
 	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
