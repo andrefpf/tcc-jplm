@@ -60,11 +60,15 @@ enum class JpegPlenoPart {
 
 class JPLMConfiguration {
  public:
-  const string &getInput() const;
+  const string &get_input_filename() const;
+  
 
   JPLMConfiguration();
 
-  const string &getOutput() const;
+
+  const string &get_output_filename() const;
+
+
   JPLMConfiguration(int argc, char **argv);
 
  protected:
@@ -94,11 +98,11 @@ class JPLMConfiguration {
   void parse_cli(int argc, char **argv);
 };
 
-const string &JPLMConfiguration::getInput() const {
+const string &JPLMConfiguration::get_input_filename() const {
   return input;
 }
 
-const string &JPLMConfiguration::getOutput() const {
+const string &JPLMConfiguration::get_output_filename() const {
   return output;
 }
 
