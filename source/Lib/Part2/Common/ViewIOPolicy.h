@@ -100,7 +100,6 @@ class ViewIOPolicy {
   ImageType<T>& get_image_at(View<T>& view) {
     load_image_if_necessary(view);
     using namespace ImageColorSpaceConversion;
-    auto image_ptr = view.get_image_ptr();
     if (const auto image_ptr = view.get_image_ptr();
         image_ptr->get_type() == ImageType<T>::image_type) {
       return static_cast<ImageType<T>&>(*image_ptr);
