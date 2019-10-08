@@ -24,8 +24,6 @@ public:
 
 	void decode();
 
-	void save();
-
 	virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override;

@@ -45,7 +45,7 @@
 #include "Lib/Part1/Common/JPLMCodec.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part2/Encoder/JPLM4DPredictionModeLightFieldEncoder.h"
-#include "Lib/Part2/Encoder/JPLM4DTransformModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.h"
 #include "JPLMEncoderConfigurationLightField.h"
 #include "JPLMEncoderConfigurationLightField4DPredictionMode.h"
 #include "JPLMEncoderConfigurationLightField4DTransformMode.h"
@@ -90,6 +90,8 @@ class JPLMCodecFactory {
 
     return nullptr;
   }
+
+  
   static std::unique_ptr<JPLMCodec> get_decoder(
       [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
     return nullptr;
