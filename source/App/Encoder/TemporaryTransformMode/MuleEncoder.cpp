@@ -104,13 +104,13 @@ std::unique_ptr<ContiguousCodestreamCode> MuleEncoder::encode() {
     
     int32_t level_shift = -std::pow(2, raw_lightfield->get_views_bpp())/2; //
 
-    for(auto t = 0; t < T; t += BLOCK_SIZE_t) {
+    for(auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
         auto used_size_t = (t + BLOCK_SIZE_t > T)? T%BLOCK_SIZE_t : BLOCK_SIZE_t;
-        for(auto s = 0; s < S; s += BLOCK_SIZE_s) {
+        for(auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
             auto used_size_s = (s + BLOCK_SIZE_s > S)? S%BLOCK_SIZE_s : BLOCK_SIZE_s;
-            for(auto v = 0; v < V; v += BLOCK_SIZE_v) {
+            for(auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
                 auto used_size_v = (v + BLOCK_SIZE_v > V)? V%BLOCK_SIZE_v : BLOCK_SIZE_v;
-                for(auto u = 0; u < U; u += BLOCK_SIZE_u) {
+                for(auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
                     auto used_size_u = (u + BLOCK_SIZE_u > U)? U%BLOCK_SIZE_u : BLOCK_SIZE_u;
 
                     

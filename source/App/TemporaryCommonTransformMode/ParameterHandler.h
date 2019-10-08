@@ -294,18 +294,18 @@ class ParameterHandler {
   double lambda = 1024.0;  //-lambda
 
   //transform configuration:
-  int transform_length_t =
+  uint32_t transform_length_t =
       13;  //-t or -k for setting transform_length_t and transform_length_s
-  int transform_length_s =
+  uint32_t transform_length_s =
       13;  //-s or -k for setting transform_length_t and transform_length_s
-  int transform_length_v =
+  uint32_t transform_length_v =
       15;  //-v or -l for setting transform_length_v and transform_length_u
-  int transform_length_u =
+  uint32_t transform_length_u =
       15;  //-u or -l for setting transform_length_v and transform_length_u
-  int min_transform_length_t = 4;  // -min_t
-  int min_transform_length_s = 4;  // -min_s
-  int min_transform_length_v = 4;  // -min_v
-  int min_transform_length_u = 4;  // -min_u
+  uint32_t min_transform_length_t = 4;  // -min_t
+  uint32_t min_transform_length_s = 4;  // -min_s
+  uint32_t min_transform_length_v = 4;  // -min_v
+  uint32_t min_transform_length_u = 4;  // -min_u
   double transform_scale_t = 1.0;  //-t_scale
   double transform_scale_s = 1.0;  //-s_scale
   double transform_scale_v = 1.0;  //-v_scale
