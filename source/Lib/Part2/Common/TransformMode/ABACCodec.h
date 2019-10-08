@@ -66,7 +66,6 @@ class ABACCodec {
  public:
   ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {}
   ~ABACCodec() = default;
-  virtual void finish() = 0;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_ABACCODEC_H__ */

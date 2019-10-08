@@ -50,9 +50,9 @@
 
 class ABACEncoder : public ABACCodec {
  protected:
-  std::unique_ptr<ContiguousCodestreamCode> codestream_code;
+  mutable std::unique_ptr<ContiguousCodestreamCode> codestream_code;
   std::string filename;
-  int number_of_scalings; /*!< number of renormalizations performed */
+  mutable int number_of_scalings; /*!< number of renormalizations performed */
   std::byte mask;
   std::byte byte_buffer;
   void mask_set_high_reset_low();
@@ -72,9 +72,11 @@ class ABACEncoder : public ABACCodec {
   virtual ~ABACEncoder() = default;
   void start(const std::string& filename);
   void encode_bit(bool bit, const ProbabilityModel& probability_model);
-  void finish() override;
   ContiguousCodestreamCode& get_ref_to_codestream_code() const;
   std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
+    number_of_scalings++;
+    output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
+    codestream_code->push_byte(byte_buffer);
     return std::move(codestream_code);
   }
 };

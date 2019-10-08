@@ -100,7 +100,6 @@ void MuleEncoder::run_for_block_4d(const uint32_t channel,
 
 std::unique_ptr<ContiguousCodestreamCode>
 MuleEncoder::get_contigous_codestream_code() {
-  hierarchical_4d_encoder.finish();
   return hierarchical_4d_encoder.move_codestream_code_out();
 }
 

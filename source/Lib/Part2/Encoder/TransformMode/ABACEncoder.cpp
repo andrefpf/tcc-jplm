@@ -104,15 +104,6 @@ void ABACEncoder::output_n_bits(std::size_t n) {
 }
 
 
-/*! write remaining bits in the outputfile */
-void ABACEncoder::finish() {  //flush
-  number_of_scalings++;
-  output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
-  codestream_code->push_byte(byte_buffer);
-  // write_to_file(filename, *codestream_code);
-}
-
-
 ContiguousCodestreamCode& ABACEncoder::get_ref_to_codestream_code() const {
     return *codestream_code;
 }

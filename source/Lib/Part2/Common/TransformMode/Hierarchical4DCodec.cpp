@@ -45,7 +45,3 @@ void Hierarchical4DCodec::reset_probability_models() {
         probability_model.reset();
     }
 }
-
-void Hierarchical4DCodec::finish() {
-	entropy_codec.finish();
-}

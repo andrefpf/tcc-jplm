@@ -115,9 +115,6 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
     return (bitDecoded);
 }
 
-void ABACDecoder::finish() {
-    // fseek(file_ptr, -2, SEEK_CUR);    
-}
 
 int ABACDecoder::ReadBitFromFile() {
     int bit;

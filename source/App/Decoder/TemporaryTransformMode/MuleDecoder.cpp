@@ -44,7 +44,6 @@ MuleDecoder::MuleDecoder(
 
 MuleDecoder::~MuleDecoder() {
   lightfield->save_views_according_to_view_io_policies();
-  hierarchical_4d_decoder.finish();
 }
 
 
