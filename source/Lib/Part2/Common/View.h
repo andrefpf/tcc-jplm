@@ -113,7 +113,12 @@ class View {
   }
 
 
-  void set_image(Image<T>&& image) {
+  //  void set_image(Image<T>&& image) {
+  //   image_ = std::move(image);
+  //}
+
+
+  void set_image(std::unique_ptr<Image<T>>&& image) {
     image_ = std::move(image);
   }
 
@@ -246,6 +251,12 @@ class View {
     return image_->get_pixel_at(channel, coordinate);
   }
 
+
+  virtual void write_image([[maybe_unused]]const bool overwrite_file = false) {
+    std::cout << "I'm a simple view and I have no idea on how to write an "
+                 "image to file. Need specialized view for that operation"
+              << std::endl;
+  }
 
   virtual void load_image(const std::pair<std::size_t, std::size_t>& size,
       const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const {

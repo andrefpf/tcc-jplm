@@ -295,7 +295,7 @@ class Generic2DStructure {
    */
   void check_for_access_errors(const std::size_t i, const std::size_t j) const {
     if (!elements) {
-      //FIXME
+      //! \todo Throw exception if ptr to elements is not initialized in Generic2DStructure
       std::cerr << "ptr not set.. " << std::endl;
       exit(2);
     }

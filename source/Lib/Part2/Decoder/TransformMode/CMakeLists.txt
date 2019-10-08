@@ -1,0 +1,3 @@
+set(PART2_DECODER_TRANSFORM_MODE_SOURCES ABACDecoder.cpp Hierarchical4DDecoder.cpp PartitionDecoder.cpp)
+add_library(jplm_part2_decoder_transform_mode ${PART2_DECODER_TRANSFORM_MODE_SOURCES})
+target_link_libraries(jplm_part2_decoder_transform_mode jplm_part2_common_transform_mode)

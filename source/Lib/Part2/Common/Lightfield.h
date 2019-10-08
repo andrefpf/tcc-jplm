@@ -44,11 +44,18 @@
 #include "Lib/Part2/Common/LightfieldCoordinate.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/View.h"
-#include "Lib/Part2/Common/ViewIOPolicies.h"
+#include "Lib/Part2/Common/ViewIOPolicy.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
 #include "Lib/Utils/Image/Generic2DStructure.h"
 
 //template<class ViewT<typename>,
 
+enum class LightFieldDimensions {
+  T = 0,
+  S = 1,
+  V = 2,
+  U = 3,
+};
 
 template<typename T>
 class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
@@ -146,6 +153,23 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  ViewIOPolicy<T>& get_ref_to_view_io_policy() {
+    return *view_io_policy;
+  }
+
+
+  const ViewIOPolicy<T>& get_ref_to_view_io_policy() const {
+    return *view_io_policy;
+  }
+
+
+  void save_views_according_to_view_io_policies() {
+    for(auto& view: *this) {
+      view_io_policy->save_image(*view);
+    }
+  }
+
+
   virtual T get_value_at(const std::size_t channel,
       const LightfieldCoordinate<std::size_t>& coordinate) const {
     auto& view = get_view_at(coordinate.get_t_and_s());
@@ -175,6 +199,29 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  virtual Image<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->get_image_at(view);
+  }
+
+
+  template<template<typename> typename ImageType>
+  const ImageType<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) const {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->template get_image_at<ImageType>(view);
+  }
+  
+
+  template<template<typename> typename ImageType>
+  ImageType<T>& get_image_at(
+      const std::pair<std::size_t, std::size_t>& coordinate) {
+    auto& view = get_view_at(coordinate);
+    return view_io_policy->template get_image_at<ImageType>(view);
+  }
+
+
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
@@ -186,8 +233,13 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType&& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    this->set_element_at(
-        std::move(std::make_unique<ViewType>(std::move(view))), coordinate);
+    this->set_element_at(std::make_unique<ViewType>(std::move(view)), coordinate);
+  }
+
+
+  template<typename ViewType = View<T>>
+  void set_view_at(std::unique_ptr<ViewType>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
+    this->set_element_at(std::move(view), coordinate);
   }
 
 
@@ -233,6 +285,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
   template<typename Type = std::size_t>
   LightfieldDimension<Type> get_dimensions() const {
+    
     if (!lightfield_dimension) {
       lightfield_dimension =
           std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),

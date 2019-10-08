@@ -44,6 +44,7 @@
 #include "Lib/Part2/Common/View.h"
 #include "Lib/Part2/Common/ViewToFilenameTranslator.h"
 #include "Lib/Utils/Image/ImageUtils.h"
+#include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/PixelMapFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
 
@@ -54,6 +55,7 @@ class ViewFromPPMFile : public View<T> {
   const std::pair<std::size_t, std::size_t> position;
   std::unique_ptr<ViewToFilenameTranslator> name_translator;
   std::unique_ptr<PixelMapFile> ppm_file;
+  bool overwrite_ppm_file_in_destructor = false;
 
  public:
   ViewFromPPMFile(const std::string& path,
@@ -66,6 +68,19 @@ class ViewFromPPMFile : public View<T> {
     this->view_size = {ppm_file->get_width(), ppm_file->get_height()};
     this->bpp = ppm_file->get_number_of_bits_per_pixel();
   };
+
+
+  ViewFromPPMFile(const std::string& path,
+      const std::pair<std::size_t, std::size_t>& position,
+      const std::pair<std::size_t, std::size_t>& dimension_v_u,
+      std::size_t max_value, const PixelMapType type)
+      : View<T>(), path(path), position(position),
+        name_translator(std::make_unique<PPM3CharViewToFilename>()),
+        ppm_file(PixelMapFileIO::open(
+            {path + name_translator->view_position_to_filename(position)}, type,
+            std::get<1>(dimension_v_u), std::get<0>(dimension_v_u),
+            max_value)), overwrite_ppm_file_in_destructor(true) {
+  }
 
 
   ViewFromPPMFile(const ViewFromPPMFile& other)
@@ -82,14 +97,16 @@ class ViewFromPPMFile : public View<T> {
 
 
   ViewFromPPMFile(ViewFromPPMFile&& other) noexcept
-      : View<T>(std::move(other)) {
+      : View<T>(std::move(other)), path(std::move(other.path)), position(other.position) {
     std::swap(name_translator, other.name_translator);
     std::swap(ppm_file, other.ppm_file);
+    overwrite_ppm_file_in_destructor=other.overwrite_ppm_file_in_destructor;
   }
 
 
   void load_image(const std::pair<std::size_t, std::size_t>& size,
-      const std::pair<std::size_t, std::size_t>& initial = {0, 0}) const override {
+      const std::pair<std::size_t, std::size_t>& initial = {
+          0, 0}) const override {
     const auto& [i, j] = initial;
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //loads the entire image
@@ -104,7 +121,19 @@ class ViewFromPPMFile : public View<T> {
     }
   }
 
-  ~ViewFromPPMFile() = default;
+
+
+  virtual void write_image(const bool overwrite_file = false) override {
+    if(this->image_) {
+      ImageIO::imwrite(*this->image_, this->ppm_file->get_filename(), overwrite_file);
+    }
+  }
+
+  ~ViewFromPPMFile() {
+    // if(overwrite_ppm_file_in_destructor) {
+    //   write_image(overwrite_ppm_file_in_destructor);
+    // }
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWFROMPPMFILE_H__ */

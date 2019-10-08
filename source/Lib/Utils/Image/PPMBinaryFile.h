@@ -77,6 +77,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
 
   template<typename T>
   void write_image_to_file(const Image<T>& image) {
+    // std::cout << "raster_begin " << raster_begin << std::endl;
     if (!file.is_open()) {
       if (!std::filesystem::exists(filename)) {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
@@ -115,12 +116,21 @@ class PPMBinaryFile : public PixelMapFileBinary {
                 pixel);
           }
         }
-        file.seekp(get_raster_begin(), std::ios::beg);
+        // std::cout << file.tellg() << std::endl;
+        auto raster_begin = get_raster_begin();
+        if(raster_begin < 0) {
+          file.seekg(0, std::ios::end);
+        } else {
+          file.seekp(get_raster_begin(), std::ios::beg);
+        }
+        // std::cout << rgb_vector.size() << std::endl;
         file.write(reinterpret_cast<char*>(rgb_vector.data()),
             rgb_vector.capacity() * sizeof(std::tuple<T, T, T>));
+        // std::cout << file.tellg() << std::endl;
         file.flush();
+        // std::cout << file.tellg() << std::endl;
       } else {
-        std::cout << "Image is not RGB..." << std::endl;
+        // std::cout << "Image is not RGB..." << std::endl;
         auto rgb_image =
             ImageColorSpaceConversion::convert::to<RGBImage>(image);
         write_image_to_file(rgb_image);

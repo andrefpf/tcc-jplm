@@ -96,6 +96,9 @@ target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_encoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common) 
 target_link_libraries(jpl-decoder-bin PRIVATE image) 
 
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Encoder/TemporaryTransformMode)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Decoder/TemporaryTransformMode)
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
@@ -115,9 +118,12 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Common/TransformMode)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/TransformMode)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/TransformMode)
 
 
 
@@ -139,6 +145,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/Boxes)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Encoder/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/TransformMode/)
 
 
 if(BUILD_DOC)

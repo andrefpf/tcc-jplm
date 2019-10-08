@@ -31,148 +31,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewIOPolicies.h
+/** \file     ViewIOPolicyLimitedMemory.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-06
+ *  \date     2019-09-27
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
-#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__
+#ifndef JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__
+#define JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__
 
-#include <queue>
-#include <unordered_set>
-#include "Lib/Part2/Common/CommonExceptions.h"
-#include "Lib/Part2/Common/View.h"
-#include "Lib/Utils/Image/Image.h"
-
-template<typename T>
-class ViewIOPolicy {
- protected:
-  virtual void load_image_if_necessary(View<T>& view) = 0;
-
- public:
-  ViewIOPolicy() = default;
-
-  ViewIOPolicy(const ViewIOPolicy<T>& other) = default;
-
-  virtual ~ViewIOPolicy() = default;
-
-
-  virtual T get_value_at(View<T>& view, const std::size_t channel,
-      const std::pair<std::size_t, std::size_t>& coordinate) {
-    load_image_if_necessary(view);
-    return view.get_value_at(channel, coordinate);
-  }
-
-
-  virtual const Image<T>& get_image_at(View<T>& view) {
-    load_image_if_necessary(view);
-    return *view.get_image_ptr();
-  }
-
-  virtual ViewIOPolicy<T>* clone() const = 0;
-};
-
-
-template<typename T>
-class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
-protected:
-
-  void load_image_if_necessary(View<T>& view) override {
-    if (!view.has_image())
-      view.load_image();
-  }
-
- public:
-
-  virtual ViewIOPolicyLimitlessMemory<T>* clone() const override {
-    return new ViewIOPolicyLimitlessMemory(*this);
-  }
-
-
-
-
-};
-
-
-template<typename T>
-class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
- protected:
-  View<T>* last = nullptr;
-
-  void load_image_if_necessary(View<T>& view) {
-    if (last != nullptr && last != &view) {
-      last->release_image();
-    }
-    view.load_image();
-    last = &view;
-  }
-
- public:
-
-  virtual ViewIOPolicyOneAtATime<T>* clone() const override {
-    return new ViewIOPolicyOneAtATime(*this);
-  }
-  
-
-};
-
-
-//abstract
-template<typename T>
-class ViewIOPolicyQueue : public ViewIOPolicy<T> {
- protected:
-  std::deque<View<T>*> queue;
-  std::unordered_set<const View<T>*> set;
-
-
-  bool is_loaded(const View<T>* view) const {
-    return set.count(view) > 0;
-  }
-
-  void release_view_image() {
-    if (queue.size() > 0) {
-      auto ref_to_view = queue.front();
-      ref_to_view->release_image();
-      queue.pop_front();
-      set.erase(ref_to_view);
-    }
-  }
-
-  public:
-  virtual ViewIOPolicyQueue<T>* clone() const = 0;
-
-};
-
-
-template<typename T>
-class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
- protected:
-  std::size_t max_views = 3;
-  std::size_t current_views = 0;
-
-
-  void load_image_if_necessary(View<T>& view) override {
-    if (!this->is_loaded(&view)) {
-      if (current_views + 1 > max_views) {
-        this->release_view_image();
-      } else {
-        current_views++;
-      }
-      this->queue.push_back(&view);
-      this->set.insert(&view);
-      view.load_image();
-    }
-  }
-
-public:
-
-  virtual ViewIOPolicyLimitedNumberOfViews<T>* clone() const override {
-    return new ViewIOPolicyLimitedNumberOfViews(*this);
-  }
-};
+#include "Lib/Part2/Common/ViewIOPolicyQueue.h"
 
 
 template<typename T>
@@ -192,13 +61,12 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
         current_bytes += expected_number_of_bytes;
       }
       this->queue.push_back(&view);
-      this->set.insert(&view);
+      // this->set.insert(&view);
       view.load_image();
     }
   }
 
  public:
-
   virtual ViewIOPolicyLimitedMemory<T>* clone() const override {
     return new ViewIOPolicyLimitedMemory(*this);
   }
@@ -225,4 +93,4 @@ class ViewIOPolicyLimitedMemory : public ViewIOPolicyQueue<T> {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICIES_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYLIMITEDMEMORY_H__ */

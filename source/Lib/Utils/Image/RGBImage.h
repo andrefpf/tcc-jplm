@@ -46,8 +46,9 @@
 template<typename T>
 class RGBImage : public ThreeChannelImage<T> {
  public:
+  static constexpr auto image_type = ImageType::RGB;
   RGBImage(std::size_t width, std::size_t height, std::size_t bpp)
-      : ThreeChannelImage<T>(width, height, bpp, ImageType::RGB){};
+      : ThreeChannelImage<T>(width, height, bpp, image_type){};
 
 
   RGBImage(RGBImage<T>&& other) noexcept

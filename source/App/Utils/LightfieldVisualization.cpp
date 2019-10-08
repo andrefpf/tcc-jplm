@@ -40,6 +40,8 @@
 
 #include <iostream>
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitedMemory.h"
 //X11:
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
@@ -194,8 +196,8 @@ class LightfieldAtX11Window : public X11WindowHandler {
     auto positional_view_x = x / view_relative_horizontal_size;
     auto positional_view_y = y / view_relative_vertical_size;
 
-    auto t = static_cast<std::size_t>(std::round(positional_view_x));
-    auto s = static_cast<std::size_t>(std::round(positional_view_y));
+    auto t = static_cast<std::size_t>(std::round(positional_view_y));
+    auto s = static_cast<std::size_t>(std::round(positional_view_x));
 
     auto &[past_t, past_s] = past_t_s;
 
