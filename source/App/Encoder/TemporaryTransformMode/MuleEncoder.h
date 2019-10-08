@@ -52,21 +52,22 @@
 class MuleEncoder : public MuleCodec
 {
 private:
-	std::unique_ptr<LightFieldTransformMode<>> raw_lightfield;
 	Hierarchical4DEncoder hierarchical_4d_encoder;
 	TransformPartition tp;
 
-    void open_raw_lightfield();
+    // void open_raw_lightfield();
 public:
 	MuleEncoder(ParameterHandler handler);
-	~MuleEncoder();
+	~MuleEncoder() = default;
 	
 	void setup_hierarchical_4d_encoder();
 	void write_initial_data_to_encoded_file();
 
-	std::unique_ptr<ContiguousCodestreamCode> encode() ;
+	std::unique_ptr<ContiguousCodestreamCode> get_contigous_codestream_code();
 	
-
+	virtual void run_for_block_4d(const uint32_t channel,
+      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& size) override;
 };
 
 #endif /* end of include guard: MULEENCODER_H__ */

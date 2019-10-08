@@ -46,127 +46,101 @@
 */
 #include "MuleEncoder.h"
 
-void MuleEncoder::open_raw_lightfield() {
+// void MuleEncoder::open_lightfield() {
 
-    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
-                parameter_handler.number_of_horizontal_views, 
-                3, 3);
-    auto config = LightfieldIOConfiguration(
-        parameter_handler.decoded_lightfield.string(),
-        dimension
-        );
+//     auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views,
+//                 parameter_handler.number_of_horizontal_views,
+//                 3, 3);
+//     auto config = LightfieldIOConfiguration(
+//         parameter_handler.decoded_lightfield.string(),
+//         dimension
+//         );
 
-    raw_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+//     lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+// }
+
+MuleEncoder::MuleEncoder(ParameterHandler handler)
+    : MuleCodec(handler), tp(parameter_handler.min_transform_length_t,
+                              parameter_handler.min_transform_length_s,
+                              parameter_handler.min_transform_length_v,
+                              parameter_handler.min_transform_length_u) {
+  auto dimension = LightfieldDimension<std::size_t>(
+      parameter_handler.number_of_vertical_views,
+      parameter_handler.number_of_horizontal_views, 3, 3);
+  auto config = LightfieldIOConfiguration(
+      parameter_handler.decoded_lightfield.string(), dimension);
+
+  lightfield = std::make_unique<LightFieldTransformMode<>>(config);
+
+  tp.mPartitionData.set_dimension(parameter_handler.transform_length_t,
+      parameter_handler.transform_length_s,
+      parameter_handler.transform_length_v,
+      parameter_handler.transform_length_u);
+  setup_hierarchical_4d_encoder();
+
+  setup_transform_coefficients(true);
+
+  write_initial_data_to_encoded_file();
+
+  initialize_extension_lenghts();
 }
 
-MuleEncoder::MuleEncoder(ParameterHandler handler) : 
-	MuleCodec(handler),
-	tp(	parameter_handler.min_transform_length_t,
-		parameter_handler.min_transform_length_s,
-		parameter_handler.min_transform_length_v,
-		parameter_handler.min_transform_length_u) {
-        
-    auto dimension = LightfieldDimension<std::size_t>(parameter_handler.number_of_vertical_views, 
-                parameter_handler.number_of_horizontal_views, 
-                3, 3);
-    auto config = LightfieldIOConfiguration(
-        parameter_handler.decoded_lightfield.string(),
-        dimension
-        );
 
-    raw_lightfield = std::make_unique<LightFieldTransformMode<>>(config);
-
-	tp.mPartitionData.set_dimension(parameter_handler.transform_length_t,
-									parameter_handler.transform_length_s,
-									parameter_handler.transform_length_v,
-									parameter_handler.transform_length_u);
- 	setup_hierarchical_4d_encoder();
-
- 	setup_transform_coefficients(true);
-
-	write_initial_data_to_encoded_file();
-
-    initialize_extension_lenghts();
+void MuleEncoder::run_for_block_4d(const uint32_t channel,
+    const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& size) {
+  auto block_4d = lightfield->get_block_4D_from(channel, position, size);
+  block_4d += 0 - level_shift;
+  hierarchical_4d_encoder.reset_probability_models();
+  tp.rd_optimize_transform(
+      block_4d, hierarchical_4d_encoder, parameter_handler.lambda);
+  tp.encode_partition(hierarchical_4d_encoder, parameter_handler.lambda);
 }
 
-MuleEncoder::~MuleEncoder() {
+
+std::unique_ptr<ContiguousCodestreamCode>
+MuleEncoder::get_contigous_codestream_code() {
+  hierarchical_4d_encoder.finish();
+  return hierarchical_4d_encoder.move_codestream_code_out();
 }
 
-std::unique_ptr<ContiguousCodestreamCode> MuleEncoder::encode() {
-
-    const auto& [T, S, V, U] = raw_lightfield->get_dimensions<uint32_t>();
-
-    auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
-    auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
-    auto BLOCK_SIZE_v = parameter_handler.transform_length_v;
-    auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
-
-    
-    int32_t level_shift = -std::pow(2, raw_lightfield->get_views_bpp())/2; //
-
-    for(auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
-        auto used_size_t = (t + BLOCK_SIZE_t > T)? T%BLOCK_SIZE_t : BLOCK_SIZE_t;
-        for(auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
-            auto used_size_s = (s + BLOCK_SIZE_s > S)? S%BLOCK_SIZE_s : BLOCK_SIZE_s;
-            for(auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
-                auto used_size_v = (v + BLOCK_SIZE_v > V)? V%BLOCK_SIZE_v : BLOCK_SIZE_v;
-                for(auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
-                    auto used_size_u = (u + BLOCK_SIZE_u > U)? U%BLOCK_SIZE_u : BLOCK_SIZE_u;
-
-                    
-                    if(parameter_handler.verbose)
-                        printf("transforming the 4D block at position (%d %d %d %d)\n", t, s, v, u);
-                    
-                    //if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-                    //    rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                    //    spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-                    //}
-                    
-
-                    auto size = LightfieldDimension<uint32_t>(used_size_t, used_size_s, used_size_v, used_size_u);
-                    
-                    for(auto color_channel_index=0;color_channel_index<3;++color_channel_index) {
-                        auto block_4d = raw_lightfield->get_block_4D_from(color_channel_index, {t, s, v, u}, size);
-                        block_4d+=level_shift;
-                        hierarchical_4d_encoder.reset_probability_models();
-                        tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, parameter_handler.lambda);
-                        tp.encode_partition(hierarchical_4d_encoder, parameter_handler.lambda);
-                    }
-                }
-            }
-        }
-    }
-    hierarchical_4d_encoder.finish();
-    std::cout << "done" << std::endl ;
-    return hierarchical_4d_encoder.move_codestream_code_out();
-}
 
 void MuleEncoder::setup_hierarchical_4d_encoder() {
+  hierarchical_4d_encoder.mTransformLength_t =
+      parameter_handler.transform_length_t;
+  hierarchical_4d_encoder.mTransformLength_s =
+      parameter_handler.transform_length_s;
+  hierarchical_4d_encoder.mTransformLength_v =
+      parameter_handler.transform_length_v;
+  hierarchical_4d_encoder.mTransformLength_u =
+      parameter_handler.transform_length_u;
+  hierarchical_4d_encoder.create_temporary_buffer(
+      hierarchical_4d_encoder.mTransformLength_u);
+  hierarchical_4d_encoder.mMinimumTransformLength_t =
+      parameter_handler.min_transform_length_t;
+  hierarchical_4d_encoder.mMinimumTransformLength_s =
+      parameter_handler.min_transform_length_s;
+  hierarchical_4d_encoder.mMinimumTransformLength_v =
+      parameter_handler.min_transform_length_v;
+  hierarchical_4d_encoder.mMinimumTransformLength_u =
+      parameter_handler.min_transform_length_u;
+  // std::tie(
+  //     hierarchical_4d_encoder.mNumberOfVerticalViews,
+  //     hierarchical_4d_encoder.mNumberOfHorizontalViews,
+  //     hierarchical_4d_encoder.mNumberOfViewLines,
+  //     hierarchical_4d_encoder.mNumberOfViewColumns) = lightfield->get_dimensions<int>();
+  const auto& [T, S, V, U] = lightfield->get_dimensions<uint32_t>();
+  hierarchical_4d_encoder.mNumberOfVerticalViews = T;
+  hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
+  hierarchical_4d_encoder.mNumberOfViewLines = V;
+  hierarchical_4d_encoder.mNumberOfViewColumns = U;
 
-    hierarchical_4d_encoder.mTransformLength_t = parameter_handler.transform_length_t;
-    hierarchical_4d_encoder.mTransformLength_s = parameter_handler.transform_length_s;
-    hierarchical_4d_encoder.mTransformLength_v = parameter_handler.transform_length_v;
-    hierarchical_4d_encoder.mTransformLength_u = parameter_handler.transform_length_u;
-    hierarchical_4d_encoder.create_temporary_buffer(hierarchical_4d_encoder.mTransformLength_u);
-    hierarchical_4d_encoder.mMinimumTransformLength_t = parameter_handler.min_transform_length_t;
-    hierarchical_4d_encoder.mMinimumTransformLength_s = parameter_handler.min_transform_length_s;
-    hierarchical_4d_encoder.mMinimumTransformLength_v = parameter_handler.min_transform_length_v;
-    hierarchical_4d_encoder.mMinimumTransformLength_u = parameter_handler.min_transform_length_u;
-    // std::tie(
-    //     hierarchical_4d_encoder.mNumberOfVerticalViews, 
-    //     hierarchical_4d_encoder.mNumberOfHorizontalViews, 
-    //     hierarchical_4d_encoder.mNumberOfViewLines, 
-    //     hierarchical_4d_encoder.mNumberOfViewColumns) = raw_lightfield->get_dimensions<int>();
-    const auto& [T, S, V, U] = raw_lightfield->get_dimensions<uint32_t>();
-    hierarchical_4d_encoder.mNumberOfVerticalViews = T;
-    hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
-    hierarchical_4d_encoder.mNumberOfViewLines = V;
-    hierarchical_4d_encoder.mNumberOfViewColumns = U;
-
-    hierarchical_4d_encoder.mPGMScale = std::pow(2, raw_lightfield->get_views_bpp())-1;
+  hierarchical_4d_encoder.mPGMScale =
+      std::pow(2, lightfield->get_views_bpp()) - 1;
 }
 
 
-void MuleEncoder::write_initial_data_to_encoded_file() {//read_initial_data_from_encoded_file
-    hierarchical_4d_encoder.write_initial_data();
+void MuleEncoder::
+    write_initial_data_to_encoded_file() {  //read_initial_data_from_encoded_file
+  hierarchical_4d_encoder.write_initial_data();
 }

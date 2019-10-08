@@ -47,10 +47,10 @@
 #include <string.h>
 #include <iostream>
 #include <memory>
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "App/TemporaryCommonTransformMode/ParameterHandler.h"
+#include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
 
 class MuleCodec {
  protected:
@@ -60,14 +60,20 @@ class MuleCodec {
   int extension_length_v = 0;
   int extension_length_u = 0;
   bool needs_block_extension = false;
+  std::unique_ptr<LightFieldTransformMode<>> lightfield;
   void open_encoded_lightfield(const char* modes);
   void setup_transform_coefficients(bool forward);
   void initialize_extension_lenghts();
 
+  virtual void run_for_block_4d(const uint32_t channel,
+      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& size) = 0;
+
+
  public:
-  MuleCodec(ParameterHandler handler) : parameter_handler(handler) {
-  };
+  MuleCodec(ParameterHandler handler) : parameter_handler(handler){};
   ~MuleCodec() = default;
+  void run();
 };
 
 #endif /* end of include guard: MULECODEC_H__ */

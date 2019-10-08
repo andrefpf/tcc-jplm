@@ -22,5 +22,7 @@ int main(int argc, char **argv) {
     if_stream.close();
 
     MuleDecoder decoder(handler, codestream_code);
-    decoder.decode();
+    decoder.run();
+    // decoder.decode();
+
 }
