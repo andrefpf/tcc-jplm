@@ -97,14 +97,16 @@ class JPLM4DTransformModeLightFieldCodec
     std::cout << "Run LF transfom mode codec." << std::endl;
     const auto& [T, S, V, U] = lightfield_dimension;
 
-    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] = block_4d_dimension;
+    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
+        block_4d_dimension;
     // auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
     // auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
     // auto BLOCK_SIZE_v = parameter_handler.transform_length_v;
     // auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
 
 
-    int32_t level_shift = 512; //std::pow(2, lightfield->get_views_bpp()) / 2;  //
+    int32_t level_shift = 512;
+    //std::pow(2, lightfield->get_views_bpp()) / 2;  //
 
     for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
       auto used_size_t =
@@ -137,8 +139,8 @@ class JPLM4DTransformModeLightFieldCodec
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {
               run_for_block_4d(
-                   color_channel_index, level_shift, {t, s, v, u}, size);
-          // run_for_block_4d();
+                  color_channel_index, level_shift, {t, s, v, u}, size);
+              // run_for_block_4d();
             }
           }
         }
@@ -147,12 +149,10 @@ class JPLM4DTransformModeLightFieldCodec
   }
 
 
-virtual void
-run_for_block_4d(const uint32_t channel,
-    const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
-    const LightfieldDimension<uint32_t>& size) = 0;
-}
-;
+  virtual void run_for_block_4d(const uint32_t channel,
+      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& size) = 0;
+};
 
 
 #endif /* end of include guard: JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__ */

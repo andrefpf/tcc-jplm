@@ -72,7 +72,7 @@ public:
     int mNumberOfVerticalViews, mNumberOfHorizontalViews;
     int mNumberOfViewLines, mNumberOfViewColumns;
 	Hierarchical4DCodec() = default;
-	~Hierarchical4DCodec() = default;
+	virtual ~Hierarchical4DCodec() = default;
 	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
 };
