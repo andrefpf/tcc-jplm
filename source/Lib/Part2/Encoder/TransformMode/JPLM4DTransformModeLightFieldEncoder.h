@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
 
 template<typename T = uint16_t>
@@ -51,14 +51,17 @@ class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
           configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+      : JPLMLightFieldCodec<T>(
+            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
+                configuration->get_lightfield_io_configurations()))),
+        JPLMLightFieldEncoder<T>(std::move(configuration)) {
   }
 
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
   virtual void run() override {
-  	std::cout << "Run LF transfom mode encoder." << std::endl;
+    std::cout << "Run LF transfom mode encoder." << std::endl;
     //! \todo implement run method for jpl lightfield encoder
   }
 };

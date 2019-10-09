@@ -53,7 +53,7 @@
 
 
 template<typename T = uint16_t>
-class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
+class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
  protected:
   std::unique_ptr<const JPLMEncoderConfigurationLightField> configuration;
 
@@ -88,10 +88,7 @@ class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
  public:
   JPLMLightFieldEncoder(
       std::unique_ptr<const JPLMEncoderConfigurationLightField>&& configuration)
-      : JPLMLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        configuration(std::move(configuration)) {
+      : configuration(std::move(configuration)) {
     add_pleno_lf_box();
   }
 

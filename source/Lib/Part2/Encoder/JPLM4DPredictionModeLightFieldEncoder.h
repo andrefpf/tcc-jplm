@@ -51,7 +51,10 @@ class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
   JPLM4DPredictionModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
           configuration)
-      : JPLMLightFieldEncoder<T>(std::move(configuration)) {
+      : JPLMLightFieldCodec<T>(
+            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
+                configuration->get_lightfield_io_configurations()))),
+        JPLMLightFieldEncoder<T>(std::move(configuration)) {
   }
 
   virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
