@@ -70,8 +70,7 @@ class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
         std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
     auto colour_specification_boxes =
         std::vector<std::unique_ptr<ColourSpecificationBox>>();
-    colour_specification_boxes.emplace_back(
-        std::move(std::make_unique<ColourSpecificationBox>()));
+    colour_specification_boxes.emplace_back(std::make_unique<ColourSpecificationBox>());
 
     auto jpeg_pleno_light_field_header_box =
         std::make_unique<JpegPlenoLightFieldHeaderBox>(

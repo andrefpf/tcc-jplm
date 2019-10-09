@@ -58,6 +58,7 @@ class JPLM4DTransformModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
 
 
   virtual void run() override {
+  	std::cout << "Run LF transfom mode encoder." << std::endl;
     //! \todo implement run method for jpl lightfield encoder
   }
 };

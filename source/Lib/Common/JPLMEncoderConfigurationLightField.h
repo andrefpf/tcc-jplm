@@ -116,20 +116,6 @@ void JPLMEncoderConfigurationLightField::parse_json(string path) {
  * \brief      check if it was created with wrong params, if so, uses a default
  */
 void JPLMEncoderConfigurationLightField::check_inconsistencies() {
-  // vector<bool> rules({
-  //     !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
-  //     !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
-  //     // !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
-  //     // !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
-  // });
-  // if (std::any_of(rules.begin(), rules.end(), [](bool t) { return t; })) {
-  //   std::cout << "part " << static_cast<int>(part) << std::endl;
-  //   std::cout << "type " << static_cast<int>(type) << std::endl;
-  //   throw InconsistentOptionsException();
-  // }
-  // if((type != Type::transform_mode) && (type != Type::prediction_mode)) {
-  //   throw InconsistentOptionsException();
-  // }
   if (part != JpegPlenoPart::LightField) {
     this->part = JpegPlenoPart::LightField;
     std::cout << "Inconsistent configuration. Jpeg Pleno Part was set to "
