@@ -56,17 +56,18 @@ class JPLM4DTransformModeLightFieldEncoder
       transform_mode_configuration;
   Hierarchical4DEncoder hierarchical_4d_encoder;
   TransformPartition tp;
+  LightFieldTransformMode<PelType>& ref_to_lightfield;
 
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
           configuration)
       : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightfieldFromPPMFile<PelType>>(
+            std::make_unique<LightFieldTransformMode<PelType>>(
                 configuration->get_lightfield_io_configurations())),
-      JPLM4DTransformModeLightFieldCodec<PelType>({configuration->get_lightfield_io_configurations().get_size()}, {
-      	configuration->get_maximal_transform_sizes()
-      }), 
+        JPLM4DTransformModeLightFieldCodec<PelType>(
+            {configuration->get_lightfield_io_configurations().get_size()},
+            {configuration->get_maximal_transform_sizes()}),
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
         tp(transform_mode_configuration
@@ -76,7 +77,9 @@ class JPLM4DTransformModeLightFieldEncoder
             transform_mode_configuration
                 ->get_minimal_transform_size_intra_view_vertical(),
             transform_mode_configuration
-                ->get_minimal_transform_size_intra_view_horizontal()) {
+                ->get_minimal_transform_size_intra_view_horizontal()),
+        ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
+            *(this->light_field))) {
     tp.mPartitionData.set_dimension(
         transform_mode_configuration
             ->get_maximal_transform_size_inter_view_vertical(),  //T
@@ -151,8 +154,16 @@ class JPLM4DTransformModeLightFieldEncoder
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
-  virtual void run_for_block_4d() override {
-    std::cout << "running 4d block in encoder..." << std::endl;
+  virtual void run_for_block_4d(const uint32_t channel,
+      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& size) override {
+    auto block_4d =
+        ref_to_lightfield.get_block_4D_from(channel, position, size);
+    block_4d += 0 - level_shift;
+    hierarchical_4d_encoder.reset_probability_models();
+    const auto lambda = transform_mode_configuration->get_lambda();
+    tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
+    tp.encode_partition(hierarchical_4d_encoder, lambda);
   }
 };
 

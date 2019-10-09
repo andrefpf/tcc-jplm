@@ -95,7 +95,6 @@ class JPLM4DTransformModeLightFieldCodec
 
   virtual void run() override {
     std::cout << "Run LF transfom mode codec." << std::endl;
-    this->run_for_block_4d();
     const auto& [T, S, V, U] = lightfield_dimension;
 
     const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] = block_4d_dimension;
@@ -137,9 +136,9 @@ class JPLM4DTransformModeLightFieldCodec
 
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {
-              // run_for_block_4d(
-              //     color_channel_index, level_shift, {t, s, v, u}, size);
-          run_for_block_4d();
+              run_for_block_4d(
+                   color_channel_index, level_shift, {t, s, v, u}, size);
+          // run_for_block_4d();
             }
           }
         }
@@ -149,7 +148,9 @@ class JPLM4DTransformModeLightFieldCodec
 
 
 virtual void
-run_for_block_4d() = 0;
+run_for_block_4d(const uint32_t channel,
+    const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& size) = 0;
 }
 ;
 
