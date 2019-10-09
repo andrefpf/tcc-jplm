@@ -136,6 +136,11 @@ class JPLFile {
   }
 
 
+  auto& get_reference_to_codestreams() noexcept {
+    return jpeg_pleno_codestreams;
+  }
+
+
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
     return *jpeg_pleno_signature_box;
   }

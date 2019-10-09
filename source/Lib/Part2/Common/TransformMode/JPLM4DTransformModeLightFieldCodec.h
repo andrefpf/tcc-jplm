@@ -93,6 +93,8 @@ class JPLM4DTransformModeLightFieldCodec
     //     needs_block_extension=true;
   }
 
+  virtual void finalization() {};
+
   virtual void run() override {
     std::cout << "Run LF transfom mode codec." << std::endl;
     const auto& [T, S, V, U] = lightfield_dimension;
@@ -146,6 +148,7 @@ class JPLM4DTransformModeLightFieldCodec
         }
       }
     }
+    finalization();
   }
 
 

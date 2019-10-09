@@ -20,9 +20,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
-  // encoder->run();
+  encoder->run();
   auto& jpl_file = encoder->get_ref_to_jpl_file();
-  std::cout << "writing to file" << std::endl;
   of_stream << jpl_file;
   of_stream.close();
 

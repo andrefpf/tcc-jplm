@@ -117,6 +117,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
                 : nullptr) {
   }
 
+
   /**
    * \brief      Adds a contiguous codestream box to the JPEG Pleno Light Field Contents.
    *

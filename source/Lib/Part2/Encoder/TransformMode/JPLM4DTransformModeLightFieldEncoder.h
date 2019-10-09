@@ -151,6 +151,16 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
 
+  virtual void finalization() override {
+    auto& codestreams = this->jpl_file->get_reference_to_codestreams();
+    auto& first_codestream = *(codestreams.at(0));
+    auto& first_codestream_as_part2 = static_cast<JpegPlenoLightFieldBox&>(first_codestream);
+    auto& lightfield_box_contents = static_cast<JpegPlenoLightFieldContents&>(first_codestream.get_ref_to_contents());
+    lightfield_box_contents.add_contiguous_codestream_box(
+      std::make_unique<ContiguousCodestreamBox>(std::move(hierarchical_4d_encoder.move_codestream_code_out())));
+  }
+
+
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
