@@ -60,6 +60,10 @@ class JPLM4DTransformModeLightFieldEncoder : public JPLM4DTransformModeLightFiel
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
+  virtual void run_for_block_4d() override {
+  	std::cout << "running 4d block in encoder..." << std::endl;
+  }
+
   // virtual void run() override {
   //   std::cout << "Run LF transfom mode encoder." << std::endl;
   //   //! \todo implement run method for jpl lightfield encoder

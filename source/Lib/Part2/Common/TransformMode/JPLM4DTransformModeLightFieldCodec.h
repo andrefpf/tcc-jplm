@@ -56,8 +56,11 @@ class JPLM4DTransformModeLightFieldCodec
 
   virtual void run() override {
     std::cout << "Run LF transfom mode codec." << std::endl;
+    this->run_for_block_4d();
     //! \todo implement run method for jpl lightfield encoder
   }
+
+  virtual void run_for_block_4d() = 0;
 };
 
 
