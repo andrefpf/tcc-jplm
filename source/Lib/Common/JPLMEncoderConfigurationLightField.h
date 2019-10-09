@@ -45,6 +45,7 @@
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include <tuple>
 
 //stub
 class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
@@ -76,9 +77,10 @@ JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
 LightfieldIOConfiguration
 JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
   // \todo check this constants
-  LightfieldDimension<std::size_t> size(3, 3, 32, 32);
-  LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-  return LightfieldIOConfiguration(input, initial, size);
+  auto dimension = LightfieldDimension<std::size_t>(
+      number_of_rows_t, number_of_columns_s, view_height_v, view_width_u);
+  auto config = LightfieldIOConfiguration(input, dimension);
+  return config;
 }
 
 
@@ -119,8 +121,8 @@ void JPLMEncoderConfigurationLightField::check_inconsistencies() {
   if (part != JpegPlenoPart::LightField) {
     this->part = JpegPlenoPart::LightField;
     std::cout << "Inconsistent configuration. Jpeg Pleno Part was set to "
-              << static_cast<int>(part) << ". Using Part 2 (Light Field) as default"
-              << std::endl;
+              << static_cast<int>(part)
+              << ". Using Part 2 (Light Field) as default" << std::endl;
   }
   if ((type != Type::transform_mode) && (type != Type::prediction_mode)) {
     std::cout << "Inconsistent configuration. Compression type was set to "

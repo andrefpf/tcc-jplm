@@ -48,19 +48,22 @@
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 
-template<typename T = uint16_t>
+template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldCodec
-    : public virtual JPLMLightFieldCodec<T> {
+    : public virtual JPLMLightFieldCodec<PelType> {
  protected:
-  int extension_length_t = 0;
-  int extension_length_s = 0;
-  int extension_length_v = 0;
-  int extension_length_u = 0;
   bool needs_block_extension = false;
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> extensions;
+  LightfieldDimension<uint32_t> lightfield_dimension;
+  LightfieldDimension<uint32_t> block_4d_dimension;
 
  public:
-  JPLM4DTransformModeLightFieldCodec() : JPLMLightFieldCodec<T>(nullptr) {
-    //this ctr will probably never be called, but it is required to compile...
+  JPLM4DTransformModeLightFieldCodec(
+      const LightfieldDimension<uint32_t>& lightfield_dimension,
+      const LightfieldDimension<uint32_t>& block_4d_dimension)
+      : JPLMLightFieldCodec<PelType>(nullptr),
+        lightfield_dimension(lightfield_dimension),
+        block_4d_dimension(block_4d_dimension) {
   }
 
 
@@ -93,11 +96,62 @@ class JPLM4DTransformModeLightFieldCodec
   virtual void run() override {
     std::cout << "Run LF transfom mode codec." << std::endl;
     this->run_for_block_4d();
-    //! \todo implement run method for jpl lightfield encoder
+    const auto& [T, S, V, U] = lightfield_dimension;
+
+    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] = block_4d_dimension;
+    // auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
+    // auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
+    // auto BLOCK_SIZE_v = parameter_handler.transform_length_v;
+    // auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
+
+
+    int32_t level_shift = 512; //std::pow(2, lightfield->get_views_bpp()) / 2;  //
+
+    for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
+      auto used_size_t =
+          (t + BLOCK_SIZE_t > T) ? T % BLOCK_SIZE_t : BLOCK_SIZE_t;
+      for (auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
+        auto used_size_s =
+            (s + BLOCK_SIZE_s > S) ? S % BLOCK_SIZE_s : BLOCK_SIZE_s;
+        for (auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
+          auto used_size_v =
+              (v + BLOCK_SIZE_v > V) ? V % BLOCK_SIZE_v : BLOCK_SIZE_v;
+          for (auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
+            auto used_size_u =
+                (u + BLOCK_SIZE_u > U) ? U % BLOCK_SIZE_u : BLOCK_SIZE_u;
+
+
+            // if (parameter_handler.verbose) {
+            printf("transforming the 4D block at position (%d %d %d %d)\n", t,
+                s, v, u);
+            // }
+
+            //if (parameter_handler.extension_method == SHRINK_TO_FIT) {
+            //    rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+            //    spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
+            //}
+
+
+            auto size = LightfieldDimension<uint32_t>(
+                used_size_t, used_size_s, used_size_v, used_size_u);
+
+            for (auto color_channel_index = 0; color_channel_index < 3;
+                 ++color_channel_index) {
+              // run_for_block_4d(
+              //     color_channel_index, level_shift, {t, s, v, u}, size);
+          run_for_block_4d();
+            }
+          }
+        }
+      }
+    }
   }
 
-  virtual void run_for_block_4d() = 0;
-};
+
+virtual void
+run_for_block_4d() = 0;
+}
+;
 
 
 #endif /* end of include guard: JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__ */

@@ -64,6 +64,9 @@ class JPLM4DTransformModeLightFieldEncoder
       : JPLMLightFieldCodec<PelType>(
             std::make_unique<LightfieldFromPPMFile<PelType>>(
                 configuration->get_lightfield_io_configurations())),
+      JPLM4DTransformModeLightFieldCodec<PelType>({configuration->get_lightfield_io_configurations().get_size()}, {
+      	configuration->get_maximal_transform_sizes()
+      }), 
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
         tp(transform_mode_configuration
