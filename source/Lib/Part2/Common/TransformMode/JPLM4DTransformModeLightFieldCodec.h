@@ -31,40 +31,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldEncoder.h
+/** \file     JPLM4DTransformModeLightFieldCodec.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-10-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
-
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
+#ifndef JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__
+#define JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__
 
 
 template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLM4DTransformModeLightFieldCodec<T>, JPLMLightFieldEncoder<T> {
- public:
-  JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
-      : JPLMLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        JPLMLightFieldEncoder<T>(std::move(configuration)) {
-  }
-
-  virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
-
-
-  virtual void run() override {
-    std::cout << "Run LF transfom mode encoder." << std::endl;
-    //! \todo implement run method for jpl lightfield encoder
-  }
+class JPLM4DTransformModeLightFieldCodec : public virtual JPLMLightFieldCodec<T> {
+	
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+
+#endif /* end of include guard: JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__ */
