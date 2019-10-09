@@ -59,16 +59,19 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
 
  private:
   void parse_mode_type(const json &conf);
-  void check_inconsistencies(void);
+  void check_inconsistencies();
 };
+
 
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfiguration(argc, argv) {
   if (!config.empty())
     parse_json(config);
+  this->part = JpegPlenoPart::LightField;
   check_inconsistencies();
 }
+
 
 LightfieldIOConfiguration
 JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
@@ -78,23 +81,29 @@ JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
   return LightfieldIOConfiguration(input, initial, size);
 }
 
+
 Type JPLMEncoderConfigurationLightField::get_type() const {
   return type;
 }
+
 
 void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
   if (conf.contains("type")) {
     string t = conf["type"].get<string>();
     std::transform(t.begin(), t.end(), t.begin(),
         [](unsigned char c) { return std::tolower(c); });
-    if (t == "transform mode" || t == "transform_mode" || t == "mule")
+    if (t == "transform mode" || t == "transform_mode" || t == "mule") {
       type = Type::transform_mode;
-    else if (t == "prediction mode" || t == "prediction_mode" || t == "wasp")
+    } else if (t == "prediction mode" || t == "prediction_mode" ||
+               t == "wasp") {
       type = Type::prediction_mode;
-    else
+    } else {
+      //! \todo check if this is the right exception to be thown here...
       throw NotImplementedYetInputTypeParseException(t);
+    }
   }
 }
+
 
 void JPLMEncoderConfigurationLightField::parse_json(string path) {
   JPLMEncoderConfiguration::parse_json(path);
@@ -103,14 +112,38 @@ void JPLMEncoderConfigurationLightField::parse_json(string path) {
   parse_mode_type(conf);
 }
 
-void JPLMEncoderConfigurationLightField::check_inconsistencies(void) {
-  vector<bool> rules({
-      !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
-      !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
-  });
-  if (std::any_of(rules.begin(), rules.end(), [](bool t) { return t; }))
-    throw InconsistentOptionsException();
+/**
+ * \brief      check if it was created with wrong params, if so, uses a default
+ */
+void JPLMEncoderConfigurationLightField::check_inconsistencies() {
+  // vector<bool> rules({
+  //     !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
+  //     !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
+  //     // !(part != JpegPlenoPart::LightField) && (type != Type::transform_mode),
+  //     // !(part != JpegPlenoPart::LightField) && (type != Type::prediction_mode),
+  // });
+  // if (std::any_of(rules.begin(), rules.end(), [](bool t) { return t; })) {
+  //   std::cout << "part " << static_cast<int>(part) << std::endl;
+  //   std::cout << "type " << static_cast<int>(type) << std::endl;
+  //   throw InconsistentOptionsException();
+  // }
+  // if((type != Type::transform_mode) && (type != Type::prediction_mode)) {
+  //   throw InconsistentOptionsException();
+  // }
+  if (part != JpegPlenoPart::LightField) {
+    this->part = JpegPlenoPart::LightField;
+    std::cout << "Inconsistent configuration. Jpeg Pleno Part was set to "
+              << static_cast<int>(part) << ". Using Part 2 (Light Field) as default"
+              << std::endl;
+  }
+  if ((type != Type::transform_mode) && (type != Type::prediction_mode)) {
+    std::cout << "Inconsistent configuration. Compression type was set to "
+              << static_cast<int>(type) << ". Using transform mode as default"
+              << std::endl;
+    this->type = Type::transform_mode;
+  }
 }
+
 
 Type JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
