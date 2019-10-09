@@ -41,10 +41,23 @@
 #ifndef JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__
 #define JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__
 
+#include <cstdint>
+#include <iostream>
+#include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 
 template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldCodec : public virtual JPLMLightFieldCodec<T> {
-	
+class JPLM4DTransformModeLightFieldCodec
+    : public virtual JPLMLightFieldCodec<T> {
+
+    public:
+    	JPLM4DTransformModeLightFieldCodec() : JPLMLightFieldCodec<T>(nullptr) {}
+    	virtual ~JPLM4DTransformModeLightFieldCodec() = default;
+
+
+  virtual void run() override {
+    std::cout << "Run LF transfom mode codec." << std::endl;
+    //! \todo implement run method for jpl lightfield encoder
+  }
 };
 
 

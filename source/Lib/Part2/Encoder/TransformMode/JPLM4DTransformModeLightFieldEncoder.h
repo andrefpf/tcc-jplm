@@ -47,24 +47,26 @@
 
 
 template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLM4DTransformModeLightFieldCodec<T>, JPLMLightFieldEncoder<T> {
+class JPLM4DTransformModeLightFieldEncoder : public JPLM4DTransformModeLightFieldCodec<T>, public JPLMLightFieldEncoder<T> {
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
           configuration)
-      : JPLMLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        JPLMLightFieldEncoder<T>(std::move(configuration)) {
+      : JPLMLightFieldCodec<T>(std::make_unique<LightfieldFromPPMFile<T>>(
+                 configuration->get_lightfield_io_configurations())),
+      JPLMLightFieldEncoder<T>(std::move(configuration)) {
   }
 
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
-  virtual void run() override {
-    std::cout << "Run LF transfom mode encoder." << std::endl;
-    //! \todo implement run method for jpl lightfield encoder
-  }
+  // virtual void run() override {
+  //   std::cout << "Run LF transfom mode encoder." << std::endl;
+  //   //! \todo implement run method for jpl lightfield encoder
+  // }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
+
+// JPLMLightFieldCodec<T>(std::make_unique<LightfieldFromPPMFile<T>>(
+//                 configuration->get_lightfield_io_configurations()))

@@ -49,13 +49,13 @@
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
 template<typename T = uint16_t>
 class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
  protected:
-  std::unique_ptr<const JPLMEncoderConfigurationLightField> configuration;
+  std::unique_ptr<JPLMEncoderConfigurationLightField> configuration;
 
   void add_pleno_lf_box() {
     auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
@@ -87,7 +87,7 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
 
  public:
   JPLMLightFieldEncoder(
-      std::unique_ptr<const JPLMEncoderConfigurationLightField>&& configuration)
+      std::unique_ptr<JPLMEncoderConfigurationLightField>&& configuration)
       : configuration(std::move(configuration)) {
     add_pleno_lf_box();
   }
