@@ -86,6 +86,7 @@ target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common) 
 target_link_libraries(jpl-encoder-bin PRIVATE image) 
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 
 add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp

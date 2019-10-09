@@ -55,7 +55,7 @@
 template<typename T = uint16_t>
 class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
  protected:
-  std::unique_ptr<JPLMEncoderConfigurationLightField> configuration;
+  const JPLMEncoderConfigurationLightField& light_field_encoder_configuration;
 
   void add_pleno_lf_box() {
     auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
@@ -65,7 +65,7 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
         this->light_field->template get_dimensions<uint32_t>(),
         this->light_field->get_number_of_channels_in_view(),
         this->light_field->get_views_bpp(),
-        configuration->get_compression_type());
+        light_field_encoder_configuration.get_compression_type());
     auto lightfield_header_box =
         std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
     auto colour_specification_boxes =
@@ -87,11 +87,10 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
 
  public:
   JPLMLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField>&& configuration)
-      : configuration(std::move(configuration)) {
+      const JPLMEncoderConfigurationLightField& configuration)
+      : light_field_encoder_configuration(configuration) {
     add_pleno_lf_box();
   }
-
 
   virtual ~JPLMLightFieldEncoder() = default;
 };

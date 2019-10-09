@@ -44,15 +44,51 @@
 #include <cstdint>
 #include <iostream>
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
+#include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
+#include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
 
 template<typename T = uint16_t>
 class JPLM4DTransformModeLightFieldCodec
     : public virtual JPLMLightFieldCodec<T> {
+ protected:
+  int extension_length_t = 0;
+  int extension_length_s = 0;
+  int extension_length_v = 0;
+  int extension_length_u = 0;
+  bool needs_block_extension = false;
 
-    public:
-    	JPLM4DTransformModeLightFieldCodec() : JPLMLightFieldCodec<T>(nullptr) {}
-    	virtual ~JPLM4DTransformModeLightFieldCodec() = default;
+ public:
+  JPLM4DTransformModeLightFieldCodec() : JPLMLightFieldCodec<T>(nullptr) {
+    //this ctr will probably never be called, but it is required to compile...
+  }
 
+
+  virtual ~JPLM4DTransformModeLightFieldCodec() = default;
+
+
+  void setup_transform_coefficients(bool forward,
+      const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>& max_sizes,
+      const std::tuple<double, double, double, double>& scalings) {
+    const auto& [t_size, s_size, v_size, u_size] = max_sizes;
+    const auto& [t_scaling, s_scaling, v_scaling, u_scaling] = scalings;
+    DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
+        u_size, v_size, s_size, t_size);
+
+    DCT4DCoefficientsManager::get_instance(forward).set_transform_gains(
+        u_scaling, v_scaling, s_scaling, t_scaling);
+  }
+
+
+  void initialize_extension_lenghts() {
+    // extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
+    // extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
+    // extension_length_v = decoded_lightfield.mNumberOfViewLines%parameter_handler.transform_length_v;
+    // extension_length_u = decoded_lightfield.mNumberOfViewColumns%parameter_handler.transform_length_u;
+
+    // if(parameter_handler.extension_method != SHRINK_TO_FIT && extension_length_t+extension_length_s+extension_length_v+extension_length_u > 0)
+    //     needs_block_extension=true;
+  }
 
   virtual void run() override {
     std::cout << "Run LF transfom mode codec." << std::endl;

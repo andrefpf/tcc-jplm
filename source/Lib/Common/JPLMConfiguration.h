@@ -85,14 +85,20 @@ class JPLMConfiguration {
   double lambda;
   Type type;
 
-  uint32_t minimal_transform_size_intra_view_vertical_v;
-  uint32_t maximal_transform_size_intra_view_vertical_v;
-  uint32_t minimal_transform_size_intra_view_horizontal_u;
-  uint32_t maximal_transform_size_intra_view_horizontal_u;
-  uint32_t minimal_transform_size_inter_view_vertical_t;
   uint32_t maximal_transform_size_inter_view_vertical_t;
-  uint32_t minimal_transform_size_inter_view_horizontal_s;
   uint32_t maximal_transform_size_inter_view_horizontal_s;
+  uint32_t maximal_transform_size_intra_view_vertical_v;
+  uint32_t maximal_transform_size_intra_view_horizontal_u;
+
+  uint32_t minimal_transform_size_inter_view_vertical_t;
+  uint32_t minimal_transform_size_inter_view_horizontal_s;
+  uint32_t minimal_transform_size_intra_view_vertical_v;
+  uint32_t minimal_transform_size_intra_view_horizontal_u;
+
+  double transform_scale_t = 1.0;
+  double transform_scale_s = 1.0;
+  double transform_scale_v = 1.0;
+  double transform_scale_u = 1.0;
 
  private:
   void parse_cli(int argc, char **argv);

@@ -41,20 +41,24 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 
 
 template<typename T = uint16_t>
 class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<T> {
+ protected:
+  std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
+      prediction_mode_configuration;
+
  public:
   JPLM4DPredictionModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
           configuration)
-      : JPLMLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        JPLMLightFieldEncoder<T>(std::move(configuration)) {
+      : JPLMLightFieldCodec<T>(std::make_unique<LightfieldFromPPMFile<T>>(
+            configuration->get_lightfield_io_configurations())),
+        JPLMLightFieldEncoder<T>(*configuration),
+        prediction_mode_configuration(std::move(configuration)) {
   }
 
   virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;

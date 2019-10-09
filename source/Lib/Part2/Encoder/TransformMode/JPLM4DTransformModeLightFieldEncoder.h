@@ -41,36 +41,116 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
+#include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
+#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/TransformPartition.h"
 
+template<typename PelType = uint16_t>
+class JPLM4DTransformModeLightFieldEncoder
+    : public JPLM4DTransformModeLightFieldCodec<PelType>,
+      public JPLMLightFieldEncoder<PelType> {
+ protected:
+  std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
+      transform_mode_configuration;
+  Hierarchical4DEncoder hierarchical_4d_encoder;
+  TransformPartition tp;
 
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldEncoder : public JPLM4DTransformModeLightFieldCodec<T>, public JPLMLightFieldEncoder<T> {
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
           configuration)
-      : JPLMLightFieldCodec<T>(std::make_unique<LightfieldFromPPMFile<T>>(
-                 configuration->get_lightfield_io_configurations())),
-      JPLMLightFieldEncoder<T>(std::move(configuration)) {
+      : JPLMLightFieldCodec<PelType>(
+            std::make_unique<LightfieldFromPPMFile<PelType>>(
+                configuration->get_lightfield_io_configurations())),
+        JPLMLightFieldEncoder<PelType>(*configuration),
+        transform_mode_configuration(std::move(configuration)),
+        tp(transform_mode_configuration
+                ->get_minimal_transform_size_inter_view_vertical(),
+            transform_mode_configuration
+                ->get_minimal_transform_size_inter_view_horizontal(),
+            transform_mode_configuration
+                ->get_minimal_transform_size_intra_view_vertical(),
+            transform_mode_configuration
+                ->get_minimal_transform_size_intra_view_horizontal()) {
+    tp.mPartitionData.set_dimension(
+        transform_mode_configuration
+            ->get_maximal_transform_size_inter_view_vertical(),  //T
+        transform_mode_configuration
+            ->get_maximal_transform_size_inter_view_horizontal(),  //S
+        transform_mode_configuration
+            ->get_maximal_transform_size_intra_view_vertical(),  //V
+        transform_mode_configuration
+            ->get_maximal_transform_size_intra_view_horizontal());  //U
+    setup_hierarchical_4d_encoder();
+
+    this->setup_transform_coefficients(true,
+        transform_mode_configuration->get_maximal_transform_sizes(),
+        transform_mode_configuration->get_transform_scalings());
+
+    write_initial_data_to_encoded_file();
+
+    this->initialize_extension_lenghts();
   }
+
+
+  void setup_hierarchical_4d_encoder() {
+    hierarchical_4d_encoder.mTransformLength_t =
+        transform_mode_configuration
+            ->get_maximal_transform_size_inter_view_vertical();
+    hierarchical_4d_encoder.mTransformLength_s =
+        transform_mode_configuration
+            ->get_maximal_transform_size_inter_view_horizontal();
+    hierarchical_4d_encoder.mTransformLength_v =
+        transform_mode_configuration
+            ->get_maximal_transform_size_intra_view_vertical();
+    hierarchical_4d_encoder.mTransformLength_u =
+        transform_mode_configuration
+            ->get_maximal_transform_size_intra_view_horizontal();
+    hierarchical_4d_encoder.create_temporary_buffer(
+        hierarchical_4d_encoder.mTransformLength_u);
+    hierarchical_4d_encoder.mMinimumTransformLength_t =
+        transform_mode_configuration
+            ->get_minimal_transform_size_inter_view_vertical();
+    hierarchical_4d_encoder.mMinimumTransformLength_s =
+        transform_mode_configuration
+            ->get_minimal_transform_size_inter_view_horizontal();
+    hierarchical_4d_encoder.mMinimumTransformLength_v =
+        transform_mode_configuration
+            ->get_minimal_transform_size_intra_view_vertical();
+    hierarchical_4d_encoder.mMinimumTransformLength_u =
+        transform_mode_configuration
+            ->get_minimal_transform_size_intra_view_horizontal();
+    // std::tie(
+    //     hierarchical_4d_encoder.mNumberOfVerticalViews,
+    //     hierarchical_4d_encoder.mNumberOfHorizontalViews,
+    //     hierarchical_4d_encoder.mNumberOfViewLines,
+    //     hierarchical_4d_encoder.mNumberOfViewColumns) = lightfield->get_dimensions<int>();
+    const auto& [T, S, V, U] =
+        this->light_field->template get_dimensions<uint32_t>();
+    hierarchical_4d_encoder.mNumberOfVerticalViews = T;
+    hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
+    hierarchical_4d_encoder.mNumberOfViewLines = V;
+    hierarchical_4d_encoder.mNumberOfViewColumns = U;
+
+    hierarchical_4d_encoder.mPGMScale =
+        std::pow(2, this->light_field->get_views_bpp()) - 1;
+  }
+
+
+  void
+  write_initial_data_to_encoded_file() {  //read_initial_data_from_encoded_file
+    hierarchical_4d_encoder.write_initial_data();
+  }
+
 
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
   virtual void run_for_block_4d() override {
-  	std::cout << "running 4d block in encoder..." << std::endl;
+    std::cout << "running 4d block in encoder..." << std::endl;
   }
-
-  // virtual void run() override {
-  //   std::cout << "Run LF transfom mode encoder." << std::endl;
-  //   //! \todo implement run method for jpl lightfield encoder
-  // }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
-
-// JPLMLightFieldCodec<T>(std::make_unique<LightfieldFromPPMFile<T>>(
-//                 configuration->get_lightfield_io_configurations()))

@@ -91,6 +91,23 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_maximal_transform_size_inter_view_vertical() const;
   uint32_t get_minimal_transform_size_inter_view_horizontal() const;
   uint32_t get_maximal_transform_size_inter_view_horizontal() const;
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+
+
+  get_maximal_transform_sizes() const {
+    return {maximal_transform_size_inter_view_vertical_t,
+        maximal_transform_size_inter_view_horizontal_s,
+        maximal_transform_size_intra_view_vertical_v,
+        maximal_transform_size_intra_view_horizontal_u};
+  }
+
+
+  std::tuple<double, double, double, double> get_transform_scalings() const {
+    return {transform_scale_t, transform_scale_s, transform_scale_v,
+        transform_scale_u};
+  }
+
+
   TransformSize transform_size;
 };
 
