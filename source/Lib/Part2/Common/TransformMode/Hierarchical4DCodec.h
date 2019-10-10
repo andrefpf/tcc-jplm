@@ -81,21 +81,16 @@ public:
 
 	void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines, mNumberOfViewColumns) = dimension.as_tuple();
-        std::cout << "LF: \n" << mNumberOfVerticalViews << ", " << mNumberOfHorizontalViews << ", ";
-        std::cout << mNumberOfViewLines << ", " << mNumberOfViewColumns << std::endl;
 
 	}
 
 	void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u) = dimension.as_tuple();
-        std::cout << "T : \n" << mTransformLength_t << ", " << mTransformLength_s << ", ";
-        std::cout << mTransformLength_v << ", " << mTransformLength_u << std::endl;
 	}
 
+	
 	void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u) = dimension.as_tuple();
-        std::cout << "TM : \n" << mMinimumTransformLength_t << ", " << mMinimumTransformLength_s << ", ";
-        std::cout << mMinimumTransformLength_v << ", " << mMinimumTransformLength_u << std::endl;
 	}
 };
 
