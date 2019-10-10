@@ -61,8 +61,8 @@ protected:
 	static constexpr auto number_of_probability_models=161;
     std::array<ProbabilityModel, number_of_probability_models> probability_models;
     int mPGMScale;
-    uint8_t mSuperiorBitPlane = 30;
-    uint8_t mInferiorBitPlane = 0;
+    uint8_t superior_bit_plane = 30;
+    uint8_t inferior_bit_plane = 0;
 public:
 
 
@@ -77,22 +77,22 @@ public:
 
 
     void set_inferior_bit_plane(uint8_t value) {
-        mInferiorBitPlane = value;
+        inferior_bit_plane = value;
     }
 
 
     auto get_inferior_bit_plane() const {
-        return mInferiorBitPlane;
+        return inferior_bit_plane;
     }
 
 
     void set_superior_bit_plane(uint8_t value) {
-        mSuperiorBitPlane = value;
+        superior_bit_plane = value;
     }
 
 
     auto get_superior_bit_plane() const {
-        return mSuperiorBitPlane;
+        return superior_bit_plane;
     }
 
 

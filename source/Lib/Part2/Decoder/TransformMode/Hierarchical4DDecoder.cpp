@@ -47,7 +47,7 @@ void Hierarchical4DDecoder::start() {
 
 void Hierarchical4DDecoder::decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane) {
     
-    if(bitplane < mInferiorBitPlane) {
+    if(bitplane < inferior_bit_plane) {
         return;
     }
     
@@ -115,7 +115,7 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
     int bit;
     int bit_position=bitplane;
     
-    for(bit_position = bitplane; bit_position >= mInferiorBitPlane; bit_position--) {
+    for(bit_position = bitplane; bit_position >= inferior_bit_plane; bit_position--) {
         magnitude = magnitude << 1;
         bit = entropy_decoder.decode_bit(probability_models[bit_position+mSymbolProbabilityModelIndex]);
         if(bit_position > BITPLANE_BYPASS) 
@@ -124,9 +124,9 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
             magnitude++;
          }            
     }
-    magnitude = magnitude << mInferiorBitPlane;
+    magnitude = magnitude << inferior_bit_plane;
     if(magnitude > 0) {
-        magnitude += (1 << mInferiorBitPlane)/2;
+        magnitude += (1 << inferior_bit_plane)/2;
         if(entropy_decoder.decode_bit(probability_models[0]) == 1) {
             magnitude = -magnitude;
         }

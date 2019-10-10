@@ -52,7 +52,7 @@ void Hierarchical4DEncoder::write_initial_data() {
   auto bytes = std::vector<std::byte>();
   bytes.reserve(28);
 
-  BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mSuperiorBitPlane);
+  BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->superior_bit_plane);
     
     //writes the maximum transform sizes
     BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_t);
@@ -112,10 +112,10 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
   RdOptimizeHexadecaTree(
-      position, lengths, lambda, mSuperiorBitPlane, hexadecatree_flags);
+      position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
-      mSubbandLF.mlength_v, mSubbandLF.mlength_u, mSuperiorBitPlane,
+      mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
       flagSearchIndex);
 }
 
@@ -192,7 +192,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
     std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
   using LF = LightFieldDimension;
 
-  if (bitplane < mInferiorBitPlane) {
+  if (bitplane < inferior_bit_plane) {
     double signal_energy = 0.0;
     auto temp = temporary_buffer.get();
     for (auto t = 0; t < std::get<LF::T>(lengths); t++) {
@@ -225,7 +225,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
 
     auto there_is_one = false;
     double accumulatedRate = 0.0;
-    for (int bit_position = bitplane; bit_position >= mInferiorBitPlane;
+    for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
          bit_position--) {
       int bit = (magnitude >> bit_position) & 01;
       if (bit) {
@@ -252,10 +252,10 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
     if (there_is_one)
       accumulatedRate += 1.0;
 
-    int bitMask = onesMask << mInferiorBitPlane;
+    int bitMask = onesMask << inferior_bit_plane;
     int quantizedMagnitude = magnitude & bitMask;
     if (there_is_one) {
-      quantizedMagnitude += (1 << mInferiorBitPlane) / 2;
+      quantizedMagnitude += (1 << inferior_bit_plane) / 2;
     }
     double error = magnitude - quantizedMagnitude;
 
@@ -380,7 +380,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
   j_skip += SignalEnergySum;
 
   //Choose the lowest cost
-  if ((J0 < j_skip) || ((bitplane == mInferiorBitPlane) && (!Significance))) {
+  if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!Significance))) {
     std::vector<HexadecaTreeFlag> temp_hexadecatree_flags = hexadecatree_flags;
 
     if (Significance) {
@@ -413,7 +413,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
 void Hierarchical4DEncoder::encode_hexadecatree(int position_t, int position_s,
     int position_v, int position_u, int length_t, int length_s, int length_v,
     int length_u, uint8_t bitplane, int& flagIndex) {
-  if (bitplane < mInferiorBitPlane) {
+  if (bitplane < inferior_bit_plane) {
     return;
   }
 
@@ -488,7 +488,7 @@ void Hierarchical4DEncoder::encode_coefficient(int coefficient, uint8_t bitplane
   if (coefficient < 0) {
     sign = 1;
   }
-  for (int bit_position = bitplane; bit_position >= mInferiorBitPlane;
+  for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
        bit_position--) {
     int bit = (magnitude >> (bit_position)) & 01;
     mEntropyCoder.encode_bit(
@@ -566,7 +566,7 @@ void Hierarchical4DEncoder::encode_partition_viewSplit_flag() {
 void Hierarchical4DEncoder::encode_inferior_bit_plane_value() {
     const auto& probability_model = probability_models[0];
   for (int n = MINIMUM_BITPLANE_PRECISION - 1; n >= 0; n--) {
-    int bit = (mInferiorBitPlane >> n) & 01;
+    int bit = (inferior_bit_plane >> n) & 01;
     mEntropyCoder.encode_bit(bit, probability_model);
   }
 }
@@ -581,7 +581,7 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
   int onesMask = 0;
   onesMask = ~onesMask;
 
-  for (int bit_position = mSuperiorBitPlane; bit_position >= 0;
+  for (int bit_position = superior_bit_plane; bit_position >= 0;
        bit_position--) {
     double distortion = 0.0;
     auto signalRate = 0;
