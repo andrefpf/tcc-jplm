@@ -48,7 +48,6 @@
 #include <limits>
 #include <cstdint>
 
-// #define MAXINT 0xffff
 
 class ABACCodec {
  protected:
@@ -64,8 +63,11 @@ class ABACCodec {
   unsigned char mBitBuffer; /*!< bit-readable buffer */
   FILE *file_ptr = nullptr; /*!< pointer to file */
  public:
-  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {}
-  ~ABACCodec() = default;
+  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {
+  }
+
+
+  virtual ~ABACCodec() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_ABACCODEC_H__ */

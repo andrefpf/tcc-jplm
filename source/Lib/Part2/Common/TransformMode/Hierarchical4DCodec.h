@@ -61,10 +61,9 @@ protected:
 	static constexpr auto number_of_probability_models=161;
 	int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
-public:
-	std::array<ProbabilityModel, number_of_probability_models> probability_models;
+    std::array<ProbabilityModel, number_of_probability_models> probability_models;
     Block4D mSubbandLF;
-	uint8_t mSuperiorBitPlane = 30;
+    uint8_t mSuperiorBitPlane = 30;
     uint8_t mInferiorBitPlane = 0;
     int mPGMScale;
     uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
@@ -74,21 +73,21 @@ public:
     uint32_t mNumberOfVerticalViews, mNumberOfHorizontalViews;
     uint32_t mNumberOfViewLines, mNumberOfViewColumns;
     //LightfieldDimension<uint32_t> lightfield_dimension;
-	Hierarchical4DCodec() = default;
+    Hierarchical4DCodec() = default;
+public:
 	virtual ~Hierarchical4DCodec() = default;
 	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
 
 	void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines, mNumberOfViewColumns) = dimension.as_tuple();
-
 	}
 
 	void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u) = dimension.as_tuple();
 	}
 
-	
+
 	void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
         std::tie(mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u) = dimension.as_tuple();
 	}
