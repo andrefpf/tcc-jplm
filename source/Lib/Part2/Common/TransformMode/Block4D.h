@@ -111,6 +111,11 @@ class Block4D {
   ~Block4D();
   void set_dimension(int length_t, int length_s, int length_v, int length_u);
   void set_dimension(const std::tuple<int, int, int, int>& lengths);
+  void set_dimension(const LightfieldDimension<uint32_t>& new_dimension) {
+      const auto& [t, s, v, u] = new_dimension;
+      this->set_dimension(t, s, v, u);
+  }
+
   std::tuple<int, int, int, int> get_dimension() {
     return std::make_tuple(mlength_t, mlength_s, mlength_v, mlength_u);
   }

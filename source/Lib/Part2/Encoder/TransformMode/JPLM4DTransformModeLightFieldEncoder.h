@@ -73,15 +73,8 @@ class JPLM4DTransformModeLightFieldEncoder
         tp(transform_mode_configuration->get_minimal_transform_dimension()),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))) {
-    tp.mPartitionData.set_dimension(
-        transform_mode_configuration
-            ->get_maximal_transform_size_inter_view_vertical(),  //T
-        transform_mode_configuration
-            ->get_maximal_transform_size_inter_view_horizontal(),  //S
-        transform_mode_configuration
-            ->get_maximal_transform_size_intra_view_vertical(),  //V
-        transform_mode_configuration
-            ->get_maximal_transform_size_intra_view_horizontal());  //U
+
+    tp.mPartitionData.set_dimension(transform_mode_configuration->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
 
     this->setup_transform_coefficients(true,

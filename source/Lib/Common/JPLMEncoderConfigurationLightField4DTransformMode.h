@@ -102,6 +102,10 @@ class JPLMEncoderConfigurationLightField4DTransformMode
         maximal_transform_size_intra_view_horizontal_u};
   }
 
+    LightfieldDimension<uint32_t> get_maximal_transform_dimension() const {
+        return {get_maximal_transform_sizes()};
+    }
+
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
     get_minimal_transform_sizes() const {
