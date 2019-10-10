@@ -519,18 +519,15 @@ void Hierarchical4DEncoder::encode_segmentation_lowerBitPlane_flag(
 }
 
 void Hierarchical4DEncoder::encode_segmentation_splitBlock_flag(int bitplane) {
-  mEntropyCoder.encode_bit(
-      0, probability_models[(bitplane << 1) +
-                            mSegmentationFlagProbabilityModelIndex]);
-  mEntropyCoder.encode_bit(
-      1, probability_models[(bitplane << 1) + 1 +
-                            mSegmentationFlagProbabilityModelIndex]);
+  auto& probability_model_0 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex];
+  auto& probability_model_1 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex + 1 ];
+
+  mEntropyCoder.encode_bit<0>(probability_model_0);
+  mEntropyCoder.encode_bit<1>(probability_model_1);
+
   if (bitplane > BITPLANE_BYPASS_FLAGS) {
-    probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex]
-        .update<0>();
-    probability_models[(bitplane << 1) + 1 +
-                       mSegmentationFlagProbabilityModelIndex]
-        .update<1>();
+      probability_model_0.update<0>();
+      probability_model_1.update<1>();
   }
 }
 

@@ -69,36 +69,11 @@ void ABACEncoder::output_bit_pattern_according_to_condition(bool condition) {
 
 /*! encodes a binary symbol using the given probability model */
 void ABACEncoder::encode_bit(bool bit, const ProbabilityModel& probability_model) {
-//  uint64_t length_0 = (((mHigh - mLow + 1) * probability_model.get_frequency_of_zeros()) /
-//                       probability_model.get_frequency_of_ones());
-
   if (bit) {
       encode_bit<1>(probability_model);
   } else {
       encode_bit<0>(probability_model);
   }
-
-
-//  if (bit) {  //1
-//    mLow += length_0;
-//  } else {  //0
-//    mHigh = mLow + length_0 - 1;
-//  }
-//
-//  while (
-//      ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) ||
-//      ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
-//    if ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
-//      output_bit_pattern_according_to_condition((mLow & MSB_MASK) != 0);
-//      mask_set_high_reset_low();
-//    }
-//    if ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK))) {
-//      number_of_scalings++;
-//      mask_set_high_reset_low();
-//      mLow ^= MSB_MASK;
-//      mHigh ^= MSB_MASK;
-//    }
-//  }
 }
 
 
