@@ -117,9 +117,9 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
     
     for(bit_position = bitplane; bit_position >= inferior_bit_plane; bit_position--) {
         magnitude = magnitude << 1;
-        bit = entropy_decoder.decode_bit(probability_models[bit_position+mSymbolProbabilityModelIndex]);
+        bit = entropy_decoder.decode_bit(probability_models[bit_position+SYMBOL_PROBABILITY_MODEL_INDEX]);
         if(bit_position > BITPLANE_BYPASS) 
-            probability_models[bit_position+mSymbolProbabilityModelIndex].update(bit);            
+            probability_models[bit_position+SYMBOL_PROBABILITY_MODEL_INDEX].update(bit);
         if(bit == 1) {
             magnitude++;
          }            

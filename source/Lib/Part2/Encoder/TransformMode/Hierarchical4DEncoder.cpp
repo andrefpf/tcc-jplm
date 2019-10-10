@@ -232,20 +232,20 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
         there_is_one = true;
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                                            mSymbolProbabilityModelIndex]
+                    SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<1>();
         if (bit_position > BITPLANE_BYPASS)
           optimization_probability_models[bit_position +
-                                          mSymbolProbabilityModelIndex]
+                  SYMBOL_PROBABILITY_MODEL_INDEX]
               .update<1>();
       } else {
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                                            mSymbolProbabilityModelIndex]
+                    SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<0>();
         if (bit_position > BITPLANE_BYPASS)
           optimization_probability_models[bit_position +
-                                          mSymbolProbabilityModelIndex]
+                  SYMBOL_PROBABILITY_MODEL_INDEX]
               .update<0>();
       }
     }
@@ -492,9 +492,9 @@ void Hierarchical4DEncoder::encode_coefficient(int coefficient, uint8_t bitplane
        bit_position--) {
     int bit = (magnitude >> (bit_position)) & 01;
     mEntropyCoder.encode_bit(
-        bit, probability_models[bit_position + mSymbolProbabilityModelIndex]);
+        bit, probability_models[bit_position + SYMBOL_PROBABILITY_MODEL_INDEX]);
     if (bit_position > BITPLANE_BYPASS)
-      probability_models[bit_position + mSymbolProbabilityModelIndex].update(
+      probability_models[bit_position + SYMBOL_PROBABILITY_MODEL_INDEX].update(
           bit);
     there_is_one |= bit;
   }
@@ -603,10 +603,10 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
         int bit = (magnitude >> bit_position) & 01;
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                                            mSymbolProbabilityModelIndex]
+                    SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate(bit);
         optimization_probability_models[bit_position +
-                                        mSymbolProbabilityModelIndex]
+                SYMBOL_PROBABILITY_MODEL_INDEX]
             .update(bit);
       }
     }
