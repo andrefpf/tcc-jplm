@@ -88,43 +88,19 @@ class JPLM4DTransformModeLightFieldEncoder
 
 
   void setup_hierarchical_4d_encoder() {
-    hierarchical_4d_encoder.mTransformLength_t =
-        transform_mode_configuration
-            ->get_maximal_transform_size_inter_view_vertical();
-    hierarchical_4d_encoder.mTransformLength_s =
-        transform_mode_configuration
-            ->get_maximal_transform_size_inter_view_horizontal();
-    hierarchical_4d_encoder.mTransformLength_v =
-        transform_mode_configuration
-            ->get_maximal_transform_size_intra_view_vertical();
-    hierarchical_4d_encoder.mTransformLength_u =
-        transform_mode_configuration
-            ->get_maximal_transform_size_intra_view_horizontal();
+    hierarchical_4d_encoder.set_transform_dimension(
+        transform_mode_configuration->get_maximal_transform_dimension());
+
     hierarchical_4d_encoder.create_temporary_buffer(
         hierarchical_4d_encoder.mTransformLength_u);
-    hierarchical_4d_encoder.mMinimumTransformLength_t =
-        transform_mode_configuration
-            ->get_minimal_transform_size_inter_view_vertical();
-    hierarchical_4d_encoder.mMinimumTransformLength_s =
-        transform_mode_configuration
-            ->get_minimal_transform_size_inter_view_horizontal();
-    hierarchical_4d_encoder.mMinimumTransformLength_v =
-        transform_mode_configuration
-            ->get_minimal_transform_size_intra_view_vertical();
-    hierarchical_4d_encoder.mMinimumTransformLength_u =
-        transform_mode_configuration
-            ->get_minimal_transform_size_intra_view_horizontal();
-    // std::tie(
-    //     hierarchical_4d_encoder.mNumberOfVerticalViews,
-    //     hierarchical_4d_encoder.mNumberOfHorizontalViews,
-    //     hierarchical_4d_encoder.mNumberOfViewLines,
-    //     hierarchical_4d_encoder.mNumberOfViewColumns) = lightfield->get_dimensions<int>();
-    const auto& [T, S, V, U] =
-        this->light_field->template get_dimensions<uint32_t>();
-    hierarchical_4d_encoder.mNumberOfVerticalViews = T;
-    hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
-    hierarchical_4d_encoder.mNumberOfViewLines = V;
-    hierarchical_4d_encoder.mNumberOfViewColumns = U;
+
+      hierarchical_4d_encoder.set_minimum_transform_dimension(
+              transform_mode_configuration->get_minimal_transform_dimension()
+              );
+
+      hierarchical_4d_encoder.set_lightfield_dimension(
+              this->light_field->template get_dimensions<uint32_t>()
+              );
 
     hierarchical_4d_encoder.mPGMScale =
         std::pow(2, this->light_field->get_views_bpp()) - 1;
