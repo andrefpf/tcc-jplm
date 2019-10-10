@@ -66,34 +66,18 @@ protected:
 public:
 
 
-    void set_level_shift(int value) {
-        mPGMScale = value;
-    }
+    void set_level_shift(int value);
+    int get_level_shift() const;
 
+    void set_inferior_bit_plane(uint8_t value);
+    uint8_t get_inferior_bit_plane() const;
 
-    auto get_level_shift() const {
-        return mPGMScale;
-    }
+    void set_superior_bit_plane(uint8_t value);
+    uint8_t get_superior_bit_plane() const;
 
-
-    void set_inferior_bit_plane(uint8_t value) {
-        inferior_bit_plane = value;
-    }
-
-
-    auto get_inferior_bit_plane() const {
-        return inferior_bit_plane;
-    }
-
-
-    void set_superior_bit_plane(uint8_t value) {
-        superior_bit_plane = value;
-    }
-
-
-    auto get_superior_bit_plane() const {
-        return superior_bit_plane;
-    }
+    void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension);
+    void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
+    void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
 
 
     int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
@@ -110,18 +94,7 @@ public:
     virtual ~Hierarchical4DCodec() = default;
     virtual void reset_probability_models();
 
-	void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension) {
-        std::tie(mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines, mNumberOfViewColumns) = dimension.as_tuple();
-	}
 
-	void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
-        std::tie(mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u) = dimension.as_tuple();
-	}
-
-
-	void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
-        std::tie(mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u) = dimension.as_tuple();
-	}
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__ */
