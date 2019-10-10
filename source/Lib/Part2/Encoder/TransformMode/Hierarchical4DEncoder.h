@@ -73,6 +73,7 @@ public:
 //    }
 
     Hierarchical4DEncoder() : optimization_probability_models(probability_models) {
+//        reset_probability_models();
     }
 
 //    void setup(const JPLMEncoderConfigurationLightField4DTransformMode& encoder_configuration) {
@@ -95,7 +96,6 @@ public:
     bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
-    void start();
     void encode_coefficient(int coefficient, int bitplane);
     void encode_segmentation_lowerBitPlane_flag(int bitplane);
     void encode_segmentation_splitBlock_flag(int bitplane);

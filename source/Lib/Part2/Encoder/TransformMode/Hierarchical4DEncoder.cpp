@@ -41,11 +41,6 @@
 #include "Hierarchical4DEncoder.h"
 
 
-void Hierarchical4DEncoder::start() {
-  reset_probability_models();
-}
-
-
 ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() const {
   return mEntropyCoder.get_ref_to_codestream_code();
 }
@@ -569,9 +564,10 @@ void Hierarchical4DEncoder::encode_partition_viewSplit_flag() {
 
 
 void Hierarchical4DEncoder::encode_inferior_bit_plane_value() {
+    const auto& probability_model = probability_models[0];
   for (int n = MINIMUM_BITPLANE_PRECISION - 1; n >= 0; n--) {
     int bit = (mInferiorBitPlane >> n) & 01;
-    mEntropyCoder.encode_bit(bit, probability_models[0]);
+    mEntropyCoder.encode_bit(bit, probability_model);
   }
 }
 
