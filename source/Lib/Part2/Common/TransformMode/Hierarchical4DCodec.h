@@ -61,8 +61,8 @@ protected:
 	static constexpr auto number_of_probability_models=161;
     std::array<ProbabilityModel, number_of_probability_models> probability_models;
     int mPGMScale;
-    uint8_t superior_bit_plane = 30;
-    uint8_t inferior_bit_plane = 0;
+    uint8_t superior_bit_plane;
+    uint8_t inferior_bit_plane;
 
     //! \todo check if the transform dimension must be kept in this class or only the number of elements in the transform.
     //LightfieldDimension<uint32_t> transform_dimension;
@@ -103,7 +103,7 @@ public:
     Block4D mSubbandLF;
 
 
-    Hierarchical4DCodec() = default;
+    Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0) = default;
 
 
     virtual ~Hierarchical4DCodec() = default;
