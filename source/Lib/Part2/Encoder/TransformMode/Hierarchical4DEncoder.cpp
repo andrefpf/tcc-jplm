@@ -45,6 +45,7 @@ void Hierarchical4DEncoder::start() {
   reset_probability_models();
 }
 
+
 ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() const {
   return mEntropyCoder.get_ref_to_codestream_code();
 }
@@ -103,10 +104,12 @@ void Hierarchical4DEncoder::reset_optimization_models() {
   }
 }
 
+
 void Hierarchical4DEncoder::reset_probability_models() {
   Hierarchical4DCodec::reset_probability_models();
   reset_optimization_models();
 }
+
 
 void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   hexadecatree_flags.clear();
@@ -120,6 +123,7 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, mSuperiorBitPlane,
       flagSearchIndex);
 }
+
 
 bool Hierarchical4DEncoder::get_mSubbandLF_significance(int bitplane,
     const std::tuple<int, int, int, int>& position,
@@ -181,9 +185,11 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(int bitplane,
   return false;
 }
 
+
 void Hierarchical4DEncoder::create_temporary_buffer(int size) {
   temporary_buffer = std::make_unique<double[]>(size);
 }
+
 
 std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
     const std::tuple<int, int, int, int>& position,
@@ -479,6 +485,7 @@ void Hierarchical4DEncoder::encode_hexadecatree(int position_t, int position_s,
   }
 }
 
+
 void Hierarchical4DEncoder::encode_coefficient(int coefficient, int bitplane) {
   int sign = 0;
   auto there_is_one = false;
@@ -501,22 +508,21 @@ void Hierarchical4DEncoder::encode_coefficient(int coefficient, int bitplane) {
   }
 }
 
+
 void Hierarchical4DEncoder::encode_segmentation_lowerBitPlane_flag(
     int bitplane) {
-  mEntropyCoder.encode_bit(
-      0, probability_models[(bitplane << 1) +
-                            mSegmentationFlagProbabilityModelIndex]);
-  mEntropyCoder.encode_bit(
-      0, probability_models[(bitplane << 1) + 1 +
-                            mSegmentationFlagProbabilityModelIndex]);
-  if (bitplane > BITPLANE_BYPASS_FLAGS) {
-    probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex]
-        .update<0>();
-    probability_models[(bitplane << 1) + 1 +
-                       mSegmentationFlagProbabilityModelIndex]
-        .update<0>();
-  }
+  auto& probability_model_0 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex];
+  auto& probability_model_1 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex + 1 ];
+
+    mEntropyCoder.encode_bit<0>(probability_model_0);
+    mEntropyCoder.encode_bit<0>(probability_model_1);
+
+    if (bitplane > BITPLANE_BYPASS_FLAGS) {
+        probability_model_0.update<0>();
+        probability_model_1.update<0>();
+    }
 }
+
 
 void Hierarchical4DEncoder::encode_segmentation_splitBlock_flag(int bitplane) {
   auto& probability_model_0 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex];
@@ -531,28 +537,34 @@ void Hierarchical4DEncoder::encode_segmentation_splitBlock_flag(int bitplane) {
   }
 }
 
+
 void Hierarchical4DEncoder::encode_segmentation_zeroBlock_flag(int bitplane) {
-  mEntropyCoder.encode_bit(
-      1, probability_models[(bitplane << 1) +
-                            mSegmentationFlagProbabilityModelIndex]);
-  if (bitplane > BITPLANE_BYPASS_FLAGS)
-    probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex]
-        .update<1>();
+    auto& probability_model_0 =   probability_models[(bitplane << 1) + mSegmentationFlagProbabilityModelIndex];
+
+    mEntropyCoder.encode_bit<1>(probability_model_0);
+
+    if (bitplane > BITPLANE_BYPASS_FLAGS) {
+        probability_model_0.update<1>();
+    }
 }
+
 
 void Hierarchical4DEncoder::encode_partition_transform_flag() {
   mEntropyCoder.encode_bit(0, probability_models[0]);
 }
+
 
 void Hierarchical4DEncoder::encode_partition_spatialSplit_flag() {
   mEntropyCoder.encode_bit(1, probability_models[0]);
   mEntropyCoder.encode_bit(0, probability_models[0]);
 }
 
+
 void Hierarchical4DEncoder::encode_partition_viewSplit_flag() {
   mEntropyCoder.encode_bit(1, probability_models[0]);
   mEntropyCoder.encode_bit(1, probability_models[0]);
 }
+
 
 void Hierarchical4DEncoder::encode_inferior_bit_plane_value() {
   for (int n = MINIMUM_BITPLANE_PRECISION - 1; n >= 0; n--) {
@@ -560,6 +572,7 @@ void Hierarchical4DEncoder::encode_inferior_bit_plane_value() {
     mEntropyCoder.encode_bit(bit, probability_models[0]);
   }
 }
+
 
 int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
   long int subbandSize = mSubbandLF.get_number_of_elements();
@@ -617,10 +630,12 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
   //after this opertation, the optimizer prob state is reset
 }
 
+
 void Hierarchical4DEncoder::set_optimization_model(std::array<ProbabilityModel,
     Hierarchical4DEncoder::number_of_probability_models>& model) {
   optimization_probability_models = model;
 }
+
 
 void Hierarchical4DEncoder::load_optimizer_state() {
   optimization_probability_models = probability_models;
