@@ -80,24 +80,24 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   //Restores state since the encoder will reevaluate it
   hierarchical_4d_encoder.load_optimizer_state();
 
-  auto mPartitionCode = new char[partition_code.size() + 1];
-  mPartitionCode[partition_code.size()] = '\0';
+  auto mPartitionCode = std::string("");
   auto counter = 0;
   for (const auto &flag : partition_code) {
     switch (flag) {
       case PartitionFlag::transform:
-        mPartitionCode[counter++] = 'T';
+          mPartitionCode+='T';
         break;
       case PartitionFlag::spatialSplit:
-        mPartitionCode[counter++] = 'S';
+        mPartitionCode+='S';
         break;
       case PartitionFlag::viewSplit:
-        mPartitionCode[counter++] = 'V';
+          mPartitionCode+='V';
         break;
     }
   }
 
-  printf("mPartitionCode = %s\n", mPartitionCode);  //mPartitionCode
+//  printf("mPartitionCode = %s\n", mPartitionCode);  //mPartitionCode
+std::cout << "Partition code: " << mPartitionCode << "\n";
 //  printf("mInferiorBitPlane = %d\n", hierarchical_4d_encoder.get_inferior_bit_plane());
   std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
 }
