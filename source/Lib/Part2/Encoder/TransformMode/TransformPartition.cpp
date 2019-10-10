@@ -70,7 +70,6 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   hierarchical_4d_encoder.load_optimizer_state();
 
   auto lengths = input_block.get_dimension();
-  // fprintf(stderr, "%d %d %d %d\n", std::get<0>(lengths), std::get<1>(lengths), std::get<2>(lengths), std::get<3>(lengths));
   Block4D transformed_block;
   rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0}, lengths,
       hierarchical_4d_encoder, scaled_lambda, partition_code);
@@ -81,7 +80,6 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   hierarchical_4d_encoder.load_optimizer_state();
 
   auto mPartitionCode = std::string("");
-  auto counter = 0;
   for (const auto &flag : partition_code) {
     switch (flag) {
       case PartitionFlag::transform:
@@ -96,9 +94,7 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
     }
   }
 
-//  printf("mPartitionCode = %s\n", mPartitionCode);  //mPartitionCode
 std::cout << "Partition code: " << mPartitionCode << "\n";
-//  printf("mInferiorBitPlane = %d\n", hierarchical_4d_encoder.get_inferior_bit_plane());
   std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
 }
 

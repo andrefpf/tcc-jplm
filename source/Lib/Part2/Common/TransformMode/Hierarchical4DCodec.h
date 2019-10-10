@@ -108,7 +108,6 @@ public:
     //LightfieldDimension<uint32_t> lightfield_dimension;
     Hierarchical4DCodec() = default;
     virtual ~Hierarchical4DCodec() = default;
-	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
 
 	void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension) {
