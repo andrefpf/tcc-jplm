@@ -148,33 +148,38 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
       ->type_name(
           "enum/CompressionTypeLightField in {transform_mode=0, "
           "prediction_mode=1}");
-  app.add_option("--transform_size_maximum_intra_view_vertical",
-      maximal_transform_size_intra_view_vertical_v,
-      "Maximum 4D transform size in intra-view vertical direction.");
-  app.add_option("--transform_size_minimum_intra_view_vertical",
-      minimal_transform_size_intra_view_vertical_v,
-      "Minimum 4D transform size in intra-view vertical direction.");
 
-  app.add_option("--transform_size_maximum_intra_view_horizontal",
-      maximal_transform_size_intra_view_horizontal_u,
-      "Maximum 4D transform size in intra-view horizontal direction.");
-  app.add_option("--transform_size_minimum_intra_view_horizontal",
-      minimal_transform_size_intra_view_horizontal_u,
-      "Minimum 4D transform size in intra-view horizontal direction.");
 
   app.add_option("--transform_size_maximum_inter_view_vertical",
-      maximal_transform_size_inter_view_vertical_t,
-      "Maximum 4D transform size in inter-view vertical direction.");
-  app.add_option("--transform_size_minimum_inter_view_vertical",
+                   maximal_transform_size_inter_view_vertical_t,
+                   "Maximum 4D transform size in inter-view vertical direction.");
+    app.add_option("--transform_size_maximum_inter_view_horizontal",
+                   maximal_transform_size_inter_view_horizontal_s,
+                   "Maximum 4D transform size in inter-view horizontal direction.");
+    app.add_option("--transform_size_maximum_intra_view_vertical",
+                   maximal_transform_size_intra_view_vertical_v,
+                   "Maximum 4D transform size in intra-view vertical direction.");
+    app.add_option("--transform_size_maximum_intra_view_horizontal",
+                   maximal_transform_size_intra_view_horizontal_u,
+                   "Maximum 4D transform size in intra-view horizontal direction.");
+
+
+
+
+    app.add_option("--transform_size_minimum_inter_view_vertical",
       minimal_transform_size_inter_view_vertical_t,
       "Minimum 4D transform size in inter-view vertical direction.");
+    app.add_option("--transform_size_minimum_inter_view_horizontal",
+                   minimal_transform_size_inter_view_horizontal_s,
+                   "Minimum 4D transform size in inter-view horizontal direction.");
+    app.add_option("--transform_size_minimum_intra_view_vertical",
+                   minimal_transform_size_intra_view_vertical_v,
+                   "Minimum 4D transform size in intra-view vertical direction.");
+    app.add_option("--transform_size_minimum_intra_view_horizontal",
+                   minimal_transform_size_intra_view_horizontal_u,
+                   "Minimum 4D transform size in intra-view horizontal direction.");
 
-  app.add_option("--transform_size_maximum_inter_view_horizontal",
-      maximal_transform_size_inter_view_horizontal_s,
-      "Maximum 4D transform size in inter-view horizontal direction.");
-  app.add_option("--transform_size_minimum_inter_view_horizontal",
-      minimal_transform_size_inter_view_horizontal_s,
-      "Minimum 4D transform size in inter-view horizontal direction.");
+
 
   app.parse(argc, argv);
 }
