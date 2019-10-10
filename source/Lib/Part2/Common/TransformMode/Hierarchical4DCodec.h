@@ -67,14 +67,21 @@ public:
 	int mSuperiorBitPlane = 30;
 	int mInferiorBitPlane = 0;
     int mPGMScale;
-    int mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
-    int mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
-    int mNumberOfVerticalViews, mNumberOfHorizontalViews;
-    int mNumberOfViewLines, mNumberOfViewColumns;
+    uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
+    //LightfieldDimension<uint32_t> transform_dimension;
+    uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
+    //LightfieldDimension<uint32_t> minimum_transform_dimension;
+    uint32_t mNumberOfVerticalViews, mNumberOfHorizontalViews;
+    uint32_t mNumberOfViewLines, mNumberOfViewColumns;
+    //LightfieldDimension<uint32_t> lightfield_dimension;
 	Hierarchical4DCodec() = default;
 	virtual ~Hierarchical4DCodec() = default;
 	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
+
+//	void set_lightfield_dimensions(const LightfieldDimension<uint32_t>& dimension) {
+//
+//	}
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__ */
