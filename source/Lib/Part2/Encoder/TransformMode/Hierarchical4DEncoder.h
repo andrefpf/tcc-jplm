@@ -96,7 +96,6 @@ public:
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
     void start();
-    void EncodeBlock(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
     void encode_coefficient(int coefficient, int bitplane);
     void encode_segmentation_lowerBitPlane_flag(int bitplane);
     void encode_segmentation_splitBlock_flag(int bitplane);
@@ -106,13 +105,11 @@ public:
     void encode_partition_viewSplit_flag();
     void encode_inferior_bit_plane_value();
     void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane, int &flagIndex);
-    void EncodeAll(double lambda, int inferiorBitPlane);
-    void EncodeSubblock(double lambda);
+    void encode_sub_block(double lambda);
     std::pair<double, double> RdOptimizeHexadecaTree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, int bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
     int get_optimum_bit_plane(double lambda);
     void load_optimizer_state();
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);
-    void DeleteProbabilisticModelState(ProbabilityModel *state);
     void create_temporary_buffer(int size);
 
     void write_initial_data();

@@ -404,7 +404,7 @@ void TransformPartition::encode_partition(
       hierarchical_4d_encoder.mSubbandLF.set_dimension(lengths);
       hierarchical_4d_encoder.mSubbandLF.copy_sub_block_from(
           mPartitionData, position);
-      hierarchical_4d_encoder.EncodeSubblock(lambda);
+      hierarchical_4d_encoder.encode_sub_block(lambda);
       return;
     }
     case PartitionFlag::spatialSplit: {

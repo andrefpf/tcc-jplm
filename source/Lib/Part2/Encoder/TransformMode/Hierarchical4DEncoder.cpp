@@ -108,7 +108,7 @@ void Hierarchical4DEncoder::reset_probability_models() {
   reset_optimization_models();
 }
 
-void Hierarchical4DEncoder ::EncodeSubblock(double lambda) {
+void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   hexadecatree_flags.clear();
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
