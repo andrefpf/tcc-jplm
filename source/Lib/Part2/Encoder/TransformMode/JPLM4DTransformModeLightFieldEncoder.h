@@ -92,8 +92,7 @@ class JPLM4DTransformModeLightFieldEncoder
     hierarchical_4d_encoder.set_transform_dimension(
         transform_mode_configuration->get_maximal_transform_dimension());
 
-    hierarchical_4d_encoder.create_temporary_buffer(
-        hierarchical_4d_encoder.mTransformLength_u);
+    hierarchical_4d_encoder.create_temporary_buffer();
 
       hierarchical_4d_encoder.set_minimum_transform_dimension(
               transform_mode_configuration->get_minimal_transform_dimension()

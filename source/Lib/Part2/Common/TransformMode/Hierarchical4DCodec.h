@@ -63,8 +63,11 @@ protected:
     int mPGMScale;
     uint8_t superior_bit_plane = 30;
     uint8_t inferior_bit_plane = 0;
+    uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
 public:
-
+    auto get_number_of_elements_in_transform() const {
+        return mTransformLength_t*mTransformLength_s*mTransformLength_v*mTransformLength_u;
+    }
 
     void set_level_shift(int value);
     int get_level_shift() const;
@@ -83,7 +86,7 @@ public:
     int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
     Block4D mSubbandLF;
-    uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
+
     //LightfieldDimension<uint32_t> transform_dimension;
     uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
     //LightfieldDimension<uint32_t> minimum_transform_dimension;

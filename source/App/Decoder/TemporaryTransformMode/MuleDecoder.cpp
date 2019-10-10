@@ -74,14 +74,14 @@ void MuleDecoder::run_for_block_4d(const uint32_t channel,
 
 
 void MuleDecoder::setup_header_data_into_decoded_lightfield() {
-  hierarchical_4d_decoder.mTransformLength_t =
-      parameter_handler.transform_length_t;
-  hierarchical_4d_decoder.mTransformLength_s =
-      parameter_handler.transform_length_s;
-  hierarchical_4d_decoder.mTransformLength_v =
-      parameter_handler.transform_length_v;
-  hierarchical_4d_decoder.mTransformLength_u =
-      parameter_handler.transform_length_u;
+//  hierarchical_4d_decoder.mTransformLength_t =
+//      parameter_handler.transform_length_t;
+//  hierarchical_4d_decoder.mTransformLength_s =
+//      parameter_handler.transform_length_s;
+//  hierarchical_4d_decoder.mTransformLength_v =
+//      parameter_handler.transform_length_v;
+//  hierarchical_4d_decoder.mTransformLength_u =
+//      parameter_handler.transform_length_u;
 
   hierarchical_4d_decoder.mMinimumTransformLength_t =
       parameter_handler.min_transform_length_t;
@@ -115,14 +115,16 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
   hierarchical_4d_decoder.set_superior_bit_plane(
       read_int_from_codestream_code(codestream_code));
   // //reads the maximum transform sizes
-  parameter_handler.transform_length_t =
+  auto transform_length_t =
       read_int_from_codestream_code(codestream_code);
-  parameter_handler.transform_length_s =
+  auto transform_length_s =
       read_int_from_codestream_code(codestream_code);
-  parameter_handler.transform_length_v =
+  auto transform_length_v =
       read_int_from_codestream_code(codestream_code);
-  parameter_handler.transform_length_u =
+  auto transform_length_u =
       read_int_from_codestream_code(codestream_code);
+  hierarchical_4d_decoder.set_transform_dimension({transform_length_t, transform_length_s, transform_length_v, transform_length_u});
+
   // //reads the minimum transform sizes
   parameter_handler.min_transform_length_t =
       read_int_from_codestream_code(codestream_code);

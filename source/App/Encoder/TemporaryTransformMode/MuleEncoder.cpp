@@ -105,16 +105,12 @@ MuleEncoder::get_contigous_codestream_code() {
 
 
 void MuleEncoder::setup_hierarchical_4d_encoder() {
-  hierarchical_4d_encoder.mTransformLength_t =
-      parameter_handler.transform_length_t;
-  hierarchical_4d_encoder.mTransformLength_s =
-      parameter_handler.transform_length_s;
-  hierarchical_4d_encoder.mTransformLength_v =
-      parameter_handler.transform_length_v;
-  hierarchical_4d_encoder.mTransformLength_u =
-      parameter_handler.transform_length_u;
-  hierarchical_4d_encoder.create_temporary_buffer(
-      hierarchical_4d_encoder.mTransformLength_u);
+    hierarchical_4d_encoder.set_transform_dimension(
+            {parameter_handler.transform_length_t, parameter_handler.transform_length_s,
+      parameter_handler.transform_length_v, parameter_handler.transform_length_u});
+
+  hierarchical_4d_encoder.create_temporary_buffer();
+
   hierarchical_4d_encoder.mMinimumTransformLength_t =
       parameter_handler.min_transform_length_t;
   hierarchical_4d_encoder.mMinimumTransformLength_s =

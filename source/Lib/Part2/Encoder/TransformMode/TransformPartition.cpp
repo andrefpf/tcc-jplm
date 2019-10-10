@@ -58,10 +58,7 @@ TransformPartition::TransformPartition(const LightfieldDimension<uint32_t>& mini
 void TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
   // double scaled_lambda = lambda*input_block.get_number_of_elements();
-  double scaled_lambda = lambda * hierarchical_4d_encoder.mTransformLength_t *
-                         hierarchical_4d_encoder.mTransformLength_s *
-                         hierarchical_4d_encoder.mTransformLength_v *
-                         hierarchical_4d_encoder.mTransformLength_u;
+  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   partition_code.clear();
   mEvaluateOptimumBitPlane = true;
@@ -375,10 +372,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
 
 void TransformPartition::encode_partition(
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
-  double scaled_lambda = lambda * hierarchical_4d_encoder.mTransformLength_t *
-                         hierarchical_4d_encoder.mTransformLength_s *
-                         hierarchical_4d_encoder.mTransformLength_v *
-                         hierarchical_4d_encoder.mTransformLength_u;
+  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   mPartitionCodeIndex = 0;
 

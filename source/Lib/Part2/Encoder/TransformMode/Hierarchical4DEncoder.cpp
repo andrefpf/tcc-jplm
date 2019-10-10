@@ -181,8 +181,8 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
 }
 
 
-void Hierarchical4DEncoder::create_temporary_buffer(int size) {
-  temporary_buffer = std::make_unique<double[]>(size);
+void Hierarchical4DEncoder::create_temporary_buffer() {
+  temporary_buffer = std::make_unique<double[]>(this->mTransformLength_u);
 }
 
 

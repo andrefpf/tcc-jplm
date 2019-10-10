@@ -110,7 +110,7 @@ public:
     int get_optimum_bit_plane(double lambda);
     void load_optimizer_state();
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);
-    void create_temporary_buffer(int size);
+    void create_temporary_buffer();
 
     void write_initial_data();
 
