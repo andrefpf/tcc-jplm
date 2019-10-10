@@ -59,7 +59,8 @@ protected:
 	static constexpr auto SYMBOL_PROBABILITY_MODEL_INDEX=1;
 	static constexpr auto SEGMENTATION_PROB_MODEL_INDEX=32;
 	static constexpr auto number_of_probability_models=161;
-	int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
+public:
+    int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
     std::array<ProbabilityModel, number_of_probability_models> probability_models;
     Block4D mSubbandLF;
@@ -74,8 +75,7 @@ protected:
     uint32_t mNumberOfViewLines, mNumberOfViewColumns;
     //LightfieldDimension<uint32_t> lightfield_dimension;
     Hierarchical4DCodec() = default;
-public:
-	virtual ~Hierarchical4DCodec() = default;
+    virtual ~Hierarchical4DCodec() = default;
 	static constexpr int get_number_of_probability_models() {return Hierarchical4DCodec::number_of_probability_models;}
     virtual void reset_probability_models();
 
