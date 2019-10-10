@@ -136,13 +136,13 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
 
 HexadecaTreeFlag Hierarchical4DDecoder::decode_segmentation_flag(int bitplane) {
     int lsb=0;
-    int msb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+mSegmentationFlagProbabilityModelIndex]);
+    int msb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+SEGMENTATION_PROB_MODEL_INDEX]);
     if(bitplane > BITPLANE_BYPASS_FLAGS) 
-        probability_models[(bitplane<<1)+mSegmentationFlagProbabilityModelIndex].update(msb);
+        probability_models[(bitplane<<1)+SEGMENTATION_PROB_MODEL_INDEX].update(msb);
     if(msb == 0) {
-        lsb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+1+mSegmentationFlagProbabilityModelIndex]);
+        lsb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+1+SEGMENTATION_PROB_MODEL_INDEX]);
         if(bitplane > BITPLANE_BYPASS_FLAGS) 
-            probability_models[(bitplane<<1)+1+mSegmentationFlagProbabilityModelIndex].update(lsb);
+            probability_models[(bitplane<<1)+1+SEGMENTATION_PROB_MODEL_INDEX].update(lsb);
         if (lsb) {//01 = 1 = splitBlock
             return HexadecaTreeFlag::splitBlock;
         }//00

@@ -99,7 +99,7 @@ public:
 
     void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
     void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
-    int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
+//    int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
 
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
 
