@@ -103,8 +103,8 @@ class JPLM4DTransformModeLightFieldEncoder
               this->light_field->template get_dimensions<uint32_t>()
               );
 
-    hierarchical_4d_encoder.mPGMScale =
-        std::pow(2, this->light_field->get_views_bpp()) - 1;
+    hierarchical_4d_encoder.set_level_shift(
+        std::pow(2, this->light_field->get_views_bpp()) - 1);
   }
 
 

@@ -134,8 +134,8 @@ void MuleEncoder::setup_hierarchical_4d_encoder() {
   hierarchical_4d_encoder.mNumberOfViewLines = V;
   hierarchical_4d_encoder.mNumberOfViewColumns = U;
 
-  hierarchical_4d_encoder.mPGMScale =
-      std::pow(2, lightfield->get_views_bpp()) - 1;
+  hierarchical_4d_encoder.set_level_shift(
+      std::pow(2, lightfield->get_views_bpp()) - 1);
 }
 
 

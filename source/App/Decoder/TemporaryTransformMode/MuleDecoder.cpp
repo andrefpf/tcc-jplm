@@ -55,7 +55,7 @@ void MuleDecoder::run_for_block_4d(const uint32_t channel,
 
   auto decoded_block =
       partition_decoder.decode_partition(hierarchical_4d_decoder, size);
-  decoded_block += (hierarchical_4d_decoder.mPGMScale+1)/2;
+  decoded_block += (hierarchical_4d_decoder.get_level_shift()+1)/2;
 
 
   // if (needs_block_extension) {
@@ -142,8 +142,8 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
       read_int_from_codestream_code(codestream_code);
   hierarchical_4d_decoder.mNumberOfViewColumns =
       read_int_from_codestream_code(codestream_code);
-  hierarchical_4d_decoder.mPGMScale =
-      read_int_from_codestream_code(codestream_code);
+  hierarchical_4d_decoder.set_level_shift(
+      read_int_from_codestream_code(codestream_code));
 
   //reads the extension_method from file...
   // int extension_method_code;

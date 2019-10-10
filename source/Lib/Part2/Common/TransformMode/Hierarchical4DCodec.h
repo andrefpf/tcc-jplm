@@ -59,14 +59,20 @@ protected:
 	static constexpr auto SYMBOL_PROBABILITY_MODEL_INDEX=1;
 	static constexpr auto SEGMENTATION_PROB_MODEL_INDEX=32;
 	static constexpr auto number_of_probability_models=161;
+    std::array<ProbabilityModel, number_of_probability_models> probability_models;
+    int mPGMScale;
 public:
     int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
-    std::array<ProbabilityModel, number_of_probability_models> probability_models;
     Block4D mSubbandLF;
     uint8_t mSuperiorBitPlane = 30;
     uint8_t mInferiorBitPlane = 0;
-    int mPGMScale;
+    void set_level_shift(int value) {
+        mPGMScale = value;
+    }
+    auto get_level_shift() const {
+        return mPGMScale;
+    }
     uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
     //LightfieldDimension<uint32_t> transform_dimension;
     uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
