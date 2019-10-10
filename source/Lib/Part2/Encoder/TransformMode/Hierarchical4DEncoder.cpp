@@ -550,19 +550,21 @@ void Hierarchical4DEncoder::encode_segmentation_zeroBlock_flag(int bitplane) {
 
 
 void Hierarchical4DEncoder::encode_partition_transform_flag() {
-  mEntropyCoder.encode_bit(0, probability_models[0]);
+  mEntropyCoder.encode_bit<0>(probability_models[0]);
 }
 
 
 void Hierarchical4DEncoder::encode_partition_spatialSplit_flag() {
-  mEntropyCoder.encode_bit(1, probability_models[0]);
-  mEntropyCoder.encode_bit(0, probability_models[0]);
+  const auto& probability_model = probability_models[0];
+  mEntropyCoder.encode_bit<1>(probability_model);
+  mEntropyCoder.encode_bit<0>(probability_model);
 }
 
 
 void Hierarchical4DEncoder::encode_partition_viewSplit_flag() {
-  mEntropyCoder.encode_bit(1, probability_models[0]);
-  mEntropyCoder.encode_bit(1, probability_models[0]);
+  const auto& probability_model = probability_models[0];
+  mEntropyCoder.encode_bit<1>(probability_model);
+  mEntropyCoder.encode_bit<1>(probability_model);
 }
 
 
