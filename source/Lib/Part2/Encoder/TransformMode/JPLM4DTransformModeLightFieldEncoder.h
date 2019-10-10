@@ -70,14 +70,7 @@ class JPLM4DTransformModeLightFieldEncoder
             {configuration->get_maximal_transform_sizes()}),
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
-        tp(transform_mode_configuration
-                ->get_minimal_transform_size_inter_view_vertical(),
-            transform_mode_configuration
-                ->get_minimal_transform_size_inter_view_horizontal(),
-            transform_mode_configuration
-                ->get_minimal_transform_size_intra_view_vertical(),
-            transform_mode_configuration
-                ->get_minimal_transform_size_intra_view_horizontal()),
+        tp(transform_mode_configuration->get_minimal_transform_dimension()),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))) {
     tp.mPartitionData.set_dimension(

@@ -107,7 +107,8 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda,
     std::vector<PartitionFlag> &partition_code) {
   using LF = LightFieldDimension;
-  /*! returns the Lagrangian cost of one step of the optimization of the multiscale transform for the input block as well as the transformed block */
+  /*! returns the Lagrangian cost of one step of the optimization of the multiscale transform for the input
+   * block as well as the transformed block */
   // std::cerr << "in rd_optimize_transform (" << mEvaluateOptimumBitPlane << ")" << std::endl;
   //saves the current hierarchical_4d_encoder arithmetic model to initial_model.
   auto initial_model = hierarchical_4d_encoder.optimization_probability_models;
