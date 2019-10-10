@@ -8,11 +8,7 @@
 #include "MuleDecoder.h"
 
 void MuleDecoder::open_decoded_lightfield() {
-  auto dimension = LightfieldDimension<std::size_t>(
-      parameter_handler.number_of_vertical_views,
-      parameter_handler.number_of_horizontal_views,
-      hierarchical_4d_decoder.mNumberOfViewLines,
-      hierarchical_4d_decoder.mNumberOfViewColumns);
+  auto dimension = hierarchical_4d_decoder.get_lightfield_dimension();
   auto config = LightfieldIOConfiguration(
       parameter_handler.decoded_lightfield.string(), dimension);
 
@@ -96,10 +92,12 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
     mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u
   });
 
-  hierarchical_4d_decoder.mNumberOfVerticalViews =
-      parameter_handler.number_of_vertical_views;
-  hierarchical_4d_decoder.mNumberOfHorizontalViews =
-      parameter_handler.number_of_horizontal_views;
+
+
+//  hierarchical_4d_decoder.mNumberOfVerticalViews =
+//      parameter_handler.number_of_vertical_views;
+//  hierarchical_4d_decoder.mNumberOfHorizontalViews =
+//      parameter_handler.number_of_horizontal_views;
 }
 
 
@@ -146,10 +144,20 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
   parameter_handler.number_of_horizontal_views =
       read_int_from_codestream_code(codestream_code);
   // //reads the number of lines and columns of each view
-  hierarchical_4d_decoder.mNumberOfViewLines =
+
+
+  auto mNumberOfViewLines =
       read_int_from_codestream_code(codestream_code);
-  hierarchical_4d_decoder.mNumberOfViewColumns =
+  auto mNumberOfViewColumns =
       read_int_from_codestream_code(codestream_code);
+
+
+  hierarchical_4d_decoder.set_lightfield_dimension({
+    parameter_handler.number_of_vertical_views,  parameter_handler.number_of_horizontal_views,
+    mNumberOfViewLines, mNumberOfViewColumns
+  });
+
+
   hierarchical_4d_decoder.set_level_shift(
       read_int_from_codestream_code(codestream_code));
 

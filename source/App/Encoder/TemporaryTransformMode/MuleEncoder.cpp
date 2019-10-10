@@ -114,16 +114,12 @@ void MuleEncoder::setup_hierarchical_4d_encoder() {
   hierarchical_4d_encoder.set_minimum_transform_dimension(
       {parameter_handler.min_transform_length_t, parameter_handler.min_transform_length_s,
       parameter_handler.min_transform_length_v, parameter_handler.min_transform_length_u});
-  // std::tie(
-  //     hierarchical_4d_encoder.mNumberOfVerticalViews,
-  //     hierarchical_4d_encoder.mNumberOfHorizontalViews,
-  //     hierarchical_4d_encoder.mNumberOfViewLines,
-  //     hierarchical_4d_encoder.mNumberOfViewColumns) = lightfield->get_dimensions<int>();
-  const auto& [T, S, V, U] = lightfield->get_dimensions<uint32_t>();
-  hierarchical_4d_encoder.mNumberOfVerticalViews = T;
-  hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
-  hierarchical_4d_encoder.mNumberOfViewLines = V;
-  hierarchical_4d_encoder.mNumberOfViewColumns = U;
+
+    hierarchical_4d_encoder.set_lightfield_dimension(lightfield->get_dimensions<uint32_t>());
+//  hierarchical_4d_encoder.mNumberOfVerticalViews = T;
+//  hierarchical_4d_encoder.mNumberOfHorizontalViews = S;
+//  hierarchical_4d_encoder.mNumberOfViewLines = V;
+//  hierarchical_4d_encoder.mNumberOfViewColumns = U;
 
   hierarchical_4d_encoder.set_level_shift(
       std::pow(2, lightfield->get_views_bpp()) - 1);
