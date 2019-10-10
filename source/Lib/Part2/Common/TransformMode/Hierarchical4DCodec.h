@@ -61,18 +61,44 @@ protected:
 	static constexpr auto number_of_probability_models=161;
     std::array<ProbabilityModel, number_of_probability_models> probability_models;
     int mPGMScale;
-public:
-    int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
-    int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
-    Block4D mSubbandLF;
     uint8_t mSuperiorBitPlane = 30;
     uint8_t mInferiorBitPlane = 0;
+public:
+
+
     void set_level_shift(int value) {
         mPGMScale = value;
     }
+
+
     auto get_level_shift() const {
         return mPGMScale;
     }
+
+
+    void set_inferior_bit_plane(uint8_t value) {
+        mInferiorBitPlane = value;
+    }
+
+
+    auto get_inferior_bit_plane() const {
+        return mInferiorBitPlane;
+    }
+
+
+    void set_superior_bit_plane(uint8_t value) {
+        mSuperiorBitPlane = value;
+    }
+
+
+    auto get_superior_bit_plane() const {
+        return mSuperiorBitPlane;
+    }
+
+
+    int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
+    int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
+    Block4D mSubbandLF;
     uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
     //LightfieldDimension<uint32_t> transform_dimension;
     uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;

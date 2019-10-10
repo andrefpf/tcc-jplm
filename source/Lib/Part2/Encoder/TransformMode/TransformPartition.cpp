@@ -98,7 +98,8 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   }
 
   printf("mPartitionCode = %s\n", mPartitionCode);  //mPartitionCode
-  printf("mInferiorBitPlane = %d\n", hierarchical_4d_encoder.mInferiorBitPlane);
+//  printf("mInferiorBitPlane = %d\n", hierarchical_4d_encoder.get_inferior_bit_plane());
+  std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
 }
 
 double TransformPartition::rd_optimize_transform(Block4D &input_block,
@@ -129,8 +130,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
       block_0;  //copy, its not possible to move...
 
   if (mEvaluateOptimumBitPlane) {
-    hierarchical_4d_encoder.mInferiorBitPlane =
-        hierarchical_4d_encoder.get_optimum_bit_plane(lambda);
+      hierarchical_4d_encoder.set_inferior_bit_plane(hierarchical_4d_encoder.get_optimum_bit_plane(lambda));
     hierarchical_4d_encoder.load_optimizer_state();
     mEvaluateOptimumBitPlane = false;
   }
@@ -150,7 +150,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
       std::get<0>(hierarchical_4d_encoder.RdOptimizeHexadecaTree({0, 0, 0, 0},
           {block_0.mlength_t, block_0.mlength_s, block_0.mlength_v,
               block_0.mlength_u},
-          lambda, hierarchical_4d_encoder.mSuperiorBitPlane,
+          lambda, hierarchical_4d_encoder.get_superior_bit_plane(),
           hierarchical_4d_encoder.hexadecatree_flags));
 
   double bestJ = J0;

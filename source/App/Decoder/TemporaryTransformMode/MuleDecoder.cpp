@@ -112,8 +112,8 @@ uint16_t read_int_from_codestream_code(
 
 void MuleDecoder::read_initial_data_from_compressed_file() {
   // //reads the superior bit plane value
-  hierarchical_4d_decoder.mSuperiorBitPlane =
-      read_int_from_codestream_code(codestream_code);
+  hierarchical_4d_decoder.set_superior_bit_plane(
+      read_int_from_codestream_code(codestream_code));
   // //reads the maximum transform sizes
   parameter_handler.transform_length_t =
       read_int_from_codestream_code(codestream_code);
