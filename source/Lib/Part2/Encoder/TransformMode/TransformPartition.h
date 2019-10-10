@@ -51,6 +51,7 @@ class TransformPartition {
   int mlength_t_min, mlength_s_min, mlength_v_min, mlength_u_min;
   bool
       mEvaluateOptimumBitPlane; /*!< Toggles the optimum bit plane evaluation procedure on and off */
+
  public:
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   TransformPartition(

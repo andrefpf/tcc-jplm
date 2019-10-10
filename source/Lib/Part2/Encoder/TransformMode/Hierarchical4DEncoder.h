@@ -106,7 +106,7 @@ public:
     void encode_inferior_bit_plane_value();
     void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, uint8_t bitplane, int &flagIndex);
     void encode_sub_block(double lambda);
-    std::pair<double, double> RdOptimizeHexadecaTree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
+    std::pair<double, double> rd_optimize_hexadecatree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
     int get_optimum_bit_plane(double lambda);
     void load_optimizer_state();
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);

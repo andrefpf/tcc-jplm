@@ -103,7 +103,7 @@ public:
     Block4D mSubbandLF;
 
 
-    Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0) = default;
+    Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0) {};
 
 
     virtual ~Hierarchical4DCodec() = default;

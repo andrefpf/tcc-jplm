@@ -128,7 +128,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
     mEvaluateOptimumBitPlane = false;
   }
 
-  //call RdOptimizeHexadecaTree method from hierarchical_4d_encoder to evaluate J0
+  //call rd_optimize_hexadecatree method from hierarchical_4d_encoder to evaluate J0
   hierarchical_4d_encoder.hexadecatree_flags.clear();
 
   auto probability_model_for_transform = initial_model;
@@ -140,7 +140,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
 
   double J0 =
       lambda +
-      std::get<0>(hierarchical_4d_encoder.RdOptimizeHexadecaTree({0, 0, 0, 0},
+      std::get<0>(hierarchical_4d_encoder.rd_optimize_hexadecatree({0, 0, 0, 0},
           {block_0.mlength_t, block_0.mlength_s, block_0.mlength_v,
               block_0.mlength_u},
           lambda, hierarchical_4d_encoder.get_superior_bit_plane(),

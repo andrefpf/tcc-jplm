@@ -111,7 +111,7 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-  RdOptimizeHexadecaTree(
+    rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
@@ -186,7 +186,7 @@ void Hierarchical4DEncoder::create_temporary_buffer() {
 }
 
 
-std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
+std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda, uint8_t bitplane,
     std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
@@ -313,7 +313,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
 
   //evaluate the cost J0 to encode this subblock
   if (!Significance) {  //this means that there is no value larger than the threshold (1<<bitplane)
-    auto temp_j_and_energy = RdOptimizeHexadecaTree(
+    auto temp_j_and_energy = rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
     std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
@@ -357,7 +357,7 @@ std::pair<double, double> Hierarchical4DEncoder::RdOptimizeHexadecaTree(
             std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
 
             auto temp_j_and_energy =
-                RdOptimizeHexadecaTree({new_position_t, new_position_s,
+                    rd_optimize_hexadecatree({new_position_t, new_position_s,
                                            new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
                     lambda, bitplane, hexadecatree_flags_1);
