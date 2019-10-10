@@ -61,7 +61,7 @@ int main(int argc, char const* argv[]) {
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
   encoder->run();
-  auto& jpl_file = encoder->get_ref_to_jpl_file();
+  const auto& jpl_file = encoder->get_ref_to_jpl_file();
   of_stream << jpl_file;
   of_stream.close();
 

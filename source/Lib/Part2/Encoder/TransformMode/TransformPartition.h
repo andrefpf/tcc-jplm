@@ -55,6 +55,7 @@ class TransformPartition {
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   TransformPartition(
       int length_t_min, int length_s_min, int length_v_min, int length_u_min);
+  TransformPartition(const LightfieldDimension<uint32_t>& minimum_transform_dimensions);
   ~TransformPartition() = default;
   void rd_optimize_transform(
       Block4D &inputBlock, Hierarchical4DEncoder &entropyCoder, double lambda);

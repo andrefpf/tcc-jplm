@@ -47,6 +47,13 @@ TransformPartition::TransformPartition(
       mlength_v_min(length_v_min), mlength_u_min(length_u_min) {
 }
 
+TransformPartition::TransformPartition(const LightfieldDimension<uint32_t>& minimum_transform_dimensions) :
+        mlength_t_min(minimum_transform_dimensions.get_t()),
+        mlength_s_min(minimum_transform_dimensions.get_s()),
+        mlength_v_min(minimum_transform_dimensions.get_v()),
+        mlength_u_min(minimum_transform_dimensions.get_u()) {
+}
+
 /*! Evaluates the Lagrangian cost of the optimum multiscale transform for the input block as well as the transformed block */
 void TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {

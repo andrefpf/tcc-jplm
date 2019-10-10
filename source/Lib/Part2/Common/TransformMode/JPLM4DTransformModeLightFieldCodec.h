@@ -93,18 +93,14 @@ class JPLM4DTransformModeLightFieldCodec
     //     needs_block_extension=true;
   }
 
+
   virtual void finalization() {};
 
   virtual void run() override {
-    std::cout << "Run LF transfom mode codec." << std::endl;
     const auto& [T, S, V, U] = lightfield_dimension;
 
     const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
         block_4d_dimension;
-    // auto BLOCK_SIZE_t = parameter_handler.transform_length_t;
-    // auto BLOCK_SIZE_s = parameter_handler.transform_length_s;
-    // auto BLOCK_SIZE_v = parameter_handler.transform_length_v;
-    // auto BLOCK_SIZE_u = parameter_handler.transform_length_u;
 
 
     int32_t level_shift = 512;
@@ -142,12 +138,12 @@ class JPLM4DTransformModeLightFieldCodec
                  ++color_channel_index) {
               run_for_block_4d(
                   color_channel_index, level_shift, {t, s, v, u}, size);
-              // run_for_block_4d();
             }
           }
         }
       }
     }
+    //up to now, this finalization step is required only in the encoder.
     finalization();
   }
 
