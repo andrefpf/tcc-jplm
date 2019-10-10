@@ -111,14 +111,9 @@ void MuleEncoder::setup_hierarchical_4d_encoder() {
 
   hierarchical_4d_encoder.create_temporary_buffer();
 
-  hierarchical_4d_encoder.mMinimumTransformLength_t =
-      parameter_handler.min_transform_length_t;
-  hierarchical_4d_encoder.mMinimumTransformLength_s =
-      parameter_handler.min_transform_length_s;
-  hierarchical_4d_encoder.mMinimumTransformLength_v =
-      parameter_handler.min_transform_length_v;
-  hierarchical_4d_encoder.mMinimumTransformLength_u =
-      parameter_handler.min_transform_length_u;
+  hierarchical_4d_encoder.set_minimum_transform_dimension(
+      {parameter_handler.min_transform_length_t, parameter_handler.min_transform_length_s,
+      parameter_handler.min_transform_length_v, parameter_handler.min_transform_length_u});
   // std::tie(
   //     hierarchical_4d_encoder.mNumberOfVerticalViews,
   //     hierarchical_4d_encoder.mNumberOfHorizontalViews,

@@ -83,14 +83,18 @@ void MuleDecoder::setup_header_data_into_decoded_lightfield() {
 //  hierarchical_4d_decoder.mTransformLength_u =
 //      parameter_handler.transform_length_u;
 
-  hierarchical_4d_decoder.mMinimumTransformLength_t =
+  auto mMinimumTransformLength_t =
       parameter_handler.min_transform_length_t;
-  hierarchical_4d_decoder.mMinimumTransformLength_s =
+  auto mMinimumTransformLength_s =
       parameter_handler.min_transform_length_s;
-  hierarchical_4d_decoder.mMinimumTransformLength_v =
+  auto mMinimumTransformLength_v =
       parameter_handler.min_transform_length_v;
-  hierarchical_4d_decoder.mMinimumTransformLength_u =
+  auto mMinimumTransformLength_u =
       parameter_handler.min_transform_length_u;
+
+  hierarchical_4d_decoder.set_minimum_transform_dimension({
+    mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u
+  });
 
   hierarchical_4d_decoder.mNumberOfVerticalViews =
       parameter_handler.number_of_vertical_views;
@@ -134,6 +138,8 @@ void MuleDecoder::read_initial_data_from_compressed_file() {
       read_int_from_codestream_code(codestream_code);
   parameter_handler.min_transform_length_u =
       read_int_from_codestream_code(codestream_code);
+
+
   // //reads the number of views of the lightfield
   parameter_handler.number_of_vertical_views =
       read_int_from_codestream_code(codestream_code);

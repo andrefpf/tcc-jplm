@@ -63,37 +63,45 @@ protected:
     int mPGMScale;
     uint8_t superior_bit_plane = 30;
     uint8_t inferior_bit_plane = 0;
+
+    //LightfieldDimension<uint32_t> transform_dimension;
     uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
+
+    //! \todo check if the minimum transform lenghts must be kept in this class. it seems they are only here to be written to file.
+    //LightfieldDimension<uint32_t> minimum_transform_dimension;
+    uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
 public:
+
     auto get_number_of_elements_in_transform() const {
         return mTransformLength_t*mTransformLength_s*mTransformLength_v*mTransformLength_u;
     }
-
     void set_level_shift(int value);
+
     int get_level_shift() const;
-
     void set_inferior_bit_plane(uint8_t value);
+
     uint8_t get_inferior_bit_plane() const;
-
     void set_superior_bit_plane(uint8_t value);
-    uint8_t get_superior_bit_plane() const;
 
+    uint8_t get_superior_bit_plane() const;
     void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension);
     void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
+
+
     void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
-
-
     int mSegmentationFlagProbabilityModelIndex = SEGMENTATION_PROB_MODEL_INDEX;
     int mSymbolProbabilityModelIndex = SYMBOL_PROBABILITY_MODEL_INDEX;
+
     Block4D mSubbandLF;
 
-    //LightfieldDimension<uint32_t> transform_dimension;
-    uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
-    //LightfieldDimension<uint32_t> minimum_transform_dimension;
     uint32_t mNumberOfVerticalViews, mNumberOfHorizontalViews;
     uint32_t mNumberOfViewLines, mNumberOfViewColumns;
     //LightfieldDimension<uint32_t> lightfield_dimension;
+
+
     Hierarchical4DCodec() = default;
+
+
     virtual ~Hierarchical4DCodec() = default;
     virtual void reset_probability_models();
 
