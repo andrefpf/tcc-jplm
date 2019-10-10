@@ -93,20 +93,20 @@ public:
 
 
     ~Hierarchical4DEncoder() = default;
-    bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
+    bool get_mSubbandLF_significance(uint8_t bitplane, const std::tuple<int, int, int, int>& position,
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
-    void encode_coefficient(int coefficient, int bitplane);
-    void encode_segmentation_lowerBitPlane_flag(int bitplane);
-    void encode_segmentation_splitBlock_flag(int bitplane);
-    void encode_segmentation_zeroBlock_flag(int bitplane);
+    void encode_coefficient(int coefficient, uint8_t bitplane);
+    void encode_segmentation_lowerBitPlane_flag(uint8_t bitplane);
+    void encode_segmentation_splitBlock_flag(uint8_t bitplane);
+    void encode_segmentation_zeroBlock_flag(uint8_t bitplane);
     void encode_partition_transform_flag();
     void encode_partition_spatialSplit_flag();
     void encode_partition_viewSplit_flag();
     void encode_inferior_bit_plane_value();
-    void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane, int &flagIndex);
+    void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, uint8_t bitplane, int &flagIndex);
     void encode_sub_block(double lambda);
-    std::pair<double, double> RdOptimizeHexadecaTree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, int bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
+    std::pair<double, double> RdOptimizeHexadecaTree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
     int get_optimum_bit_plane(double lambda);
     void load_optimizer_state();
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);

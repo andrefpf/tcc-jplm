@@ -64,8 +64,8 @@ protected:
 public:
 	std::array<ProbabilityModel, number_of_probability_models> probability_models;
     Block4D mSubbandLF;
-	int mSuperiorBitPlane = 30;
-	int mInferiorBitPlane = 0;
+	uint8_t mSuperiorBitPlane = 30;
+    uint8_t mInferiorBitPlane = 0;
     int mPGMScale;
     uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
     //LightfieldDimension<uint32_t> transform_dimension;
