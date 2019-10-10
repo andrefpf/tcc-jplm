@@ -54,6 +54,7 @@
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+//#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
 private:
@@ -64,7 +65,32 @@ public:
     ABACEncoder mEntropyCoder;
     std::array<ProbabilityModel, number_of_probability_models> optimization_probability_models;
     std::vector<HexadecaTreeFlag> hexadecatree_flags;
-    Hierarchical4DEncoder() : optimization_probability_models(probability_models) {};
+
+
+//    Hierarchical4DEncoder(const JPLMEncoderConfigurationLightField4DTransformMode& encoder_configuration)
+//    : optimization_probability_models(probability_models) {
+//        this->setup(encoder_configuration);
+//    }
+
+    Hierarchical4DEncoder() : optimization_probability_models(probability_models) {
+    }
+
+//    void setup(const JPLMEncoderConfigurationLightField4DTransformMode& encoder_configuration) {
+//        this->set_transform_dimension(
+//                encoder_configuration.get_maximal_transform_dimension());
+//
+//        this->create_temporary_buffer(this->mTransformLength_u);
+//
+//        this->set_minimum_transform_dimension(
+//                encoder_configuration.get_minimal_transform_dimension()
+//        );
+//
+//        this->set_lightfield_dimension(
+//                encoder_configuration.get_lightfield_io_configurations().get_size()
+//        );
+//    }
+
+
     ~Hierarchical4DEncoder() = default;
     bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
                                      const std::tuple<int, int, int, int>& range) const;

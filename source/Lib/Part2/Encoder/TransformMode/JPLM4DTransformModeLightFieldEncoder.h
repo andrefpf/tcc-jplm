@@ -71,6 +71,7 @@ class JPLM4DTransformModeLightFieldEncoder
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
         tp(transform_mode_configuration->get_minimal_transform_dimension()),
+//        hierarchical_4d_encoder(*transform_mode_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))) {
 
