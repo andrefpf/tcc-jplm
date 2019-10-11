@@ -139,6 +139,17 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
     this->contiguous_codestream_box = std::move(contiguous_codestream_box);
   }
 
+  
+  ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() {
+    return *contiguous_codestream_box; 
+  }
+
+  
+  const ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() const {
+    return *contiguous_codestream_box; 
+  }
+
+
 
   /**
    * \brief      Adds a jpeg pleno light field reference view box.

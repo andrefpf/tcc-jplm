@@ -53,6 +53,8 @@ class JPLMLightFieldCodec : public JPLMCodec {
   JPLMLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
       : light_field(std::move(light_field)) {
   }
+
+  JPLMLightFieldCodec() = default;
   
   virtual ~JPLMLightFieldCodec() = default;
 };

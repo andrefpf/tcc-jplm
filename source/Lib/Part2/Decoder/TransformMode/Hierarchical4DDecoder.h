@@ -62,6 +62,10 @@ public:
 
     }
 
+    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions() const {
+        return {mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u};
+    }
+
 
     ~Hierarchical4DDecoder() = default;
     void decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);

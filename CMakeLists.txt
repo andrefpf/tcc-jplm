@@ -10,16 +10,23 @@ set (JPLM_VERSION_MAJOR 0)
 set (JPLM_VERSION_MINOR 1)
 set (JPLM_VERSION_PATCH 0)
 
+set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
 
 
 #configuring paths
-set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
-set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+  set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib-debug)
+  set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin-debug)
+else(CMAKE_BUILD_TYPE MATCHES Debug) 
+  set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
+  set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+endif(CMAKE_BUILD_TYPE MATCHES Debug)
+
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_DIR})
 
+include(JPLMCompilerOptimizations)
 
 ##puts the configuration file in the binary dir
 configure_file (
@@ -38,7 +45,7 @@ include_directories(source)
 
 #configuring the compiler
 include(JPLMWarnings)
-include(JPLMCompilerOptimizations)
+
 
 #including external libraries by downloading them from git..
 include(ExternalGoogleTest)
@@ -91,8 +98,11 @@ target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
+  target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common) 
+  target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder) 
   target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
   target_link_libraries(jpl-decoder-bin PRIVATE jplm_common_boxes_parsers) 
+  target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder_transform_mode)
   target_link_libraries(jpl-decoder-bin PRIVATE stream)
 
 

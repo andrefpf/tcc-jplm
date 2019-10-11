@@ -41,43 +41,129 @@
 #ifndef JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
 #define JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
 
-#include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
+#include <iostream>
+#include <tuple>
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
-#include <iostream>
+#include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
+#include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
+ private:
+  PartitionDecoder partition_decoder;
+  const ContiguousCodestreamCode& codestream_code;
+  Hierarchical4DDecoder hierarchical_4d_decoder;
+  LightFieldTransformMode<PelType>& ref_to_lightfield; //! \todo move this to transform mode codec...
+
+  // const JPLFile&
+  //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
  public:
   // JPLM4DTransformModeLightFieldDecoder() = default;
 
   // auto decoder = JPLM4DTransformModeLightFieldDecoder(jpl_file, codestream, configuration->get_output_filename());
-  JPLM4DTransformModeLightFieldDecoder(const JPLFile& jpl_file, const JpegPlenoLightFieldBox& light_field_box,
+  JPLM4DTransformModeLightFieldDecoder(const JPLFile& jpl_file,
+      const JpegPlenoLightFieldBox& light_field_box,
       const std::string& lightfield_path)
       : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightFieldTransformMode<PelType>>(LightfieldIOConfiguration(
-                lightfield_path, light_field_box.get_ref_to_contents()
-                                      .get_ref_to_light_field_header_box()
-                                      .get_ref_to_contents()
-                                      .get_ref_to_light_field_header_box()
-                                      .get_ref_to_contents()
-                                      .get_light_field_dimension<std::size_t>()))),
+            std::make_unique<LightFieldTransformMode<PelType>>(
+                LightfieldIOConfiguration(lightfield_path,
+                    light_field_box.get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_light_field_dimension<std::size_t>()))),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
-                                      .get_ref_to_light_field_header_box()
-                                      .get_ref_to_contents()
-                                      .get_ref_to_light_field_header_box()
-                                      .get_ref_to_contents()
-                                      .get_light_field_dimension(),
-            {9,9,64,64}) { //temporary
-      	std::cout << "done" << std::endl;
+                .get_ref_to_light_field_header_box()
+                .get_ref_to_contents()
+                .get_ref_to_light_field_header_box()
+                .get_ref_to_contents()
+                .get_light_field_dimension(),
+            {9, 9, 64, 64}),  //temporary
+        codestream_code(light_field_box.get_ref_to_contents()
+                            .get_ref_to_contiguous_codestream_box()
+                            .get_ref_to_contents()
+                            .get_ref_to_code()),
+        hierarchical_4d_decoder(codestream_code),
+        ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
+            *(this->light_field))) {
 
+        std::cout << "PAssed from the initializer list" << std::endl;
+    read_initial_data_from_compressed_file();
+    this->setup_transform_coefficients(false,
+        hierarchical_4d_decoder.get_transform_dimensions(),
+        {1.0, 1.0, 1.0, 1.0});
+
+    //initializes possible extension lenghs
+    // initialize_extension_lenghts();
+
+    std::cout << "Before stard hierarchical decoder" << std::endl;
+    hierarchical_4d_decoder.start();
+    std::cout << "finished constructor" << std::endl;
   }
 
+  // void setup_header_data_into_decoded_lightfield() {
+
+  // hierarchical_4d_decoder.set_minimum_transform_dimension({
+  //   9, 9, 8, 8 //! \todo correct this to use the sizes from file...
+  // });
+  uint16_t read_int_from_codestream_code(
+      const ContiguousCodestreamCode& codestream_code) {
+    auto bytes = std::vector<std::byte>();
+    auto byte_0 = codestream_code.get_next_byte();
+    auto byte_1 = codestream_code.get_next_byte();
+    bytes.push_back(byte_0);
+    bytes.push_back(byte_1);
+    return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
+  }
+
+
+  void read_initial_data_from_compressed_file() {
+    // //reads the superior bit plane value
+    hierarchical_4d_decoder.set_superior_bit_plane(
+        read_int_from_codestream_code(codestream_code));
+    // //reads the maximum transform sizes
+    auto transform_length_t = read_int_from_codestream_code(codestream_code);
+    auto transform_length_s = read_int_from_codestream_code(codestream_code);
+    auto transform_length_v = read_int_from_codestream_code(codestream_code);
+    auto transform_length_u = read_int_from_codestream_code(codestream_code);
+    hierarchical_4d_decoder.set_transform_dimension({transform_length_t,
+        transform_length_s, transform_length_v, transform_length_u});
+
+    // //reads the minimum transform sizes
+    auto min_transform_length_t =
+        read_int_from_codestream_code(codestream_code);
+    auto min_transform_length_s =
+        read_int_from_codestream_code(codestream_code);
+    auto min_transform_length_v =
+        read_int_from_codestream_code(codestream_code);
+    auto min_transform_length_u =
+        read_int_from_codestream_code(codestream_code);
+    hierarchical_4d_decoder.set_minimum_transform_dimension(
+        {min_transform_length_t, min_transform_length_s, min_transform_length_v,
+            min_transform_length_u});
+
+
+    // //reads the number of views of the lightfield
+    auto number_of_vertical_views =
+        read_int_from_codestream_code(codestream_code);
+    auto number_of_horizontal_views =
+        read_int_from_codestream_code(codestream_code);
+    // //reads the number of lines and columns of each view
+    auto mNumberOfViewLines = read_int_from_codestream_code(codestream_code);
+    auto mNumberOfViewColumns = read_int_from_codestream_code(codestream_code);
+
+    hierarchical_4d_decoder.set_lightfield_dimension({number_of_vertical_views,
+        number_of_horizontal_views, mNumberOfViewLines, mNumberOfViewColumns});
+  }
 
   virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
 
@@ -86,6 +172,23 @@ class JPLM4DTransformModeLightFieldDecoder
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
     std::cout << "Running for 4D block" << std::endl;
+    hierarchical_4d_decoder.reset_probability_models();
+    auto decoded_block =
+        partition_decoder.decode_partition(hierarchical_4d_decoder, size);
+    decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
+
+    // if (needs_block_extension) {
+    //     if(used_size_u != BLOCK_SIZE_u)
+    //         current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
+    //     if(used_size_v != BLOCK_SIZE_v)
+    //         current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
+    //     if(used_size_s != BLOCK_SIZE_s)
+    //         current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
+    //     if(used_size_t != BLOCK_SIZE_t)
+    //         current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
+    // }
+
+    ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
   }
 };
 
