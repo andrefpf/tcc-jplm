@@ -118,6 +118,16 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
   }
 
 
+  const JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box() const {
+    return *jpeg_pleno_light_field_header_box;
+  }
+
+
+  JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box() {
+    return *jpeg_pleno_light_field_header_box;
+  }
+
+
   /**
    * \brief      Adds a contiguous codestream box to the JPEG Pleno Light Field Contents.
    *

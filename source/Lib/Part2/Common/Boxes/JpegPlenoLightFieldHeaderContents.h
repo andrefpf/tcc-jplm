@@ -77,6 +77,16 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
   }
 
 
+  LightFieldHeaderBox& get_ref_to_light_field_header_box() {
+    return *lhdr;
+  }
+
+
+  const LightFieldHeaderBox& get_ref_to_light_field_header_box() const {
+    return *lhdr;
+  }
+
+
   const auto& get_const_ref_to_lhdr() const noexcept {
     return *lhdr;
   }

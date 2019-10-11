@@ -42,7 +42,7 @@
 #include <iostream>
 #include <string>
 #include "gtest/gtest.h"
-#include "Lib/Part2/Decoder/JPLM4DTransformModeLightFieldDecoder.h"
+#include "Lib/Part2/Decoder/TransformMode/JPLM4DTransformModeLightFieldDecoder.h"
 
 
 

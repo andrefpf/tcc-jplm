@@ -58,6 +58,11 @@ class JPLMConfigurationFactory {
   static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
       int argc, char const* argv[]);
 
+  static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
+      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
+    return make_unique<JPLMConfiguration>(argc, const_cast<char**>(argv));
+  }
+
  protected:
   static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
       int argc, char const* argv[], CompressionTypeLightField type);
@@ -75,7 +80,6 @@ JPLMConfigurationFactory::get_encoder_configuration(
     if (type == Type::transform_mode)
       return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
           argc, const_cast<char**>(argv));
-
   }
   throw NotImplementedYetPartException();
 }

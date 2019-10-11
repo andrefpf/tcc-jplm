@@ -31,25 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DTransformModeLightFieldDecoder.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-10-11
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
-#define JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__
+#ifndef PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
+#define PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
 
-#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+#include <exception>
+#include <string>
+#include <cstdint>
+#include "Lib/Common/Boxes/TBox.h"
 
+namespace JpegPlenoCodestreamBoxExceptions {
+class InvalidJpegPlenoCodestreamTypeId : public std::exception {
+ protected:
+  std::string message;
 
-template<typename T = uint16_t>
-class JPLM4DTransformModeLightFieldDecoder
-    : public JPLMLightFieldDecoder<T> {
  public:
-  JPLM4DTransformModeLightFieldDecoder() = default;
-  virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
+  InvalidJpegPlenoCodestreamTypeId(const t_box_id_type type_value)
+      : message(std::string("Box with code") + std::to_string(type_value) +
+                std::string("is not a valid JpegPlenoCodestreamBox")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLM4DTRANSFORMMODELIGHTFIELDDECODER_H__ */
+}  // namespace JpegPlenoCodestreamBoxExceptions
+
+#endif /* end of include guard: PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__ */

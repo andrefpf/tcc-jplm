@@ -96,6 +96,7 @@ class JPLMCodecFactory {
       [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
     return nullptr;
   }
+
 };
 
 #endif /* end of include guard: JPLMCODECFACTORY_H__ */

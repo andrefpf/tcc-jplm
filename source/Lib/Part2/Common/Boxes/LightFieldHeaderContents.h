@@ -122,6 +122,12 @@ class LightFieldHeaderContents : public InMemoryDBox {
   }
 
 
+  template<typename DimensionType>
+  auto get_light_field_dimension() const noexcept {
+    return LightfieldDimension(light_field_dimension);
+  }
+
+
   auto get_compression_type() const noexcept {
     return c;
   }

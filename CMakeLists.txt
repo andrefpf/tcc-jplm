@@ -91,6 +91,10 @@ target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 add_executable(jpl-decoder-bin
         source/App/Decoder/jpl-decoder.cpp
         CMakeLists.txt)
+  target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
+  target_link_libraries(jpl-decoder-bin PRIVATE jplm_common_boxes_parsers) 
+  target_link_libraries(jpl-decoder-bin PRIVATE stream)
+
 
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_common)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_encoder)
