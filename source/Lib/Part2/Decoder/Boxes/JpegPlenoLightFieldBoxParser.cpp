@@ -55,12 +55,15 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldBoxParser::parse(
 
 
   //! \todo implement contiguous codestream parsing... only reading as a blob? or already decoding??
+  std::cout << "Decoding contigous_codestream_box" << std::endl;
   auto contigous_codestream_box =
       box_parser_helper.has_data_available()
           ? box_parser.parse<ContiguousCodestreamBox, false>(
                 box_parser_helper.get_remaining_stream())
           : nullptr;
-  
+  if(contigous_codestream_box) {
+    std::cout << "Decoded" << std::endl;
+  }
 
   //! \todo decode remaining file
   // how? creating a map for the boxes if they have no specific order in the file..
@@ -71,6 +74,10 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldBoxParser::parse(
   auto jpeg_pleno_light_field_contents =
       std::make_unique<JpegPlenoLightFieldContents>(
           std::move(profile_and_level_box), std::move(jpeg_pleno_light_field_header_box));
+  if(contigous_codestream_box) {
+    jpeg_pleno_light_field_contents->add_contiguous_codestream_box(std::move(contigous_codestream_box));
+  }
+  
 
   auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(std::move(jpeg_pleno_light_field_contents));
   return jpeg_pleno_light_field_box;

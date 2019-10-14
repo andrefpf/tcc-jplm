@@ -127,4 +127,19 @@ class InvalidCoordinateException : public std::exception {
 
 }  // namespace CameraParameterBoxExceptions
 
+
+namespace JpegPlenoLightFieldBoxExceptions {
+  class UninitializedContigousCodestreamException : public std::exception {
+  protected: 
+    std::string message;
+public:
+    UninitializedContigousCodestreamException() : message("Trying to access an uninitialized contigous codestream") {}
+
+    const char* what() const noexcept override {
+      return message.c_str();
+  }
+  };
+
+}
+
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__ */

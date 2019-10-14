@@ -64,6 +64,7 @@ class JPLM4DTransformModeLightFieldCodec
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
         block_4d_dimension(block_4d_dimension) {
+          std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
   }
 
 

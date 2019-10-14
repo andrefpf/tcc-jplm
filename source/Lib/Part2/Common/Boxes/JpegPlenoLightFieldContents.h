@@ -48,6 +48,7 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+#include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldNormalizedDisparityViewBox.h"
@@ -136,16 +137,23 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    */
   void add_contiguous_codestream_box(
       std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
+    std::cout << "added contiguous codestream box" << std::endl;
     this->contiguous_codestream_box = std::move(contiguous_codestream_box);
   }
 
   
   ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() {
+    if(!contiguous_codestream_box) {
+      throw JpegPlenoLightFieldBoxExceptions::UninitializedContigousCodestreamException();
+    }
     return *contiguous_codestream_box; 
   }
 
   
   const ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() const {
+    if(!contiguous_codestream_box) {
+      throw JpegPlenoLightFieldBoxExceptions::UninitializedContigousCodestreamException();
+    }
     return *contiguous_codestream_box; 
   }
 
