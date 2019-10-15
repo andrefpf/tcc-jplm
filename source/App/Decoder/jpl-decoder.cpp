@@ -29,9 +29,24 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
       case JpegPlenoCodestreamBoxTypes::LightField: {
         std::cout << "There is a lightfield in this box" << std::endl;
       	const auto& codestream_as_part2 = static_cast<JpegPlenoLightFieldBox&>(*codestream);
-      	// const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
-      	auto decoder = JPLM4DTransformModeLightFieldDecoder<uint16_t>(*jpl_file, codestream_as_part2, configuration->get_output_filename());
-      	decoder.run();
+        // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
+        const auto mode = codestream_as_part2.get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents().get_compression_type();
+        switch (mode) {
+          case CompressionTypeLightField::transform_mode: {
+            std::cout << "The codestream is using Transform Mode" << std::endl;
+            auto decoder = JPLM4DTransformModeLightFieldDecoder<uint16_t>(*jpl_file, codestream_as_part2, configuration->get_output_filename());
+            decoder.run();
+            break;
+          }
+          case CompressionTypeLightField::prediction_mode: {
+            std::cerr << "prediction_mode not supported yet" << std::endl;
+            break;
+          }
+        }
         break;
       }
       case JpegPlenoCodestreamBoxTypes::PointCloud: {
