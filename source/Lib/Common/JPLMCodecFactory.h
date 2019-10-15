@@ -166,7 +166,7 @@ static uint16_t read_int_from_codestream_code(
 
 
               decoders.push_back(
-                  std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(*jpl_file,
+                  std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(jpl_file,
                       codestream_as_part2, output_filename,
                       block_4d_size));
               break;

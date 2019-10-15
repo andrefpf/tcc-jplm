@@ -68,11 +68,12 @@ class JPLM4DTransformModeLightFieldDecoder
   // JPLM4DTransformModeLightFieldDecoder() = default;
 
   // auto decoder = JPLM4DTransformModeLightFieldDecoder(jpl_file, codestream, configuration->get_output_filename());
-  JPLM4DTransformModeLightFieldDecoder(const JPLFile& jpl_file, // ! \todo use this as the JPLCodec file
+  JPLM4DTransformModeLightFieldDecoder(std::shared_ptr<JPLFile> jpl_file, // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
       const std::string& lightfield_path,
       const LightfieldDimension<uint32_t>& block_4d_dimension)
       : JPLMLightFieldCodec<PelType>(
+            jpl_file,
             std::make_unique<LightFieldTransformMode<PelType>>(
                 LightfieldIOConfiguration(lightfield_path,
                     light_field_box.get_ref_to_contents()

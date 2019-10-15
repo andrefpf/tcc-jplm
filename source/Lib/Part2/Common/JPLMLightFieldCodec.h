@@ -50,6 +50,12 @@ class JPLMLightFieldCodec : public JPLMCodec {
   std::unique_ptr<Lightfield<T>> light_field;
 
  public:
+  JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file, std::unique_ptr<Lightfield<T>>&& light_field)
+      : JPLMCodec(jpl_file), light_field(std::move(light_field)) {
+      	std::cout << "Using the shared_ptr constructor of JPLMLightFieldCodec" << std::endl;
+  }
+
+
   JPLMLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
       : light_field(std::move(light_field)) {
   }
