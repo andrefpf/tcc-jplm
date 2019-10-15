@@ -39,6 +39,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
     std::cerr << "The input jpl file has no codestream" << std::endl;
     exit(1);
   }
+
   auto& codestreams = jpl_file->get_reference_to_codestreams();
   for (const auto& codestream : codestreams) {
     switch (codestream->get_type()) {
