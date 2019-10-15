@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
 #define JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
 
-#include <memory>  //std::unique_ptr
+#include <memory>  //std::shared_ptr
 #include "Lib/Part1/Common/JPLFile.h"
 
 /**
@@ -49,16 +49,20 @@
  */
 class JPLMCodec {
  protected:
-  std::unique_ptr<JPLFile> jpl_file;
+  std::shared_ptr<JPLFile> jpl_file;
 
  public:
-  
-  JPLMCodec() : jpl_file(std::make_unique<JPLFile>()) {
+  JPLMCodec() : jpl_file(std::make_shared<JPLFile>()) {
   }
 
 
-  JPLMCodec(std::unique_ptr<JPLFile>&& jpl_file)
+  JPLMCodec(std::shared_ptr<JPLFile>&& jpl_file)
       : jpl_file(std::move(jpl_file)) {
+  }
+
+
+  JPLMCodec(std::shared_ptr<JPLFile> jpl_file) 
+      : jpl_file(jpl_file) {
   }
 
 
@@ -66,17 +70,16 @@ class JPLMCodec {
 
 
   JPLFile& get_ref_to_jpl_file() {
-  	return *jpl_file;
+    return *jpl_file;
   }
 
 
   const JPLFile& get_ref_to_jpl_file() const {
-  	return *jpl_file;
+    return *jpl_file;
   }
 
 
   virtual void run() = 0;
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLMCODEC_H__ */
