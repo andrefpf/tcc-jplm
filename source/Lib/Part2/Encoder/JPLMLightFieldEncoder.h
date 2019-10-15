@@ -49,13 +49,13 @@
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
 template<typename T = uint16_t>
-class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
+class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
  protected:
-  std::unique_ptr<const JPLMEncoderConfigurationLightField> configuration;
+  const JPLMEncoderConfigurationLightField& light_field_encoder_configuration;
 
   void add_pleno_lf_box() {
     auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
@@ -65,13 +65,12 @@ class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
         this->light_field->template get_dimensions<uint32_t>(),
         this->light_field->get_number_of_channels_in_view(),
         this->light_field->get_views_bpp(),
-        configuration->get_compression_type());
+        light_field_encoder_configuration.get_compression_type());
     auto lightfield_header_box =
         std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
     auto colour_specification_boxes =
         std::vector<std::unique_ptr<ColourSpecificationBox>>();
-    colour_specification_boxes.emplace_back(
-        std::move(std::make_unique<ColourSpecificationBox>()));
+    colour_specification_boxes.emplace_back(std::make_unique<ColourSpecificationBox>());
 
     auto jpeg_pleno_light_field_header_box =
         std::make_unique<JpegPlenoLightFieldHeaderBox>(
@@ -88,14 +87,10 @@ class JPLMLightFieldEncoder : public JPLMLightFieldCodec<T> {
 
  public:
   JPLMLightFieldEncoder(
-      std::unique_ptr<const JPLMEncoderConfigurationLightField>&& configuration)
-      : JPLMLightFieldCodec<T>(
-            std::move(std::make_unique<LightfieldFromPPMFile<T>>(
-                configuration->get_lightfield_io_configurations()))),
-        configuration(std::move(configuration)) {
+      const JPLMEncoderConfigurationLightField& configuration)
+      : light_field_encoder_configuration(configuration) {
     add_pleno_lf_box();
   }
-
 
   virtual ~JPLMLightFieldEncoder() = default;
 };

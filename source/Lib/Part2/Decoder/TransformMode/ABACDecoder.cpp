@@ -115,9 +115,6 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
     return (bitDecoded);
 }
 
-void ABACDecoder::finish() {
-    // fseek(file_ptr, -2, SEEK_CUR);    
-}
 
 int ABACDecoder::ReadBitFromFile() {
     int bit;
@@ -127,7 +124,6 @@ int ABACDecoder::ReadBitFromFile() {
         number_of_bits_in_byte = 8;
         if(codestream_code.is_next_valid()) {
             std::byte byte = codestream_code.get_next_byte();
-            // std::cout << std::to_integer<uint16_t>(std::byte{mBitBuffer}) << " " << std::to_integer<uint16_t>(byte) << std::endl;
             mBitBuffer=std::to_integer<int>(byte);
         }
     }

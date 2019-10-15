@@ -77,6 +77,9 @@ class ContiguousCodestreamCode {
   virtual std::byte peek_next_byte() const = 0;
 
 
+  virtual void rewind(std::size_t n_bytes_to_rewind) const = 0;
+
+
   // virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
 
   

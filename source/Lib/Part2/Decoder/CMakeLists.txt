@@ -1,2 +1,2 @@
-set(PART2_DECODER_SOURCES  JPLMLightFieldDecoder.cpp JPLM4DPredictionModeLightFieldDecoder.cpp JPLM4DTransformModeLightFieldDecoder.cpp)
+set(PART2_DECODER_SOURCES  JPLMLightFieldDecoder.cpp JPLM4DPredictionModeLightFieldDecoder.cpp)
 add_library(jplm_part2_decoder ${PART2_DECODER_SOURCES})

@@ -47,14 +47,18 @@ TransformPartition::TransformPartition(
       mlength_v_min(length_v_min), mlength_u_min(length_u_min) {
 }
 
+TransformPartition::TransformPartition(const LightfieldDimension<uint32_t>& minimum_transform_dimensions) :
+        mlength_t_min(minimum_transform_dimensions.get_t()),
+        mlength_s_min(minimum_transform_dimensions.get_s()),
+        mlength_v_min(minimum_transform_dimensions.get_v()),
+        mlength_u_min(minimum_transform_dimensions.get_u()) {
+}
+
 /*! Evaluates the Lagrangian cost of the optimum multiscale transform for the input block as well as the transformed block */
 void TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
   // double scaled_lambda = lambda*input_block.get_number_of_elements();
-  double scaled_lambda = lambda * hierarchical_4d_encoder.mTransformLength_t *
-                         hierarchical_4d_encoder.mTransformLength_s *
-                         hierarchical_4d_encoder.mTransformLength_v *
-                         hierarchical_4d_encoder.mTransformLength_u;
+  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   partition_code.clear();
   mEvaluateOptimumBitPlane = true;
@@ -63,7 +67,6 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   hierarchical_4d_encoder.load_optimizer_state();
 
   auto lengths = input_block.get_dimension();
-  // fprintf(stderr, "%d %d %d %d\n", std::get<0>(lengths), std::get<1>(lengths), std::get<2>(lengths), std::get<3>(lengths));
   Block4D transformed_block;
   rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0}, lengths,
       hierarchical_4d_encoder, scaled_lambda, partition_code);
@@ -73,25 +76,23 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   //Restores state since the encoder will reevaluate it
   hierarchical_4d_encoder.load_optimizer_state();
 
-  auto mPartitionCode = new char[partition_code.size() + 1];
-  mPartitionCode[partition_code.size()] = '\0';
-  auto counter = 0;
+  auto mPartitionCode = std::string("");
   for (const auto &flag : partition_code) {
     switch (flag) {
       case PartitionFlag::transform:
-        mPartitionCode[counter++] = 'T';
+          mPartitionCode+='T';
         break;
       case PartitionFlag::spatialSplit:
-        mPartitionCode[counter++] = 'S';
+        mPartitionCode+='S';
         break;
       case PartitionFlag::viewSplit:
-        mPartitionCode[counter++] = 'V';
+          mPartitionCode+='V';
         break;
     }
   }
 
-  printf("mPartitionCode = %s\n", mPartitionCode);  //mPartitionCode
-  printf("mInferiorBitPlane = %d\n", hierarchical_4d_encoder.mInferiorBitPlane);
+std::cout << "Partition code: " << mPartitionCode << "\n";
+  std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
 }
 
 double TransformPartition::rd_optimize_transform(Block4D &input_block,
@@ -100,7 +101,8 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda,
     std::vector<PartitionFlag> &partition_code) {
   using LF = LightFieldDimension;
-  /*! returns the Lagrangian cost of one step of the optimization of the multiscale transform for the input block as well as the transformed block */
+  /*! returns the Lagrangian cost of one step of the optimization of the multiscale transform for the input
+   * block as well as the transformed block */
   // std::cerr << "in rd_optimize_transform (" << mEvaluateOptimumBitPlane << ")" << std::endl;
   //saves the current hierarchical_4d_encoder arithmetic model to initial_model.
   auto initial_model = hierarchical_4d_encoder.optimization_probability_models;
@@ -121,13 +123,12 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
       block_0;  //copy, its not possible to move...
 
   if (mEvaluateOptimumBitPlane) {
-    hierarchical_4d_encoder.mInferiorBitPlane =
-        hierarchical_4d_encoder.get_optimum_bit_plane(lambda);
+      hierarchical_4d_encoder.set_inferior_bit_plane(hierarchical_4d_encoder.get_optimum_bit_plane(lambda));
     hierarchical_4d_encoder.load_optimizer_state();
     mEvaluateOptimumBitPlane = false;
   }
 
-  //call RdOptimizeHexadecaTree method from hierarchical_4d_encoder to evaluate J0
+  //call rd_optimize_hexadecatree method from hierarchical_4d_encoder to evaluate J0
   hierarchical_4d_encoder.hexadecatree_flags.clear();
 
   auto probability_model_for_transform = initial_model;
@@ -139,10 +140,10 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
 
   double J0 =
       lambda +
-      std::get<0>(hierarchical_4d_encoder.RdOptimizeHexadecaTree({0, 0, 0, 0},
+      std::get<0>(hierarchical_4d_encoder.rd_optimize_hexadecatree({0, 0, 0, 0},
           {block_0.mlength_t, block_0.mlength_s, block_0.mlength_v,
               block_0.mlength_u},
-          lambda, hierarchical_4d_encoder.mSuperiorBitPlane,
+          lambda, hierarchical_4d_encoder.get_superior_bit_plane(),
           hierarchical_4d_encoder.hexadecatree_flags));
 
   double bestJ = J0;
@@ -371,10 +372,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
 
 void TransformPartition::encode_partition(
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
-  double scaled_lambda = lambda * hierarchical_4d_encoder.mTransformLength_t *
-                         hierarchical_4d_encoder.mTransformLength_s *
-                         hierarchical_4d_encoder.mTransformLength_v *
-                         hierarchical_4d_encoder.mTransformLength_u;
+  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   mPartitionCodeIndex = 0;
 
@@ -396,7 +394,7 @@ void TransformPartition::encode_partition(
       hierarchical_4d_encoder.mSubbandLF.set_dimension(lengths);
       hierarchical_4d_encoder.mSubbandLF.copy_sub_block_from(
           mPartitionData, position);
-      hierarchical_4d_encoder.EncodeSubblock(lambda);
+      hierarchical_4d_encoder.encode_sub_block(lambda);
       return;
     }
     case PartitionFlag::spatialSplit: {

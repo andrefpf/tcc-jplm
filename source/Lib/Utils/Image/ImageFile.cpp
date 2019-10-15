@@ -63,7 +63,7 @@ void ImageFile::check(const std::string& filename) {
   }
   if (!std::filesystem::exists(filename)) {
     std::cerr << "File " << filename
-              << " does not exist... Need more information to create a new file"
+              << " does not exist... I need more information to create a new file"
               << std::endl;
     throw ImageIOExceptions::InexistentFileException();
   }

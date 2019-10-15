@@ -135,8 +135,10 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
 
 
   void populate_light_field_codestreams() {
+    std::cout << "Populating LF codestream" << std::endl;
     if (auto it = temp_decoded_boxes.find(JpegPlenoLightFieldBox::id);
         it != temp_decoded_boxes.end()) {
+      std::cout << "Found JpegPlenoLightFieldBox" << std::endl;
       auto& jpeg_pleno_light_field_boxes = it->second;
       for (auto& jpeg_pleno_light_field_box : jpeg_pleno_light_field_boxes) {
         jpeg_pleno_codestreams.emplace_back(

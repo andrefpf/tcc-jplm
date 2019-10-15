@@ -519,7 +519,6 @@ class ConversorProvider {
       case 16: if constexpr (sizeof(T) > 1) {
         return std::make_unique<ColorSpacesConverter<T, 16,
             ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
     }
     //this is the default
     std::cerr << "nbits=" << nbits

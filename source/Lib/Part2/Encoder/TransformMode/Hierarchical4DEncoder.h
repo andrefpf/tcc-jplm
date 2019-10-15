@@ -54,6 +54,7 @@
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+//#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
 private:
@@ -64,30 +65,52 @@ public:
     ABACEncoder mEntropyCoder;
     std::array<ProbabilityModel, number_of_probability_models> optimization_probability_models;
     std::vector<HexadecaTreeFlag> hexadecatree_flags;
-    Hierarchical4DEncoder() : Hierarchical4DCodec(mEntropyCoder), optimization_probability_models(probability_models) {};
+
+
+//    Hierarchical4DEncoder(const JPLMEncoderConfigurationLightField4DTransformMode& encoder_configuration)
+//    : optimization_probability_models(probability_models) {
+//        this->setup(encoder_configuration);
+//    }
+
+    Hierarchical4DEncoder() : optimization_probability_models(probability_models) {
+//        reset_probability_models();
+    }
+
+//    void setup(const JPLMEncoderConfigurationLightField4DTransformMode& encoder_configuration) {
+//        this->set_transform_dimension(
+//                encoder_configuration.get_maximal_transform_dimension());
+//
+//        this->create_temporary_buffer(this->mTransformLength_u);
+//
+//        this->set_minimum_transform_dimension(
+//                encoder_configuration.get_minimal_transform_dimension()
+//        );
+//
+//        this->set_lightfield_dimension(
+//                encoder_configuration.get_lightfield_io_configurations().get_size()
+//        );
+//    }
+
+
     ~Hierarchical4DEncoder() = default;
-    bool get_mSubbandLF_significance(int bitplane, const std::tuple<int, int, int, int>& position, 
+    bool get_mSubbandLF_significance(uint8_t bitplane, const std::tuple<int, int, int, int>& position,
                                      const std::tuple<int, int, int, int>& range) const;
     void reset_probability_models() override;
-    void start();
-    void EncodeBlock(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
-    void encode_coefficient(int coefficient, int bitplane);
-    void encode_segmentation_lowerBitPlane_flag(int bitplane);
-    void encode_segmentation_splitBlock_flag(int bitplane);
-    void encode_segmentation_zeroBlock_flag(int bitplane);
+    void encode_coefficient(int coefficient, uint8_t bitplane);
+    void encode_segmentation_lowerBitPlane_flag(uint8_t bitplane);
+    void encode_segmentation_splitBlock_flag(uint8_t bitplane);
+    void encode_segmentation_zeroBlock_flag(uint8_t bitplane);
     void encode_partition_transform_flag();
     void encode_partition_spatialSplit_flag();
     void encode_partition_viewSplit_flag();
     void encode_inferior_bit_plane_value();
-    void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane, int &flagIndex);
-    void EncodeAll(double lambda, int inferiorBitPlane);
-    void EncodeSubblock(double lambda);
-    std::pair<double, double> RdOptimizeHexadecaTree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, int bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
+    void encode_hexadecatree(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, uint8_t bitplane, int &flagIndex);
+    void encode_sub_block(double lambda);
+    std::pair<double, double> rd_optimize_hexadecatree(const std::tuple<int, int, int, int>& position, const std::tuple<int, int, int, int>& lenghts, double lambda, uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
     int get_optimum_bit_plane(double lambda);
     void load_optimizer_state();
     void set_optimization_model(std::array<ProbabilityModel, Hierarchical4DEncoder::number_of_probability_models>& model);
-    void DeleteProbabilisticModelState(ProbabilityModel *state);
-    void create_temporary_buffer(int size);
+    void create_temporary_buffer();
 
     void write_initial_data();
 

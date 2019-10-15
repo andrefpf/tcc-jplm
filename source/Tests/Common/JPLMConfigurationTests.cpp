@@ -53,7 +53,7 @@ TEST(JPLMConfiguration, SimpleTest) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
   int argc = 3;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.getInput().c_str());
+  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.get_input_filename().c_str());
 }
 
 
@@ -71,7 +71,7 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("../resources/small_greek/", config.getInput().c_str());
+  EXPECT_STREQ("../resources/small_greek/", config.get_input_filename().c_str());
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
   EXPECT_EQ(13, config.get_number_of_rows_t());
   EXPECT_EQ(13, config.get_number_of_columns_s());

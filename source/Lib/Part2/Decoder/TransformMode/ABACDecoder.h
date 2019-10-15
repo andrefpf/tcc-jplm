@@ -55,7 +55,6 @@ public:
   ~ABACDecoder() = default;
   void start();
   int decode_bit(const ProbabilityModel& mPmodel);
-  void finish() override;  
   int ReadBitFromFile();
 };
 

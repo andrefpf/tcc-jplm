@@ -31,43 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     MuleEncoder.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2019-10-11
  */
 
-#ifndef MULEENCODER_H__
-#define MULEENCODER_H__
+#ifndef PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
+#define PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
 
+#include <exception>
+#include <string>
+#include <cstdint>
+#include "Lib/Common/Boxes/TBox.h"
 
-#include "App/TemporaryCommonTransformMode/MuleCodec.h"
+namespace JpegPlenoCodestreamBoxExceptions {
+class InvalidJpegPlenoCodestreamTypeId : public std::exception {
+ protected:
+  std::string message;
 
-#include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
-#include "Lib/Part2/Encoder/TransformMode/TransformPartition.h"
-#include <memory>
-
-
-class MuleEncoder : public MuleCodec
-{
-private:
-	Hierarchical4DEncoder hierarchical_4d_encoder;
-	TransformPartition tp;
-
-    // void open_raw_lightfield();
-public:
-	MuleEncoder(ParameterHandler handler);
-	~MuleEncoder() = default;
-	
-	void setup_hierarchical_4d_encoder();
-	void write_initial_data_to_encoded_file();
-
-	std::unique_ptr<ContiguousCodestreamCode> get_contigous_codestream_code();
-	
-	virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
-      const LightfieldDimension<uint32_t>& size) override;
+ public:
+  InvalidJpegPlenoCodestreamTypeId(const t_box_id_type type_value)
+      : message(std::string("Box with code") + std::to_string(type_value) +
+                std::string("is not a valid JpegPlenoCodestreamBox")) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
 };
 
-#endif /* end of include guard: MULEENCODER_H__ */
+}  // namespace JpegPlenoCodestreamBoxExceptions
+
+#endif /* end of include guard: PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__ */

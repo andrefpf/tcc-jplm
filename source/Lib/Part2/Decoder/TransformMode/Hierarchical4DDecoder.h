@@ -58,8 +58,13 @@ private:
 public:
     ABACDecoder entropy_decoder;
     Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
-    : entropy_decoder(codestream_code), Hierarchical4DCodec(entropy_decoder) {
+    : entropy_decoder(codestream_code) {
+        std::cout << "Hierarchical4DDecoder" << std::endl;
 
+    }
+
+    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions() const {
+        return {mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u};
     }
 
 

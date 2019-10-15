@@ -41,7 +41,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "Lib/Part2/Encoder/JPLM4DTransformModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.h"
 #include "gtest/gtest.h"
 
 

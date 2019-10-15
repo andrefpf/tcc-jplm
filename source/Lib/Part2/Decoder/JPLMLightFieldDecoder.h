@@ -43,10 +43,10 @@
 
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 
-template<typename T = uint16_t>
-class JPLMLightFieldDecoder : public JPLMLightFieldCodec<T> {
+template<typename PelType = uint16_t>
+class JPLMLightFieldDecoder : public virtual JPLMLightFieldCodec<PelType> {
  public:
-  JPLMLightFieldDecoder() = default;
+  JPLMLightFieldDecoder() : JPLMLightFieldCodec<PelType>() {}
   virtual ~JPLMLightFieldDecoder() = default;
 };
 

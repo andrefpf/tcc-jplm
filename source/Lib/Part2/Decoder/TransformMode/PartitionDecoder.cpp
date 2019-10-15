@@ -52,8 +52,8 @@ Block4D PartitionDecoder::decode_partition(
   mPartitionData = Block4D(size);
   // mPartitionData.fill_with_zeros();
 
-  hierarchical_decoder.mInferiorBitPlane = hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION);
-  
+  hierarchical_decoder.set_inferior_bit_plane(hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION));
+
   decode_partition(position, length, hierarchical_decoder);
 
   return Block4D(std::move(mPartitionData));
@@ -122,7 +122,7 @@ void PartitionDecoder::decode_transform_partition(
       length[0], length[1], length[2], length[3]);
   hierarchical_decoder.mSubbandLF.fill_with_zeros();
   hierarchical_decoder.decode_block(0, 0, 0, 0, length[0], length[1], length[2],
-      length[3], hierarchical_decoder.mSuperiorBitPlane);
+      length[3], hierarchical_decoder.get_superior_bit_plane());
   DCT4DBlock dctblock(std::move(
       hierarchical_decoder
           .mSubbandLF));  //uses move in the initialization of transformed block.

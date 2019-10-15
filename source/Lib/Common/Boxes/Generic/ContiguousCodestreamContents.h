@@ -67,7 +67,18 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
   }
 
 
+  //! \todo remove this method (it is not necessary to be defined as const in its name)
   const ContiguousCodestreamCode& get_const_ref_to_code() const {
+    return *code;
+  }
+  
+
+  const ContiguousCodestreamCode& get_ref_to_code() const {
+    return *code;
+  }
+
+
+  ContiguousCodestreamCode& get_ref_to_code() {
     return *code;
   }
 

@@ -118,6 +118,16 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
+  virtual void rewind(std::size_t n_bytes_to_rewind) const override {
+    int64_t new_pos = current_pos - n_bytes_to_rewind;
+    if(new_pos >= 0) {
+      current_pos = static_cast<std::size_t>(new_pos);
+    } else {
+      current_pos = 0;
+    }
+  }
+
+
   virtual ContiguousCodestreamCodeInMemory* clone() const override {
     return new ContiguousCodestreamCodeInMemory(*this);
   }

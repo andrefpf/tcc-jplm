@@ -47,7 +47,7 @@ void Hierarchical4DDecoder::start() {
 
 void Hierarchical4DDecoder::decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane) {
     
-    if(bitplane < mInferiorBitPlane) {
+    if(bitplane < inferior_bit_plane) {
         return;
     }
     
@@ -115,18 +115,18 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
     int bit;
     int bit_position=bitplane;
     
-    for(bit_position = bitplane; bit_position >= mInferiorBitPlane; bit_position--) {
+    for(bit_position = bitplane; bit_position >= inferior_bit_plane; bit_position--) {
         magnitude = magnitude << 1;
-        bit = entropy_decoder.decode_bit(probability_models[bit_position+mSymbolProbabilityModelIndex]);
+        bit = entropy_decoder.decode_bit(probability_models[bit_position+SYMBOL_PROBABILITY_MODEL_INDEX]);
         if(bit_position > BITPLANE_BYPASS) 
-            probability_models[bit_position+mSymbolProbabilityModelIndex].update(bit);            
+            probability_models[bit_position+SYMBOL_PROBABILITY_MODEL_INDEX].update(bit);
         if(bit == 1) {
             magnitude++;
          }            
     }
-    magnitude = magnitude << mInferiorBitPlane;
+    magnitude = magnitude << inferior_bit_plane;
     if(magnitude > 0) {
-        magnitude += (1 << mInferiorBitPlane)/2;
+        magnitude += (1 << inferior_bit_plane)/2;
         if(entropy_decoder.decode_bit(probability_models[0]) == 1) {
             magnitude = -magnitude;
         }
@@ -136,13 +136,13 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
 
 HexadecaTreeFlag Hierarchical4DDecoder::decode_segmentation_flag(int bitplane) {
     int lsb=0;
-    int msb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+mSegmentationFlagProbabilityModelIndex]);
+    int msb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+SEGMENTATION_PROB_MODEL_INDEX]);
     if(bitplane > BITPLANE_BYPASS_FLAGS) 
-        probability_models[(bitplane<<1)+mSegmentationFlagProbabilityModelIndex].update(msb);
+        probability_models[(bitplane<<1)+SEGMENTATION_PROB_MODEL_INDEX].update(msb);
     if(msb == 0) {
-        lsb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+1+mSegmentationFlagProbabilityModelIndex]);
+        lsb = entropy_decoder.decode_bit(probability_models[(bitplane<<1)+1+SEGMENTATION_PROB_MODEL_INDEX]);
         if(bitplane > BITPLANE_BYPASS_FLAGS) 
-            probability_models[(bitplane<<1)+1+mSegmentationFlagProbabilityModelIndex].update(lsb);
+            probability_models[(bitplane<<1)+1+SEGMENTATION_PROB_MODEL_INDEX].update(lsb);
         if (lsb) {//01 = 1 = splitBlock
             return HexadecaTreeFlag::splitBlock;
         }//00
