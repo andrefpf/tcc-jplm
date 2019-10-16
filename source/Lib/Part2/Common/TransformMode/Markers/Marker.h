@@ -39,6 +39,9 @@
  */
 
 #include <cstdint>
+#include <type_traits> //std::underlying_type_t
+#include <cstddef> //std::byte
+#include <vector>
 
 enum class Marker : uint16_t {
 	SOC = 0xFFA0, //!< Start of Codestream
@@ -48,6 +51,32 @@ enum class Marker : uint16_t {
 	SOB = 0xFFA4, //!< Start of Block
 	EOC = 0xFFD9, //!< End of Codestream
 };
+
+namespace Markers {
+	std::vector<std::byte> get_bytes(Marker marker) {
+		auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
+		marker_value&=0x00FF; //keeping only the least significative byte;
+		auto bytes = std::vector<std::byte>();
+		bytes.emplace_back({0xFF});
+		bytes.emplace_back(std::byte{marker_value});
+		return bytes;
+	}
+
+
+	bool is_a_known_marker(Marker marker) {
+		switch (marker) {
+			case Marker::SOC: [[fall_through]];
+			case Marker::LFC: [[fall_through]];
+			case Marker::SCC: [[fall_through]];
+			case Marker::PNT: [[fall_through]];
+			case Marker::SOB: [[fall_through]];
+			case Marker::EOC: return true;
+			default: return false;
+		}
+	}
+
+	
+}
 
 
 // class Marker
