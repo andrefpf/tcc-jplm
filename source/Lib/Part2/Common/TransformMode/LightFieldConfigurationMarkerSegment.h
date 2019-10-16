@@ -73,7 +73,7 @@ class LightFieldConfigurationMarkerSegment {
                 const LightfieldDimension<uint32_t>& block_dimension, 
                 const std::vector<uint8_t>& max_bitplane,
                 bool truncate) : lightfield_dimension(lightfield_dimension),
-  Ssiz_vector(Ssiz), block_dimension(block_dimension), truncate(truncate) {
+  Ssiz_vector(Ssiz), block_dimension(block_dimension), max_bitplane(max_bitplane), truncate(truncate) {
   }
 
 
@@ -104,7 +104,7 @@ class LightFieldConfigurationMarkerSegment {
   }
 
 
-  std::vector<std::byte> to_bytes() const {
+  std::vector<std::byte> get_bytes() const {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->get_length_of_marker_segment()+2); //+2 is because it will include the marker
     BinaryTools::byte_vector_cat(bytes, Markers::get_bytes(LightFieldConfigurationMarkerSegment::marker_code));

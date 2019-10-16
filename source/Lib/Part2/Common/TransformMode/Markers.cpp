@@ -31,33 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Markers.h
+/** \file     Markers.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-10-15
+ *  \date     2019-10-16
  */
 
-#ifndef MARKERS_H__
-#define MARKERS_H__
+#include "Markers.h"
 
-#include <cstdint>
-#include <type_traits> //std::underlying_type_t
-#include <cstddef> //std::byte
-#include <vector>
 
-enum class Marker : uint16_t {
-	SOC = 0xFFA0, //!< Start of Codestream
-	LFC = 0xFFA1, //!< Light Field Configuration
-	SCC = 0xFFA2, //!< Colour Component Scaling
-	PNT = 0xFFA3, //!< Codestream Pointer Set
-	SOB = 0xFFA4, //!< Start of Block
-	EOC = 0xFFD9, //!< End of Codestream
-};
-
-namespace Markers {
-	std::vector<std::byte> get_bytes(Marker marker);
-	bool is_a_known_marker(Marker marker);
+std::vector<std::byte> Markers::get_bytes(Marker marker) {
+	auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
+	marker_value&=0x00FF; //keeping only the least significative byte;
+	auto bytes = std::vector<std::byte>();
+	bytes.emplace_back(std::byte{0xFF});
+	bytes.emplace_back(std::byte{marker_value});
+	return bytes;
 }
 
-#endif /* end of include guard: MARKERS_H__ */
+
+bool Markers::is_a_known_marker(Marker marker) {
+	switch (marker) {
+		case Marker::SOC: [[fall_through]];
+		case Marker::LFC: [[fall_through]];
+		case Marker::SCC: [[fall_through]];
+		case Marker::PNT: [[fall_through]];
+		case Marker::SOB: [[fall_through]];
+		case Marker::EOC: return true;
+		default: return false;
+	}
+}

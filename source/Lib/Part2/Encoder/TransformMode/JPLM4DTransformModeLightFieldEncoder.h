@@ -93,7 +93,9 @@ class JPLM4DTransformModeLightFieldEncoder
         transform_mode_configuration->get_maximal_transform_sizes(),
         transform_mode_configuration->get_transform_scalings());
 
-    write_initial_data_to_encoded_file();
+    // write_initial_data_to_encoded_file();
+    hierarchical_4d_encoder.write_marker(Marker::SOC); //writes the start of codestream
+    hierarchical_4d_encoder.write_lightfield_configuration_marker_segment(lightfield_configuration_marker_segment);
 
     this->initialize_extension_lenghts();
   }
@@ -129,6 +131,7 @@ class JPLM4DTransformModeLightFieldEncoder
     auto& first_codestream = *(codestreams.at(0));
     auto& first_codestream_as_part2 = static_cast<JpegPlenoLightFieldBox&>(first_codestream);
     auto& lightfield_box_contents = first_codestream_as_part2.get_ref_to_contents();
+    
     lightfield_box_contents.add_contiguous_codestream_box(
       std::make_unique<ContiguousCodestreamBox>(std::move(hierarchical_4d_encoder.move_codestream_code_out())));
   }
@@ -140,6 +143,7 @@ class JPLM4DTransformModeLightFieldEncoder
   virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
+    hierarchical_4d_encoder.write_marker(Marker::SOB);
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;

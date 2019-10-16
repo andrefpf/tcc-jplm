@@ -47,6 +47,7 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include "Lib/Part2/Common/TransformMode/Markers.h"
 
 class ABACEncoder : public ABACCodec {
  protected:
@@ -108,6 +109,9 @@ class ABACEncoder : public ABACCodec {
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     codestream_code->push_byte(byte_buffer);
+    auto eoc_bytes = Markers::get_bytes(Marker::EOC);
+    codestream_code->push_byte(eoc_bytes[0]);
+    codestream_code->push_byte(eoc_bytes[1]);
     return std::move(codestream_code);
   }
 };
