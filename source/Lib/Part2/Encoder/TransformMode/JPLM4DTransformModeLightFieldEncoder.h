@@ -46,6 +46,7 @@
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/TransformPartition.h"
+#include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldEncoder
@@ -57,6 +58,7 @@ class JPLM4DTransformModeLightFieldEncoder
   Hierarchical4DEncoder hierarchical_4d_encoder;
   TransformPartition tp;
   LightFieldTransformMode<PelType>& ref_to_lightfield;
+  LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
  public:
   JPLM4DTransformModeLightFieldEncoder(
@@ -73,7 +75,16 @@ class JPLM4DTransformModeLightFieldEncoder
         tp(transform_mode_configuration->get_minimal_transform_dimension()),
 //        hierarchical_4d_encoder(*transform_mode_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
-            *(this->light_field))) {
+            *(this->light_field)))
+        ,
+        lightfield_configuration_marker_segment(
+            {transform_mode_configuration->get_lightfield_io_configurations().get_size()}, //lightfield_dimension,
+            {ComponentSsizParameter(10),ComponentSsizParameter(10),ComponentSsizParameter(10)}, //Ssiz
+            {transform_mode_configuration->get_maximal_transform_sizes()}, //block_dimension,
+            {30,30,30}, //max_bitplane
+            true //truncate
+         ) 
+{
 
     tp.mPartitionData.set_dimension(transform_mode_configuration->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();

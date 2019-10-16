@@ -31,59 +31,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Marker.h
+/** \file     MarkerSegmentHelper.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-10-15
+ *  \date     2019-10-16
  */
 
-#include <cstdint>
-#include <type_traits> //std::underlying_type_t
-#include <cstddef> //std::byte
-#include <vector>
 
-enum class Marker : uint16_t {
-	SOC = 0xFFA0, //!< Start of Codestream
-	LFC = 0xFFA1, //!< Light Field Configuration
-	SCC = 0xFFA2, //!< Colour Component Scaling
-	PNT = 0xFFA3, //!< Codestream Pointer Set
-	SOB = 0xFFA4, //!< Start of Block
-	EOC = 0xFFD9, //!< End of Codestream
-};
+#ifndef MARKERSEGMENTHELPER_H__
+#define MARKERSEGMENTHELPER_H__
 
-namespace Markers {
-	std::vector<std::byte> get_bytes(Marker marker) {
-		auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
-		marker_value&=0x00FF; //keeping only the least significative byte;
-		auto bytes = std::vector<std::byte>();
-		bytes.emplace_back({0xFF});
-		bytes.emplace_back(std::byte{marker_value});
-		return bytes;
-	}
+#include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 
-
-	bool is_a_known_marker(Marker marker) {
-		switch (marker) {
-			case Marker::SOC: [[fall_through]];
-			case Marker::LFC: [[fall_through]];
-			case Marker::SCC: [[fall_through]];
-			case Marker::PNT: [[fall_through]];
-			case Marker::SOB: [[fall_through]];
-			case Marker::EOC: return true;
-			default: return false;
+namespace MarkerSegmentHelper {
+	template<typename RetType> 
+	RetType get_next(const ContiguousCodestreamCode& code) {
+		static_assert(std::is_integral_v<RetType>, "The return type of MarkerSegmentHelper::get_next must be integral");
+		if constexpr (sizeof(RetType) == 1) {
+			return std::to_integer<RetType>(code.get_next_byte());
 		}
+		auto bytes = code.get_next_n_bytes(sizeof(RetType));
+		return BinaryTools::get_value_from_big_endian_byte_vector<RetType>(bytes);
 	}
-
-	
 }
 
-
-// class Marker
-// {
-
-// public:
-// 	Marker();
-// 	virtual ~Marker() = default;
-	
-// };
+#endif /* end of include guard: MARKERSEGMENTHELPER_H__ */

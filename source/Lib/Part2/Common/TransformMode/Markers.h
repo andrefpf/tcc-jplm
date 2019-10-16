@@ -31,78 +31,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ContiguousCodestreamCode.h
+/** \file     Markers.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-29
+ *  \date     2019-10-15
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
-
-#include <cstddef>  //for std::byte
 #include <cstdint>
-#include <ostream>
+#include <type_traits> //std::underlying_type_t
+#include <cstddef> //std::byte
 #include <vector>
 
-/**
- * \brief      Class for contiguous codestream code.
- */
-class ContiguousCodestreamCode {
- public:
-  virtual uint64_t size() const noexcept = 0;
-
-
-  virtual ContiguousCodestreamCode* clone() const = 0;
-
-
-  virtual bool is_equal(const ContiguousCodestreamCode& other) const = 0;
-
-
-  virtual std::ostream& write_to(std::ostream& stream) const = 0;
-
-
-  virtual void push_byte(const std::byte byte) = 0;
-
-
-  virtual std::byte get_byte_at(const uint64_t pos) const = 0;
-
-
-  virtual std::byte get_next_byte() const = 0;
-
-
-  virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
-
-
-  virtual bool is_next_valid() const = 0;
-
-
-  virtual std::byte peek_next_byte() const = 0;
-
-
-  virtual void rewind(std::size_t n_bytes_to_rewind) const = 0;
-
-
-  // virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
-
-  
-
-
-  bool operator==(const ContiguousCodestreamCode& other) const {
-    return this->is_equal(other);
-  }
-
-
-  bool operator!=(const ContiguousCodestreamCode& other) const {
-    return !this->operator==(other);
-  }
-
-  //! \todo define a iterator interface for ContiguousCodestreamCode
+enum class Marker : uint16_t {
+	SOC = 0xFFA0, //!< Start of Codestream
+	LFC = 0xFFA1, //!< Light Field Configuration
+	SCC = 0xFFA2, //!< Colour Component Scaling
+	PNT = 0xFFA3, //!< Codestream Pointer Set
+	SOB = 0xFFA4, //!< Start of Block
+	EOC = 0xFFD9, //!< End of Codestream
 };
 
+namespace Markers {
+	std::vector<std::byte> get_bytes(Marker marker) {
+		auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
+		marker_value&=0x00FF; //keeping only the least significative byte;
+		auto bytes = std::vector<std::byte>();
+		bytes.emplace_back(std::byte{0xFF});
+		bytes.emplace_back(std::byte{marker_value});
+		return bytes;
+	}
 
-std::ostream& operator<<(
-    std::ostream& stream, const ContiguousCodestreamCode& code);
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__ */
+	bool is_a_known_marker(Marker marker) {
+		switch (marker) {
+			case Marker::SOC: [[fall_through]];
+			case Marker::LFC: [[fall_through]];
+			case Marker::SCC: [[fall_through]];
+			case Marker::PNT: [[fall_through]];
+			case Marker::SOB: [[fall_through]];
+			case Marker::EOC: return true;
+			default: return false;
+		}
+	}
+
+	
+}
+
+
+// class Marker
+// {
+
+// public:
+// 	Marker();
+// 	virtual ~Marker() = default;
+	
+// };

@@ -31,78 +31,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ContiguousCodestreamCode.h
+/** \file     ComponentSsizParameter.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-29
+ *  \date     2019-10-16
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__
+#ifndef COMPONENTSSIZPARAMETER_H__
+#define COMPONENTSSIZPARAMETER_H__
 
-#include <cstddef>  //for std::byte
 #include <cstdint>
-#include <ostream>
-#include <vector>
 
-/**
- * \brief      Class for contiguous codestream code.
- */
-class ContiguousCodestreamCode {
- public:
-  virtual uint64_t size() const noexcept = 0;
-
-
-  virtual ContiguousCodestreamCode* clone() const = 0;
-
-
-  virtual bool is_equal(const ContiguousCodestreamCode& other) const = 0;
-
-
-  virtual std::ostream& write_to(std::ostream& stream) const = 0;
-
-
-  virtual void push_byte(const std::byte byte) = 0;
-
-
-  virtual std::byte get_byte_at(const uint64_t pos) const = 0;
-
-
-  virtual std::byte get_next_byte() const = 0;
-
-
-  virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
-
-
-  virtual bool is_next_valid() const = 0;
-
-
-  virtual std::byte peek_next_byte() const = 0;
-
-
-  virtual void rewind(std::size_t n_bytes_to_rewind) const = 0;
-
-
-  // virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
-
+class ComponentSsizParameter {
+ protected:
+  uint8_t value;
+  bool is_signed_;
   
 
+  void check_validity() const {
+    auto sample_precision = get_component_sample_precision();
+    if (sample_precision > 38) {
+      // !\todo create this exception
+      // throw ComponentSsizParameterExceptions::InvalidComponentPrecisionException(sample_precision);
+    }
+  }
 
-  bool operator==(const ContiguousCodestreamCode& other) const {
-    return this->is_equal(other);
+ public:
+  ComponentSsizParameter(uint8_t value)
+      : value(value), is_signed_((value > 127) ? true : false) {
   }
 
 
-  bool operator!=(const ContiguousCodestreamCode& other) const {
-    return !this->operator==(other);
+  bool is_signed() const noexcept {
+    return is_signed_;
   }
 
-  //! \todo define a iterator interface for ContiguousCodestreamCode
+
+  uint8_t operator()() const noexcept {
+    return value;
+  }
+
+
+  uint8_t get_component_sample_precision() const noexcept {
+    uint8_t mask = 0x7F;  // dec 127, bin 0111 1111
+    return (value & mask) + 1;  //removes the possible msb
+  }
 };
 
+#endif /* end of include guard: COMPONENTSSIZPARAMETER_H__ */
 
-std::ostream& operator<<(
-    std::ostream& stream, const ContiguousCodestreamCode& code);
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODE_H__ */
