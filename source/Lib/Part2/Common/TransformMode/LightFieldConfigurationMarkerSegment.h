@@ -104,6 +104,36 @@ class LightFieldConfigurationMarkerSegment {
   }
 
 
+  const auto& get_ref_to_block_dimension() const {
+    return block_dimension;
+  }
+
+
+  const auto& get_ref_to_lightfield_dimension() const {
+    return lightfield_dimension;
+  }
+
+
+  const std::vector<uint8_t>& get_ref_to_max_bitplanes() {
+    return max_bitplane;
+  }
+
+
+  uint8_t get_max_bitplane_at_channel(const std::size_t channel) {
+    return max_bitplane.at(channel);
+  }
+
+
+  const std::vector<ComponentSsizParameter>& get_ref_to_bitdepths() {
+    return Ssiz_vector;
+  }
+
+
+  uint8_t get_max_bitdepth_at_channel(const std::size_t channel) {
+    return Ssiz_vector.at(channel)();
+  }
+
+
   std::vector<std::byte> get_bytes() const {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->get_length_of_marker_segment()+2); //+2 is because it will include the marker

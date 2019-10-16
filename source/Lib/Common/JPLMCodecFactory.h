@@ -141,34 +141,33 @@ static uint16_t read_int_from_codestream_code(
               std::cout << "Transform Mode codestream"
                         << std::endl;
 
-              //####################### temporary until implementing the markers ############################
-              auto& codestream_code =
-                  codestream_as_part2.get_ref_to_contents()
-                      .get_ref_to_contiguous_codestream_box()
-                      .get_ref_to_contents()
-                      .get_ref_to_code();
-              [[maybe_unused]] auto superior_bit_plane =
-                  read_int_from_codestream_code(codestream_code);
-              // //reads the maximum transform sizes
-              auto transform_length_t =
-                  read_int_from_codestream_code(codestream_code);
-              auto transform_length_s =
-                  read_int_from_codestream_code(codestream_code);
-              auto transform_length_v =
-                  read_int_from_codestream_code(codestream_code);
-              auto transform_length_u =
-                  read_int_from_codestream_code(codestream_code);
-              auto block_4d_size = LightfieldDimension<uint32_t>(
-                  transform_length_t, transform_length_s, transform_length_v,
-                  transform_length_u);
-              codestream_code.rewind(10);
-              //####################### temporary until implementing the markers ############################
+              // //####################### temporary until implementing the markers ############################
+              // auto& codestream_code =
+              //     codestream_as_part2.get_ref_to_contents()
+              //         .get_ref_to_contiguous_codestream_box()
+              //         .get_ref_to_contents()
+              //         .get_ref_to_code();
+              // [[maybe_unused]] auto superior_bit_plane =
+              //     read_int_from_codestream_code(codestream_code);
+              // // //reads the maximum transform sizes
+              // auto transform_length_t =
+              //     read_int_from_codestream_code(codestream_code);
+              // auto transform_length_s =
+              //     read_int_from_codestream_code(codestream_code);
+              // auto transform_length_v =
+              //     read_int_from_codestream_code(codestream_code);
+              // auto transform_length_u =
+              //     read_int_from_codestream_code(codestream_code);
+              // auto block_4d_size = LightfieldDimension<uint32_t>(
+              //     transform_length_t, transform_length_s, transform_length_v,
+              //     transform_length_u);
+              // codestream_code.rewind(10);
+              // //####################### temporary until implementing the markers ############################
 
 
               decoders.push_back(
                   std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(jpl_file,
-                      codestream_as_part2, output_filename,
-                      block_4d_size));
+                      codestream_as_part2, output_filename));
               break;
             }
             case CompressionTypeLightField::prediction_mode: {

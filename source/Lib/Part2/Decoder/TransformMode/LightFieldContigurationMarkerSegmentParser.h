@@ -41,9 +41,12 @@
 #ifndef LIGHTFIELDCONTIGURATIONMARKERSEGMENTPARSER_H__
 #define LIGHTFIELDCONTIGURATIONMARKERSEGMENTPARSER_H__
 
+#include "Lib/Part2/Decoder/TransformMode/MarkerSegmentHelper.h"
+#include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
+
 
 namespace LightFieldContigurationMarkerSegmentParser {
-	LightFieldConfigurationMarkerSegment get_light_field_configuration_marker_segment(ContiguousCodestreamCode& codestream_code) {
+	LightFieldConfigurationMarkerSegment get_light_field_configuration_marker_segment(const ContiguousCodestreamCode& codestream_code) {
 		[[maybe_unused]] auto SLlfc_from_codestream_code = codestream_code.get_next_byte();
 	  	[[maybe_unused]] auto Llfc_from_codestream_code = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
 	  	auto ROWS = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
