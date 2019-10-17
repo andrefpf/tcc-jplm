@@ -132,12 +132,16 @@ class JPLM4DTransformModeLightFieldDecoder
     { //reading SOC
       auto byte_0 = codestream_code.get_next_byte();
       auto byte_1 = codestream_code.get_next_byte();
+      std::cout << "byte_0: " << std::to_integer<int>(byte_0) << std::endl;
+      std::cout << "byte_1: " << std::to_integer<int>(byte_1) << std::endl;
       // is_a_known_marker
     }
     
     { //reading LFC
       auto byte_0 = codestream_code.get_next_byte();
       auto byte_1 = codestream_code.get_next_byte();
+      std::cout << "byte_0: " << std::to_integer<int>(byte_0) << std::endl;
+      std::cout << "byte_1: " << std::to_integer<int>(byte_1) << std::endl;
     }
     // LightFieldConfigurationMarkerSegment
     auto lightfield_configuration_marker_segment = 

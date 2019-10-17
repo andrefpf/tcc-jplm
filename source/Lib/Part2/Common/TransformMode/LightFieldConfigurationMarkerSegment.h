@@ -146,6 +146,7 @@ class LightFieldConfigurationMarkerSegment {
       BinaryTools::append_big_endian_bytes(bytes, Ssiz());
     }
     BinaryTools::append_big_endian_bytes(bytes, get_number_of_4d_blocks());
+    BinaryTools::append_big_endian_bytes(bytes, block_dimension.as_tuple());
     BinaryTools::append_big_endian_bytes(bytes, max_bitplane);
     bytes.push_back(std::byte{truncate});
     return bytes;

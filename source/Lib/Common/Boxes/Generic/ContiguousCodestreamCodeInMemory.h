@@ -114,7 +114,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
     for(auto i=decltype(n){0};i<n;++i){
       bytes_vector.push_back(this->get_next_byte());
     }
-    current_pos+=n;
+    // current_pos+=n;
     return bytes_vector;
   }
 
