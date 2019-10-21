@@ -148,8 +148,6 @@ class JPLM4DTransformModeLightFieldDecoder
       LightFieldContigurationMarkerSegmentParser::get_light_field_configuration_marker_segment(codestream_code);
 
 
-
-    // 
     // // //reads the superior bit plane value
     auto superior_bit_plane = lightfield_configuration_marker_segment.get_max_bitplane_at_channel(0);
     hierarchical_4d_decoder.set_superior_bit_plane(superior_bit_plane);
@@ -157,35 +155,8 @@ class JPLM4DTransformModeLightFieldDecoder
     // // //reads the maximum transform sizes
     const auto& [transform_length_t, transform_length_s, transform_length_v, transform_length_u] = 
       lightfield_configuration_marker_segment.get_ref_to_block_dimension().as_tuple();
-    // auto transform_length_s = read_int_from_codestream_code(codestream_code);
-    // auto transform_length_v = read_int_from_codestream_code(codestream_code);
-    // auto transform_length_u = read_int_from_codestream_code(codestream_code);
     hierarchical_4d_decoder.set_transform_dimension(lightfield_configuration_marker_segment.get_ref_to_block_dimension());
-    //     transform_length_s, transform_length_v, transform_length_u});
 
-
-    // // //reads the minimum transform sizes
-    // auto min_transform_length_t =
-    //     read_int_from_codestream_code(codestream_code);
-    // auto min_transform_length_s =
-    //     read_int_from_codestream_code(codestream_code);
-    // auto min_transform_length_v =
-    //     read_int_from_codestream_code(codestream_code);
-    // auto min_transform_length_u =
-    //     read_int_from_codestream_code(codestream_code);
-    // hierarchical_4d_decoder.set_minimum_transform_dimension(
-    //     {min_transform_length_t, min_transform_length_s, min_transform_length_v,
-    //         min_transform_length_u});
-
-
-    // // //reads the number of views of the lightfield
-    // auto number_of_vertical_views =
-    //     read_int_from_codestream_code(codestream_code);
-    // auto number_of_horizontal_views =
-    //     read_int_from_codestream_code(codestream_code);
-    // // //reads the number of lines and columns of each view
-    // auto mNumberOfViewLines = read_int_from_codestream_code(codestream_code);
-    // auto mNumberOfViewColumns = read_int_from_codestream_code(codestream_code);
     const auto& [number_of_vertical_views, number_of_horizontal_views, mNumberOfViewLines, mNumberOfViewColumns] =
      lightfield_configuration_marker_segment.get_ref_to_lightfield_dimension();
     hierarchical_4d_decoder.set_lightfield_dimension(lightfield_configuration_marker_segment.get_ref_to_lightfield_dimension());
@@ -193,7 +164,6 @@ class JPLM4DTransformModeLightFieldDecoder
     auto bpp = lightfield_configuration_marker_segment.get_max_bitdepth_at_channel(0);
 
     auto level_shift = static_cast<int>(std::pow(2.0, bpp)-1.0);
-    //     read_int_from_codestream_code(codestream_code);
     hierarchical_4d_decoder.set_level_shift(level_shift);
     
 
@@ -202,17 +172,11 @@ class JPLM4DTransformModeLightFieldDecoder
     std::cout << "transform_length_s: " << transform_length_s << "\n";
     std::cout << "transform_length_v: " << transform_length_v << "\n";
     std::cout << "transform_length_u: " << transform_length_u << "\n";
-    // std::cout << "min_transform_length_t: " << min_transform_length_t << "\n";
-    // std::cout << "min_transform_length_s: " << min_transform_length_s << "\n";
-    // std::cout << "min_transform_length_v: " << min_transform_length_v << "\n";
-    // std::cout << "min_transform_length_u: " << min_transform_length_u << "\n";
     std::cout << "number_of_vertical_views: " << number_of_vertical_views << "\n";
     std::cout << "number_of_horizontal_views: " << number_of_horizontal_views << "\n";
     std::cout << "mNumberOfViewLines: " << mNumberOfViewLines << "\n";
     std::cout << "mNumberOfViewColumns: " << mNumberOfViewColumns << "\n";
     std::cout << "level_shift: " << level_shift << std::endl;
-
-    // exit(0);
 
   }
 
