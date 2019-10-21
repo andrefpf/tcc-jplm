@@ -71,6 +71,7 @@ class ABACEncoder : public ABACCodec {
         number_of_scalings(0), mask(std::byte{0x01}),
         byte_buffer(std::byte{0}) {
   }
+
   virtual ~ABACEncoder() = default;
   void start(const std::string& filename);
   void encode_bit(bool bit, const ProbabilityModel& probability_model);
@@ -104,11 +105,27 @@ class ABACEncoder : public ABACCodec {
 
   ContiguousCodestreamCode& get_ref_to_codestream_code() const;
 
+  void reset() {
+    number_of_scalings = 0;
+    mask=std::byte{0x01};
+    byte_buffer=std::byte{0};
+    mLow=0;
+    mHigh=MAXINT;
+    number_of_bits_in_byte=0;
+    mBitBuffer=0;
+  }
 
-  std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
+
+  void flush_byte() {
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     codestream_code->push_byte(byte_buffer);
+    reset();
+  }
+
+
+  std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
+    flush_byte();
     auto eoc_bytes = Markers::get_bytes(Marker::EOC);
     codestream_code->push_byte(eoc_bytes[0]);
     codestream_code->push_byte(eoc_bytes[1]);
