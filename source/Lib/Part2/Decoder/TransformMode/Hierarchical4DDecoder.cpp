@@ -42,7 +42,7 @@
 
 void Hierarchical4DDecoder::start() {
     entropy_decoder.start();  //initializes entropy decoder
-    reset_probability_models();   
+    // reset_probability_models();   
 }
 
 void Hierarchical4DDecoder::decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane) {
