@@ -103,6 +103,7 @@ void Hierarchical4DEncoder::reset_optimization_models() {
 void Hierarchical4DEncoder::reset_probability_models() {
   Hierarchical4DCodec::reset_probability_models();
   reset_optimization_models();
+  mEntropyCoder.flush_byte();
 }
 
 

@@ -119,6 +119,12 @@ class ABACEncoder : public ABACCodec {
 
 
   void flush_byte() {
+    std::cout << "called flush" << std::endl;
+  }
+
+
+  void flush_byte_impl() {
+    std::cout << "called flush" << std::endl;
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     push_current_byte_to_codestream_code();
@@ -128,7 +134,7 @@ class ABACEncoder : public ABACCodec {
 
 
   std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
-    flush_byte();
+    flush_byte_impl();
     auto eoc_bytes = Markers::get_bytes(Marker::EOC);
     codestream_code->push_byte(eoc_bytes[0]);
     codestream_code->push_byte(eoc_bytes[1]);
