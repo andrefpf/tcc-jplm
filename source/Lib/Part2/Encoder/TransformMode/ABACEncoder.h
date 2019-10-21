@@ -49,6 +49,7 @@
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 
+  
 class ABACEncoder : public ABACCodec {
  protected:
   mutable std::unique_ptr<ContiguousCodestreamCode> codestream_code;
@@ -64,6 +65,7 @@ class ABACEncoder : public ABACCodec {
   template<bool bit>
   void output_bit();
   void output_bit(bool bit);
+  void push_current_byte_to_codestream_code();
 
  public:
   ABACEncoder()
@@ -119,7 +121,8 @@ class ABACEncoder : public ABACCodec {
   void flush_byte() {
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
-    codestream_code->push_byte(byte_buffer);
+    push_current_byte_to_codestream_code();
+    // codestream_code->push_byte(byte_buffer);
     reset();
   }
 

@@ -144,6 +144,7 @@ class JPLM4DTransformModeLightFieldEncoder
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
     // hierarchical_4d_encoder.write_marker(Marker::SOB);
+    std::cout << "begin block 4d" << std::endl;
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;
@@ -151,6 +152,7 @@ class JPLM4DTransformModeLightFieldEncoder
     const auto lambda = transform_mode_configuration->get_lambda();
     tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
     tp.encode_partition(hierarchical_4d_encoder, lambda);
+    std::cout << "end block 4d" << std::endl;
   }
 };
 
