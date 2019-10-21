@@ -70,7 +70,6 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
          mLow = mLow + length_0;
     }
 
-    mNumberOfbitsreadAfterlastBitDecoded = 0;
     while(((mLow & MSB_MASK) == (mHigh & MSB_MASK)) || ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
         
        if((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
@@ -109,16 +108,17 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
             mTag = mTag  & MAXINT;
         }
     }
+    
     mHigh = mHigh & MAXINT;
     mLow = mLow & MAXINT;
     mTag = mTag  & MAXINT;
+
     return (bitDecoded);
 }
 
 
 int ABACDecoder::ReadBitFromFile() {
-    int bit;
-    mNumberOfbitsreadAfterlastBitDecoded++;    
+    int bit; 
     if (number_of_bits_in_byte == 0) {  
         // mBitBuffer = fgetc(file_ptr);
         number_of_bits_in_byte = 8;

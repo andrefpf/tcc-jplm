@@ -148,10 +148,14 @@ class JPLM4DTransformModeLightFieldEncoder
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;
+
+
     hierarchical_4d_encoder.reset_probability_models();
     const auto lambda = transform_mode_configuration->get_lambda();
     tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
     tp.encode_partition(hierarchical_4d_encoder, lambda);
+    
+
     std::cout << "end block 4d" << std::endl;
   }
 };
