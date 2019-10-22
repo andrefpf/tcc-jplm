@@ -41,75 +41,85 @@
 #ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__
 
+#include <array>
+#include <vector>
+#include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
-#include "Lib/Part2/Common/TransformMode/ABACCodec.h"
-#include <vector>
-#include <array>
 
-enum class PartitionFlag {transform=0, spatialSplit=1, viewSplit=2}; //Table C.30
-enum class HexadecaTreeFlag {lowerBitPlane=0, splitBlock=1, zeroBlock=2}; //Table C.44
+enum class PartitionFlag {
+  transform = 0,
+  spatialSplit = 1,
+  viewSplit = 2
+};  //Table C.30
+enum class HexadecaTreeFlag {
+  lowerBitPlane = 0,
+  splitBlock = 1,
+  zeroBlock = 2
+};  //Table C.44
 
-class Hierarchical4DCodec
-{
-protected:
-	static constexpr auto MINIMUM_BITPLANE_PRECISION=5;
-	static constexpr auto BITPLANE_BYPASS=-1;
-	static constexpr auto BITPLANE_BYPASS_FLAGS=-1;
-	static constexpr auto SYMBOL_PROBABILITY_MODEL_INDEX=1;
-	static constexpr auto SEGMENTATION_PROB_MODEL_INDEX=32;
-	static constexpr auto number_of_probability_models=161;
-    std::array<ProbabilityModel, number_of_probability_models> probability_models;
-    int mPGMScale;
-    uint8_t superior_bit_plane;
-    uint8_t inferior_bit_plane;
+class Hierarchical4DCodec {
+ protected:
+  static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
+  static constexpr auto BITPLANE_BYPASS = -1;
+  static constexpr auto BITPLANE_BYPASS_FLAGS = -1;
+  static constexpr auto SYMBOL_PROBABILITY_MODEL_INDEX = 1;
+  static constexpr auto SEGMENTATION_PROB_MODEL_INDEX = 32;
+  static constexpr auto number_of_probability_models = 161;
+  std::array<ProbabilityModel, number_of_probability_models> probability_models;
+  int mPGMScale;
+  uint8_t superior_bit_plane;
+  uint8_t inferior_bit_plane;
 
-    //! \todo check if the transform dimension must be kept in this class or only the number of elements in the transform.
-    //LightfieldDimension<uint32_t> transform_dimension;
-    uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u;
+  //! \todo check if the transform dimension must be kept in this class or only the number of elements in the transform.
+  //LightfieldDimension<uint32_t> transform_dimension;
+  uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v,
+      mTransformLength_u;
 
-    //! \todo check if the minimum transform lenghts must be kept in this class. it seems they are only here to be written to file.
-    //LightfieldDimension<uint32_t> minimum_transform_dimension;
-    uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u;
-
-
-    //! \todo check if the lightfield dimension must be kept in this class. it seems they are only here to be written to file.
-    //LightfieldDimension<uint32_t> lightfield_dimension;
-    uint32_t mNumberOfVerticalViews, mNumberOfHorizontalViews;
-    uint32_t mNumberOfViewLines, mNumberOfViewColumns;
-
-public:
-    auto get_number_of_elements_in_transform() const {
-        return mTransformLength_t*mTransformLength_s*mTransformLength_v*mTransformLength_u;
-    }
-
-    void set_level_shift(int value);
-    int get_level_shift() const;
-
-    void set_inferior_bit_plane(uint8_t value);
-    uint8_t get_inferior_bit_plane() const;
-
-    void set_superior_bit_plane(uint8_t value);
-    uint8_t get_superior_bit_plane() const;
-    void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension);
-    LightfieldDimension<std::size_t> get_lightfield_dimension() const {
-        return {mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines, mNumberOfViewColumns};
-    }
+  //! \todo check if the minimum transform lenghts must be kept in this class. it seems they are only here to be written to file.
+  //LightfieldDimension<uint32_t> minimum_transform_dimension;
+  uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s,
+      mMinimumTransformLength_v, mMinimumTransformLength_u;
 
 
-    void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
-    void set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
+  //! \todo check if the lightfield dimension must be kept in this class. it seems they are only here to be written to file.
+  //LightfieldDimension<uint32_t> lightfield_dimension;
+  uint32_t mNumberOfVerticalViews, mNumberOfHorizontalViews;
+  uint32_t mNumberOfViewLines, mNumberOfViewColumns;
 
-    Block4D mSubbandLF;
+ public:
+  auto get_number_of_elements_in_transform() const {
+    return mTransformLength_t * mTransformLength_s * mTransformLength_v *
+           mTransformLength_u;
+  }
+
+  void set_level_shift(int value);
+  int get_level_shift() const;
+
+  void set_inferior_bit_plane(uint8_t value);
+  uint8_t get_inferior_bit_plane() const;
+
+  void set_superior_bit_plane(uint8_t value);
+  uint8_t get_superior_bit_plane() const;
+  void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension);
+  LightfieldDimension<std::size_t> get_lightfield_dimension() const {
+    return {mNumberOfVerticalViews, mNumberOfHorizontalViews,
+        mNumberOfViewLines, mNumberOfViewColumns};
+  }
 
 
-    Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0) {};
+  void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
+  void set_minimum_transform_dimension(
+      const LightfieldDimension<uint32_t>& dimension);
+
+  Block4D mSubbandLF;
 
 
-    virtual ~Hierarchical4DCodec() = default;
-    virtual void reset_probability_models();
+  Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0){};
 
 
+  virtual ~Hierarchical4DCodec() = default;
+  virtual void reset_probability_models();
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__ */

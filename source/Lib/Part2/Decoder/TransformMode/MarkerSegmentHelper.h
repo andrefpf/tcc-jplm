@@ -42,19 +42,20 @@
 #ifndef MARKERSEGMENTHELPER_H__
 #define MARKERSEGMENTHELPER_H__
 
-#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 namespace MarkerSegmentHelper {
-	template<typename RetType> 
-	RetType get_next(const ContiguousCodestreamCode& code) {
-		static_assert(std::is_integral_v<RetType>, "The return type of MarkerSegmentHelper::get_next must be integral");
-		if constexpr (sizeof(RetType) == 1) {
-			return std::to_integer<RetType>(code.get_next_byte());
-		}
-		auto bytes = code.get_next_n_bytes(sizeof(RetType));
-		return BinaryTools::get_value_from_big_endian_byte_vector<RetType>(bytes);
-	}
+template<typename RetType>
+RetType get_next(const ContiguousCodestreamCode& code) {
+  static_assert(std::is_integral_v<RetType>,
+      "The return type of MarkerSegmentHelper::get_next must be integral");
+  if constexpr (sizeof(RetType) == 1) {
+    return std::to_integer<RetType>(code.get_next_byte());
+  }
+  auto bytes = code.get_next_n_bytes(sizeof(RetType));
+  return BinaryTools::get_value_from_big_endian_byte_vector<RetType>(bytes);
 }
+}  // namespace MarkerSegmentHelper
 
 #endif /* end of include guard: MARKERSEGMENTHELPER_H__ */

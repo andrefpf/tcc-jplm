@@ -54,14 +54,13 @@ class ExpectingAMarkerException : public std::exception {
 
  public:
   ExpectingAMarkerException([[maybe_unused]] Marker marker)
-      : message(
-            std::string("Expecting a marker..") ) {
+      : message(std::string("Expecting a marker..")) {
   }
   const char* what() const noexcept override {
     return message.c_str();
   }
 };
-}
+}  // namespace JPLM4DTransformModeLightFieldDecoderExceptions
 
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__ */
