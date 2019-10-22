@@ -93,8 +93,6 @@ ContiguousCodestreamCode& ABACEncoder::get_ref_to_codestream_code() const {
 
 void ABACEncoder::push_current_byte_to_codestream_code() {
     mask = std::byte{0x01};
-    std::cout << "pushed byte: ";
-    this->print_byte(byte_buffer);
     codestream_code->push_byte(byte_buffer);    
     byte_buffer = std::byte{0};
 }

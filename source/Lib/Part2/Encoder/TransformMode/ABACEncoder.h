@@ -123,7 +123,6 @@ class ABACEncoder : public ABACCodec {
 
 
   void flush_byte() {
-    std::cout << "called flush" << std::endl;
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     push_current_byte_to_codestream_code();

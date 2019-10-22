@@ -143,8 +143,9 @@ class JPLM4DTransformModeLightFieldEncoder
   virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
+    
     hierarchical_4d_encoder.write_marker(Marker::SOB);
-    std::cout << "begin block 4d" << std::endl;
+
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;
@@ -158,7 +159,6 @@ class JPLM4DTransformModeLightFieldEncoder
     //assumes that the prob models are initialized in reset state... 
     hierarchical_4d_encoder.reset_probability_models();
 
-    std::cout << "end block 4d" << std::endl;
   }
 };
 
