@@ -46,6 +46,8 @@
 #include <limits>
 #include <string>
 #include "Lib/Part2/Common/TransformMode/Markers.h"
+#include "magic_enum.hpp"
+
 
 namespace JPLM4DTransformModeLightFieldDecoderExceptions {
 class ExpectingAMarkerException : public std::exception {
@@ -53,8 +55,8 @@ class ExpectingAMarkerException : public std::exception {
   std::string message;
 
  public:
-  ExpectingAMarkerException([[maybe_unused]] Marker marker)
-      : message(std::string("Expecting a marker..")) {
+  ExpectingAMarkerException(Marker marker)
+      : message(std::string("Expecting a marker ")+std::to_string(static_cast<uint16_t>(marker))) {
   }
   const char* what() const noexcept override {
     return message.c_str();
