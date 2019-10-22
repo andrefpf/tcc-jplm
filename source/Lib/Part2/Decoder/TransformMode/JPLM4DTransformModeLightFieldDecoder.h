@@ -52,6 +52,7 @@
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
 #include "Lib/Part2/Decoder/TransformMode/LightFieldContigurationMarkerSegmentParser.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Part2/Decoder/TransformMode/CommonExceptions.h"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
@@ -112,31 +113,31 @@ class JPLM4DTransformModeLightFieldDecoder
   }
 
 
+  void read_marker(Marker marker) {
+    auto bytes = Markers::get_bytes(marker); 
+    if(auto byte = codestream_code.get_next_byte(); byte != bytes[0]) {
+      throw JPLM4DTransformModeLightFieldDecoderExceptions::ExpectingAMarkerException(marker);
+    }
+    if(auto byte = codestream_code.get_next_byte(); byte != bytes[1]) {
+      throw JPLM4DTransformModeLightFieldDecoderExceptions::ExpectingAMarkerException(marker);
+    }
+  }
+
+
   void read_initial_data_from_compressed_file() {
-    { //reading SOC
-      auto byte_0 = codestream_code.get_next_byte();
-      auto byte_1 = codestream_code.get_next_byte();
-      std::cout << "byte_0: " << std::to_integer<int>(byte_0) << std::endl;
-      std::cout << "byte_1: " << std::to_integer<int>(byte_1) << std::endl;
-      // is_a_known_marker
-    }
-    
-    { //reading LFC
-      auto byte_0 = codestream_code.get_next_byte();
-      auto byte_1 = codestream_code.get_next_byte();
-      std::cout << "byte_0: " << std::to_integer<int>(byte_0) << std::endl;
-      std::cout << "byte_1: " << std::to_integer<int>(byte_1) << std::endl;
-    }
+    read_marker(Marker::SOC);
+
+    read_marker(Marker::LFC);
     // LightFieldConfigurationMarkerSegment
     auto lightfield_configuration_marker_segment = 
       LightFieldContigurationMarkerSegmentParser::get_light_field_configuration_marker_segment(codestream_code);
 
 
-    // // //reads the superior bit plane value
+    //gets the superior bit plane value from the LFC marker segment
     auto superior_bit_plane = lightfield_configuration_marker_segment.get_max_bitplane_at_channel(0);
     hierarchical_4d_decoder.set_superior_bit_plane(superior_bit_plane);
 
-    // // //reads the maximum transform sizes
+    //gets the maximum transform sizes from the LFC marker segment
     const auto& [transform_length_t, transform_length_s, transform_length_v, transform_length_u] = 
       lightfield_configuration_marker_segment.get_ref_to_block_dimension().as_tuple();
     hierarchical_4d_decoder.set_transform_dimension(lightfield_configuration_marker_segment.get_ref_to_block_dimension());

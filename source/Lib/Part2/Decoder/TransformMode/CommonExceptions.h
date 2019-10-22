@@ -31,67 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Hierarchical4DDecoder.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \author   Murilo
- *  \date     2017-12-28
+ *  \date     2019-10-22
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__
-
-#include "Lib/Part2/Decoder/TransformMode/ABACDecoder.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
-#include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
+#ifndef JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
+#define JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
 
 
-class Hierarchical4DDecoder : public Hierarchical4DCodec 
-{
-private:    
-    HexadecaTreeFlag decode_segmentation_flag(int bitplane);
+#include <exception>
+#include <limits>
+#include <string>
+#include "Lib/Part2/Common/TransformMode/Markers.h"
 
+namespace JPLM4DTransformModeLightFieldDecoderExceptions {
+class ExpectingAMarkerException : public std::exception {
+ protected:
+  std::string message;
 
-    int decode_coefficient(int bitplane);
-
-
-public:
-    ABACDecoder entropy_decoder;
-
-
-    Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
-    : entropy_decoder(codestream_code) {
-    }
-
-
-    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions() const {
-        return {mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u};
-    }
-
-
-    virtual ~Hierarchical4DDecoder() = default;
-
-
-    void decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
-
-
-    PartitionFlag decode_partition_flag();
-
-
-    int decode_integer(int precision);
-
-
-    void start();
-
-
-    virtual void reset_probability_models() override {
-        Hierarchical4DCodec::reset_probability_models();
-        entropy_decoder.start();
-    }
+ public:
+  ExpectingAMarkerException([[maybe_unused]] Marker marker)
+      : message(
+            std::string("Expecting a marker..") ) {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
 };
+}
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__ */
+
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__ */
