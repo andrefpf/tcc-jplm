@@ -53,7 +53,6 @@
 class ABACEncoder : public ABACCodec {
  protected:
   mutable std::unique_ptr<ContiguousCodestreamCode> codestream_code;
-  // ContiguousCodestreamCode& codestream_code;
   std::string filename;
   mutable int number_of_scalings; /*!< number of renormalizations performed */
   std::byte mask;

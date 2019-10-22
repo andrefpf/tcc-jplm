@@ -109,22 +109,6 @@ class JPLM4DTransformModeLightFieldDecoder
   view_io_policy.set_save_image_when_release(true)
       .set_overwrite_image_when_save_if_file_already_exists(true);
 
-    // hierarchical_4d_decoder.start();
-  }
-
-  // void setup_header_data_into_decoded_lightfield() {
-
-  // hierarchical_4d_decoder.set_minimum_transform_dimension({
-  //   9, 9, 8, 8 //! \todo correct this to use the sizes from file...
-  // });
-  uint16_t read_int_from_codestream_code(
-      const ContiguousCodestreamCode& codestream_code) {
-    auto bytes = std::vector<std::byte>();
-    auto byte_0 = codestream_code.get_next_byte();
-    auto byte_1 = codestream_code.get_next_byte();
-    bytes.push_back(byte_0);
-    bytes.push_back(byte_1);
-    return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
   }
 
 

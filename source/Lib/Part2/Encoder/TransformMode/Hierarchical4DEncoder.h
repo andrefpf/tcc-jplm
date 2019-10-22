@@ -102,8 +102,6 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       Hierarchical4DEncoder::number_of_probability_models>& model);
   void create_temporary_buffer();
 
-  void write_initial_data();
-
   
   void write_marker(Marker marker) {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();

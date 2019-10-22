@@ -120,12 +120,6 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
 
-  void
-  write_initial_data_to_encoded_file() {  //read_initial_data_from_encoded_file
-    hierarchical_4d_encoder.write_initial_data();
-  }
-
-
   virtual void finalization() override {
     auto& codestreams = this->jpl_file->get_reference_to_codestreams();
     auto& first_codestream = *(codestreams.at(0));

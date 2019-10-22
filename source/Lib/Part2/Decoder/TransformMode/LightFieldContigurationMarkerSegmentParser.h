@@ -48,38 +48,23 @@
 namespace LightFieldContigurationMarkerSegmentParser {
 	LightFieldConfigurationMarkerSegment get_light_field_configuration_marker_segment(const ContiguousCodestreamCode& codestream_code) {
 		[[maybe_unused]] auto SLlfc_from_codestream_code = codestream_code.get_next_byte();
-		std::cout << "SLlfc_from_codestream_code: " << std::to_integer<int>(SLlfc_from_codestream_code) << std::endl;
 	  	[[maybe_unused]] auto Llfc_from_codestream_code = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
-	  	std::cout << "Llfc_from_codestream_code: " << Llfc_from_codestream_code << std::endl;
-	  	std::cout << "I'm here" << std::endl;
 	  	auto ROWS = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "ROWS: " << ROWS << std::endl;
 	  	auto COLUMNS = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "COLUMNS: " << COLUMNS << std::endl;
 	  	auto HEIGHT = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "HEIGHT: " << HEIGHT << std::endl;
 	  	auto WIDTH = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "WIDTH: " << WIDTH << std::endl;
 	  	auto lightfield_dimension = LightfieldDimension<uint32_t>(ROWS, COLUMNS, HEIGHT, WIDTH);
 	  	auto NC = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
-	  	std::cout << "NC: " << NC << std::endl;
 	  	auto Ssiz_vector = std::vector<ComponentSsizParameter>();
 	  	Ssiz_vector.reserve(NC);
 	  	for(auto i=decltype(NC){0};i<NC;++i) {
-	  		std::cout << "i: " << i << "(" << NC << ")" << std::endl;
 	  		Ssiz_vector.emplace_back(ComponentSsizParameter(MarkerSegmentHelper::get_next<uint8_t>(codestream_code)));
 	  	}
-	  	std::cout << "out of loop" << std::endl;
 	  	[[maybe_unused]] auto N_4D = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "N_4D: " << N_4D << std::endl;
 	  	auto BLOCK_SIZE_t = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "BLOCK_SIZE_t: " << BLOCK_SIZE_t << std::endl;
 	  	auto BLOCK_SIZE_s = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "BLOCK_SIZE_s: " << BLOCK_SIZE_s << std::endl;
 	  	auto BLOCK_SIZE_v = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "BLOCK_SIZE_v: " << BLOCK_SIZE_v << std::endl;
 	  	auto BLOCK_SIZE_u = MarkerSegmentHelper::get_next<uint32_t>(codestream_code);
-	  	std::cout << "BLOCK_SIZE_u: " << BLOCK_SIZE_u << std::endl;
 	  	auto block_dimension = LightfieldDimension<uint32_t>(BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
 	  	auto max_bitplane = std::vector<uint8_t>();
 	  	max_bitplane.reserve(NC);

@@ -46,47 +46,6 @@ ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() co
 }
 
 
-void Hierarchical4DEncoder::write_initial_data() {
-  ContiguousCodestreamCode& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
-
-  auto bytes = std::vector<std::byte>();
-  bytes.reserve(28);
-
-  BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->superior_bit_plane);
-    
-    //writes the maximum transform sizes
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_t);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_s);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_v);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_u);
-    
-    //writes the minimum transform sizes
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_t);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_s);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_v);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_u);
-    
-
-    //writes the number of views of the lightfield
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfVerticalViews);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfHorizontalViews);
-    
-    //writes the number of lines and columns of each view
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfViewLines);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfViewColumns);
-    
-    //writes the bit precision of each component of the pixels of the views
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mPGMScale);
-
-    //writes the extension_method to file...
-    // write_int16_into_file(parameter_handler.extension_method, encoded_file_pointer);
-    // 
-    for(const auto& byte: bytes) {
-      codestream_code.push_byte(byte);
-    }
-}
-
-
 std::unique_ptr<ContiguousCodestreamCode>&& Hierarchical4DEncoder::move_codestream_code_out() {
   return mEntropyCoder.move_codestream_code_out();
 }

@@ -53,9 +53,6 @@ namespace MarkerSegmentHelper {
 			return std::to_integer<RetType>(code.get_next_byte());
 		}
 		auto bytes = code.get_next_n_bytes(sizeof(RetType));
-		for(const auto& byte: bytes) {
-			std::cout << "Byte " << std::to_integer<int>(byte) << "\n"; 
-		}
 		return BinaryTools::get_value_from_big_endian_byte_vector<RetType>(bytes);
 	}
 }
