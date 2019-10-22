@@ -189,13 +189,9 @@ class JPLM4DTransformModeLightFieldDecoder
   virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
-    std::cout << "begin block 4d" << std::endl;
-    
-    std::cout << "reseting prob models" << std::endl;
     hierarchical_4d_decoder.reset_probability_models();
 
 
-    std::cout << "decoding" << std::endl;
     auto decoded_block =
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
@@ -212,11 +208,6 @@ class JPLM4DTransformModeLightFieldDecoder
     // }
 
     ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
-
-
-
-
-    std::cout << "end block 4d" << std::endl;
   }
 };
 

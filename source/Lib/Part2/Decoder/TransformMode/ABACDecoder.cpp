@@ -128,12 +128,9 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
 int ABACDecoder::ReadBitFromFile() {
     int bit; 
     if (number_of_bits_in_byte == 0) {  
-        // mBitBuffer = fgetc(file_ptr);
         number_of_bits_in_byte = 8;
         if(codestream_code.is_next_valid()) {
             std::byte byte = codestream_code.get_next_byte();
-            std::cout << "readed byte ";
-             this->print_byte(byte);
             mBitBuffer=std::to_integer<int>(byte);
         }
     }

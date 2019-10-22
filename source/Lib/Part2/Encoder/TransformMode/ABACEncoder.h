@@ -105,7 +105,11 @@ class ABACEncoder : public ABACCodec {
         }
     }
 
+
+
   ContiguousCodestreamCode& get_ref_to_codestream_code() const;
+
+
 
   void reset() {
     number_of_scalings = 0;
@@ -118,19 +122,11 @@ class ABACEncoder : public ABACCodec {
   }
 
 
-  // void flush_byte() {
-  //   std::cout << "called flush" << std::endl;
-  // }
-
-
   void flush_byte() {
     std::cout << "called flush" << std::endl;
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     push_current_byte_to_codestream_code();
-    // codestream_code->push_byte(std::byte{0xff}); //dummy byte 1
-    // codestream_code->push_byte(std::byte{0xa4}); //dummy byte 2
-    // codestream_code->push_byte(byte_buffer);
     reset();
   }
 

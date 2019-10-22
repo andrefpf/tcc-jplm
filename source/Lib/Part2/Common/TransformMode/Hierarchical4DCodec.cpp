@@ -41,7 +41,6 @@
 #include "Hierarchical4DCodec.h"
 
 void Hierarchical4DCodec::reset_probability_models() {
-    std::cout << "reseting probability_model" << std::endl;
     for(auto& probability_model: probability_models) {
         probability_model.reset();
     }
