@@ -118,23 +118,25 @@ class ABACEncoder : public ABACCodec {
   }
 
 
+  // void flush_byte() {
+  //   std::cout << "called flush" << std::endl;
+  // }
+
+
   void flush_byte() {
-    std::cout << "called flush" << std::endl;
-  }
-
-
-  void flush_byte_impl() {
     std::cout << "called flush" << std::endl;
     number_of_scalings++;
     output_bit_pattern_according_to_condition(mLow >= SECOND_MSB_MASK);
     push_current_byte_to_codestream_code();
+    // codestream_code->push_byte(std::byte{0xff}); //dummy byte 1
+    // codestream_code->push_byte(std::byte{0xa4}); //dummy byte 2
     // codestream_code->push_byte(byte_buffer);
     reset();
   }
 
 
   std::unique_ptr<ContiguousCodestreamCode>&& move_codestream_code_out() {
-    flush_byte_impl();
+    flush_byte();
     auto eoc_bytes = Markers::get_bytes(Marker::EOC);
     codestream_code->push_byte(eoc_bytes[0]);
     codestream_code->push_byte(eoc_bytes[1]);

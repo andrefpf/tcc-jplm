@@ -51,6 +51,7 @@
 #include <iostream>
 #include <cstddef>
 
+
 class ABACCodec {
  protected:
   static constexpr uint32_t MAXINT = 0xffff;//std::numeric_limits<uint32_t>::max();

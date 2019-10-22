@@ -109,7 +109,7 @@ class JPLM4DTransformModeLightFieldDecoder
   view_io_policy.set_save_image_when_release(true)
       .set_overwrite_image_when_save_if_file_already_exists(true);
 
-    hierarchical_4d_decoder.start();
+    // hierarchical_4d_decoder.start();
   }
 
   // void setup_header_data_into_decoded_lightfield() {

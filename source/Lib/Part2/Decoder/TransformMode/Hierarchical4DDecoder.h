@@ -73,6 +73,11 @@ public:
     PartitionFlag decode_partition_flag();
     int decode_integer(int precision);
     void start();
+
+    virtual void reset_probability_models() override {
+        Hierarchical4DCodec::reset_probability_models();
+        entropy_decoder.start();
+    }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__ */

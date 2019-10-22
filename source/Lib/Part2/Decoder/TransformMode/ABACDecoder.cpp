@@ -43,6 +43,14 @@
 #include <iostream>
 
 void ABACDecoder::start() {
+
+    if(codestream_code.peek_next_byte() == std::byte{0xff}) {
+        codestream_code.get_next_byte();
+    }
+    if(codestream_code.peek_next_byte() == std::byte{0xa4}) {
+        codestream_code.get_next_byte();
+    }
+
     number_of_bits_in_byte = 0;  
     mLow = 0;
     mHigh = MAXINT;    
@@ -108,7 +116,7 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
             mTag = mTag  & MAXINT;
         }
     }
-    
+
     mHigh = mHigh & MAXINT;
     mLow = mLow & MAXINT;
     mTag = mTag  & MAXINT;
