@@ -297,6 +297,19 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     //     this->get_views_width(), this->get_views_height());
   }
 
+
+  template<typename Type = std::size_t>
+  bool is_coordinate_valid(const LightfieldCoordinate<Type>& coordinate) const {
+    const auto& [t, s, v, u] = this->get_dimensions<Type>().as_tuple();
+    const auto& [tc, sc, vc, uc] = coordinate.as_tuple();
+    if((t < tc) || (s < sc) || (v < vc) || (u < uc)) {
+      return false;
+    }
+    return true;
+  }
+
+
+
   inline View<T>* operator[](const int i) {
     // auto unique_ptr_to_view = *this->elements_for_2d_access[i];
     // return unique_ptr_to_view.get();

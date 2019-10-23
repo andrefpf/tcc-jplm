@@ -140,6 +140,7 @@ class JPLM4DTransformModeLightFieldCodec
 
             auto size = LightfieldDimension<uint32_t>(
                 used_size_t, used_size_s, used_size_v, used_size_u);
+            std::cout << "Used size " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
 
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {
