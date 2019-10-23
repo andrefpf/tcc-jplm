@@ -149,6 +149,7 @@ class JPLM4DTransformModeLightFieldEncoder
     tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
     tp.encode_partition(hierarchical_4d_encoder, lambda);
     
+    
     //reset prob models here at the end to ensure no flush is called.
     //assumes that the prob models are initialized in reset state... 
     hierarchical_4d_encoder.reset_probability_models();

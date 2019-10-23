@@ -64,7 +64,7 @@ class JPLM4DTransformModeLightFieldCodec
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
         block_4d_dimension(block_4d_dimension) {
-          std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
+    std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
   }
 
 
@@ -85,17 +85,29 @@ class JPLM4DTransformModeLightFieldCodec
 
 
   void initialize_extension_lenghts() {
-    // extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
-    // extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
-    // extension_length_v = decoded_lightfield.mNumberOfViewLines%parameter_handler.transform_length_v;
-    // extension_length_u = decoded_lightfield.mNumberOfViewColumns%parameter_handler.transform_length_u;
+    const auto& [number_of_vertical_views, number_of_horizontal_views,
+                    mNumberOfViewLines, mNumberOfViewColumns] =
+        lightfield_dimension.as_tuple();
+    const auto& [transform_length_t, transform_length_s, transform_length_v,
+                    transform_length_u] = block_4d_dimension.as_tuple();
 
-    // if(parameter_handler.extension_method != SHRINK_TO_FIT && extension_length_t+extension_length_s+extension_length_v+extension_length_u > 0)
-    //     needs_block_extension=true;
+    std::cout << "Initializing extension lenghts" << std::endl;
+
+    auto extension_length_t = number_of_vertical_views % transform_length_t;
+    auto extension_length_s = number_of_horizontal_views % transform_length_s;
+    auto extension_length_v = mNumberOfViewLines % transform_length_v;
+    auto extension_length_u = mNumberOfViewColumns % transform_length_u;
+
+
+    if(extension_length_t + extension_length_s + extension_length_v +extension_length_u > 0) {
+      needs_block_extension = true;
+    }
+
+    extensions = {extension_length_t, extension_length_s, extension_length_v, extension_length_u};
   }
 
 
-  virtual void finalization() {};
+  virtual void finalization(){};
 
   virtual void run() override {
     const auto& [T, S, V, U] = lightfield_dimension;
@@ -125,12 +137,6 @@ class JPLM4DTransformModeLightFieldCodec
             printf("transforming the 4D block at position (%d %d %d %d)\n", t,
                 s, v, u);
             // }
-
-            //if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-            //    rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-            //    spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-            //}
-
 
             auto size = LightfieldDimension<uint32_t>(
                 used_size_t, used_size_s, used_size_v, used_size_u);

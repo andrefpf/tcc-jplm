@@ -179,9 +179,11 @@ class JPLM4DTransformModeLightFieldDecoder
 
   virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
 
+  
   virtual void finalization() override {
     ref_to_lightfield.save_views_according_to_view_io_policies();
   }
+
 
   virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
@@ -193,16 +195,17 @@ class JPLM4DTransformModeLightFieldDecoder
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
 
-    // if (needs_block_extension) {
-    //     if(used_size_u != BLOCK_SIZE_u)
-    //         current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
-    //     if(used_size_v != BLOCK_SIZE_v)
-    //         current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
-    //     if(used_size_s != BLOCK_SIZE_s)
-    //         current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
-    //     if(used_size_t != BLOCK_SIZE_t)
-    //         current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
-    // }
+    //! \todo add back the support for blocks to be extedended or shrinked.
+    if (this->needs_block_extension) {
+        // if(used_size_u != BLOCK_SIZE_u)
+        //     current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
+        // if(used_size_v != BLOCK_SIZE_v)
+        //     current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
+        // if(used_size_s != BLOCK_SIZE_s)
+        //     current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
+        // if(used_size_t != BLOCK_SIZE_t)
+        //     current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
+    }
 
     ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
   }
