@@ -54,8 +54,7 @@ void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
 
   if (length_t * length_s * length_v * length_u ==
       1) {  //perhaps & instead of *?
-    mSubbandLF.mPixel[position_t][position_s][position_v][position_u] =
-        decode_coefficient(bitplane);
+    mSubbandLF.mPixel[position_t][position_s][position_v][position_u] = decode_coefficient(bitplane);
     return;
   }
 

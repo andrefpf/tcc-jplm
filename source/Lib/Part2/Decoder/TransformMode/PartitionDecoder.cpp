@@ -130,4 +130,5 @@ void PartitionDecoder::decode_transform_partition(
       dctblock.inverse();  //hopefully using move (copy elision)
   mPartitionData.copy_sub_block_from(hierarchical_decoder.mSubbandLF, 0, 0, 0,
       0, position[0], position[1], position[2], position[3]);
+
 }

@@ -45,10 +45,10 @@
 void ABACDecoder::start() {
 
     if(codestream_code.peek_next_byte() == std::byte{0xff}) {
-        codestream_code.get_next_byte();
+        [[maybe_unused]] auto byte = codestream_code.get_next_byte();
     }
     if(codestream_code.peek_next_byte() == std::byte{0xa4}) {
-        codestream_code.get_next_byte();
+        [[maybe_unused]] auto byte = codestream_code.get_next_byte();
     }
 
     number_of_bits_in_byte = 0;  

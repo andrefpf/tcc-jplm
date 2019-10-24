@@ -148,6 +148,9 @@ class JPLM4DTransformModeLightFieldDecoder
     hierarchical_4d_decoder.set_transform_dimension(
         lightfield_configuration_marker_segment.get_ref_to_block_dimension());
 
+
+    this->block_4d_dimension = lightfield_configuration_marker_segment.get_ref_to_block_dimension();
+
     const auto& [number_of_vertical_views, number_of_horizontal_views,
                     mNumberOfViewLines, mNumberOfViewColumns] =
         lightfield_configuration_marker_segment
@@ -190,15 +193,12 @@ class JPLM4DTransformModeLightFieldDecoder
       const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
 
-    std::cout << "rund" << std::endl;
 
     auto decoded_block =
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
-    std::cout << "decoded" << std::endl;
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
 
-    std::cout << "sum" << std::endl;
 
     //! \todo add back the support for blocks to be extedended or shrinked.
     if (this->needs_block_extension) {
@@ -213,7 +213,7 @@ class JPLM4DTransformModeLightFieldDecoder
         //     current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
     }
 
-    // ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
+    ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
   }
 };
 
