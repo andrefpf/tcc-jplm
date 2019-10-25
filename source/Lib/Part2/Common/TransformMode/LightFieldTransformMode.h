@@ -77,10 +77,12 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
                 channel);
         for (auto v = v_initial; v < v_max; ++v) {
           for (auto u = u_initial; u < u_max; ++u) {
+            // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
             if (this->is_coordinate_valid({t, s, v, u})) {
               block.mPixelData[c++] = image_channel[v][u];
             } else {
               c++;
+              std::cout << "invalid" << std::endl;
             }
           }
         }

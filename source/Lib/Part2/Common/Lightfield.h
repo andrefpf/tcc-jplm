@@ -302,7 +302,9 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   bool is_coordinate_valid(const LightfieldCoordinate<Type>& coordinate) const {
     const auto& [t, s, v, u] = this->get_dimensions<Type>().as_tuple();
     const auto& [tc, sc, vc, uc] = coordinate.as_tuple();
-    if((t < tc) || (s < sc) || (v < vc) || (u < uc)) {
+    // std::cout << "lightfield: " << t << ", " << s << ", " << v << ", " << u << std::endl;
+    // std::cout << "coordinate: " << tc << ", " << sc << ", " << vc << ", " << uc << std::endl;
+    if((tc >= t) || (sc >= s) || (vc >= v) || (uc >= u)) {
       return false;
     }
     return true;

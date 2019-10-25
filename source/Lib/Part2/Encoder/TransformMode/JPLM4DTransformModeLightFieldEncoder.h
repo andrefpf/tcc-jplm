@@ -155,7 +155,7 @@ class JPLM4DTransformModeLightFieldEncoder
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;
-
+    
 
     const auto lambda = transform_mode_configuration->get_lambda();
     tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);

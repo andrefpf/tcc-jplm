@@ -155,7 +155,11 @@ class JPLM4DTransformModeLightFieldCodec
                 (boder_blocks_policy == BorderBlocksPolicy::truncate)
                     ? size_shrink
                     : size_padding;
-            std::cout << "Used size " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+            std::cout << "Shrink? " << (boder_blocks_policy == BorderBlocksPolicy::truncate) << std::endl;
+            // std::cout << "size_shrink " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+            // std::cout << "size_shrink " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+            // std::cout << "Used size " << size.get_t() << ", " << size.get_s() << ", " << size.get_v() << ", " << size.get_u() << std::endl;
+
 
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {
@@ -166,6 +170,7 @@ class JPLM4DTransformModeLightFieldCodec
         }
       }
     }
+    std::cout << "finished" << std::endl;
     //up to now, this finalization step is required only in the encoder.
     finalization();
   }

@@ -54,6 +54,7 @@
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
+
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
@@ -151,7 +152,8 @@ class JPLM4DTransformModeLightFieldDecoder
         lightfield_configuration_marker_segment.get_ref_to_block_dimension());
 
 
-    this->block_4d_dimension = lightfield_configuration_marker_segment.get_ref_to_block_dimension();
+    this->block_4d_dimension =
+        lightfield_configuration_marker_segment.get_ref_to_block_dimension();
 
     const auto& [number_of_vertical_views, number_of_horizontal_views,
                     mNumberOfViewLines, mNumberOfViewColumns] =
@@ -168,10 +170,9 @@ class JPLM4DTransformModeLightFieldDecoder
     hierarchical_4d_decoder.set_level_shift(level_shift);
 
 
-    if(!lightfield_configuration_marker_segment.get_truncate_flag()) {
+    if (!lightfield_configuration_marker_segment.get_truncate_flag()) {
       border_blocks_policy = BorderBlocksPolicy::padding;
     }
-
 
 
     std::cout << "superior_bit_plane: " << superior_bit_plane << "\n";
@@ -196,7 +197,7 @@ class JPLM4DTransformModeLightFieldDecoder
 
   virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
 
-  
+
   virtual void finalization() override {
     ref_to_lightfield.save_views_according_to_view_io_policies();
   }
@@ -212,20 +213,6 @@ class JPLM4DTransformModeLightFieldDecoder
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
-
-
-    //! \todo add back the support for blocks to be extedended or shrinked.
-    if (this->needs_block_extension) {
-      std::cout << "neeeeds extension!!!!" << std::endl;
-        // if(used_size_u != BLOCK_SIZE_u)
-        //     current_block->extend(parameter_handler.extension_method, extension_length_u, LightFieldDimension::U);
-        // if(used_size_v != BLOCK_SIZE_v)
-        //     current_block->extend(parameter_handler.extension_method, extension_length_v, LightFieldDimension::V);
-        // if(used_size_s != BLOCK_SIZE_s)
-        //     current_block->extend(parameter_handler.extension_method, extension_length_s, LightFieldDimension::S);
-        // if(used_size_t != BLOCK_SIZE_t)
-        //     current_block->extend(parameter_handler.extension_method, extension_length_t, LightFieldDimension::T);
-    }
 
     ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
   }
