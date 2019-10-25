@@ -46,6 +46,7 @@
 #include <string>
 #include "CLI/CLI.hpp"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
@@ -84,6 +85,8 @@ class JPLMConfiguration {
   ColorSpaces::ColorSpace colorspace;
   double lambda;
   Type type;
+  BorderBlocksPolicy border_policy = BorderBlocksPolicy::truncate;
+
 
   uint32_t maximal_transform_size_inter_view_vertical_t;
   uint32_t maximal_transform_size_inter_view_horizontal_s;
@@ -148,6 +151,12 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
       ->type_name(
           "enum/CompressionTypeLightField in {transform_mode=0, "
           "prediction_mode=1}");
+
+  app.add_set("-B,--border_policy", border_policy, {BorderBlocksPolicy::padding, BorderBlocksPolicy::truncate},
+         "Policy to treat border 4D blocks.")
+      ->type_name(
+          "enum/BorderBlocksPolicy in {padding=0, "
+          "truncate=1}");
 
 
   app.add_option("--transform_size_maximum_inter_view_vertical",

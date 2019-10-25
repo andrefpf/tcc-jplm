@@ -134,6 +134,11 @@ class LightFieldConfigurationMarkerSegment {
   }
 
 
+  bool get_truncate_flag() const {
+    return truncate;
+  }
+
+
   std::vector<std::byte> get_bytes() const {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->get_length_of_marker_segment()+2); //+2 is because it will include the marker

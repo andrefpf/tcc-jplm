@@ -44,6 +44,7 @@
 #include <cstdint>
 #include <iostream>
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
+#include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
@@ -99,15 +100,20 @@ class JPLM4DTransformModeLightFieldCodec
     auto extension_length_u = mNumberOfViewColumns % transform_length_u;
 
 
-    if(extension_length_t + extension_length_s + extension_length_v +extension_length_u > 0) {
+    if (extension_length_t + extension_length_s + extension_length_v +
+            extension_length_u >
+        0) {
       needs_block_extension = true;
     }
 
-    extensions = {extension_length_t, extension_length_s, extension_length_v, extension_length_u};
+    extensions = {extension_length_t, extension_length_s, extension_length_v,
+        extension_length_u};
   }
 
 
   virtual void finalization(){};
+
+  virtual BorderBlocksPolicy get_border_blocks_policy() const = 0;
 
   virtual void run() override {
     const auto& [T, S, V, U] = lightfield_dimension;
@@ -116,8 +122,12 @@ class JPLM4DTransformModeLightFieldCodec
         block_4d_dimension;
 
 
+    const auto& boder_blocks_policy = this->get_border_blocks_policy();
+
     int32_t level_shift = 512;
     //std::pow(2, lightfield->get_views_bpp()) / 2;  //
+    auto size_padding = LightfieldDimension<uint32_t>(
+        BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
 
     for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
       auto used_size_t =
@@ -138,9 +148,14 @@ class JPLM4DTransformModeLightFieldCodec
                 s, v, u);
             // }
 
-            auto size = LightfieldDimension<uint32_t>(
+            auto size_shrink = LightfieldDimension<uint32_t>(
                 used_size_t, used_size_s, used_size_v, used_size_u);
-            // std::cout << "Used size " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+
+            const auto& size =
+                (boder_blocks_policy == BorderBlocksPolicy::truncate)
+                    ? size_shrink
+                    : size_padding;
+            std::cout << "Used size " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
 
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {

@@ -65,6 +65,8 @@ class JPLM4DTransformModeLightFieldDecoder
   LightFieldTransformMode<PelType>&
       ref_to_lightfield;  //! \todo move this to transform mode codec...
 
+  BorderBlocksPolicy border_blocks_policy = BorderBlocksPolicy::truncate;
+
   // const JPLFile&
   //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
  public:
@@ -166,6 +168,12 @@ class JPLM4DTransformModeLightFieldDecoder
     hierarchical_4d_decoder.set_level_shift(level_shift);
 
 
+    if(!lightfield_configuration_marker_segment.get_truncate_flag()) {
+      border_blocks_policy = BorderBlocksPolicy::padding;
+    }
+
+
+
     std::cout << "superior_bit_plane: " << superior_bit_plane << "\n";
     std::cout << "transform_length_t: " << transform_length_t << "\n";
     std::cout << "transform_length_s: " << transform_length_s << "\n";
@@ -179,6 +187,12 @@ class JPLM4DTransformModeLightFieldDecoder
     std::cout << "mNumberOfViewColumns: " << mNumberOfViewColumns << "\n";
     std::cout << "level_shift: " << level_shift << std::endl;
   }
+
+
+  virtual BorderBlocksPolicy get_border_blocks_policy() const override {
+    return border_blocks_policy;
+  }
+
 
   virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
 

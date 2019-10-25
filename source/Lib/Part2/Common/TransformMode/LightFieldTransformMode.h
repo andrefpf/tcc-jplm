@@ -52,15 +52,16 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
       : LightfieldFromPPMFile<T>(configuration, std::move(view_io_policy)) {
   }
 
-  LightFieldTransformMode(
-      const LightfieldIOConfiguration& configuration, std::size_t max_value,
-      const PixelMapType type,
+  LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
+      std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromPPMFile<T>(
             configuration, max_value, type, std::move(view_io_policy)) {
   }
 
-  ~LightFieldTransformMode() = default;
+
+  virtual ~LightFieldTransformMode() = default;
+
 
   Block4D get_block_4D_from(const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d,
@@ -76,11 +77,11 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
                 channel);
         for (auto v = v_initial; v < v_max; ++v) {
           for (auto u = u_initial; u < u_max; ++u) {
-            // if(this->is_coordinate_valid({t, s, v, u})) {
+            if (this->is_coordinate_valid({t, s, v, u})) {
               block.mPixelData[c++] = image_channel[v][u];
-            // } else {
-            //   c++;
-            // }
+            } else {
+              c++;
+            }
           }
         }
       }
@@ -91,23 +92,26 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
 
   void set_block_4D_at(const Block4D& block_4d, const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d) {
-
     const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
-    const auto [t_max, s_max, v_max, u_max] = coordinate_4d + block_4d.get_dimension();
+    const auto [t_max, s_max, v_max, u_max] =
+        coordinate_4d + block_4d.get_dimension();
     auto c = 0;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-            auto& image_channel =
+        auto& image_channel =
             this->template get_image_at<BT601Image>({t, s}).get_channel(
                 channel);
-             for (auto v = v_initial; v < v_max; ++v) {
-	          for (auto u = u_initial; u < u_max; ++u) {
-	            image_channel[v][u] = block_4d.mPixelData[c++];
-	          }
-	        }
-        }        
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            if (this->is_coordinate_valid({t, s, v, u})) {
+              image_channel[v][u] = block_4d.mPixelData[c++];
+            } else {
+              c++;
+            }
+          }
+        }
+      }
     }
-
   }
 };
 
