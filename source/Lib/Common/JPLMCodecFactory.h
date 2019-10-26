@@ -113,21 +113,8 @@ static uint16_t read_int_from_codestream_code(
 ///###############################################################################
 ///############################ TEMPORARY ########################################
 ///###############################################################################
-
-
-  static std::vector<std::unique_ptr<JPLMCodec>> get_decoders(
-      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename) {
-    if (!jpl_file->has_codestream()) {
-      std::cerr << "The input jpl file has no codestream" << std::endl;
-    }
-
-    auto decoders = std::vector<std::unique_ptr<JPLMCodec>>();
-    auto& codestreams = jpl_file->get_reference_to_codestreams();
-    for (const auto& codestream : codestreams) {
-      switch (codestream->get_type()) {
-        case JpegPlenoCodestreamBoxTypes::LightField: {
-          std::cout << "There is a lightfield in this box" << std::endl;
-          const auto& codestream_as_part2 =
+static std::unique_ptr<JPLMCodec> get_lightfield_decoder(std::shared_ptr<JPLFile> jpl_file, const std::unique_ptr<JpegPlenoCodestreamBox>& codestream, const std::string& output_filename) {
+const auto& codestream_as_part2 =
               static_cast<JpegPlenoLightFieldBox&>(*codestream);
           // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
           const auto mode = codestream_as_part2.get_ref_to_contents()
@@ -141,33 +128,8 @@ static uint16_t read_int_from_codestream_code(
               std::cout << "Transform Mode codestream"
                         << std::endl;
 
-              // //####################### temporary until implementing the markers ############################
-              // auto& codestream_code =
-              //     codestream_as_part2.get_ref_to_contents()
-              //         .get_ref_to_contiguous_codestream_box()
-              //         .get_ref_to_contents()
-              //         .get_ref_to_code();
-              // [[maybe_unused]] auto superior_bit_plane =
-              //     read_int_from_codestream_code(codestream_code);
-              // // //reads the maximum transform sizes
-              // auto transform_length_t =
-              //     read_int_from_codestream_code(codestream_code);
-              // auto transform_length_s =
-              //     read_int_from_codestream_code(codestream_code);
-              // auto transform_length_v =
-              //     read_int_from_codestream_code(codestream_code);
-              // auto transform_length_u =
-              //     read_int_from_codestream_code(codestream_code);
-              // auto block_4d_size = LightfieldDimension<uint32_t>(
-              //     transform_length_t, transform_length_s, transform_length_v,
-              //     transform_length_u);
-              // codestream_code.rewind(10);
-              // //####################### temporary until implementing the markers ############################
-
-
-              decoders.push_back(
-                  std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(jpl_file,
-                      codestream_as_part2, output_filename));
+              return std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(jpl_file,
+                      codestream_as_part2, output_filename);
               break;
             }
             case CompressionTypeLightField::prediction_mode: {
@@ -175,6 +137,21 @@ static uint16_t read_int_from_codestream_code(
               break;
             }
           }
+}
+
+  static std::vector<std::unique_ptr<JPLMCodec>> get_decoders(
+      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename) {
+    if (!jpl_file->has_codestream()) {
+      std::cerr << "The input jpl file has no codestream" << std::endl;
+    }
+
+    auto decoders = std::vector<std::unique_ptr<JPLMCodec>>();
+    auto& codestreams = jpl_file->get_reference_to_codestreams();
+    for (const auto& codestream : codestreams) {
+      switch (codestream->get_type()) {
+        case JpegPlenoCodestreamBoxTypes::LightField: {
+          std::cout << "There is a lightfield in this box" << std::endl;
+          decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(jpl_file, codestream, output_filename));
           break;
         }
         case JpegPlenoCodestreamBoxTypes::PointCloud: {

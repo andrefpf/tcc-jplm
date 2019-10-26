@@ -52,8 +52,8 @@
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
-template<typename T = uint16_t>
-class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
+template<typename PelType = uint16_t>
+class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
  protected:
   const JPLMEncoderConfigurationLightField& light_field_encoder_configuration;
 
