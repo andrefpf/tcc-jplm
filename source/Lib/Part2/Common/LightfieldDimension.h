@@ -50,6 +50,7 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   void check_for_zero_dimension(
       const std::tuple<T, T, T, T>& dimensions) const {
     const auto& [t, s, v, u] = dimensions;
+    std::cout << "LightfieldDimension:check_for_zero_dimension" << t << "," << s << "," << v << "," << u << std::endl;
     if ((t == 0) || (s == 0) || (v == 0) || (u == 0)) {
       throw LightfieldDimensionExceptions::InvalidZeroDimensionException();
     }

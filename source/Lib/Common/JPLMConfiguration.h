@@ -44,6 +44,7 @@
 #ifndef JPLM_JPLMConfiguration_H
 #define JPLM_JPLMConfiguration_H
 
+#include <getopt.h>
 #include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
@@ -52,12 +53,10 @@
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
-using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {
   LightField = 2,
 };
-
 
 class JPLMConfiguration {
  public:
@@ -70,35 +69,209 @@ class JPLMConfiguration {
   const std::string &get_output_filename() const;
 
  protected:
-  CLI::App app{"JPLM"};
+  class Option {
+   private:
+    static int option_counter;
+
+   public:
+    std::vector<std::string> names;
+    char short_name;
+    int option_number;
+    std::function<void(const char *)> handler_char = nullptr;
+    std::function<void(void)> handler_void = nullptr;
+    bool has_argument;
+    bool available_to_encoder;
+    bool available_to_decoder;
+    std::string synopsys = "The synopsys for this option is not available yet";
+
+    Option(std::vector<std::string> option_names, char short_option = 0,
+        bool available_in_encoder = true, bool available_in_decoder = true)
+        : names(option_names), short_name(short_option),
+          available_to_encoder(available_in_encoder),
+          available_to_decoder(available_in_decoder) {
+      if (short_option == 0) {
+        option_number = option_counter++;
+      } else {
+        option_number = static_cast<int>(short_option);
+        names.push_back({char(short_option)});
+      }
+    };
+
+    Option(std::vector<std::string> option_names,
+        std::function<void(const char *)> option_handler, char short_option = 0,
+        bool available_in_encoder = true, bool available_in_decoder = true)
+        : Option(option_names, short_option, available_in_encoder,
+              available_in_decoder) {
+      handler_char = option_handler;
+      has_argument = true;
+    };
+
+
+    Option(std::vector<std::string> option_names,
+        std::function<void(void)> option_handler, char short_option = 0,
+        bool available_in_encoder = true, bool available_in_decoder = true)
+        : Option(option_names, short_option, available_in_encoder,
+              available_in_decoder) {
+      handler_void = option_handler;
+      has_argument = false;
+    };
+
+    ~Option() = default;
+
+    void print() const {
+      if (short_name != 0) {
+        std::cout << "\t-" << short_name << ", ";
+      } else {
+        std::cout << "\t";
+      }
+      for (auto option_name : names) {
+        std::cout << "--" << option_name << ", \t";
+      }
+      std::cout << std::endl;
+      std::cout << "\t\t" << synopsys << std::endl << std::endl;
+    }
+
+    void set_synopsys(std::string synopsys) {
+      this->synopsys = synopsys;
+    }
+
+    std::vector<std::string> get_names() const {
+      return names;
+    }
+
+    int get_number() const {
+      return option_number;
+    }
+
+    void handle(const char *param) {
+      if (handler_char != nullptr) {
+        handler_char(param);
+      } else {
+        std::cerr << "There is no handler associated with the option."
+                  << std::endl;
+      }
+    }
+
+    void handle() {
+      if (handler_void != nullptr) {
+        handler_void();
+      } else {
+        std::cerr << "There is no handler associated with the option."
+                  << std::endl;
+      }
+    }
+  };
+
+  class OptionsHolder {
+   private:
+    std::map<int, Option> options;
+    std::map<std::string, int> options_name_map;
+    Option unknown_option = Option({"Unknown Option"});
+    // std::unique_ptr<struct option[]> options_struct = nullptr;
+    struct option *options_struct = nullptr;
+
+   public:
+    OptionsHolder() = default;
+
+    ~OptionsHolder(){};  //delete options struct
+
+    Option &add_option(Option option) {
+      auto list_of_names = option.get_names();
+      auto result = options.insert(std::make_pair(option.get_number(), option));
+      if (!result.second) {
+        std::cerr << "The option " << option.names.at(0)
+                  << " was already in the list of options" << std::endl;
+        exit(1);
+      }
+      for (auto name : list_of_names) {
+        auto result =
+            options_name_map.insert(std::make_pair(name, option.get_number()));
+        if (!result.second) {
+          std::cerr << "The name " << name
+                    << " used for option already exists (i.e., there is a "
+                       "duplicate name for options)."
+                    << std::endl;
+          exit(1);
+        }
+      }
+      return options.find(option.get_number())->second;
+    };
+
+    void print_all_options() const {
+      for (auto option : options) {
+        option.second.print();
+      }
+    }
+
+    Option &get_option_by_name(std::string name) {
+      auto option_iterator = options_name_map.find(name);
+      if (option_iterator != options_name_map.end()) {
+        return options.find(option_iterator->second)->second;
+      }
+      return unknown_option;
+    }
+
+    Option &get_option_by_id(int option_id) {
+      auto option_iterator = options.find(option_id);
+      if (option_iterator != options.end()) {
+        return option_iterator->second;
+      }
+      return unknown_option;
+    }
+
+    struct option *generate_options_struct(bool encoder) {
+      auto number_of_options = options_name_map.size();
+      // options_struct = std::unique_ptr<struct option[]>(new struct option[number_of_options+1]);
+      options_struct = new struct option[number_of_options + 1];
+      int counter = 0;
+      for (auto option_idx : options_name_map) {
+        auto option_iterator = options.find(option_idx.second);
+        if (option_iterator == options.end()) {
+          std::cerr << "Option not found..." << std::endl;
+        } else {
+          auto current_option = option_iterator->second;
+          if ((encoder && current_option.available_to_encoder) ||
+              (!encoder && current_option.available_to_decoder)) {
+            auto name = new char[option_idx.first.size() + 1];
+            strcpy(name, option_idx.first.c_str());
+            options_struct[counter].name = name;
+            options_struct[counter].has_arg =
+                static_cast<int>(current_option.has_argument);
+            options_struct[counter].flag = 0;
+            options_struct[counter].val = current_option.get_number();
+            counter++;
+          }
+        }
+      }
+      options_struct[counter] = {0, 0, 0, 0};
+      return options_struct;
+    }
+
+    std::string generate_short_options(bool encoder) {
+      std::string short_options(":");
+
+      for (auto option : options) {
+        auto current_option = option.second;
+        if ((encoder && current_option.available_to_encoder) ||
+            (!encoder && current_option.available_to_decoder)) {
+          int option_number = current_option.get_number();
+          if (option_number < 256) {
+            short_options.push_back(char(option_number));
+            if (current_option.has_argument) {
+              short_options.push_back(':');
+            }
+          }
+        }
+      }
+
+      return short_options;
+    }
+  };
+
+ protected:
   std::string input;
   std::string output;
-  JpegPlenoPart part;
-  std::string config;
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-  ColorSpaces::ColorSpace colorspace;
-  double lambda;
-  Type type;
-
-  uint32_t maximal_transform_size_inter_view_vertical_t = 100000;
-  uint32_t maximal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t maximal_transform_size_intra_view_vertical_v= 100000;
-  uint32_t maximal_transform_size_intra_view_horizontal_u= 100000;
-
-  uint32_t minimal_transform_size_inter_view_vertical_t= 100000;
-  uint32_t minimal_transform_size_inter_view_horizontal_s= 100000;
-  uint32_t minimal_transform_size_intra_view_vertical_v= 100000;
-  uint32_t minimal_transform_size_intra_view_horizontal_u= 100000;
-
-  double transform_scale_t = 1.0;
-  double transform_scale_s = 1.0;
-  double transform_scale_v = 1.0;
-  double transform_scale_u = 1.0;
-
- private:
+  OptionsHolder holder;
   void parse_cli(int argc, char **argv);
 };
 
@@ -115,74 +288,43 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  // Belongs to JPLMConfiguration
-  app.add_option("-i,--input", input,
-      "Input (If Part II, it is a directory containing a set of uncompressed "
-      "light-field images xxx_yyy.ppm).");
-  app.add_option("-o,--output", output, "Output compressed bitstream");
+  holder.add_option({{"input"}, {[this](auto v) { this->input = v; }}, 'i'})
+      .set_synopsys(
+          "Input (If Part II, it is a directory containing a set of "
+          "uncompressed "
+          "light-field images xxx_yyy.ppm).");
+  holder.add_option({{"output"}, {[this](auto v) { this->output = v; }}, 'o'})
+      .set_synopsys("Output compressed bitstream");
 
-  // Belongs to JPLMEncoderConfiguration
-  app.add_option("-c,--config", config, "Path to config file");
-  app.add_set(
-         "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
-      ->type_name("enum/JpegPlenoPart in { LightField=2 }");
+  bool is_encoder = true;
+  auto short_options = holder.generate_short_options(is_encoder);
+  const struct option *optionas = holder.generate_options_struct(is_encoder);
 
-  app.add_option(
-      "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
-  app.add_option("-s,--number_of_columns", number_of_columns_s,
-      "Number of light-field columns");
-  app.add_option(
-      "-v,--view_height", view_height_v, "Single-view height dimension");
-  app.add_option(
-      "-u,--view_width", view_width_u, "Single-view width dimension");
+  int opt;
+  while ((opt = getopt_long_only(
+              argc, argv, short_options.c_str(), optionas, NULL)) > 0) {
+    if (opt == ':') {
+      std::cerr << "option " << holder.get_option_by_id(optopt).get_names()[0]
+                << " expected argument" << std::endl;
 
-  // Belongs to JPLMEncoderConfigurationLightField4DTransformMode
-  app.add_option("-l,--lambda", lambda,
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
+      continue;
+    }
+    if (opt == '?') {
+      std::cerr << "Unknown option: " << std::string(argv[optind - 1])
+                << std::endl;
+      continue;
+    }
 
-  // Belongs to JPLMEncoderConfigurationLightField
-  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
-         "Codec type")
-      ->type_name(
-          "enum/CompressionTypeLightField in {transform_mode=0, "
-          "prediction_mode=1}");
-
-
-  app.add_option("--transform_size_maximum_inter_view_vertical",
-      maximal_transform_size_inter_view_vertical_t,
-      "Maximum 4D transform size in inter-view vertical direction.");
-  app.add_option("--transform_size_maximum_inter_view_horizontal",
-      maximal_transform_size_inter_view_horizontal_s,
-      "Maximum 4D transform size in inter-view horizontal direction.");
-  app.add_option("--transform_size_maximum_intra_view_vertical",
-      maximal_transform_size_intra_view_vertical_v,
-      "Maximum 4D transform size in intra-view vertical direction.");
-  app.add_option("--transform_size_maximum_intra_view_horizontal",
-      maximal_transform_size_intra_view_horizontal_u,
-      "Maximum 4D transform size in intra-view horizontal direction.");
-
-
-  app.add_option("--transform_size_minimum_inter_view_vertical",
-      minimal_transform_size_inter_view_vertical_t,
-      "Minimum 4D transform size in inter-view vertical direction.");
-  app.add_option("--transform_size_minimum_inter_view_horizontal",
-      minimal_transform_size_inter_view_horizontal_s,
-      "Minimum 4D transform size in inter-view horizontal direction.");
-  app.add_option("--transform_size_minimum_intra_view_vertical",
-      minimal_transform_size_intra_view_vertical_v,
-      "Minimum 4D transform size in intra-view vertical direction.");
-  app.add_option("--transform_size_minimum_intra_view_horizontal",
-      minimal_transform_size_intra_view_horizontal_u,
-      "Minimum 4D transform size in intra-view horizontal direction.");
-
-
-  try {
-    app.parse(argc, argv);
-  } catch (const CLI::CallForHelp &e) {
-    app.exit(e);
-    std::cout << __FILE__ << " " << __func__ << " " << __LINE__ << e.what()
-              << std::endl;
+    auto obtained_option = holder.get_option_by_id(opt);
+    if (obtained_option.has_argument) {
+      obtained_option.handle(optarg);
+    } else {
+      obtained_option.handle();
+    }
   }
 }
+
+// PRIVATE CLASSES
+int JPLMConfiguration::Option::option_counter = 256;
 
 #endif  //JPLM_JPLMConfiguration_H
