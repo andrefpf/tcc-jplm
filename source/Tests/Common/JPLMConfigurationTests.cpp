@@ -182,6 +182,29 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+     TransformParametersFromJSON_DifferentWithPropertiesBinding) {
+  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "-c",
+                        a.c_str()};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
+
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
+}
+
+
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   if (argc > 1) {

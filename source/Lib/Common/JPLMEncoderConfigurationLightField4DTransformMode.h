@@ -281,7 +281,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
       if (conf["transform_size"]["minimum"].contains("inter-view"))
         if (conf["transform_size"]["minimum"]["inter-view"].contains(
                 "vertical"))
-          minimal_transform_size_intra_view_horizontal_u =
+          minimal_transform_size_inter_view_vertical_t =
               conf["transform_size"]["minimum"]["inter-view"]["vertical"]
                   .get<uint32_t>();
 }
@@ -293,7 +293,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
       if (conf["transform_size"]["maximum"].contains("inter-view"))
         if (conf["transform_size"]["maximum"]["inter-view"].contains(
                 "vertical"))
-          minimal_transform_size_intra_view_horizontal_u =
+          maximal_transform_size_inter_view_vertical_t =
               conf["transform_size"]["maximum"]["inter-view"]["vertical"]
                   .get<uint32_t>();
 }
@@ -305,7 +305,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
       if (conf["transform_size"]["minimum"].contains("inter-view"))
         if (conf["transform_size"]["minimum"]["inter-view"].contains(
                 "horizontal"))
-          minimal_transform_size_intra_view_horizontal_u =
+          minimal_transform_size_inter_view_horizontal_s =
               conf["transform_size"]["minimum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();
 }
@@ -317,7 +317,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
       if (conf["transform_size"]["maximum"].contains("inter-view"))
         if (conf["transform_size"]["maximum"]["inter-view"].contains(
                 "horizontal"))
-          minimal_transform_size_intra_view_horizontal_u =
+          maximal_transform_size_inter_view_horizontal_s =
               conf["transform_size"]["maximum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();
 }
