@@ -48,9 +48,9 @@
 #include "Lib/Utils/Stream/BinaryTools.h"
 
 class FileTypeContents : public InMemoryDBox {
-  uint32_t BR;  //! brand
-  uint32_t MinV;  //! minor version
-  std::vector<uint32_t> CL;  //! compatibility list
+  uint32_t BR;  //!< brand
+  uint32_t MinV;  //!< minor version
+  std::vector<uint32_t> CL;  //!< compatibility list
 
  public:
   FileTypeContents(uint32_t brand, uint32_t minor_version,

@@ -93,26 +93,6 @@ class JPLMCodecFactory {
   }
 
 
-  // static std::unique_ptr<JPLMCodec> get_decoder(
-  //     [[maybe_unused]] std::unique_ptr<JPLMConfiguration>&& configuration) {
-  //   return nullptr;
-  // }
-
-///###############################################################################
-///############################ TEMPORARY ########################################
-///###############################################################################
-static uint16_t read_int_from_codestream_code(
-    const ContiguousCodestreamCode& codestream_code) {
-  auto bytes = std::vector<std::byte>();
-  auto byte_0 = codestream_code.get_next_byte();
-  auto byte_1 = codestream_code.get_next_byte();
-  bytes.push_back(byte_0);
-  bytes.push_back(byte_1);
-  return BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
-}
-///###############################################################################
-///############################ TEMPORARY ########################################
-///###############################################################################
 static std::unique_ptr<JPLMCodec> get_lightfield_decoder(std::shared_ptr<JPLFile> jpl_file, const std::unique_ptr<JpegPlenoCodestreamBox>& codestream, const std::string& output_filename) {
 const auto& codestream_as_part2 =
               static_cast<JpegPlenoLightFieldBox&>(*codestream);
