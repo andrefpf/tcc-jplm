@@ -119,7 +119,8 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
         [](unsigned char c) { return std::tolower(c); });
     if (p == "part 2" || p == "part2" || p == "part_2" || p == "light_fields")
       part = JpegPlenoPart::LightField;
-    throw NotImplementedYetInputTypeParseException(p);
+    else
+      throw NotImplementedYetInputTypeParseException(p);
   }
 }
 
@@ -174,7 +175,7 @@ JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
 }
 
 
-const string& JPLMEncoderConfiguration::get_config() const {
+const string &JPLMEncoderConfiguration::get_config() const {
   return config;
 }
 

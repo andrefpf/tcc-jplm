@@ -43,13 +43,14 @@
  */
 #ifndef JPLM_JPLMConfiguration_H
 #define JPLM_JPLMConfiguration_H
+
+#include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
-using namespace std;
 using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 
@@ -60,23 +61,20 @@ enum class JpegPlenoPart {
 
 class JPLMConfiguration {
  public:
-  const string &get_input_filename() const;
-  
-
   JPLMConfiguration();
-
-
-  const string &get_output_filename() const;
-
 
   JPLMConfiguration(int argc, char **argv);
 
+  const std::string &get_input_filename() const;
+
+  const std::string &get_output_filename() const;
+
  protected:
   CLI::App app{"JPLM"};
-  string input;
-  string output;
+  std::string input;
+  std::string output;
   JpegPlenoPart part;
-  string config;
+  std::string config;
   uint32_t number_of_rows_t;
   uint32_t number_of_columns_s;
   uint32_t view_height_v;
@@ -104,11 +102,11 @@ class JPLMConfiguration {
   void parse_cli(int argc, char **argv);
 };
 
-const string &JPLMConfiguration::get_input_filename() const {
+const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
 }
 
-const string &JPLMConfiguration::get_output_filename() const {
+const std::string &JPLMConfiguration::get_output_filename() const {
   return output;
 }
 
@@ -151,38 +149,40 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
 
 
   app.add_option("--transform_size_maximum_inter_view_vertical",
-                   maximal_transform_size_inter_view_vertical_t,
-                   "Maximum 4D transform size in inter-view vertical direction.");
-    app.add_option("--transform_size_maximum_inter_view_horizontal",
-                   maximal_transform_size_inter_view_horizontal_s,
-                   "Maximum 4D transform size in inter-view horizontal direction.");
-    app.add_option("--transform_size_maximum_intra_view_vertical",
-                   maximal_transform_size_intra_view_vertical_v,
-                   "Maximum 4D transform size in intra-view vertical direction.");
-    app.add_option("--transform_size_maximum_intra_view_horizontal",
-                   maximal_transform_size_intra_view_horizontal_u,
-                   "Maximum 4D transform size in intra-view horizontal direction.");
+      maximal_transform_size_inter_view_vertical_t,
+      "Maximum 4D transform size in inter-view vertical direction.");
+  app.add_option("--transform_size_maximum_inter_view_horizontal",
+      maximal_transform_size_inter_view_horizontal_s,
+      "Maximum 4D transform size in inter-view horizontal direction.");
+  app.add_option("--transform_size_maximum_intra_view_vertical",
+      maximal_transform_size_intra_view_vertical_v,
+      "Maximum 4D transform size in intra-view vertical direction.");
+  app.add_option("--transform_size_maximum_intra_view_horizontal",
+      maximal_transform_size_intra_view_horizontal_u,
+      "Maximum 4D transform size in intra-view horizontal direction.");
 
 
-
-
-    app.add_option("--transform_size_minimum_inter_view_vertical",
+  app.add_option("--transform_size_minimum_inter_view_vertical",
       minimal_transform_size_inter_view_vertical_t,
       "Minimum 4D transform size in inter-view vertical direction.");
-    app.add_option("--transform_size_minimum_inter_view_horizontal",
-                   minimal_transform_size_inter_view_horizontal_s,
-                   "Minimum 4D transform size in inter-view horizontal direction.");
-    app.add_option("--transform_size_minimum_intra_view_vertical",
-                   minimal_transform_size_intra_view_vertical_v,
-                   "Minimum 4D transform size in intra-view vertical direction.");
-    app.add_option("--transform_size_minimum_intra_view_horizontal",
-                   minimal_transform_size_intra_view_horizontal_u,
-                   "Minimum 4D transform size in intra-view horizontal direction.");
+  app.add_option("--transform_size_minimum_inter_view_horizontal",
+      minimal_transform_size_inter_view_horizontal_s,
+      "Minimum 4D transform size in inter-view horizontal direction.");
+  app.add_option("--transform_size_minimum_intra_view_vertical",
+      minimal_transform_size_intra_view_vertical_v,
+      "Minimum 4D transform size in intra-view vertical direction.");
+  app.add_option("--transform_size_minimum_intra_view_horizontal",
+      minimal_transform_size_intra_view_horizontal_u,
+      "Minimum 4D transform size in intra-view horizontal direction.");
 
 
-
-  app.parse(argc, argv);
+  try {
+    app.parse(argc, argv);
+  } catch (const CLI::CallForHelp &e) {
+    app.exit(e);
+    std::cout << __FILE__ << " " << __func__ << " " << __LINE__ << e.what()
+              << std::endl;
+  }
 }
-
 
 #endif  //JPLM_JPLMConfiguration_H
