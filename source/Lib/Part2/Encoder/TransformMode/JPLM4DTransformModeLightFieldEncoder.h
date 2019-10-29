@@ -71,11 +71,11 @@ class JPLM4DTransformModeLightFieldEncoder
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
         tp(transform_mode_configuration->get_minimal_transform_dimension()),
-//        hierarchical_4d_encoder(*transform_mode_configuration),
+        //        hierarchical_4d_encoder(*transform_mode_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))) {
-
-    tp.mPartitionData.set_dimension(transform_mode_configuration->get_maximal_transform_dimension());
+    tp.mPartitionData.set_dimension(
+        transform_mode_configuration->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
 
     this->setup_transform_coefficients(true,
@@ -94,13 +94,11 @@ class JPLM4DTransformModeLightFieldEncoder
 
     hierarchical_4d_encoder.create_temporary_buffer();
 
-      hierarchical_4d_encoder.set_minimum_transform_dimension(
-              transform_mode_configuration->get_minimal_transform_dimension()
-              );
+    hierarchical_4d_encoder.set_minimum_transform_dimension(
+        transform_mode_configuration->get_minimal_transform_dimension());
 
-      hierarchical_4d_encoder.set_lightfield_dimension(
-              this->light_field->template get_dimensions<uint32_t>()
-              );
+    hierarchical_4d_encoder.set_lightfield_dimension(
+        this->light_field->template get_dimensions<uint32_t>());
 
     hierarchical_4d_encoder.set_level_shift(
         std::pow(2, this->light_field->get_views_bpp()) - 1);
@@ -116,17 +114,20 @@ class JPLM4DTransformModeLightFieldEncoder
   virtual void finalization() override {
     auto& codestreams = this->jpl_file->get_reference_to_codestreams();
     auto& first_codestream = *(codestreams.at(0));
-    auto& first_codestream_as_part2 = static_cast<JpegPlenoLightFieldBox&>(first_codestream);
-    auto& lightfield_box_contents = first_codestream_as_part2.get_ref_to_contents();
+    auto& first_codestream_as_part2 =
+        static_cast<JpegPlenoLightFieldBox&>(first_codestream);
+    auto& lightfield_box_contents =
+        first_codestream_as_part2.get_ref_to_contents();
     lightfield_box_contents.add_contiguous_codestream_box(
-      std::make_unique<ContiguousCodestreamBox>(std::move(hierarchical_4d_encoder.move_codestream_code_out())));
+        std::make_unique<ContiguousCodestreamBox>(
+            std::move(hierarchical_4d_encoder.move_codestream_code_out())));
   }
 
 
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
-  virtual void run_for_block_4d(const uint32_t channel,
+  void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
     auto block_4d =
