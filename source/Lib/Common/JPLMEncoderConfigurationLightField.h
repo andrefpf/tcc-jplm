@@ -61,6 +61,14 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
  private:
   void parse_mode_type(const json &conf);
   void check_inconsistencies();
+
+  CompressionTypeLightField type;
+  // Belongs to JPLMEncoderConfigurationLightField
+  //  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
+  //  "Codec type")
+  //  ->type_name(
+  //  "enum/CompressionTypeLightField in {transform_mode=0, "
+  //  "prediction_mode=1}");
 };
 
 

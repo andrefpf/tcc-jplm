@@ -57,7 +57,42 @@ using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 namespace fs = std::filesystem;
 
+// TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
 class JPLMEncoderConfiguration : public JPLMConfiguration {
+ protected:
+  void parse_json(string path);
+  void parse_jpeg_pleno_part(const json &conf);
+
+  void parse_number_of_rows_t(const json &conf);
+  void parse_number_of_columns_s(const json &conf);
+  void parse_view_height_v(const json &conf);
+  void parse_view_width_u(const json &conf);
+  void parse_colorspace(const json &conf);
+
+  uint32_t number_of_rows_t;
+  uint32_t number_of_columns_s;
+  uint32_t view_height_v;
+  uint32_t view_width_u;
+  //  app.add_option(
+  //  "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
+  //  app.add_option("-s,--number_of_columns", number_of_columns_s,
+  //  "Number of light-field columns");
+  //  app.add_option(
+  //  "-v,--view_height", view_height_v, "Single-view height dimension");
+  //  app.add_option(
+  //  "-u,--view_width", view_width_u, "Single-view width dimension");
+
+  std::string config;
+  // Belongs to JPLMEncoderConfiguration
+  // app.add_option("-c,--config", config, "Path to config file");
+
+  JpegPlenoPart part;
+  //  app.add_set(
+  //  "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
+  //  ->type_name("enum/JpegPlenoPart in { LightField=2 }");
+
+  ColorSpaces::ColorSpace colorspace;
+
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;
 
@@ -75,16 +110,6 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   ColorSpaces::ColorSpace get_colorspace() const;
 
   JPLMEncoderConfiguration(int argc, char **argv);
-
- protected:
-  void parse_json(string path);
-  void parse_jpeg_pleno_part(const json &conf);
-
-  void parse_number_of_rows_t(const json &conf);
-  void parse_number_of_columns_s(const json &conf);
-  void parse_view_height_v(const json &conf);
-  void parse_view_width_u(const json &conf);
-  void parse_colorspace(const json &conf);
 };
 
 

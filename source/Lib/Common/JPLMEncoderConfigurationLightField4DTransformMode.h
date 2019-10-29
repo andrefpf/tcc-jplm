@@ -68,6 +68,55 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   };
   void init_transform_size();
 
+  uint32_t maximal_transform_size_inter_view_vertical_t = 100000;
+  uint32_t maximal_transform_size_inter_view_horizontal_s = 100000;
+  uint32_t maximal_transform_size_intra_view_vertical_v= 100000;
+  uint32_t maximal_transform_size_intra_view_horizontal_u= 100000;
+
+  uint32_t minimal_transform_size_inter_view_vertical_t= 100000;
+  uint32_t minimal_transform_size_inter_view_horizontal_s= 100000;
+  uint32_t minimal_transform_size_intra_view_vertical_v= 100000;
+  uint32_t minimal_transform_size_intra_view_horizontal_u= 100000;
+
+//  app.add_option("--transform_size_maximum_inter_view_vertical",
+//  maximal_transform_size_inter_view_vertical_t,
+//  "Maximum 4D transform size in inter-view vertical direction.");
+//  app.add_option("--transform_size_maximum_inter_view_horizontal",
+//  maximal_transform_size_inter_view_horizontal_s,
+//  "Maximum 4D transform size in inter-view horizontal direction.");
+//  app.add_option("--transform_size_maximum_intra_view_vertical",
+//  maximal_transform_size_intra_view_vertical_v,
+//  "Maximum 4D transform size in intra-view vertical direction.");
+//  app.add_option("--transform_size_maximum_intra_view_horizontal",
+//  maximal_transform_size_intra_view_horizontal_u,
+//  "Maximum 4D transform size in intra-view horizontal direction.");
+//
+//
+//  app.add_option("--transform_size_minimum_inter_view_vertical",
+//  minimal_transform_size_inter_view_vertical_t,
+//  "Minimum 4D transform size in inter-view vertical direction.");
+//  app.add_option("--transform_size_minimum_inter_view_horizontal",
+//  minimal_transform_size_inter_view_horizontal_s,
+//  "Minimum 4D transform size in inter-view horizontal direction.");
+//  app.add_option("--transform_size_minimum_intra_view_vertical",
+//  minimal_transform_size_intra_view_vertical_v,
+//  "Minimum 4D transform size in intra-view vertical direction.");
+//  app.add_option("--transform_size_minimum_intra_view_horizontal",
+//  minimal_transform_size_intra_view_horizontal_u,
+//  "Minimum 4D transform size in intra-view horizontal direction.");
+
+  double lambda;
+  // Belongs to JPLMEncoderConfigurationLightField4DTransformMode
+  //app.add_option("-l,--lambda", lambda,
+  //"Lagrangian multiplier used in the RDO process of 4D Transform mode.");
+
+  double transform_scale_t = 1.0;
+  double transform_scale_s = 1.0;
+  double transform_scale_v = 1.0;
+  double transform_scale_u = 1.0;
+
+
+
  protected:
   void parse_json(string path);
   void parse_minimal_transform_size_intra_view_vertical(const json &conf);
