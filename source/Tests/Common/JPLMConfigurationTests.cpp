@@ -116,7 +116,6 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 }
 
 
-
 //TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
 //  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
 //  int argc = 4;
@@ -141,16 +140,65 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 //
 //
-//TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
-//      "/tmp/donotcreateme/I01Bikes.cfg"};
-//  int argc = 5;
-//
-//  EXPECT_THROW(
-//      { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
-//      ConfigFileDoesNotExistException);
-//}
-//
+TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
+      "/tmp/donotcreateme/I01Bikes.cfg"};
+  int argc = 5;
+
+  EXPECT_THROW(
+      { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
+      ConfigFileDoesNotExistException);
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-T", "0"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_EQ(Type::transform_mode, config.get_type());
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam2) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-T", "1"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_NE(Type::transform_mode, config.get_type());
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam3) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-T", "1"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_EQ(Type::prediction_mode, config.get_type());
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "--type", "0"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_EQ(Type::transform_mode, config.get_type());
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "--type", "1"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_EQ(Type::prediction_mode, config.get_type());
+}
+
+TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "--type", "1"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
+  EXPECT_NE(Type::transform_mode, config.get_type());
+}
+
+
 //
 //TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
 //  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
@@ -158,9 +206,9 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 //  int argc = 7;
 //  JPLMEncoderConfigurationLightField4DTransformMode config(
 //      argc, const_cast<char**>(argv));
-//  EXPECT_EQ(12, config.get_lambda());
+//  //EXPECT_EQ(12, config.get_lambda());
 //}
-//
+
 //
 //TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 //    TransformParametersFromCLI_Basic) {

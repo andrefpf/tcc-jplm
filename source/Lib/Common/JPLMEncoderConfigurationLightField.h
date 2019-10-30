@@ -41,11 +41,11 @@
 #ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 
+#include <tuple>
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include <tuple>
 
 //stub
 class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
@@ -63,22 +63,25 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   void check_inconsistencies();
 
   CompressionTypeLightField type;
-  // Belongs to JPLMEncoderConfigurationLightField
-  //  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
-  //  "Codec type")
-  //  ->type_name(
-  //  "enum/CompressionTypeLightField in {transform_mode=0, "
-  //  "prediction_mode=1}");
 };
 
 
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfiguration(argc, argv) {
-  if (!config.empty())
-    parse_json(config);
-  this->part = JpegPlenoPart::LightField;
-  check_inconsistencies();
+  arguments.push_back({"--type", "-T",
+      "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
+      "prediction_mode=1}",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        int type = std::stoi(typed_string);
+        this->type = static_cast<Type>(type);
+      }});
+  this->parse_cli(argc, argv);
+  //  if (!config.empty())
+  //    parse_json(config);
+  //  this->part = JpegPlenoPart::LightField;
+  //  check_inconsistencies();
 }
 
 

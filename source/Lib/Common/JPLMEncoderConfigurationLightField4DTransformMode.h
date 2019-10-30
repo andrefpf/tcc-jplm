@@ -70,51 +70,21 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 
   uint32_t maximal_transform_size_inter_view_vertical_t = 100000;
   uint32_t maximal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t maximal_transform_size_intra_view_vertical_v= 100000;
-  uint32_t maximal_transform_size_intra_view_horizontal_u= 100000;
+  uint32_t maximal_transform_size_intra_view_vertical_v = 100000;
+  uint32_t maximal_transform_size_intra_view_horizontal_u = 100000;
 
-  uint32_t minimal_transform_size_inter_view_vertical_t= 100000;
-  uint32_t minimal_transform_size_inter_view_horizontal_s= 100000;
-  uint32_t minimal_transform_size_intra_view_vertical_v= 100000;
-  uint32_t minimal_transform_size_intra_view_horizontal_u= 100000;
+  uint32_t minimal_transform_size_inter_view_vertical_t = 100000;
+  uint32_t minimal_transform_size_inter_view_horizontal_s = 100000;
+  uint32_t minimal_transform_size_intra_view_vertical_v = 100000;
+  uint32_t minimal_transform_size_intra_view_horizontal_u = 100000;
 
-//  app.add_option("--transform_size_maximum_inter_view_vertical",
-//  maximal_transform_size_inter_view_vertical_t,
-//  "Maximum 4D transform size in inter-view vertical direction.");
-//  app.add_option("--transform_size_maximum_inter_view_horizontal",
-//  maximal_transform_size_inter_view_horizontal_s,
-//  "Maximum 4D transform size in inter-view horizontal direction.");
-//  app.add_option("--transform_size_maximum_intra_view_vertical",
-//  maximal_transform_size_intra_view_vertical_v,
-//  "Maximum 4D transform size in intra-view vertical direction.");
-//  app.add_option("--transform_size_maximum_intra_view_horizontal",
-//  maximal_transform_size_intra_view_horizontal_u,
-//  "Maximum 4D transform size in intra-view horizontal direction.");
-//
-//
-//  app.add_option("--transform_size_minimum_inter_view_vertical",
-//  minimal_transform_size_inter_view_vertical_t,
-//  "Minimum 4D transform size in inter-view vertical direction.");
-//  app.add_option("--transform_size_minimum_inter_view_horizontal",
-//  minimal_transform_size_inter_view_horizontal_s,
-//  "Minimum 4D transform size in inter-view horizontal direction.");
-//  app.add_option("--transform_size_minimum_intra_view_vertical",
-//  minimal_transform_size_intra_view_vertical_v,
-//  "Minimum 4D transform size in intra-view vertical direction.");
-//  app.add_option("--transform_size_minimum_intra_view_horizontal",
-//  minimal_transform_size_intra_view_horizontal_u,
-//  "Minimum 4D transform size in intra-view horizontal direction.");
 
   double lambda;
-  // Belongs to JPLMEncoderConfigurationLightField4DTransformMode
-  //app.add_option("-l,--lambda", lambda,
-  //"Lagrangian multiplier used in the RDO process of 4D Transform mode.");
 
   double transform_scale_t = 1.0;
   double transform_scale_s = 1.0;
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
-
 
 
  protected:
@@ -151,22 +121,22 @@ class JPLMEncoderConfigurationLightField4DTransformMode
         maximal_transform_size_intra_view_horizontal_u};
   }
 
-    LightfieldDimension<uint32_t> get_maximal_transform_dimension() const {
-        return {get_maximal_transform_sizes()};
-    }
+  LightfieldDimension<uint32_t> get_maximal_transform_dimension() const {
+    return {get_maximal_transform_sizes()};
+  }
 
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
-    get_minimal_transform_sizes() const {
-        return {minimal_transform_size_inter_view_vertical_t,
-                minimal_transform_size_inter_view_horizontal_s,
-                minimal_transform_size_intra_view_vertical_v,
-                minimal_transform_size_intra_view_horizontal_u};
-    }
+  get_minimal_transform_sizes() const {
+    return {minimal_transform_size_inter_view_vertical_t,
+        minimal_transform_size_inter_view_horizontal_s,
+        minimal_transform_size_intra_view_vertical_v,
+        minimal_transform_size_intra_view_horizontal_u};
+  }
 
 
-    LightfieldDimension<uint32_t> get_minimal_transform_dimension() const {
-      return {get_minimal_transform_sizes()};
+  LightfieldDimension<uint32_t> get_minimal_transform_dimension() const {
+    return {get_minimal_transform_sizes()};
   }
 
 
@@ -179,12 +149,83 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   TransformSize transform_size;
 };
 
+
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
-  if (!config.empty())
-    parse_json(config);
-  init_transform_size();
+//  arguments.push_back({"--lambda", "-l",
+//      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+//      [this](std::any v) { this->lambda = std::any_cast<double>(v); }});
+
+//  arguments.push_back({"--transform_size_maximum_inter_view_vertical",
+//      "--transform_size_maximum_inter_view_vertical",
+//      "Maximum 4D transform size in inter-view vertical direction.",
+//      [this](std::any v) {
+//        this->maximal_transform_size_inter_view_vertical_t =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
+//      "--transform_size_maximum_inter_view_horizontal",
+//      "Maximum 4D transform size in inter-view horizontal direction.",
+//      [this](std::any v) {
+//        this->maximal_transform_size_inter_view_horizontal_s =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_maximum_intra_view_vertical",
+//      "--transform_size_maximum_intra_view_vertical",
+//      "Maximum 4D transform size in intra-view vertical direction.",
+//      [this](std::any v) {
+//        this->maximal_transform_size_intra_view_vertical_v =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
+//      "--transform_size_maximum_intra_view_horizontal",
+//      "Maximum 4D transform size in intra-view horizontal direction.",
+//      [this](std::any v) {
+//        this->maximal_transform_size_intra_view_horizontal_u =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//
+//  arguments.push_back({"--transform_size_minimum_inter_view_vertical",
+//      "--transform_size_minimum_inter_view_vertical",
+//      "Minimum 4D transform size in inter-view vertical direction.",
+//      [this](std::any v) {
+//        this->minimal_transform_size_inter_view_vertical_t =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
+//      "--transform_size_minimum_inter_view_horizontal",
+//      "Minimum 4D transform size in inter-view horizontal direction.",
+//      [this](std::any v) {
+//        this->minimal_transform_size_inter_view_horizontal_s =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_minimum_intra_view_vertical",
+//      "--transform_size_minimum_intra_view_vertical",
+//      "Minimum 4D transform size in intra-view vertical direction.",
+//      [this](std::any v) {
+//        this->minimal_transform_size_intra_view_vertical_v =
+//            std::any_cast<uint32_t>(v);
+//      }});
+//
+//  arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
+//      "--transform_size_minimum_intra_view_horizontal",
+//      "Minimum 4D transform size in intra-view horizontal direction.",
+//      [this](std::any v) {
+//        this->minimal_transform_size_intra_view_horizontal_u =
+//            std::any_cast<uint32_t>(v);
+//      }});
+
+  //this->parse_cli(argc, argv);
+//  if (!config.empty())
+ //   parse_json(config);
+ // init_transform_size();
 }
 
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()

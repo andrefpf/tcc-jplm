@@ -177,7 +177,7 @@ void JPLMConfiguration::validate_param(std::string param) {
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
     std::string key = argv[n];
-    validate_param(key);
+    //validate_param(key);
     std::string value = argv[n + 1];
     std::for_each(arguments.begin(), arguments.end(),
         [key, value](CLIArgument &s) { s.parse(key, value); });
