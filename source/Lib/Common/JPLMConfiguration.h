@@ -55,6 +55,7 @@
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
 
 enum class JpegPlenoPart {
   LightField = 2,
@@ -63,9 +64,11 @@ enum class JpegPlenoPart {
 class JPLMConfiguration {
  public:
   JPLMConfiguration();
+
   JPLMConfiguration(int argc, char **argv);
 
   const std::string &get_input_filename() const;
+
   const std::string &get_output_filename() const;
   const bool &is_help_mode() const;
 
@@ -122,5 +125,59 @@ private:
   std::string executable_name;
 };
 
+const std::string &JPLMConfiguration::get_input_filename() const {
+  return input;
+}
+
+const std::string &JPLMConfiguration::get_output_filename() const {
+  return output;
+}
+
+JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
+  add_option_to_holder();
+  parse_cli(argc, argv);
+}
+
+void JPLMConfiguration::add_option_to_holder(void) {
+  holder.add_option({{"input"}, {[this](auto v) { this->input = v; }}, 'i'})
+      .set_synopsys(
+          "Input (If Part II, it is a directory containing a set of "
+          "uncompressed "
+          "light-field images xxx_yyy.ppm).");
+  holder.add_option({{"output"}, {[this](auto v) { this->output = v; }}, 'o'})
+      .set_synopsys("Output compressed bitstream");
+}
+
+void JPLMConfiguration::parse_cli(int argc, char **argv) {
+  bool is_encoder = true;
+  auto short_options = holder.generate_short_options(is_encoder);
+  const struct option *optionas = holder.generate_options_struct(is_encoder);
+
+  int opt;
+  while ((opt = getopt_long_only(
+              argc, argv, short_options.c_str(), optionas, NULL)) > 0) {
+    if (opt == ':') {
+      std::cerr << "option " << holder.get_option_by_id(optopt).get_names()[0]
+                << " expected argument" << std::endl;
+
+      continue;
+    }
+    if (opt == '?') {
+      std::cerr << "Unknown option: " << std::string(argv[optind - 1])
+                << std::endl;
+      continue;
+    }
+
+    auto obtained_option = holder.get_option_by_id(opt);
+    if (obtained_option.has_argument) {
+      obtained_option.handle(optarg);
+    } else {
+      obtained_option.handle();
+    }
+  }
+}
+
+// PRIVATE CLASSES
+int JPLMConfiguration::Option::option_counter = 256;
 
 #endif  //JPLM_JPLMConfiguration_H
