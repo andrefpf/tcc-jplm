@@ -113,6 +113,8 @@ class JPLMConfiguration {
 
  protected:
   std::vector<CLIArgument> arguments;
+
+ protected:
   std::string input;
   std::string output;
   void run_help();
@@ -136,16 +138,6 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   add_option_to_holder();
   parse_cli(argc, argv);
-}
-
-void JPLMConfiguration::add_option_to_holder(void) {
-  holder.add_option({{"input"}, {[this](auto v) { this->input = v; }}, 'i'})
-      .set_synopsys(
-          "Input (If Part II, it is a directory containing a set of "
-          "uncompressed "
-          "light-field images xxx_yyy.ppm).");
-  holder.add_option({{"output"}, {[this](auto v) { this->output = v; }}, 'o'})
-      .set_synopsys("Output compressed bitstream");
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
