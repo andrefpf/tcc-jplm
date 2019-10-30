@@ -50,11 +50,12 @@
 #include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
-#include "JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
+#include "CppConsoleTable/CppConsoleTable.hpp"
 
+using ConsoleTable = samilton::ConsoleTable;
 using json = nlohmann::json;
 
 enum class JpegPlenoPart {
@@ -70,7 +71,6 @@ class JPLMConfiguration {
   const std::string &get_input_filename() const;
 
   const std::string &get_output_filename() const;
-  const bool &is_help_mode() const;
 
  protected:
   struct CLIArgument {
@@ -88,10 +88,11 @@ class JPLMConfiguration {
         action(value);
         this->parsed = true;
       }
-<<<<<<< HEAD
     }
 
-   public:
+   private:
+    std::string long_option;
+  public:
     const std::string &getLongOption() const {
       return long_option;
     }
@@ -102,12 +103,9 @@ class JPLMConfiguration {
 
     const std::string &getDescription() const {
       return description;
-=======
->>>>>>> Added unit tests to check if both long-styled and short-styled params are working together.
     }
 
-   private:
-    std::string long_option;
+  private:
     std::string short_option;
     std::string description;
     bool parsed;
@@ -120,14 +118,7 @@ class JPLMConfiguration {
  protected:
   std::string input;
   std::string output;
-  void run_help();
   void parse_cli(int argc, char **argv);
-  bool validate_param(std::string param);
-  bool validate_value(unsigned int size, unsigned int pos, char **argv);
-
-private:
-  bool help_mode_flag = false;
-  std::string executable_name;
 };
 
 const std::string &JPLMConfiguration::get_input_filename() const {
@@ -139,40 +130,39 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
-  add_option_to_holder();
-  parse_cli(argc, argv);
+  arguments.push_back(
+      {"--help", "-h", "Print this help message and exit", [this](std::any v) {
+         std::cout << "JPLM Codec" << std::endl;
+         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]" << std::endl;
+        std::cout << "Options:" << std::endl;
+        ConsoleTable table(1, 1, samilton::Alignment::centre);
+        unsigned int count = 0;
+         for (auto o : this->arguments) {
+           table[count][1] = o.getShortOption() + "," + o.getLongOption();
+           table[count][2] = o.getDescription();
+           count++;
+         }
+         std::cout << table << std::endl;
+         //exit(0);
+       }});
+  arguments.push_back({"--input", "-i",
+      "Input directory containing a set of uncompressed light-field images "
+      "(xxx_yyy.ppm).",
+      [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
+  arguments.push_back({"--output", "-o",
+      "Output directory containing temporary light-field data and the "
+      "compressed bitstream.",
+      [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
+  this->parse_cli(argc, argv);
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  bool is_encoder = true;
-  auto short_options = holder.generate_short_options(is_encoder);
-  const struct option *optionas = holder.generate_options_struct(is_encoder);
-
-  int opt;
-  while ((opt = getopt_long_only(
-              argc, argv, short_options.c_str(), optionas, NULL)) > 0) {
-    if (opt == ':') {
-      std::cerr << "option " << holder.get_option_by_id(optopt).get_names()[0]
-                << " expected argument" << std::endl;
-
-      continue;
-    }
-    if (opt == '?') {
-      std::cerr << "Unknown option: " << std::string(argv[optind - 1])
-                << std::endl;
-      continue;
-    }
-
-    auto obtained_option = holder.get_option_by_id(opt);
-    if (obtained_option.has_argument) {
-      obtained_option.handle(optarg);
-    } else {
-      obtained_option.handle();
-    }
+  for (int n = 1; n < argc - 1; n++) {
+    std::string key = argv[n];
+    std::string value = argv[n + 1];
+    std::for_each(arguments.begin(), arguments.end(),
+        [key, value](CLIArgument &s) { std::cout << "IGUAL=" << key << ", " << value << std::endl; s.parse(key, value); });
   }
 }
-
-// PRIVATE CLASSES
-int JPLMConfiguration::Option::option_counter = 256;
 
 #endif  //JPLM_JPLMConfiguration_H
