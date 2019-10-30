@@ -68,8 +68,33 @@ TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
       "-o", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
   int argc = 5;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/", config.get_input_filename().c_str());
-  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl", config.get_output_filename().c_str());
+  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      config.get_input_filename().c_str());
+  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
+      config.get_output_filename().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles) {
+  const char* argv[] = {"", "--input",
+      "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/", "-o",
+      "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
+  int argc = 5;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      config.get_input_filename().c_str());
+  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
+      config.get_output_filename().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
+  const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      "--output", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
+  int argc = 5;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      config.get_input_filename().c_str());
+  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
+      config.get_output_filename().c_str());
 }
 
 //

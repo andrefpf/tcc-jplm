@@ -78,17 +78,21 @@ class JPLMConfiguration {
         const std::function<void(std::any)> &action)
         : long_option(longOption), short_option(short_option),
           description(description), action(action) {
+      this->parsed = false;
     }
 
     void parse(std::string key, std::any value) {
-      if (key == long_option || key == short_option)
+      if (!this->parsed && (key == long_option || key == short_option)) {
         action(value);
+        this->parsed = true;
+      }
     }
 
    private:
     std::string long_option;
     std::string short_option;
     std::string description;
+    bool parsed;
     std::function<void(std::any)> action;
   };
 
