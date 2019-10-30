@@ -163,22 +163,17 @@ void JPLMConfiguration::validate_param(std::string param) {
 
   auto starts_with = [param](std::string prefix) {
     if (prefix.length() > 0 && param.length() > prefix.length()) {
-      int i = 0;
-      while (i < prefix.length()) {
+      for(int i=0; i < prefix.length(); ++i)
         if (param[i] != prefix[i])
           return false;
-        i++;
-      }
       return true;
-    } else
-      return false;
+    }
+    return false;
   };
 
-  if (starts_with("-")) {
-    std::cout << param << "INICIA" << std::endl;
-    if (std::none_of(arguments.begin(), arguments.end(), lambda))
-      throw UnknownCLIParameterException(param);
-  }
+  if (starts_with("-") &&
+      std::none_of(arguments.begin(), arguments.end(), lambda))
+    throw UnknownCLIParameterException(param);
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {

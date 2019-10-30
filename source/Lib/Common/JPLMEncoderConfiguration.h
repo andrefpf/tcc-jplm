@@ -115,13 +115,18 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
-  if (!config.empty()) {
-    if (fs::exists(config)) {
-      parse_json(config);
-    } else {
-      throw ConfigFileDoesNotExistException(config);
-    }
-  }
+  arguments.push_back(
+      {"--config", "-c", "Path to config file", [this](std::any v) {
+         this->config = std::any_cast<std::string>(v);
+         if (!this->config.empty()) {
+           if (fs::exists(this->config)) {
+             parse_json(this->config);
+           } else {
+             throw ConfigFileDoesNotExistException(this->config);
+           }
+         }
+       }});
+  this->parse_cli(argc, argv);
 }
 
 
