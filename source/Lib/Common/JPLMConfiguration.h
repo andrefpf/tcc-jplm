@@ -70,13 +70,13 @@ class JPLMConfiguration {
 
  protected:
   class Option {
-   private:
+public:
     static int option_counter;
 
    public:
     std::vector<std::string> names;
     char short_name;
-    int option_number;
+    int option_number = 0;
     std::function<void(const char *)> handler_char = nullptr;
     std::function<void(void)> handler_void = nullptr;
     bool has_argument;
@@ -90,7 +90,7 @@ class JPLMConfiguration {
           available_to_encoder(available_in_encoder),
           available_to_decoder(available_in_decoder) {
       if (short_option == 0) {
-        option_number = option_counter++;
+        option_number = JPLMConfiguration::Option::option_counter++;
       } else {
         option_number = static_cast<int>(short_option);
         names.push_back({char(short_option)});
@@ -263,7 +263,6 @@ class JPLMConfiguration {
           }
         }
       }
-
       return short_options;
     }
   };
@@ -272,6 +271,7 @@ class JPLMConfiguration {
   std::string input;
   std::string output;
   OptionsHolder holder;
+  void add_option_to_holder(void);
   void parse_cli(int argc, char **argv);
 };
 
@@ -284,10 +284,11 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
+  add_option_to_holder();
   parse_cli(argc, argv);
 }
 
-void JPLMConfiguration::parse_cli(int argc, char **argv) {
+void JPLMConfiguration::add_option_to_holder(void) {
   holder.add_option({{"input"}, {[this](auto v) { this->input = v; }}, 'i'})
       .set_synopsys(
           "Input (If Part II, it is a directory containing a set of "
@@ -295,7 +296,9 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
           "light-field images xxx_yyy.ppm).");
   holder.add_option({{"output"}, {[this](auto v) { this->output = v; }}, 'o'})
       .set_synopsys("Output compressed bitstream");
+}
 
+void JPLMConfiguration::parse_cli(int argc, char **argv) {
   bool is_encoder = true;
   auto short_options = holder.generate_short_options(is_encoder);
   const struct option *optionas = holder.generate_options_struct(is_encoder);
