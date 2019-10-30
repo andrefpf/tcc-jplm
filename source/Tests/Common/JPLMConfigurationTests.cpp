@@ -199,15 +199,15 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
 }
 
 
-//
-//TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-//      "../resources/out_small_greek/", "-l", "12"};
-//  int argc = 7;
-//  JPLMEncoderConfigurationLightField4DTransformMode config(
-//      argc, const_cast<char**>(argv));
-//  //EXPECT_EQ(12, config.get_lambda());
-//}
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "12"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(12, config.get_lambda());
+}
 
 //
 //TEST(JPLMEncoderConfigurationLightField4DTransformMode,
@@ -336,5 +336,6 @@ int main(int argc, char* argv[]) {
   if (argc > 1) {
     root_path = std::string(argv[1]);
   }
-  return RUN_ALL_TESTS();
+ return RUN_ALL_TESTS();
 }
+

@@ -41,6 +41,7 @@
 #ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 
+#include <string>
 #include "JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 
@@ -153,9 +154,14 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
-//  arguments.push_back({"--lambda", "-l",
-//      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
-//      [this](std::any v) { this->lambda = std::any_cast<double>(v); }});
+  std::cout << "AO MENOS INICIALIZEI" << std::endl;
+  arguments.push_back({"--lambda", "-l",
+      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        std::string::size_type sz;
+        this->lambda = std::stod(typed_string, &sz);
+  }});
 
 //  arguments.push_back({"--transform_size_maximum_inter_view_vertical",
 //      "--transform_size_maximum_inter_view_vertical",
@@ -222,7 +228,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
 //            std::any_cast<uint32_t>(v);
 //      }});
 
-  //this->parse_cli(argc, argv);
+  this->parse_cli(argc, argv);
 //  if (!config.empty())
  //   parse_json(config);
  // init_transform_size();
