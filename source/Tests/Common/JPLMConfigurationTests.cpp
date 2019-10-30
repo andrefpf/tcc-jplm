@@ -116,13 +116,13 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 }
 
 
-//
-//TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
-//  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
-//  int argc = 4;
-//  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
-//      std::runtime_error);
-//}
+
+TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
+  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
+  int argc = 4;
+  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
+               UnknownCLIParameterException);
+}
 
 //
 //TEST(JPLMEncoderConfiguration, SimpleCLITest) {

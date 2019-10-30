@@ -50,10 +50,11 @@
 #include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
+#include "CppConsoleTable/CppConsoleTable.hpp"
+#include "JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
-#include "CppConsoleTable/CppConsoleTable.hpp"
 
 using ConsoleTable = samilton::ConsoleTable;
 using json = nlohmann::json;
@@ -88,9 +89,7 @@ class JPLMConfiguration {
       }
     }
 
-   private:
-    std::string long_option;
-  public:
+   public:
     const std::string &getLongOption() const {
       return long_option;
     }
@@ -103,7 +102,8 @@ class JPLMConfiguration {
       return description;
     }
 
-  private:
+   private:
+    std::string long_option;
     std::string short_option;
     std::string description;
     bool parsed;
@@ -112,11 +112,10 @@ class JPLMConfiguration {
 
  protected:
   std::vector<CLIArgument> arguments;
-
- protected:
   std::string input;
   std::string output;
   void parse_cli(int argc, char **argv);
+  void validate_param(std::string param);
 };
 
 const std::string &JPLMConfiguration::get_input_filename() const {
@@ -131,10 +130,11 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back(
       {"--help", "-h", "Print this help message and exit", [this](std::any v) {
          std::cout << "JPLM Codec" << std::endl;
-         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]" << std::endl;
-        std::cout << "Options:" << std::endl;
-        ConsoleTable table(1, 1, samilton::Alignment::centre);
-        unsigned int count = 0;
+         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]"
+                   << std::endl;
+         std::cout << "Options:" << std::endl;
+         ConsoleTable table(1, 1, samilton::Alignment::centre);
+         unsigned int count = 0;
          for (auto o : this->arguments) {
            table[count][1] = o.getShortOption() + "," + o.getLongOption();
            table[count][2] = o.getDescription();
@@ -154,12 +154,38 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   this->parse_cli(argc, argv);
 }
 
+void JPLMConfiguration::validate_param(std::string param) {
+  auto lambda = [param](CLIArgument &s) {
+    return ((s.getShortOption() == param) || (s.getLongOption() == param));
+  };
+
+  auto starts_with = [param](std::string prefix) {
+    if (prefix.length() > 0 && param.length() > prefix.length()) {
+      int i = 0;
+      while (i < prefix.length()) {
+        if (param[i] != prefix[i])
+          return false;
+        i++;
+      }
+      return true;
+    } else
+      return false;
+  };
+
+  if (starts_with("-")) {
+    std::cout << param << "INICIA" << std::endl;
+    if (std::none_of(arguments.begin(), arguments.end(), lambda))
+      throw UnknownCLIParameterException(param);
+  }
+}
+
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  for (int n = 1; n < argc - 1; n++) {
+  for (int n = 1; n < argc; n++) {
     std::string key = argv[n];
+    validate_param(key);
     std::string value = argv[n + 1];
     std::for_each(arguments.begin(), arguments.end(),
-        [key, value](CLIArgument &s) { std::cout << "IGUAL=" << key << ", " << value << std::endl; s.parse(key, value); });
+        [key, value](CLIArgument &s) { s.parse(key, value); });
   }
 }
 
