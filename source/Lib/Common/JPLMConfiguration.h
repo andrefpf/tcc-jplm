@@ -114,6 +114,10 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
       "Input directory containing a set of uncompressed light-field images "
       "(xxx_yyy.ppm).",
       [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
+  arguments.push_back({"--output", "-o",
+      "Output directory containing temporary light-field data and the "
+      "compressed bitstream.",
+      [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
   parse_cli(argc, argv);
 }
 
