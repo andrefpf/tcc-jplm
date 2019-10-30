@@ -117,28 +117,28 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 
 
 
-TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
-  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
-  int argc = 4;
-  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
-               UnknownCLIParameterException);
-}
+//TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
+//  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
+//  int argc = 4;
+//  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
+//               UnknownCLIParameterException);
+//}
 
 //
-//TEST(JPLMEncoderConfiguration, SimpleCLITest) {
-//  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
-//      "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
-//  int argc = 15;
-//  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
-//  EXPECT_STREQ(
-//      "../resources/small_greek/", config.get_input_filename().c_str());
-//  EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
-//  EXPECT_EQ(13, config.get_number_of_rows_t());
-//  EXPECT_EQ(13, config.get_number_of_columns_s());
-//  EXPECT_EQ(434, config.get_view_height_v());
-//  EXPECT_EQ(626, config.get_view_width_u());
-//}
+TEST(JPLMEncoderConfiguration, SimpleCLITest) {
+  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
+      "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
+  int argc = 15;
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ(
+      "../resources/small_greek/", config.get_input_filename().c_str());
+  EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
+  EXPECT_EQ(13, config.get_number_of_rows_t());
+  EXPECT_EQ(13, config.get_number_of_columns_s());
+  EXPECT_EQ(434, config.get_view_height_v());
+  EXPECT_EQ(626, config.get_view_width_u());
+}
 //
 //
 //TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
