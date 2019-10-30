@@ -49,11 +49,27 @@ using namespace std;
 std::string root_path = "../";
 
 
-TEST(JPLMConfiguration, SimpleTest) {
+TEST(JPLMConfiguration, SimpleTestWithInput) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/"};
   int argc = 3;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../cfg/part2/mule/", config.get_input_filename().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWithOutput) {
+  const char* argv[] = {"", "-o", "./output.jpl"};
+  int argc = 3;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("./output.jpl", config.get_output_filename().c_str());
+}
+
+TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
+//  const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+//      "-o", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
+//  int argc = 5;
+//  JPLMConfiguration config(argc, const_cast<char**>(argv));
+//  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/", config.get_input_filename().c_str());
+//  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl", config.get_output_filename().c_str());
 }
 
 //
@@ -63,7 +79,7 @@ TEST(JPLMConfiguration, SimpleTest) {
 //  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
 //      std::runtime_error);
 //}
-//
+
 //
 //TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 //  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
