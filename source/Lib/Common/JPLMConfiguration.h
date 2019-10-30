@@ -45,6 +45,8 @@
 #define JPLM_JPLMConfiguration_H
 
 #include <getopt.h>
+#include <algorithm>
+#include <any>
 #include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
@@ -69,209 +71,33 @@ class JPLMConfiguration {
   const std::string &get_output_filename() const;
 
  protected:
-  class Option {
-public:
-    static int option_counter;
-
+  struct CLIArgument {
    public:
-    std::vector<std::string> names;
-    char short_name;
-    int option_number = 0;
-    std::function<void(const char *)> handler_char = nullptr;
-    std::function<void(void)> handler_void = nullptr;
-    bool has_argument;
-    bool available_to_encoder;
-    bool available_to_decoder;
-    std::string synopsys = "The synopsys for this option is not available yet";
-
-    Option(std::vector<std::string> option_names, char short_option = 0,
-        bool available_in_encoder = true, bool available_in_decoder = true)
-        : names(option_names), short_name(short_option),
-          available_to_encoder(available_in_encoder),
-          available_to_decoder(available_in_decoder) {
-      if (short_option == 0) {
-        option_number = JPLMConfiguration::Option::option_counter++;
-      } else {
-        option_number = static_cast<int>(short_option);
-        names.push_back({char(short_option)});
-      }
-    };
-
-    Option(std::vector<std::string> option_names,
-        std::function<void(const char *)> option_handler, char short_option = 0,
-        bool available_in_encoder = true, bool available_in_decoder = true)
-        : Option(option_names, short_option, available_in_encoder,
-              available_in_decoder) {
-      handler_char = option_handler;
-      has_argument = true;
-    };
-
-
-    Option(std::vector<std::string> option_names,
-        std::function<void(void)> option_handler, char short_option = 0,
-        bool available_in_encoder = true, bool available_in_decoder = true)
-        : Option(option_names, short_option, available_in_encoder,
-              available_in_decoder) {
-      handler_void = option_handler;
-      has_argument = false;
-    };
-
-    ~Option() = default;
-
-    void print() const {
-      if (short_name != 0) {
-        std::cout << "\t-" << short_name << ", ";
-      } else {
-        std::cout << "\t";
-      }
-      for (auto option_name : names) {
-        std::cout << "--" << option_name << ", \t";
-      }
-      std::cout << std::endl;
-      std::cout << "\t\t" << synopsys << std::endl << std::endl;
+    CLIArgument(const std::string &longOption, const std::string &short_option,
+        const std::string &description,
+        const std::function<void(std::any)> &action)
+        : long_option(longOption), short_option(short_option),
+          description(description), action(action) {
     }
 
-    void set_synopsys(std::string synopsys) {
-      this->synopsys = synopsys;
+    void parse(std::string key, std::any value) {
+      if (key == long_option || key == short_option)
+        action(value);
     }
 
-    std::vector<std::string> get_names() const {
-      return names;
-    }
-
-    int get_number() const {
-      return option_number;
-    }
-
-    void handle(const char *param) {
-      if (handler_char != nullptr) {
-        handler_char(param);
-      } else {
-        std::cerr << "There is no handler associated with the option."
-                  << std::endl;
-      }
-    }
-
-    void handle() {
-      if (handler_void != nullptr) {
-        handler_void();
-      } else {
-        std::cerr << "There is no handler associated with the option."
-                  << std::endl;
-      }
-    }
-  };
-
-  class OptionsHolder {
    private:
-    std::map<int, Option> options;
-    std::map<std::string, int> options_name_map;
-    Option unknown_option = Option({"Unknown Option"});
-    // std::unique_ptr<struct option[]> options_struct = nullptr;
-    struct option *options_struct = nullptr;
-
-   public:
-    OptionsHolder() = default;
-
-    ~OptionsHolder(){};  //delete options struct
-
-    Option &add_option(Option option) {
-      auto list_of_names = option.get_names();
-      auto result = options.insert(std::make_pair(option.get_number(), option));
-      if (!result.second) {
-        std::cerr << "The option " << option.names.at(0)
-                  << " was already in the list of options" << std::endl;
-        exit(1);
-      }
-      for (auto name : list_of_names) {
-        auto result =
-            options_name_map.insert(std::make_pair(name, option.get_number()));
-        if (!result.second) {
-          std::cerr << "The name " << name
-                    << " used for option already exists (i.e., there is a "
-                       "duplicate name for options)."
-                    << std::endl;
-          exit(1);
-        }
-      }
-      return options.find(option.get_number())->second;
-    };
-
-    void print_all_options() const {
-      for (auto option : options) {
-        option.second.print();
-      }
-    }
-
-    Option &get_option_by_name(std::string name) {
-      auto option_iterator = options_name_map.find(name);
-      if (option_iterator != options_name_map.end()) {
-        return options.find(option_iterator->second)->second;
-      }
-      return unknown_option;
-    }
-
-    Option &get_option_by_id(int option_id) {
-      auto option_iterator = options.find(option_id);
-      if (option_iterator != options.end()) {
-        return option_iterator->second;
-      }
-      return unknown_option;
-    }
-
-    struct option *generate_options_struct(bool encoder) {
-      auto number_of_options = options_name_map.size();
-      // options_struct = std::unique_ptr<struct option[]>(new struct option[number_of_options+1]);
-      options_struct = new struct option[number_of_options + 1];
-      int counter = 0;
-      for (auto option_idx : options_name_map) {
-        auto option_iterator = options.find(option_idx.second);
-        if (option_iterator == options.end()) {
-          std::cerr << "Option not found..." << std::endl;
-        } else {
-          auto current_option = option_iterator->second;
-          if ((encoder && current_option.available_to_encoder) ||
-              (!encoder && current_option.available_to_decoder)) {
-            auto name = new char[option_idx.first.size() + 1];
-            strcpy(name, option_idx.first.c_str());
-            options_struct[counter].name = name;
-            options_struct[counter].has_arg =
-                static_cast<int>(current_option.has_argument);
-            options_struct[counter].flag = 0;
-            options_struct[counter].val = current_option.get_number();
-            counter++;
-          }
-        }
-      }
-      options_struct[counter] = {0, 0, 0, 0};
-      return options_struct;
-    }
-
-    std::string generate_short_options(bool encoder) {
-      std::string short_options(":");
-
-      for (auto option : options) {
-        auto current_option = option.second;
-        if ((encoder && current_option.available_to_encoder) ||
-            (!encoder && current_option.available_to_decoder)) {
-          int option_number = current_option.get_number();
-          if (option_number < 256) {
-            short_options.push_back(char(option_number));
-            if (current_option.has_argument) {
-              short_options.push_back(':');
-            }
-          }
-        }
-      }
-      return short_options;
-    }
+    std::string long_option;
+    std::string short_option;
+    std::string description;
+    std::function<void(std::any)> action;
   };
+
+ protected:
+  std::vector<CLIArgument> arguments;
 
  protected:
   std::string input;
   std::string output;
-  OptionsHolder holder;
-  void add_option_to_holder(void);
   void parse_cli(int argc, char **argv);
 };
 
@@ -284,50 +110,20 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
-  add_option_to_holder();
+  arguments.push_back({"--input", "-i",
+      "Input directory containing a set of uncompressed light-field images "
+      "(xxx_yyy.ppm).",
+      [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
   parse_cli(argc, argv);
 }
 
-void JPLMConfiguration::add_option_to_holder(void) {
-  holder.add_option({{"input"}, {[this](auto v) { this->input = v; }}, 'i'})
-      .set_synopsys(
-          "Input (If Part II, it is a directory containing a set of "
-          "uncompressed "
-          "light-field images xxx_yyy.ppm).");
-  holder.add_option({{"output"}, {[this](auto v) { this->output = v; }}, 'o'})
-      .set_synopsys("Output compressed bitstream");
-}
-
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  bool is_encoder = true;
-  auto short_options = holder.generate_short_options(is_encoder);
-  const struct option *optionas = holder.generate_options_struct(is_encoder);
-
-  int opt;
-  while ((opt = getopt_long_only(
-              argc, argv, short_options.c_str(), optionas, NULL)) > 0) {
-    if (opt == ':') {
-      std::cerr << "option " << holder.get_option_by_id(optopt).get_names()[0]
-                << " expected argument" << std::endl;
-
-      continue;
-    }
-    if (opt == '?') {
-      std::cerr << "Unknown option: " << std::string(argv[optind - 1])
-                << std::endl;
-      continue;
-    }
-
-    auto obtained_option = holder.get_option_by_id(opt);
-    if (obtained_option.has_argument) {
-      obtained_option.handle(optarg);
-    } else {
-      obtained_option.handle();
-    }
+  for (int n = 1; n < argc - 1; n++) {
+    std::string key = argv[n];
+    std::string value = argv[n + 1];
+    std::for_each(arguments.begin(), arguments.end(),
+        [key, value](CLIArgument &s) { s.parse(key, value); });
   }
 }
-
-// PRIVATE CLASSES
-int JPLMConfiguration::Option::option_counter = 256;
 
 #endif  //JPLM_JPLMConfiguration_H
