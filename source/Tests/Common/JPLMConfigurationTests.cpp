@@ -56,12 +56,14 @@ TEST(JPLMConfiguration, SimpleTestWithInput) {
   EXPECT_STREQ("../cfg/part2/mule/", config.get_input_filename().c_str());
 }
 
+
 TEST(JPLMConfiguration, SimpleTestWithOutput) {
   const char* argv[] = {"", "-o", "./output.jpl"};
   int argc = 3;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("./output.jpl", config.get_output_filename().c_str());
 }
+
 
 TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
   const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
@@ -73,6 +75,7 @@ TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());
 }
+
 
 TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles) {
   const char* argv[] = {"", "--input",
@@ -96,6 +99,22 @@ TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());
 }
+
+
+TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
+  const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      "--output", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl", "-i",
+      "/home/PLENO/DATASETS/LENSLETS/OUTRO"};
+  int argc = 7;
+  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+      config.get_input_filename().c_str());
+  EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
+      config.get_output_filename().c_str());
+  EXPECT_STRNE("/home/PLENO/DATASETS/LENSLETS/OUTRO",
+      config.get_input_filename().c_str());
+}
+
 
 //
 //TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {

@@ -53,7 +53,9 @@
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
+#include "CppConsoleTable/CppConsoleTable.hpp"
 
+using ConsoleTable = samilton::ConsoleTable;
 using json = nlohmann::json;
 
 enum class JpegPlenoPart {
@@ -63,11 +65,9 @@ enum class JpegPlenoPart {
 class JPLMConfiguration {
  public:
   JPLMConfiguration();
-
   JPLMConfiguration(int argc, char **argv);
 
   const std::string &get_input_filename() const;
-
   const std::string &get_output_filename() const;
 
  protected:
@@ -90,6 +90,20 @@ class JPLMConfiguration {
 
    private:
     std::string long_option;
+  public:
+    const std::string &getLongOption() const {
+      return long_option;
+    }
+
+    const std::string &getShortOption() const {
+      return short_option;
+    }
+
+    const std::string &getDescription() const {
+      return description;
+    }
+
+  private:
     std::string short_option;
     std::string description;
     bool parsed;
@@ -114,6 +128,21 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
+  arguments.push_back(
+      {"--help", "-h", "Print this help message and exit", [this](std::any v) {
+         std::cout << "JPLM Codec" << std::endl;
+         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]" << std::endl;
+        std::cout << "Options:" << std::endl;
+        ConsoleTable table(1, 1, samilton::Alignment::centre);
+        unsigned int count = 0;
+         for (auto o : this->arguments) {
+           table[count][1] = o.getShortOption() + "," + o.getLongOption();
+           table[count][2] = o.getDescription();
+           count++;
+         }
+         std::cout << table << std::endl;
+         //exit(0);
+       }});
   arguments.push_back({"--input", "-i",
       "Input directory containing a set of uncompressed light-field images "
       "(xxx_yyy.ppm).",
@@ -122,7 +151,7 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
       "Output directory containing temporary light-field data and the "
       "compressed bitstream.",
       [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
-  parse_cli(argc, argv);
+  this->parse_cli(argc, argv);
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
@@ -130,7 +159,7 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
     std::string key = argv[n];
     std::string value = argv[n + 1];
     std::for_each(arguments.begin(), arguments.end(),
-        [key, value](CLIArgument &s) { s.parse(key, value); });
+        [key, value](CLIArgument &s) { std::cout << "IGUAL=" << key << ", " << value << std::endl; s.parse(key, value); });
   }
 }
 
