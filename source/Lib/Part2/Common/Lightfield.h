@@ -243,7 +243,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  auto get_views_width() const {
+  auto get_views_width_u() const {
     if (!this->elements) {
       //Throws
     }
@@ -251,7 +251,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  auto get_views_height() const {
+  auto get_views_height_v() const {
     if (!this->elements) {
       //Throws
     }
@@ -271,7 +271,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     if (!this->elements) {
       //Throws
     }
-    return get_views_width() * get_views_height();
+    return get_views_width_u() * get_views_height_v();
   }
 
 
@@ -288,13 +288,14 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     
     if (!lightfield_dimension) {
       lightfield_dimension =
-          std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),
-              this->get_views_width(), this->get_views_height());
+          std::make_unique<LightfieldDimension<std::size_t>>(
+              this->get_number_of_rows_t(), this->get_number_of_columns_s(),
+              this->get_views_height_v(), this->get_views_width_u());
     }
     return LightfieldDimension<Type>(*lightfield_dimension);
 
     // return LightfieldDimension<Type>(this->get_width(), this->get_height(),
-    //     this->get_views_width(), this->get_views_height());
+    //     this->get_views_width_u(), this->get_views_height_v());
   }
 
 
@@ -342,6 +343,26 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   virtual Lightfield* clone() const override {
     return new Lightfield(*this);
   };
+
+
+  /**
+ * \brief      Gets the height.
+ *
+ * \return     The height.
+ */
+  inline auto get_number_of_rows_t() const noexcept {
+    return this->get_height();
+  }
+
+  /**
+ * \brief      Gets the width.
+ *
+ * \return     The width.
+ */
+  inline auto get_number_of_columns_s() const noexcept {
+    return this->get_width();
+  }
+
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__ */

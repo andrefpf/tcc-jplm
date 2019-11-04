@@ -74,13 +74,13 @@ TEST_F(LFFromPPMSmallGreek, HasCorrectHeight) {
 
 
 TEST_F(LFFromPPMSmallGreek, HasCorrectViewWidth) {
-  auto width = lightfield.get_views_width();
+  auto width = lightfield.get_views_width_u();
   EXPECT_EQ(width, 32);
 }
 
 
 TEST_F(LFFromPPMSmallGreek, HasCorrectViewHeight) {
-  auto height = lightfield.get_views_height();
+  auto height = lightfield.get_views_height_v();
   EXPECT_EQ(height, 32);
 }
 
