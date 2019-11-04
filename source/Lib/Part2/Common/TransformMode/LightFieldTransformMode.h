@@ -50,6 +50,19 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromPPMFile<T>(configuration, std::move(view_io_policy)) {
+        std::cout << "LightFieldTransformMode A" << std::endl;
+        {const auto& [t, s, v, u] = configuration.get_size();
+                std::cout << "t: " << t << std::endl;
+                std::cout << "s: " << s << std::endl;
+                std::cout << "v: " << v << std::endl;
+                std::cout << "u: " << u << std::endl;}
+
+        std::cout << "This size: " << std::endl;
+        const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
+        std::cout << "t: " << t << std::endl;
+        std::cout << "s: " << s << std::endl;
+        std::cout << "v: " << v << std::endl;
+        std::cout << "u: " << u << std::endl;
   }
 
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
@@ -57,6 +70,18 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromPPMFile<T>(
             configuration, max_value, type, std::move(view_io_policy)) {
+        std::cout << "LightFieldTransformMode B" << std::endl;
+        {const auto& [t, s, v, u] = configuration.get_size();
+                std::cout << "t: " << t << std::endl;
+                std::cout << "s: " << s << std::endl;
+                std::cout << "v: " << v << std::endl;
+                std::cout << "u: " << u << std::endl;}
+                std::cout << "This size: " << std::endl;
+        const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
+        std::cout << "t: " << t << std::endl;
+        std::cout << "s: " << s << std::endl;
+        std::cout << "v: " << v << std::endl;
+        std::cout << "u: " << u << std::endl;
   }
 
 
@@ -75,6 +100,7 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
         const auto& image_channel =
             this->template get_image_at<BT601Image>({t, s}).get_channel(
                 channel);
+              
         for (auto v = v_initial; v < v_max; ++v) {
           for (auto u = u_initial; u < u_max; ++u) {
             // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
@@ -82,7 +108,7 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
               block.mPixelData[c++] = image_channel[v][u];
             } else {
               c++;
-              std::cout << "invalid" << std::endl;
+              // std::cout << "invalid" << std::endl;
             }
           }
         }

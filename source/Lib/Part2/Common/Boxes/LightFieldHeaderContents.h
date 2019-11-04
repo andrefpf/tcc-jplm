@@ -46,6 +46,7 @@
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include "assert.h"
 
 using colour_space_unknown_flag_type = uint8_t;
 
@@ -179,7 +180,16 @@ class LightFieldHeaderContents : public InMemoryDBox {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
 
+    //t, s, v, u
+    //height, width, height, width
+    //rows, columns, rows, columns
     const auto& [rows, columns, height, width] = light_field_dimension;
+    const auto& [t, s, v, u] = light_field_dimension;
+        std::cout << "t: " << t << std::endl;
+        std::cout << "s: " << s << std::endl;
+        std::cout << "v: " << v << std::endl;
+        std::cout << "u: " << u << std::endl;
+
 
     BinaryTools::append_big_endian_bytes(bytes, rows);
     BinaryTools::append_big_endian_bytes(bytes, columns);

@@ -288,8 +288,8 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     
     if (!lightfield_dimension) {
       lightfield_dimension =
-          std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),
-              this->get_views_width(), this->get_views_height());
+          std::make_unique<LightfieldDimension<std::size_t>>(this->get_height(), this->get_width(),
+              this->get_views_height(), this->get_views_width());
     }
     return LightfieldDimension<Type>(*lightfield_dimension);
 

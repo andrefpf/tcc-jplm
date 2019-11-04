@@ -184,8 +184,8 @@ class JPLM4DTransformModeLightFieldDecoder
               << "\n";
     std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
               << "\n";
-    std::cout << "mNumberOfViewLines: " << mNumberOfViewLines << "\n";
-    std::cout << "mNumberOfViewColumns: " << mNumberOfViewColumns << "\n";
+    std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
+    std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
     std::cout << "level_shift: " << level_shift << std::endl;
   }
 
