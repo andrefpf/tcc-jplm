@@ -221,6 +221,15 @@ class Generic2DStructure {
   inline bool is_coordinate_valid(
       const std::pair<std::size_t, std::size_t>& coordinate) const {
     const auto& [i, j] = coordinate;
+
+    bool test = i < height && j < width;
+    std::cout << "DEBUGA " << __FILE__ << " : " << __LINE__
+      << " i=" << i
+      << " j=" << j
+      << " height=" << height
+      << " width=" << width
+      << " is_valid=" << test
+      << std::endl;
     return i < height && j < width;
   }
 

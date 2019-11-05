@@ -76,7 +76,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
    * Instantiates a new Lightfield according to the parameters, using a view_io_policy
    * 
    */
-  Lightfield(const std::size_t width, const std::size_t height,
+  Lightfield(const std::size_t height, const std::size_t width,
       // ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const bool auto_alloc_resources = true)
@@ -349,7 +349,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  *
  * \return     The height.
  */
-  inline auto get_number_of_rows_t() const noexcept {
+  auto get_number_of_rows_t() const noexcept {
     return this->get_height();
   }
 
@@ -358,7 +358,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  *
  * \return     The width.
  */
-  inline auto get_number_of_columns_s() const noexcept {
+  auto get_number_of_columns_s() const noexcept {
     return this->get_width();
   }
 };
