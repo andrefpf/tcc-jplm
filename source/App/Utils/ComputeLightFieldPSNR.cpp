@@ -31,12 +31,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Lenslet13x13Shifter.cpp
- *  \brief    Test of PPM Binary File reader/writer.
+/** \file     ComputeLightFieldPSNR.cpp
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-31
+ *  \date     2019-11-05
  */
+
+
 
 #include <filesystem>
 #include <iomanip>  //std::setw and std::setfill
@@ -48,9 +50,14 @@
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageMetrics.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
+#include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
+#include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 
 
 std::map<std::string, ImageType> string_to_image_type_map;
+
 
 void fill_map() {
   string_to_image_type_map["rgb"]=ImageType::RGB;
@@ -61,51 +68,68 @@ void fill_map() {
 
 
 void show_psnr(
-    const std::string& filename_original, const std::string& filename_decoded, const ImageType type=ImageType::RGB) {
-  auto original_file = PixelMapFileIO::open(filename_original);
-  auto decoded_file = PixelMapFileIO::open(filename_decoded);
+  const std::string& filename_original, const std::string& filename_decoded, const ImageType type=ImageType::RGB,
+  std::size_t t_max=13, std::size_t s_max=13) {
 
-  auto original_image_variant = original_file->read_full_image();
-  auto original_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
-              uint16_t>(original_image_variant);
+  LightfieldDimension<std::size_t> size(t_max, s_max, 32, 32);
+  LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+  LightfieldIOConfiguration original_configuration(filename_original, initial, size);
+  LightfieldIOConfiguration decoded_configuration(filename_decoded, initial, size);
 
-  auto decoded_image_variant = decoded_file->read_full_image();
-  auto decoded_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
-              uint16_t>(decoded_image_variant);
+  
+  auto original_lightfield =
+      std::make_unique<LightfieldFromPPMFile<uint16_t>>(original_configuration);
+
+  auto decoded_lightfield =
+      std::make_unique<LightfieldFromPPMFile<uint16_t>>(decoded_configuration);
+
+/*  auto original_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+  original_lightfield->set_view_io_policy(std::move(original_policy));
+  auto decoded_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+  decoded_lightfield->set_view_io_policy(std::move(decoded_policy));*/
 
   auto printer = ImageMetrics::visitors::PSNRPrinter();
-
-   switch (type) {
-      case ImageType::RGB:
-        printer(original_image, decoded_image);
-        break;
-      case ImageType::BT601:
-        printer.operator()<BT601Image>(original_image, decoded_image);
-        break;
-      case ImageType::BT709:
-        printer.operator()<BT709Image>(original_image, decoded_image);
-        break;
-      case ImageType::BT2020:
-        printer.operator()<BT2020Image>(original_image, decoded_image);
-        break;
-      default:
-        std::cerr << "Error default" << std::endl;
-    }
+  for(auto t=0;t<t_max;++t) {
+  	for(auto s=0; s<s_max; ++s) {
+  		std::cout << "T: " << t << "   S: " << s << std::endl;
+  		auto original_image = std::make_unique<RGBImage<uint16_t>>(original_lightfield->get_image_at<RGBImage>({t, s}));
+  		auto decoded_image = std::make_unique<RGBImage<uint16_t>>(decoded_lightfield->get_image_at<RGBImage>({t, s}));
+  		switch (type) {
+	      case ImageType::RGB:
+	        printer(original_image, decoded_image);
+	        break;
+	      case ImageType::BT601:
+	        printer.operator()<BT601Image>(original_image, decoded_image);
+	        break;
+	      case ImageType::BT709:
+	        printer.operator()<BT709Image>(original_image, decoded_image);
+	        break;
+	      case ImageType::BT2020:
+	        printer.operator()<BT2020Image>(original_image, decoded_image);
+	        break;
+	      default:
+	        std::cerr << "Error default" << std::endl;
+	    }
+  	}
+  }
 
 }
 
 
 int main(int argc, char const* argv[]) {
   if (argc < 4) {
-    std::cout << "Expecting 3 params\n";
+    std::cout << "Expecting 5 params\n";
     std::cout << "\tUsage: " << argv[0]
               << " color_space"
-              << " /path/to/input/directory/original.ppm"
-                 " /path/to/output/directory/decoded.ppm"
+              << " /path/to/input/directory/"
+                 " /path/to/output/directory/"
+              << " t" << " s"
               << std::endl;
     exit(1);
   }
   fill_map();
+
+
 
   std::string color_space(argv[1]);
   std::transform(color_space.begin(), color_space.end(), color_space.begin(), ::tolower);
@@ -123,10 +147,22 @@ int main(int argc, char const* argv[]) {
   }
 
 
+
   std::string filename_original(argv[2]);
   std::string filename_decoded(argv[3]);
 
-  show_psnr(filename_original, filename_decoded, type);
+  int t = 13;
+  int s = 13;
+
+  if (argc >= 3) {
+    t = s = atoi(argv[4]);
+  }
+
+  if (argc == 4) {
+    s = atoi(argv[5]);
+  }
+
+  show_psnr(filename_original, filename_decoded, type, t, s);
 
   return 0;
 }
