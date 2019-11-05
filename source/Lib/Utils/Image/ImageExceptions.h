@@ -42,6 +42,7 @@
 #define JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 
 #include <exception>
+#include <string>
 
 namespace ImageChannelExceptions {
 class InvalidSizeException : public std::exception {
@@ -53,9 +54,21 @@ class InvalidSizeException : public std::exception {
 
 
 class InvalidIndexWriteException : public std::exception {
+ private:
+  std::string message_;
+
  public:
-  const char* what() const noexcept override {
-    return "Trying to write in invalid index of image channel";
+  explicit InvalidIndexWriteException(
+      const std::size_t i, const std::size_t j) {
+    message_ = "Trying to write in invalid index of image channel at (" +
+               std::to_string(i) + ", " + std::to_string(j) + ")";
+  }
+
+  explicit InvalidIndexWriteException() {
+    message_ = "Trying to write in invalid index of image channel";
+  }
+  virtual const char* what() const throw() {
+    return message_.c_str();
   }
 };
 

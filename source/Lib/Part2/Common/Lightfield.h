@@ -61,8 +61,8 @@ template<typename T>
 class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  protected:
   std::unique_ptr<ViewIOPolicy<T>> view_io_policy;
-  mutable std::unique_ptr<LightfieldDimension<std::size_t>> lightfield_dimension =
-      nullptr;
+  mutable std::unique_ptr<LightfieldDimension<std::size_t>>
+      lightfield_dimension = nullptr;
 
  public:
   /**
@@ -76,7 +76,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
    * Instantiates a new Lightfield according to the parameters, using a view_io_policy
    * 
    */
-  Lightfield(const std::size_t width, const std::size_t height,
+  Lightfield(const std::size_t height, const std::size_t width,
       // ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const ViewIOPolicy<T>& view_io_policy = ViewIOPolicyLimitlessMemory<T>(),
       const bool auto_alloc_resources = true)
@@ -164,7 +164,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
 
   void save_views_according_to_view_io_policies() {
-    for(auto& view: *this) {
+    for (auto& view : *this) {
       view_io_policy->save_image(*view);
     }
   }
@@ -212,7 +212,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     auto& view = get_view_at(coordinate);
     return view_io_policy->template get_image_at<ImageType>(view);
   }
-  
+
 
   template<template<typename> typename ImageType>
   ImageType<T>& get_image_at(
@@ -233,17 +233,19 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   template<typename ViewType = View<T>>
   void set_view_at(const ViewType&& view,
       const std::pair<std::size_t, std::size_t>& coordinate) {
-    this->set_element_at(std::make_unique<ViewType>(std::move(view)), coordinate);
+    this->set_element_at(
+        std::make_unique<ViewType>(std::move(view)), coordinate);
   }
 
 
   template<typename ViewType = View<T>>
-  void set_view_at(std::unique_ptr<ViewType>&& view, const std::pair<std::size_t, std::size_t>& coordinate) {
+  void set_view_at(std::unique_ptr<ViewType>&& view,
+      const std::pair<std::size_t, std::size_t>& coordinate) {
     this->set_element_at(std::move(view), coordinate);
   }
 
 
-  auto get_views_width() const {
+  auto get_views_width_u() const {
     if (!this->elements) {
       //Throws
     }
@@ -251,7 +253,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
-  auto get_views_height() const {
+  auto get_views_height_v() const {
     if (!this->elements) {
       //Throws
     }
@@ -271,7 +273,7 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     if (!this->elements) {
       //Throws
     }
-    return get_views_width() * get_views_height();
+    return get_views_width_u() * get_views_height_v();
   }
 
 
@@ -285,16 +287,15 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
 
   template<typename Type = std::size_t>
   LightfieldDimension<Type> get_dimensions() const {
-    
     if (!lightfield_dimension) {
-      lightfield_dimension =
-          std::make_unique<LightfieldDimension<std::size_t>>(this->get_width(), this->get_height(),
-              this->get_views_width(), this->get_views_height());
+      lightfield_dimension = std::make_unique<LightfieldDimension<std::size_t>>(
+          this->get_number_of_rows_t(), this->get_number_of_columns_s(),
+          this->get_views_height_v(), this->get_views_width_u());
     }
     return LightfieldDimension<Type>(*lightfield_dimension);
 
     // return LightfieldDimension<Type>(this->get_width(), this->get_height(),
-    //     this->get_views_width(), this->get_views_height());
+    //     this->get_views_width_u(), this->get_views_height_v());
   }
 
 
@@ -304,12 +305,11 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
     const auto& [tc, sc, vc, uc] = coordinate.as_tuple();
     // std::cout << "lightfield: " << t << ", " << s << ", " << v << ", " << u << std::endl;
     // std::cout << "coordinate: " << tc << ", " << sc << ", " << vc << ", " << uc << std::endl;
-    if((tc >= t) || (sc >= s) || (vc >= v) || (uc >= u)) {
+    if ((tc >= t) || (sc >= s) || (vc >= v) || (uc >= u)) {
       return false;
     }
     return true;
   }
-
 
 
   inline View<T>* operator[](const int i) {
@@ -342,6 +342,25 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   virtual Lightfield* clone() const override {
     return new Lightfield(*this);
   };
+
+
+  /**
+ * \brief      Gets the height.
+ *
+ * \return     The height.
+ */
+  auto get_number_of_rows_t() const noexcept {
+    return this->get_height();
+  }
+
+  /**
+ * \brief      Gets the width.
+ *
+ * \return     The width.
+ */
+  auto get_number_of_columns_s() const noexcept {
+    return this->get_width();
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELD_H__ */
