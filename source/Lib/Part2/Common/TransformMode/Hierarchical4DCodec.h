@@ -76,7 +76,7 @@ class Hierarchical4DCodec {
   uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v,
       mTransformLength_u;
 
-  //! \todo check if the minimum transform lenghts must be kept in this class. it seems they are only here to be written to file.
+  //! \todo check if the minimum transform lengths must be kept in this class. it seems they are only here to be written to file.
   //LightfieldDimension<uint32_t> minimum_transform_dimension;
   uint32_t mMinimumTransformLength_t, mMinimumTransformLength_s,
       mMinimumTransformLength_v, mMinimumTransformLength_u;

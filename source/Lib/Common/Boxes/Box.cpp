@@ -40,7 +40,7 @@
 
 #include "Box.h"
 
-std::variant<LBox, XLBox> Box::get_lenght() const noexcept {
+std::variant<LBox, XLBox> Box::get_length() const noexcept {
   constexpr uint64_t LBox_size = 4;  //bytes = 32 bits
   constexpr uint64_t TBox_size = 4;  //bytes = 32 bits
   //this means that the LBox will contain at least 8 bytes and thus
@@ -61,9 +61,9 @@ std::variant<LBox, XLBox> Box::get_lenght() const noexcept {
 
 
 LBox Box::get_lbox() const noexcept {
-  auto lenght = this->get_lenght();
-  if (lenght.index() == 0) {  //the lbox;
-    return std::get<0>(lenght);
+  auto length = this->get_length();
+  if (length.index() == 0) {  //the lbox;
+    return std::get<0>(length);
   }
   //else, the type is XLBox, thus needs to set lbox to 1
   return LBox(1);
@@ -81,11 +81,11 @@ t_box_id_type Box::get_id() const noexcept {
 
 
 std::optional<XLBox> Box::get_xlbox() const noexcept {
-  auto lenght = this->get_lenght();
-  if (lenght.index() == 0) {  //the lbox
+  auto length = this->get_length();
+  if (length.index() == 0) {  //the lbox
     return {};  //empty XLBox
   }
-  return std::get<1>(lenght);
+  return std::get<1>(length);
 }
 
 std::unique_ptr<DBox> Box::get_dbox() const noexcept {
@@ -104,10 +104,10 @@ DBox& Box::get_ref_to_dbox() noexcept {
 
 
 std::uint64_t Box::size() const noexcept {
-  auto lenght = this->get_lenght();
+  auto length = this->get_length();
   return std::visit(
       [](auto& value_holder) { return (uint64_t) value_holder.get_value(); },
-      lenght);
+      length);
 }
 
 

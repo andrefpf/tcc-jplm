@@ -47,14 +47,14 @@ uint64_t JPLMBoxParser::ContiguousCodestreamBoxParser::memory_limit = std::numer
 std::unique_ptr<Box> JPLMBoxParser::ContiguousCodestreamBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   std::cout << "Parsing a contiguous codestream box" << std::endl;
-  auto data_lenght = box_parser_helper.get_data_lenght();
+  auto data_length = box_parser_helper.get_data_length();
 
-  if (data_lenght <= memory_limit) {
+  if (data_length <= memory_limit) {
     auto remaining_stream = box_parser_helper.get_remaining_stream();
-    assert(remaining_stream.get_length() == data_lenght);
+    assert(remaining_stream.get_length() == data_length);
     auto contiguous_codestream_code =
         std::make_unique<ContiguousCodestreamCodeInMemory>(
-            remaining_stream.get_n_bytes(data_lenght));
+            remaining_stream.get_n_bytes(data_length));
     auto contiguous_codestream_contents = std::make_unique<ContiguousCodestreamContents>(
         std::move(contiguous_codestream_code));
 

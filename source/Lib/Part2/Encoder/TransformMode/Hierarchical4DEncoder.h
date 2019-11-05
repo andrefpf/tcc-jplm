@@ -94,7 +94,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
   void encode_sub_block(double lambda);
   std::pair<double, double> rd_optimize_hexadecatree(
       const std::tuple<int, int, int, int>& position,
-      const std::tuple<int, int, int, int>& lenghts, double lambda,
+      const std::tuple<int, int, int, int>& lengths, double lambda,
       uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
   int get_optimum_bit_plane(double lambda);
   void load_optimizer_state();

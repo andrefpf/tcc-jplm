@@ -62,7 +62,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
   template<typename T>
   std::unique_ptr<RGBImage<T>> read_rgb_image_patch(
       std::pair<std::size_t, std::size_t> origin,
-      std::pair<std::size_t, std::size_t> lenght);
+      std::pair<std::size_t, std::size_t> length);
 
   template<typename T>
   std::unique_ptr<RGBImage<T>> read_full_rgb_image();
@@ -70,7 +70,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
   std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_image_patch(std::pair<std::size_t, std::size_t> origin,
-      std::pair<std::size_t, std::size_t> lenght) override;
+      std::pair<std::size_t, std::size_t> length) override;
   std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_full_image() override;

@@ -78,7 +78,7 @@ class Transformed4DBlock {
       std::size_t stride_b, std::size_t stride_c, std::size_t stride_d);
 
  protected:
-  /*The lenght values will be copied from the Block4D*/
+  /*The length values will be copied from the Block4D*/
   int mlength_t; /*!< t dimension block size */
   int mlength_s; /*!< s dimension block size */
   int mlength_v; /*!< v dimension block size */

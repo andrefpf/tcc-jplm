@@ -85,14 +85,14 @@ class JPLM4DTransformModeLightFieldCodec
   }
 
 
-  void initialize_extension_lenghts() {
+  void initialize_extension_lengths() {
     const auto& [number_of_vertical_views, number_of_horizontal_views,
                     mNumberOfViewLines, mNumberOfViewColumns] =
         lightfield_dimension.as_tuple();
     const auto& [transform_length_t, transform_length_s, transform_length_v,
                     transform_length_u] = block_4d_dimension.as_tuple();
 
-    std::cout << "Initializing extension lenghts" << std::endl;
+    std::cout << "Initializing extension lengths" << std::endl;
 
     auto extension_length_t = number_of_vertical_views % transform_length_t;
     auto extension_length_s = number_of_horizontal_views % transform_length_s;

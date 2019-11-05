@@ -107,7 +107,7 @@ class JPLM4DTransformModeLightFieldDecoder
         {1.0, 1.0, 1.0, 1.0});
 
     //initializes possible extension lenghs
-    // initialize_extension_lenghts();
+    // initialize_extension_lengths();
 
     auto& view_io_policy = ref_to_lightfield.get_ref_to_view_io_policy();
     view_io_policy.set_save_image_when_release(true)

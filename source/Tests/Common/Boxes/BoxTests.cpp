@@ -94,7 +94,7 @@ TEST(BoxBasicTest, ExpectedBoxLenghtEqualSize) {
 
 TEST(BoxBasicTest, ExpectedBoxLenghtTypeForSmallSizeBox) {
 	auto box = EmptyBox();
-	EXPECT_EQ(box.get_lenght().index(), 0);
+	EXPECT_EQ(box.get_length().index(), 0);
 }
 //doing the other test would need too much memory
 

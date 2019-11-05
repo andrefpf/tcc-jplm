@@ -97,7 +97,7 @@ std::unique_ptr<Box> JPLMBoxParser::CameraParameterBoxParser::parse(
 
   const auto baseline = box_parser_helper.get_next<float, float>();
 
-  const auto camera_parameter_bytes = box_parser_helper.get_data_lenght() -
+  const auto camera_parameter_bytes = box_parser_helper.get_data_length() -
                                       fp_coordinates->size() -
                                       sizeof(uint16_t) - 2 * sizeof(float);
 

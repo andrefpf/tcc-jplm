@@ -66,7 +66,7 @@ class PixelMapFileBinary : public PixelMapFile {
 
   // virtual std::variant<Image<uint8_t>, Image<uint16_t>> read_full_image() = 0;
   // virtual std::variant<Image<uint8_t>, Image<uint16_t>> read_image_patch(	std::pair<std::size_t, std::size_t> origin,
-  // 																std::pair<std::size_t, std::size_t> lenght) = 0;
+  // 																std::pair<std::size_t, std::size_t> length) = 0;
   virtual std::variant<std::unique_ptr<Image<uint8_t>>,
       std::unique_ptr<Image<uint16_t>>>
   read_full_image() = 0;

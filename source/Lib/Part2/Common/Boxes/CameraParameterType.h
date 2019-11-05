@@ -57,7 +57,7 @@ enum class CameraParameterType : uint8_t {
   THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
   THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
   THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal lenght (mm)
+  F = 6,  //!< Focal length (mm)
   SW = 7,  //!< Sensor width (mm)
   SH = 8,  //!< Sensor width (mm)
   SK = 9,  //!< Sensor skew

@@ -54,10 +54,10 @@ void correct_endianess(
 template<typename T>
 std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_rgb_image_patch(
     std::pair<std::size_t, std::size_t> origin,
-    std::pair<std::size_t, std::size_t> lenght) {
+    std::pair<std::size_t, std::size_t> length) {
   if (file.is_open()) {
-    auto patch_width = std::get<1>(lenght);
-    auto patch_height = std::get<0>(lenght);
+    auto patch_width = std::get<1>(length);
+    auto patch_height = std::get<0>(length);
     auto patch_image = std::make_unique<RGBImage<T>>(
         patch_width, patch_height, get_number_of_bits_per_pixel());
     auto r_ptr = patch_image->get_channel(0).data();
@@ -102,14 +102,14 @@ std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_rgb_image_patch(
 
 std::variant<std::unique_ptr<Image<uint8_t>>, std::unique_ptr<Image<uint16_t>>>
 PPMBinaryFile::read_image_patch(std::pair<std::size_t, std::size_t> origin,
-    std::pair<std::size_t, std::size_t> lenght) {
+    std::pair<std::size_t, std::size_t> length) {
   if (!file.is_open()) {
     file.open(filename, std::ios::binary | std::ios::in);
   }
   if (max_value < 256) {
-    return read_rgb_image_patch<uint8_t>(origin, lenght);
+    return read_rgb_image_patch<uint8_t>(origin, length);
   }
-  return read_rgb_image_patch<uint16_t>(origin, lenght);
+  return read_rgb_image_patch<uint16_t>(origin, length);
 }
 
 

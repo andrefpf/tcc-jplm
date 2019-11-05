@@ -104,7 +104,7 @@ class JPLM4DTransformModeLightFieldEncoder
     hierarchical_4d_encoder.write_lightfield_configuration_marker_segment(
         lightfield_configuration_marker_segment);
 
-    this->initialize_extension_lenghts();
+    this->initialize_extension_lengths();
   }
 
 
