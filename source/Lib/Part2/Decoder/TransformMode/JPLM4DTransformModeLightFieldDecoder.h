@@ -213,6 +213,8 @@ class JPLM4DTransformModeLightFieldDecoder
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
+    
+    decoded_block.clip(0, hierarchical_4d_decoder.get_level_shift());
 
     ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);
   }
