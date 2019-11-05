@@ -174,7 +174,7 @@ JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
 }
 
 
-const string& JPLMEncoderConfiguration::get_config() const {
+const string &JPLMEncoderConfiguration::get_config() const {
   return config;
 }
 
