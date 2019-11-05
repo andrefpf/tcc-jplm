@@ -162,6 +162,10 @@ TEST_F(LightfieldViewTests, LighfieldGetsDimension) {
 TEST_F(LightfieldViewTests, LighfieldGetsDimensionThroughStructuredBinding) {
   lightfield.set_view_at(std::move(view), {0, 0});
   const auto [t, s, v, u] = lightfield.get_dimensions();
+  std::cout << "DEBUGA " << __FILE__ << ":" << __LINE__ << " t=" << t
+      << " s=" << s
+      << " u=" << u
+      << " v=" << v << std::endl;
   EXPECT_EQ(t, 2);
   EXPECT_EQ(s, 3);
   EXPECT_EQ(v, 1);
