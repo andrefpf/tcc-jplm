@@ -47,6 +47,9 @@
 #include <string.h>
 #include <limits>
 #include <cstdint>
+#include <iomanip> // for leading zeros in hex cout
+#include <iostream>
+#include <cstddef>
 
 
 class ABACCodec {
@@ -66,6 +69,9 @@ class ABACCodec {
   ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {
   }
 
+  void print_byte(std::byte byte) const {
+    std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << std::to_integer<uint16_t>(byte) << std::dec << std::endl;
+  }
 
   virtual ~ABACCodec() = default;
 };

@@ -31,38 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CameraParameterType.h
+/** \file     Markers.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-20
+ *  \date     2019-10-16
  */
 
+#include "Markers.h"
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
 
-#include <cstdint>
+std::vector<std::byte> Markers::get_bytes(Marker marker) {
+	auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
+	marker_value&=0x00FF; //keeping only the least significative byte;
+	auto bytes = std::vector<std::byte>();
+	bytes.emplace_back(std::byte{0xFF});
+	bytes.emplace_back(std::byte{marker_value});
+	return bytes;
+}
 
-/**
- * \brief      Enumeration of Camera Parameter Types
- * \note    This enum is not part of the standard.
- *             It is used to access the various camera parameter types within the 
- *             CameraParameterBoxContents;
- */
-enum class CameraParameterType : uint8_t {
-  XCC = 0,  //!< Camera centre along XL coordinate axis
-  YCC = 1,  //!< Camera centre along YL coordinate axis
-  ZCC = 2,  //!< Camera centre along ZL coordinate axis
-  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
-  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
-  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal length (mm)
-  SW = 7,  //!< Sensor width (mm)
-  SH = 8,  //!< Sensor width (mm)
-  SK = 9,  //!< Sensor skew
-  U0 = 10,  //!< Horizontal principle point offset
-  V0 = 11  //!< Vertical principle point offset
-};
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */
+bool Markers::is_a_known_marker(Marker marker) {
+	switch (marker) {
+		case Marker::SOC: [[fall_through]];
+		case Marker::LFC: [[fall_through]];
+		case Marker::SCC: [[fall_through]];
+		case Marker::PNT: [[fall_through]];
+		case Marker::SOB: [[fall_through]];
+		case Marker::EOC: return true;
+		default: return false;
+	}
+}

@@ -43,6 +43,14 @@
 #include <iostream>
 
 void ABACDecoder::start() {
+
+    if(codestream_code.peek_next_byte() == std::byte{0xff}) {
+        [[maybe_unused]] auto byte = codestream_code.get_next_byte();
+    }
+    if(codestream_code.peek_next_byte() == std::byte{0xa4}) {
+        [[maybe_unused]] auto byte = codestream_code.get_next_byte();
+    }
+
     number_of_bits_in_byte = 0;  
     mLow = 0;
     mHigh = MAXINT;    
@@ -70,7 +78,6 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
          mLow = mLow + length_0;
     }
 
-    mNumberOfbitsreadAfterlastBitDecoded = 0;
     while(((mLow & MSB_MASK) == (mHigh & MSB_MASK)) || ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
         
        if((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
@@ -109,18 +116,18 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
             mTag = mTag  & MAXINT;
         }
     }
+
     mHigh = mHigh & MAXINT;
     mLow = mLow & MAXINT;
     mTag = mTag  & MAXINT;
+
     return (bitDecoded);
 }
 
 
 int ABACDecoder::ReadBitFromFile() {
-    int bit;
-    mNumberOfbitsreadAfterlastBitDecoded++;    
+    int bit; 
     if (number_of_bits_in_byte == 0) {  
-        // mBitBuffer = fgetc(file_ptr);
         number_of_bits_in_byte = 8;
         if(codestream_code.is_next_valid()) {
             std::byte byte = codestream_code.get_next_byte();

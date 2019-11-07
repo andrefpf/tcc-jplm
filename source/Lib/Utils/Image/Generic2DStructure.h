@@ -241,7 +241,7 @@ class Generic2DStructure {
   virtual void set_element_at(
       const T& element, const std::size_t i, const std::size_t j) {
     if (!is_coordinate_valid(i, j)) {
-      throw ImageChannelExceptions::InvalidIndexWriteException();
+      throw ImageChannelExceptions::InvalidIndexWriteException(i, j);
     }
     if constexpr (is_unique_ptr<T>::value) {
       typedef typename std::remove_reference<decltype(*std::declval<T>())>::type
@@ -259,7 +259,7 @@ class Generic2DStructure {
   virtual void set_element_at(
       T&& element, const std::size_t i, const std::size_t j) {
     if (!is_coordinate_valid(i, j)) {
-      throw ImageChannelExceptions::InvalidIndexWriteException();
+      throw ImageChannelExceptions::InvalidIndexWriteException(i, j);
     }
     auto data_ptr = elements.get();
     data_ptr[i * this->width + j] = std::move(element);

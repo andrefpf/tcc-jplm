@@ -44,6 +44,7 @@
 #include <cstdint>
 #include <iostream>
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
+#include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
@@ -64,7 +65,7 @@ class JPLM4DTransformModeLightFieldCodec
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
         block_4d_dimension(block_4d_dimension) {
-          std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
+    // std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
   }
 
 
@@ -84,18 +85,35 @@ class JPLM4DTransformModeLightFieldCodec
   }
 
 
-  void initialize_extension_lenghts() {
-    // extension_length_t = parameter_handler.number_of_vertical_views%parameter_handler.transform_length_t;
-    // extension_length_s = parameter_handler.number_of_horizontal_views%parameter_handler.transform_length_s;
-    // extension_length_v = decoded_lightfield.mNumberOfViewLines%parameter_handler.transform_length_v;
-    // extension_length_u = decoded_lightfield.mNumberOfViewColumns%parameter_handler.transform_length_u;
+  void initialize_extension_lengths() {
+    const auto& [number_of_vertical_views, number_of_horizontal_views,
+                    mNumberOfViewLines, mNumberOfViewColumns] =
+        lightfield_dimension.as_tuple();
+    const auto& [transform_length_t, transform_length_s, transform_length_v,
+                    transform_length_u] = block_4d_dimension.as_tuple();
 
-    // if(parameter_handler.extension_method != SHRINK_TO_FIT && extension_length_t+extension_length_s+extension_length_v+extension_length_u > 0)
-    //     needs_block_extension=true;
+    std::cout << "Initializing extension lengths" << std::endl;
+
+    auto extension_length_t = number_of_vertical_views % transform_length_t;
+    auto extension_length_s = number_of_horizontal_views % transform_length_s;
+    auto extension_length_v = mNumberOfViewLines % transform_length_v;
+    auto extension_length_u = mNumberOfViewColumns % transform_length_u;
+
+
+    if (extension_length_t + extension_length_s + extension_length_v +
+            extension_length_u >
+        0) {
+      needs_block_extension = true;
+    }
+
+    extensions = {extension_length_t, extension_length_s, extension_length_v,
+        extension_length_u};
   }
 
 
-  virtual void finalization() {};
+  virtual void finalization(){};
+
+  virtual BorderBlocksPolicy get_border_blocks_policy() const = 0;
 
   virtual void run() override {
     const auto& [T, S, V, U] = lightfield_dimension;
@@ -104,8 +122,12 @@ class JPLM4DTransformModeLightFieldCodec
         block_4d_dimension;
 
 
+    const auto& boder_blocks_policy = this->get_border_blocks_policy();
+
     int32_t level_shift = 512;
     //std::pow(2, lightfield->get_views_bpp()) / 2;  //
+    auto size_padding = LightfieldDimension<uint32_t>(
+        BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
 
     for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
       auto used_size_t =
@@ -126,14 +148,18 @@ class JPLM4DTransformModeLightFieldCodec
                 s, v, u);
             // }
 
-            //if (parameter_handler.extension_method == SHRINK_TO_FIT) {
-            //    rgb_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-            //    spectral_4d_block.resize_blocks(used_size_t, used_size_s, used_size_v, used_size_u);
-            //}
-
-
-            auto size = LightfieldDimension<uint32_t>(
+            auto size_shrink = LightfieldDimension<uint32_t>(
                 used_size_t, used_size_s, used_size_v, used_size_u);
+
+            const auto& size =
+                (boder_blocks_policy == BorderBlocksPolicy::truncate)
+                    ? size_shrink
+                    : size_padding;
+            std::cout << "Shrink? " << (boder_blocks_policy == BorderBlocksPolicy::truncate) << std::endl;
+            // std::cout << "size_shrink " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+            // std::cout << "size_shrink " << used_size_t << ", " << used_size_s << ", " << used_size_v << ", " << used_size_u << std::endl;
+            // std::cout << "Used size " << size.get_t() << ", " << size.get_s() << ", " << size.get_v() << ", " << size.get_u() << std::endl;
+
 
             for (auto color_channel_index = 0; color_channel_index < 3;
                  ++color_channel_index) {
@@ -144,6 +170,7 @@ class JPLM4DTransformModeLightFieldCodec
         }
       }
     }
+    std::cout << "finished" << std::endl;
     //up to now, this finalization step is required only in the encoder.
     finalization();
   }

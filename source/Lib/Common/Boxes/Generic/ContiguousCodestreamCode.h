@@ -44,6 +44,7 @@
 #include <cstddef>  //for std::byte
 #include <cstdint>
 #include <ostream>
+#include <vector>
 
 /**
  * \brief      Class for contiguous codestream code.
@@ -69,6 +70,9 @@ class ContiguousCodestreamCode {
 
 
   virtual std::byte get_next_byte() const = 0;
+
+
+  virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
 
 
   virtual bool is_next_valid() const = 0;

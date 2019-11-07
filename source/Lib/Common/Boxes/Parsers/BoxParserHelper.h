@@ -78,10 +78,10 @@ class BoxParserHelperBase {
   }
 
 
-  BoxParserHelperBase(ManagedStream& stream, uint64_t lenght, uint32_t t_box_value_in_stream, bool has_xl_field)
-      : managed_stream(stream.get_sub_managed_stream(lenght)), length(lenght),
+  BoxParserHelperBase(ManagedStream& stream, uint64_t length, uint32_t t_box_value_in_stream, bool has_xl_field)
+      : managed_stream(stream.get_sub_managed_stream(length)), length(length),
         t_box_value_in_stream(t_box_value_in_stream), has_xl_field(has_xl_field) {
-          managed_stream.seek(get_non_data_lenght());
+          managed_stream.seek(get_non_data_length());
   }
 
 
@@ -111,7 +111,7 @@ class BoxParserHelperBase {
   }
 
 
-  uint64_t get_non_data_lenght() const noexcept {
+  uint64_t get_non_data_length() const noexcept {
     auto non_data_length = 8;  //4 from l_box, 4 from t_box
     if (has_xl_field) {
       non_data_length += 8;
@@ -120,14 +120,14 @@ class BoxParserHelperBase {
   }
 
 
-  uint64_t get_data_lenght() const noexcept {
-    return get_length() - get_non_data_lenght();
+  uint64_t get_data_length() const noexcept {
+    return get_length() - get_non_data_length();
   }
 
 
   ManagedStream get_data_stream() {
-    managed_stream.seek(get_non_data_lenght());
-    return managed_stream.get_sub_managed_stream(get_data_lenght());
+    managed_stream.seek(get_non_data_length());
+    return managed_stream.get_sub_managed_stream(get_data_length());
   }
 
 

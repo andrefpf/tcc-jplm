@@ -91,6 +91,13 @@ ContiguousCodestreamCode& ABACEncoder::get_ref_to_codestream_code() const {
 }
 
 
+void ABACEncoder::push_current_byte_to_codestream_code() {
+    mask = std::byte{0x01};
+    codestream_code->push_byte(byte_buffer);    
+    byte_buffer = std::byte{0};
+}
+
+
 template<bool bit>
 void ABACEncoder::output_bit() {
   if constexpr (bit) {  //==1
@@ -98,9 +105,7 @@ void ABACEncoder::output_bit() {
   }
   mask <<= 1;
   if (mask == std::byte{0x0}) {
-    mask = std::byte{0x01};
-    codestream_code->push_byte(byte_buffer);
-    byte_buffer = std::byte{0};
+    push_current_byte_to_codestream_code();
   }
 }
 

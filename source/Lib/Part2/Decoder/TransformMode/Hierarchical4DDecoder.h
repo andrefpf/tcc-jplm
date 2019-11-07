@@ -42,37 +42,59 @@
 #ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__
 #define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__
 
-#include "Lib/Part2/Decoder/TransformMode/ABACDecoder.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
-#include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
+#include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include "Lib/Part2/Decoder/TransformMode/ABACDecoder.h"
 
 
-class Hierarchical4DDecoder : public Hierarchical4DCodec 
-{
-private:    
-    HexadecaTreeFlag decode_segmentation_flag(int bitplane);
-    int decode_coefficient(int bitplane);
-public:
-    ABACDecoder entropy_decoder;
-    Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
-    : entropy_decoder(codestream_code) {
-        std::cout << "Hierarchical4DDecoder" << std::endl;
-
-    }
-
-    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions() const {
-        return {mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u};
-    }
+class Hierarchical4DDecoder : public Hierarchical4DCodec {
+ private:
+  HexadecaTreeFlag decode_segmentation_flag(int bitplane);
 
 
-    ~Hierarchical4DDecoder() = default;
-    void decode_block(int position_t, int position_s, int position_v, int position_u, int length_t, int length_s, int length_v, int length_u, int bitplane);
-    PartitionFlag decode_partition_flag();
-    int decode_integer(int precision);
-    void start();
+  int decode_coefficient(int bitplane);
+
+
+ public:
+  ABACDecoder entropy_decoder;
+
+
+  Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
+      : entropy_decoder(codestream_code) {
+  }
+
+
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions()
+      const {
+    return {mTransformLength_t, mTransformLength_s, mTransformLength_v,
+        mTransformLength_u};
+  }
+
+
+  virtual ~Hierarchical4DDecoder() = default;
+
+
+  void decode_block(int position_t, int position_s, int position_v,
+      int position_u, int length_t, int length_s, int length_v, int length_u,
+      int bitplane);
+
+
+  PartitionFlag decode_partition_flag();
+
+
+  int decode_integer(int precision);
+
+
+  void start();
+
+
+  virtual void reset_probability_models() override {
+    Hierarchical4DCodec::reset_probability_models();
+    entropy_decoder.start();
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_HIERARCHICAL4DDECODER_H__ */

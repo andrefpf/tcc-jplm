@@ -10,3 +10,8 @@ if(VISUALIZATION_TOOL)
 	target_link_libraries(lightfield_visualizer jplm_part2_common)
 	target_link_libraries(lightfield_visualizer X11)
 endif(VISUALIZATION_TOOL)
+
+
+add_executable(compute_lightfield_psnr ComputeLightFieldPSNR.cpp)
+target_link_libraries(compute_lightfield_psnr image)
+target_link_libraries(compute_lightfield_psnr jplm_part2_common)

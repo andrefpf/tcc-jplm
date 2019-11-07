@@ -31,38 +31,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CameraParameterType.h
+/** \file     ComponentSsizParameter.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-20
+ *  \date     2019-10-16
  */
 
-
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+#ifndef COMPONENTSSIZPARAMETER_H__
+#define COMPONENTSSIZPARAMETER_H__
 
 #include <cstdint>
 
-/**
- * \brief      Enumeration of Camera Parameter Types
- * \note    This enum is not part of the standard.
- *             It is used to access the various camera parameter types within the 
- *             CameraParameterBoxContents;
- */
-enum class CameraParameterType : uint8_t {
-  XCC = 0,  //!< Camera centre along XL coordinate axis
-  YCC = 1,  //!< Camera centre along YL coordinate axis
-  ZCC = 2,  //!< Camera centre along ZL coordinate axis
-  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
-  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
-  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal length (mm)
-  SW = 7,  //!< Sensor width (mm)
-  SH = 8,  //!< Sensor width (mm)
-  SK = 9,  //!< Sensor skew
-  U0 = 10,  //!< Horizontal principle point offset
-  V0 = 11  //!< Vertical principle point offset
+class ComponentSsizParameter {
+ protected:
+  uint8_t value;
+  bool is_signed_;
+  
+
+  void check_validity() const {
+    auto sample_precision = get_component_sample_precision();
+    if (sample_precision > 38) {
+      // !\todo create this exception
+      // throw ComponentSsizParameterExceptions::InvalidComponentPrecisionException(sample_precision);
+    }
+  }
+
+ public:
+  ComponentSsizParameter(uint8_t value)
+      : value(value), is_signed_((value > 127) ? true : false) {
+  }
+
+
+  bool is_signed() const noexcept {
+    return is_signed_;
+  }
+
+
+  uint8_t operator()() const noexcept {
+    return value;
+  }
+
+
+  uint8_t get_component_sample_precision() const noexcept {
+    uint8_t mask = 0x7F;  // dec 127, bin 0111 1111
+    return (value & mask) + 1;  //removes the possible msb
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */
+#endif /* end of include guard: COMPONENTSSIZPARAMETER_H__ */
+

@@ -131,11 +131,11 @@ class Box {
   virtual ~Box() = default;
 
   /**
-   * \brief      Gets the lenght (within the respective type) of the Box.
+   * \brief      Gets the length (within the respective type) of the Box.
    *
-   * \return     The lenght, that can be either a LBox or a XLBox, depending on the size of this Box.
+   * \return     The length, that can be either a LBox or a XLBox, depending on the size of this Box.
    */
-  std::variant<LBox, XLBox> get_lenght() const noexcept;
+  std::variant<LBox, XLBox> get_length() const noexcept;
 
 
   /**
@@ -150,7 +150,7 @@ class Box {
    * \brief      Gets the LBox.
    *
    * \return     The LBox (copy). 
-   *             It may represent the size (lenght) of this Box, if such size fits in 32 bits (uint32_t).
+   *             It may represent the size (length) of this Box, if such size fits in 32 bits (uint32_t).
    *             Otherwise, it will be 1 to show that a XLBox holds the actual size of this Box.
    */
   LBox get_lbox() const noexcept;
@@ -207,7 +207,7 @@ class Box {
   }
 
 
-  bool has_same_lenght(const Box& other) const noexcept {
+  bool has_same_length(const Box& other) const noexcept {
     if (other.size() != this->size()) {
       return false;
     }
@@ -225,7 +225,7 @@ class Box {
 
   bool is_equal(const Box& other) const noexcept {
     if (this->holds_same_data(other) && this->has_same_type(other) &&
-        this->has_same_lenght(other))
+        this->has_same_length(other))
       return true;
     return false;
   }

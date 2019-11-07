@@ -56,6 +56,26 @@ Example:
   ```  
 
 
+#### Encoding Lenslets 13x13 (with darker views)
+
+In VM there are two different treatments for Lenslets 13x13. 
+Firstly, the dataset contains more than 13x13 views, but instead of beginning in 000_000, the encoder begins in 001_001.
+Secondly, there are four views that are much darker then the others.
+To rename the views to start in 000_000 and to brighten the four darker ones, we created a tool called lenslet_13x13_shifter. 
+
+Example:
+  ```bash
+  ORIGINALS_INPUT_PATH="/home/RAW/TAU/I01_Bikes/"
+  ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"
+  JPLM_BINS="/home/jpeg-pleno/jplm/bin"
+
+  ${JPLM_BINS}/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH}
+  ${JPLM_BINS}/jpl-encoder-bin --part 2 --type 0 --input ${ORIGINAL_TEMPORARY_PATH} --output ./test_bikes.lf --transform_size_maximum_inter_view_vertical 13 --transform_size_maximum_inter_view_horizontal 13 --transform_size_maximum_intra_view_vertical 31 --transform_size_maximum_intra_view_horizontal 31 --transform_size_minimum_inter_view_vertical 13 --transform_size_minimum_inter_view_horizontal 13 --transform_size_minimum_intra_view_vertical 4 --transform_size_minimum_intra_view_horizontal 4 --lambda 10000 -t 13 -s 13 -v 434 -u 626
+  ```  
+
+We still need to create a inverse lenslet_13x13_shifter to be executed after decoding. 
+Yet, the PSNR between a original dark view and its decoded should be the same as the PSNR between a original brighten view and its decoded (also brighten).
+
 ## Architecture overview
 TODO
 

@@ -46,47 +46,6 @@ ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() co
 }
 
 
-void Hierarchical4DEncoder::write_initial_data() {
-  ContiguousCodestreamCode& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
-
-  auto bytes = std::vector<std::byte>();
-  bytes.reserve(28);
-
-  BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->superior_bit_plane);
-    
-    //writes the maximum transform sizes
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_t);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_s);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_v);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mTransformLength_u);
-    
-    //writes the minimum transform sizes
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_t);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_s);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_v);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mMinimumTransformLength_u);
-    
-
-    //writes the number of views of the lightfield
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfVerticalViews);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfHorizontalViews);
-    
-    //writes the number of lines and columns of each view
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfViewLines);
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mNumberOfViewColumns);
-    
-    //writes the bit precision of each component of the pixels of the views
-    BinaryTools::append_big_endian_bytes(bytes, (uint16_t)this->mPGMScale);
-
-    //writes the extension_method to file...
-    // write_int16_into_file(parameter_handler.extension_method, encoded_file_pointer);
-    // 
-    for(const auto& byte: bytes) {
-      codestream_code.push_byte(byte);
-    }
-}
-
-
 std::unique_ptr<ContiguousCodestreamCode>&& Hierarchical4DEncoder::move_codestream_code_out() {
   return mEntropyCoder.move_codestream_code_out();
 }
@@ -103,6 +62,7 @@ void Hierarchical4DEncoder::reset_optimization_models() {
 void Hierarchical4DEncoder::reset_probability_models() {
   Hierarchical4DCodec::reset_probability_models();
   reset_optimization_models();
+  mEntropyCoder.flush_byte();
 }
 
 
@@ -318,7 +278,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
     std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
   } else {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
-    std::tuple<int, int, int, int> half_lenghts = std::apply(
+    std::tuple<int, int, int, int> half_lengths = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
         lengths);
     auto number_of_subdivisions = std::apply(
@@ -326,33 +286,33 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
     for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); t++) {
       int new_position_t =
-          std::get<LF::T>(position) + t * std::get<LF::T>(half_lenghts);
+          std::get<LF::T>(position) + t * std::get<LF::T>(half_lengths);
       int new_length_t =
-          (t == 0) ? std::get<LF::T>(half_lenghts)
-                   : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lenghts));
+          (t == 0) ? std::get<LF::T>(half_lengths)
+                   : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lengths));
 
       for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); s++) {
         int new_position_s =
-            std::get<LF::S>(position) + s * std::get<LF::S>(half_lenghts);
+            std::get<LF::S>(position) + s * std::get<LF::S>(half_lengths);
         int new_length_s =
             (s == 0)
-                ? std::get<LF::S>(half_lenghts)
-                : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lenghts));
+                ? std::get<LF::S>(half_lengths)
+                : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lengths));
 
         for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); v++) {
           int new_position_v =
-              std::get<LF::V>(position) + v * std::get<LF::V>(half_lenghts);
+              std::get<LF::V>(position) + v * std::get<LF::V>(half_lengths);
           int new_length_v =
               (v == 0)
-                  ? std::get<LF::V>(half_lenghts)
-                  : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lenghts));
+                  ? std::get<LF::V>(half_lengths)
+                  : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lengths));
 
           for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); u++) {
             int new_position_u =
-                std::get<LF::U>(position) + u * std::get<LF::U>(half_lenghts);
-            int new_length_u = (u == 0) ? std::get<LF::U>(half_lenghts)
+                std::get<LF::U>(position) + u * std::get<LF::U>(half_lengths);
+            int new_length_u = (u == 0) ? std::get<LF::U>(half_lengths)
                                         : (std::get<LF::U>(lengths) -
-                                              std::get<LF::U>(half_lenghts));
+                                              std::get<LF::U>(half_lengths));
 
             std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
 

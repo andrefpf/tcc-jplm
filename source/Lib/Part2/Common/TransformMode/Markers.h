@@ -31,38 +31,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CameraParameterType.h
+/** \file     Markers.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-20
+ *  \date     2019-10-15
  */
 
-
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+#ifndef MARKERS_H__
+#define MARKERS_H__
 
 #include <cstdint>
+#include <type_traits> //std::underlying_type_t
+#include <cstddef> //std::byte
+#include <vector>
 
-/**
- * \brief      Enumeration of Camera Parameter Types
- * \note    This enum is not part of the standard.
- *             It is used to access the various camera parameter types within the 
- *             CameraParameterBoxContents;
- */
-enum class CameraParameterType : uint8_t {
-  XCC = 0,  //!< Camera centre along XL coordinate axis
-  YCC = 1,  //!< Camera centre along YL coordinate axis
-  ZCC = 2,  //!< Camera centre along ZL coordinate axis
-  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
-  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
-  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal length (mm)
-  SW = 7,  //!< Sensor width (mm)
-  SH = 8,  //!< Sensor width (mm)
-  SK = 9,  //!< Sensor skew
-  U0 = 10,  //!< Horizontal principle point offset
-  V0 = 11  //!< Vertical principle point offset
+enum class Marker : uint16_t {
+	SOC = 0xFFA0, //!< Start of Codestream
+	LFC = 0xFFA1, //!< Light Field Configuration
+	SCC = 0xFFA2, //!< Colour Component Scaling
+	PNT = 0xFFA3, //!< Codestream Pointer Set
+	SOB = 0xFFA4, //!< Start of Block
+	EOC = 0xFFD9, //!< End of Codestream
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */
+namespace Markers {
+	std::vector<std::byte> get_bytes(Marker marker);
+	bool is_a_known_marker(Marker marker);
+}
+
+#endif /* end of include guard: MARKERS_H__ */

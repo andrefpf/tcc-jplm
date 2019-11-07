@@ -31,38 +31,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CameraParameterType.h
+/** \file     MarkerSegmentHelper.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-20
+ *  \date     2019-10-16
  */
 
 
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__
+#ifndef MARKERSEGMENTHELPER_H__
+#define MARKERSEGMENTHELPER_H__
 
-#include <cstdint>
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
-/**
- * \brief      Enumeration of Camera Parameter Types
- * \note    This enum is not part of the standard.
- *             It is used to access the various camera parameter types within the 
- *             CameraParameterBoxContents;
- */
-enum class CameraParameterType : uint8_t {
-  XCC = 0,  //!< Camera centre along XL coordinate axis
-  YCC = 1,  //!< Camera centre along YL coordinate axis
-  ZCC = 2,  //!< Camera centre along ZL coordinate axis
-  THETA_X_CAM = 3,  //!< Camera rotation offset along XL coordinate axis (rad)
-  THETA_Y_CAM = 4,  //!< Camera rotation offset along YL coordinate axis (rad)
-  THETA_Z_CAM = 5,  //!< Camera rotation offset along ZL coordinate axis (rad)
-  F = 6,  //!< Focal length (mm)
-  SW = 7,  //!< Sensor width (mm)
-  SH = 8,  //!< Sensor width (mm)
-  SK = 9,  //!< Sensor skew
-  U0 = 10,  //!< Horizontal principle point offset
-  V0 = 11  //!< Vertical principle point offset
-};
+namespace MarkerSegmentHelper {
+template<typename RetType>
+RetType get_next(const ContiguousCodestreamCode& code) {
+  static_assert(std::is_integral_v<RetType>,
+      "The return type of MarkerSegmentHelper::get_next must be integral");
+  if constexpr (sizeof(RetType) == 1) {
+    return std::to_integer<RetType>(code.get_next_byte());
+  }
+  auto bytes = code.get_next_n_bytes(sizeof(RetType));
+  return BinaryTools::get_value_from_big_endian_byte_vector<RetType>(bytes);
+}
+}  // namespace MarkerSegmentHelper
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERTYPE_H__ */
+#endif /* end of include guard: MARKERSEGMENTHELPER_H__ */

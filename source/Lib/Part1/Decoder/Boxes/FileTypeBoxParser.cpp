@@ -50,11 +50,11 @@ std::unique_ptr<Box> JPLMBoxParser::FileTypeBoxParser::parse(
   auto minor_version = box_parser_helper.get_next<uint32_t>();
 
   auto compatibility_list = std::vector<uint32_t>();
-  auto lenght = (box_parser_helper.get_data_lenght() - sizeof(brand) -
+  auto length = (box_parser_helper.get_data_length() - sizeof(brand) -
                   sizeof(minor_version))/sizeof(uint32_t);
-  compatibility_list.reserve(lenght);
+  compatibility_list.reserve(length);
 
-  for(auto i=decltype(lenght){0}; i < lenght; ++i) {
+  for(auto i=decltype(length){0}; i < length; ++i) {
     compatibility_list.emplace_back(box_parser_helper.get_next<uint32_t>());  	
   }
 

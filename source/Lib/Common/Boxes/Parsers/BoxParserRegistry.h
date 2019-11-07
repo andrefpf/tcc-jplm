@@ -162,7 +162,7 @@ class BoxParserRegistry {
 
   \snippet Lib/Part1/Decoder/Boxes/FileTypeBoxParser.cpp Parsing a file type box 
 
-  Notice that the size of the data contained in the box is obtained using box_parser_helper.get_data_lenght().
+  Notice that the size of the data contained in the box is obtained using box_parser_helper.get_data_length().
   
   Now, let us see how to get a box, in the case it is needed within a superbox.
 

@@ -108,6 +108,17 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
+  virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const override {
+    auto bytes_vector = std::vector<std::byte>();
+    bytes_vector.reserve(n);
+    for(auto i=decltype(n){0};i<n;++i){
+      bytes_vector.push_back(this->get_next_byte());
+    }
+    // current_pos+=n;
+    return bytes_vector;
+  }
+
+
   virtual std::byte peek_next_byte() const override {
     return bytes.at(current_pos);
   }

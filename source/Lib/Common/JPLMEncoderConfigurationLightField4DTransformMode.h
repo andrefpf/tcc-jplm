@@ -93,6 +93,9 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_minimal_transform_size_inter_view_horizontal() const;
   uint32_t get_maximal_transform_size_inter_view_horizontal() const;
 
+  BorderBlocksPolicy get_border_blocks_policy() const {
+    return this->border_policy;
+  }
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_maximal_transform_sizes() const {

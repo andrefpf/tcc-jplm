@@ -128,16 +128,17 @@ int main(int argc, char const* argv[]) {
 
   for (auto t = initial_t; t < final_t; ++t) {
     for (auto s = initial_s; s < final_s; ++s) {
-      auto view_name = get_view_name({t, s});
+      auto input_view_name = get_view_name({t, s});
+      auto output_view_name = get_view_name({t-1, s-1});
       if ((t == initial_t) || (t == final_t - 1)) {
         if ((s == initial_s) || (s == final_s - 1)) {
-          std::cout << "Shifting view " << view_name << '\n';
-          shift_view({input_path + view_name}, {output_path + view_name});
+          std::cout << "Shifting view " << input_view_name << '\n';
+          shift_view({input_path + input_view_name}, {output_path + output_view_name});
           continue;
         }
       }
-      std::cout << "Copying view " << view_name << '\n';
-      copy_view({input_path + view_name}, {output_path + view_name});
+      std::cout << "Copying view " << input_view_name << '\n';
+      copy_view({input_path + input_view_name}, {output_path + output_view_name});
     }
   }
 

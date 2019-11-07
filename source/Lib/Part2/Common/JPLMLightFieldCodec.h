@@ -44,19 +44,19 @@
 #include "Lib/Part1/Common/JPLMCodec.h"
 #include "Lib/Part2/Common/Lightfield.h"
 
-template<typename T>
+template<typename PelType>
 class JPLMLightFieldCodec : public JPLMCodec {
  protected:
-  std::unique_ptr<Lightfield<T>> light_field;
+  std::unique_ptr<Lightfield<PelType>> light_field;
 
  public:
-  JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file, std::unique_ptr<Lightfield<T>>&& light_field)
+  JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file, std::unique_ptr<Lightfield<PelType>>&& light_field)
       : JPLMCodec(jpl_file), light_field(std::move(light_field)) {
       	std::cout << "Using the shared_ptr constructor of JPLMLightFieldCodec" << std::endl;
   }
 
 
-  JPLMLightFieldCodec(std::unique_ptr<Lightfield<T>>&& light_field)
+  JPLMLightFieldCodec(std::unique_ptr<Lightfield<PelType>>&& light_field)
       : light_field(std::move(light_field)) {
   }
 

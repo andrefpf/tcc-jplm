@@ -52,8 +52,8 @@
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
-template<typename T = uint16_t>
-class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
+template<typename PelType = uint16_t>
+class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
  protected:
   const JPLMEncoderConfigurationLightField& light_field_encoder_configuration;
 
@@ -66,6 +66,14 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<T> {
         this->light_field->get_number_of_channels_in_view(),
         this->light_field->get_views_bpp(),
         light_field_encoder_configuration.get_compression_type());
+
+    std::cout << "add_pleno_lf_box" << std::endl;
+    const auto& [t, s, v, u] = lf_header_contents.get_light_field_dimension();
+    std::cout << "t: " << t << std::endl;
+    std::cout << "s: " << s << std::endl;
+    std::cout << "v: " << v << std::endl;
+    std::cout << "u: " << u << std::endl;
+
     auto lightfield_header_box =
         std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
     auto colour_specification_boxes =
