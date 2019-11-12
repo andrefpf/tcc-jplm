@@ -52,6 +52,36 @@
 
 
 /**
+ * Defines the type of METH field
+ */
+using meth_field_type = uint8_t;
+
+enum class LegalMethValue : meth_field_type 
+{
+  Enumerated = 1,
+  RestrictedICC = 2,
+  AnyICC = 3,
+  VendorColour = 4, 
+};
+
+
+/**
+ * Defines the type of APPROX field
+ */
+using approx_field_type = uint8_t;
+
+enum class LegalApproxValue : approx_field_type
+{
+  Illegal = 0, //!< only allowed in the JP2 (part 1), not JPX (part 2)
+  AccuratelyRepresents = 1, //!< This colour specification method accurately represents the correct definition of the colourspace 
+  ApproximatesWithExceptionalQuality = 2, //!< This colour specification method approximates the correct definition of the colourspace with exceptional quality
+  ApproximatesWithReasonableQuality = 3, //!< This colour specification method approximates the correct definition of the colourspace with reasonable quality
+  ApproximatesWithPoorQuality = 4, //!< This colour specification method approximates the correct definition of the colourspace with poor quality 
+};
+
+
+
+/**
  * \brief      Class for icc profile.
  * \todo If necessary, ICCProfile class must be implemented
  */
@@ -65,22 +95,19 @@ class ICCProfile {
 
 /**
  * \brief      Class for colour specification box contents.
- * \details    Defined in ISO/ICE 15444-1:2000(E) pg 161
+ * \details    Defined in ISO/ICE 15444-2:2004 pg 181
  */
 class ColourSpecificationContents : public InMemoryDBox {
  protected:
   /**
    * \brief Specification method, shall be 1 or 2
-   * \details This field specifies the method used by this Colour Specification box to define
-   * the colourspace of the decompressed image. Valid values for this field are:
-   *   - 1, meaning that Enumerated Colourspace (EnumCS) is used;
-   *   - 2, meaning that Restricted ICC profile (ICCProfile) is used;
+   * \details 
    */
   uint8_t meth;
 
   /**
    * \brief Precedence
-   * \note Reserved for ISO use and value shall be 0. However, conforming readers shall ignore the value of this field.
+   * \note 
    */
   int8_t prec;
 
@@ -115,13 +142,13 @@ class ColourSpecificationContents : public InMemoryDBox {
 
  public:
   ColourSpecificationContents(ICCProfile profile)
-      : meth(2), prec(0), approx(0), profile(profile) {
+      : meth(2), prec(1), approx(1), profile(profile) {
   }
 
 
-  ColourSpecificationContents(uint8_t meth = 1, int8_t prec = 0,
+  ColourSpecificationContents(uint8_t meth = 1, int8_t prec = 1,
       uint8_t approx = 0,
-      std::variant<EnumCS, ICCProfile> color_spec = EnumCS::sRGB)
+      std::variant<EnumCS, ICCProfile> color_spec = EnumCS::YCbCr_2)
       : meth(meth), prec(prec), approx(approx),
         enum_cs((meth == 1) ? std::optional<EnumCS>(std::get<0>(color_spec))
                             : std::nullopt),
