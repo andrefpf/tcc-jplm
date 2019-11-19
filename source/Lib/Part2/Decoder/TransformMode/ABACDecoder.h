@@ -48,14 +48,15 @@
 class ABACDecoder : public ABACCodec {
 private:
   const ContiguousCodestreamCode& codestream_code;
-  int mNumberOfbitsreadAfterlastBitDecoded;
-  unsigned int mTag;                  /*!< received tag */
+  uint16_t mTag;                  /*!< received tag */
 public:  
   ABACDecoder(const ContiguousCodestreamCode& codestream_code) : ABACCodec(), codestream_code(codestream_code) {}
   ~ABACDecoder() = default;
   void start();
+  inline void update_low_high_and_tag();
+  inline void update_mTag();
   int decode_bit(const ProbabilityModel& mPmodel);
-  int ReadBitFromFile();
+  uint16_t ReadBitFromFile();
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_ABACDECODER_H__ */

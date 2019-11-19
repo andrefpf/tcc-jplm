@@ -54,14 +54,15 @@
 
 class ABACCodec {
  protected:
-  static constexpr uint32_t MAXINT = 0xffff;//std::numeric_limits<uint32_t>::max();
-  static constexpr uint32_t RESET_LSB_MASK = 0xfffe;
-  static constexpr uint32_t SET_LSB_MASK = 0x0001;
-  static constexpr uint32_t INTERVAL_PRECISION = 16;
-  static constexpr uint32_t MSB_MASK = 0x8000;
-  static constexpr uint32_t SECOND_MSB_MASK = 0x4000;
-  unsigned int mLow; /*!< interval lower limit */
-  unsigned int mHigh; /*!< interval upper limit */
+  static constexpr uint16_t MAXINT = 0xffff;//std::numeric_limits<uint32_t>::max();
+  static constexpr uint16_t RESET_LSB_MASK = 0xfffe;
+  static constexpr uint16_t SET_LSB_MASK = 0x0001;
+  static constexpr uint16_t INTERVAL_PRECISION = 16;
+  static constexpr uint16_t MSB_MASK = 0x8000;
+  static constexpr uint16_t SECOND_MSB_MASK = 0x4000;
+  static constexpr uint16_t TWO_MSBS_MASK = MSB_MASK+SECOND_MSB_MASK;
+  uint16_t mLow; /*!< interval lower limit */
+  uint16_t mHigh; /*!< interval upper limit */
   int number_of_bits_in_byte; /*!< number of valid bits in buffer */
   unsigned char mBitBuffer; /*!< bit-readable buffer */
   FILE *file_ptr = nullptr; /*!< pointer to file */
