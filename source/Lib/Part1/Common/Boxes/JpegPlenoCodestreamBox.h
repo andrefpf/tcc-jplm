@@ -58,29 +58,35 @@ enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
 
 
 class JpegPlenoCodestreamBox : public Box {
-private:
-	void check_type() const {
-		if(auto value = this->t_box.get_value(); (value != static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::LightField)) &&
-		   (value != static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::PointCloud)) && 
-		   (value != static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::Hologram)) ) {
-			throw JpegPlenoCodestreamBoxExceptions::InvalidJpegPlenoCodestreamTypeId(value);
-		}
-	}
+ private:
+  void check_type() const {
+    if (auto value = this->t_box.get_value();
+        (value != static_cast<t_box_id_type>(
+                      JpegPlenoCodestreamBoxTypes::LightField)) &&
+        (value != static_cast<t_box_id_type>(
+                      JpegPlenoCodestreamBoxTypes::PointCloud)) &&
+        (value != static_cast<t_box_id_type>(
+                      JpegPlenoCodestreamBoxTypes::Hologram))) {
+      throw JpegPlenoCodestreamBoxExceptions::InvalidJpegPlenoCodestreamTypeId(
+          value);
+    }
+  }
+
  public:
   JpegPlenoCodestreamBox(TBox t_box, const DBox& d_box) : Box(t_box, d_box) {
-  	this->check_type();
+    this->check_type();
   }
 
 
   JpegPlenoCodestreamBox(TBox t_box, std::unique_ptr<DBox>&& d_box)
       : Box(t_box, std::move(d_box)) {
-      	this->check_type();
+    this->check_type();
   }
 
   virtual ~JpegPlenoCodestreamBox() = default;
 
   JpegPlenoCodestreamBoxTypes get_type() const {
-  	return static_cast<JpegPlenoCodestreamBoxTypes>(this->t_box.get_value());
+    return static_cast<JpegPlenoCodestreamBoxTypes>(this->t_box.get_value());
   }
 };
 

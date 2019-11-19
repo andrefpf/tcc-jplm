@@ -49,6 +49,6 @@
  * \brief Definition of the Profile and Level Box
  * \tparam ProfileAndLevelContents
  */
-using ProfileAndLevelBox = GenericBox<0x6a70686f, ProfileAndLevelContents>;
+using ProfileAndLevelBox = GenericBox<0x6a70706c, ProfileAndLevelContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_PROFILEANDLEVELBOX_H__ */
