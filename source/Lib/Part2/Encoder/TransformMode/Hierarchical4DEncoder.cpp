@@ -119,13 +119,13 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
   block4DElementType coefficient;
 
   auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
-  for (auto t = 0; t < elements_to_compute_in_t; t++) {
+  for (auto t = 0; t < elements_to_compute_in_t; ++t) {
     data_ptr += elements_to_skip_before_in_s;
-    for (auto s = 0; s < elements_to_compute_in_s; s++) {
+    for (auto s = 0; s < elements_to_compute_in_s; ++s) {
       data_ptr += elements_to_skip_before_in_v;
-      for (auto v = 0; v < elements_to_compute_in_v; v++) {
+      for (auto v = 0; v < elements_to_compute_in_v; ++v) {
         data_ptr += elements_to_skip_before_in_u;
-        for (auto u = 0; u < elements_to_compute_in_u; u++) {
+        for (auto u = 0; u < elements_to_compute_in_u; ++u) {
           coefficient = std::abs(*data_ptr);
           if (coefficient >= threshold)
             return true;
@@ -155,9 +155,9 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   if (bitplane < inferior_bit_plane) {
     double signal_energy = 0.0;
     auto temp = temporary_buffer.get();
-    for (auto t = 0; t < std::get<LF::T>(lengths); t++) {
-      for (auto s = 0; s < std::get<LF::S>(lengths); s++) {
-        for (auto v = 0; v < std::get<LF::V>(lengths); v++) {
+    for (auto t = 0; t < std::get<LF::T>(lengths); ++t) {
+      for (auto s = 0; s < std::get<LF::S>(lengths); ++s) {
+        for (auto v = 0; v < std::get<LF::V>(lengths); ++v) {
           // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
           auto initial_ptr =
               mSubbandLF.mPixelData +
@@ -186,7 +186,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     auto there_is_one = false;
     double accumulatedRate = 0.0;
     for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
-         bit_position--) {
+         --bit_position) {
       int bit = (magnitude >> bit_position) & 01;
       if (bit) {
         there_is_one = true;
@@ -284,14 +284,14 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     auto number_of_subdivisions = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
 
-    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); t++) {
+    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); ++t) {
       int new_position_t =
           std::get<LF::T>(position) + t * std::get<LF::T>(half_lengths);
       int new_length_t =
           (t == 0) ? std::get<LF::T>(half_lengths)
                    : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lengths));
 
-      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); s++) {
+      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); ++s) {
         int new_position_s =
             std::get<LF::S>(position) + s * std::get<LF::S>(half_lengths);
         int new_length_s =
@@ -299,7 +299,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                 ? std::get<LF::S>(half_lengths)
                 : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lengths));
 
-        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); v++) {
+        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); ++v) {
           int new_position_v =
               std::get<LF::V>(position) + v * std::get<LF::V>(half_lengths);
           int new_length_v =
@@ -307,7 +307,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                   ? std::get<LF::V>(half_lengths)
                   : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lengths));
 
-          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); u++) {
+          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); ++u) {
             int new_position_u =
                 std::get<LF::U>(position) + u * std::get<LF::U>(half_lengths);
             int new_length_u = (u == 0) ? std::get<LF::U>(half_lengths)
@@ -407,23 +407,23 @@ void Hierarchical4DEncoder::encode_hexadecatree(int position_t, int position_s,
       int number_of_subdivisions_v = (length_v > 1) ? 2 : 1;
       int number_of_subdivisions_u = (length_u > 1) ? 2 : 1;
 
-      for (int index_t = 0; index_t < number_of_subdivisions_t; index_t++) {
+      for (int index_t = 0; index_t < number_of_subdivisions_t; ++index_t) {
         int new_position_t = position_t + index_t * half_length_t;
         int new_length_t =
             (index_t == 0) ? half_length_t : (length_t - half_length_t);
 
-        for (int index_s = 0; index_s < number_of_subdivisions_s; index_s++) {
+        for (int index_s = 0; index_s < number_of_subdivisions_s; ++index_s) {
           int new_position_s = position_s + index_s * half_length_s;
           int new_length_s =
               (index_s == 0) ? half_length_s : (length_s - half_length_s);
 
-          for (int index_v = 0; index_v < number_of_subdivisions_v; index_v++) {
+          for (int index_v = 0; index_v < number_of_subdivisions_v; ++index_v) {
             int new_position_v = position_v + index_v * half_length_v;
             int new_length_v =
                 (index_v == 0) ? half_length_v : (length_v - half_length_v);
 
             for (int index_u = 0; index_u < number_of_subdivisions_u;
-                 index_u++) {
+                 ++index_u) {
               int new_position_u = position_u + index_u * half_length_u;
               int new_length_u =
                   (index_u == 0) ? half_length_u : (length_u - half_length_u);
@@ -550,11 +550,11 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
     int threshold = (1 << bit_position);
 
     for (auto data_ptr = mSubbandLF.mPixelData;
-         data_ptr < mSubbandLF.mPixelData + subbandSize; data_ptr++) {
+         data_ptr < mSubbandLF.mPixelData + subbandSize; ++data_ptr) {
       int magnitude = std::abs(*data_ptr);
       int quantizedMagnitude = magnitude & bitMask;
       if (quantizedMagnitude > 0) {
-        signalRate++;
+        ++signalRate;
         quantizedMagnitude += (threshold >> 1);
       }
       double error = magnitude - quantizedMagnitude;
