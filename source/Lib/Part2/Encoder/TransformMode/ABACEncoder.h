@@ -56,7 +56,6 @@ class ABACEncoder : public ABACCodec {
   std::string filename;
   mutable int number_of_scalings; /*!< number of renormalizations performed */
   std::byte mask;
-  std::byte byte_buffer;
   void mask_set_high_reset_low();
   void output_bit_pattern_according_to_condition(bool condition);
   template<bool bit>
@@ -69,8 +68,7 @@ class ABACEncoder : public ABACCodec {
  public:
   ABACEncoder()
       : codestream_code(std::make_unique<ContiguousCodestreamCodeInMemory>()),
-        number_of_scalings(0), mask(std::byte{0x01}),
-        byte_buffer(std::byte{0}) {
+        number_of_scalings(0), mask(std::byte{0x01}) {
   }
 
   virtual ~ABACEncoder() = default;
@@ -96,7 +94,7 @@ class ABACEncoder : public ABACCodec {
                 mask_set_high_reset_low();
             }
             if ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK))) {
-                number_of_scalings++;
+                ++number_of_scalings;
                 mask_set_high_reset_low();
                 mLow ^= MSB_MASK;
                 mHigh ^= MSB_MASK;
@@ -117,7 +115,6 @@ class ABACEncoder : public ABACCodec {
     mLow=0;
     mHigh=MAXINT;
     number_of_bits_in_byte=0;
-    mBitBuffer=0;
   }
 
 

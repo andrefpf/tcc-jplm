@@ -64,10 +64,11 @@ class ABACCodec {
   uint16_t mLow; /*!< interval lower limit */
   uint16_t mHigh; /*!< interval upper limit */
   int number_of_bits_in_byte; /*!< number of valid bits in buffer */
-  unsigned char mBitBuffer; /*!< bit-readable buffer */
+  // unsigned char mBitBuffer; /*!< bit-readable buffer */
+  std::byte byte_buffer; 
   FILE *file_ptr = nullptr; /*!< pointer to file */
  public:
-  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), mBitBuffer(0) {
+  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), byte_buffer(std::byte{0}) {
   }
 
   void print_byte(std::byte byte) const {

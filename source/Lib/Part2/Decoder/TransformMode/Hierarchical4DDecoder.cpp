@@ -40,10 +40,11 @@
 
 #include "Hierarchical4DDecoder.h"
 
+
 void Hierarchical4DDecoder::start() {
   entropy_decoder.start();  //initializes entropy decoder
-  // reset_probability_models();
 }
+
 
 void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
     int position_v, int position_u, int length_t, int length_s, int length_v,
@@ -74,10 +75,10 @@ void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
       int number_of_subdivisions_v = (length_v > 1) ? 2 : 1;
       int number_of_subdivisions_u = (length_u > 1) ? 2 : 1;
 
-      for (auto t = 0; t < number_of_subdivisions_t; t++) {
-        for (auto s = 0; s < number_of_subdivisions_s; s++) {
-          for (auto v = 0; v < number_of_subdivisions_v; v++) {
-            for (auto u = 0; u < number_of_subdivisions_u; u++) {
+      for (auto t = 0; t < number_of_subdivisions_t; ++t) {
+        for (auto s = 0; s < number_of_subdivisions_s; ++s) {
+          for (auto v = 0; v < number_of_subdivisions_v; ++v) {
+            for (auto u = 0; u < number_of_subdivisions_u; ++u) {
               int new_position_t = position_t + t * half_length_t;
               int new_position_s = position_s + s * half_length_s;
               int new_position_v = position_v + v * half_length_v;
@@ -102,10 +103,10 @@ void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
       break;
     }
     case HexadecaTreeFlag::zeroBlock: {
-      for (auto t = 0; t < length_t; t++) {
-        for (auto s = 0; s < length_s; s++) {
-          for (auto v = 0; v < length_v; v++) {
-            for (auto u = 0; u < length_u; u++) {
+      for (auto t = 0; t < length_t; ++t) {
+        for (auto s = 0; s < length_s; ++s) {
+          for (auto v = 0; v < length_v; ++v) {
+            for (auto u = 0; u < length_u; ++u) {
               mSubbandLF.mPixel[position_t + t][position_s + s][position_v + v]
                                [position_u + u] = 0;
             }
@@ -120,42 +121,43 @@ void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
   }
 }
 
+
 int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
   int magnitude = 0;
-  int bit;
   int bit_position = bitplane;
 
   for (bit_position = bitplane; bit_position >= inferior_bit_plane;
-       bit_position--) {
-    magnitude = magnitude << 1;
-    bit = entropy_decoder.decode_bit(
+       --bit_position) {
+    magnitude<<=1;
+    auto bit = entropy_decoder.decode_bit(
         probability_models[bit_position + SYMBOL_PROBABILITY_MODEL_INDEX]);
-    if (bit_position > BITPLANE_BYPASS)
+    if (bit_position > BITPLANE_BYPASS) {
       probability_models[bit_position + SYMBOL_PROBABILITY_MODEL_INDEX].update(
           bit);
-    if (bit == 1) {
-      magnitude++;
+    }
+    if (bit) {
+      ++magnitude;
     }
   }
   magnitude = magnitude << inferior_bit_plane;
   if (magnitude > 0) {
     magnitude += (1 << inferior_bit_plane) / 2;
-    if (entropy_decoder.decode_bit(probability_models[0]) == 1) {
+    if (entropy_decoder.decode_bit(probability_models[0])) {
       magnitude = -magnitude;
     }
   }
-  return (magnitude);
+  return magnitude;
 }
 
+
 HexadecaTreeFlag Hierarchical4DDecoder::decode_segmentation_flag(int bitplane) {
-  int lsb = 0;
-  int msb = entropy_decoder.decode_bit(
+  auto msb = entropy_decoder.decode_bit(
       probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX]);
   if (bitplane > BITPLANE_BYPASS_FLAGS)
     probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX].update(
         msb);
-  if (msb == 0) {
-    lsb = entropy_decoder.decode_bit(
+  if (!msb) {
+    auto lsb = entropy_decoder.decode_bit(
         probability_models[(bitplane << 1) + 1 +
                            SEGMENTATION_PROB_MODEL_INDEX]);
     if (bitplane > BITPLANE_BYPASS_FLAGS)
@@ -169,6 +171,7 @@ HexadecaTreeFlag Hierarchical4DDecoder::decode_segmentation_flag(int bitplane) {
   return HexadecaTreeFlag::zeroBlock;
 }
 
+
 PartitionFlag Hierarchical4DDecoder::decode_partition_flag(void) {
   if (!entropy_decoder.decode_bit(probability_models[0]))  //=0
     return PartitionFlag::transform;
@@ -178,9 +181,10 @@ PartitionFlag Hierarchical4DDecoder::decode_partition_flag(void) {
   return PartitionFlag::spatialSplit;  //10
 }
 
+
 int Hierarchical4DDecoder::decode_integer(int precision) {
   int integerValue = 0;
-  for (int n = 0; n < precision; n++) {
+  for (int n = 0; n < precision; ++n) {
     auto bit = entropy_decoder.decode_bit(probability_models[0]);
     integerValue = (integerValue << 1) + bit;
   }

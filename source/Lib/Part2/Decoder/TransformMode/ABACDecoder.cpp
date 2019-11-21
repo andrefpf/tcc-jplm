@@ -42,17 +42,46 @@
 #include "ABACDecoder.h"
 #include <iostream>
 
-inline void ABACDecoder::update_mTag() {
-  mTag <<= 1;
-  mTag += ReadBitFromFile();
+//from http://graphics.stanford.edu/~seander/bithacks.html
+inline std::byte swap_bits(std::byte byte) {
+    auto b = std::to_integer<uint8_t>(byte);
+    b = ((b * 0x80200802ULL) & 0x0884422110ULL) * 0x0101010101ULL >> 32;
+    return std::byte{b};
+}
+
+
+inline void ABACDecoder::init_tag() {
+   if (codestream_code.is_next_valid()) {
+       auto ms_byte = codestream_code.get_next_byte();
+       auto ls_byte = codestream_code.get_next_byte();
+       // print_byte(ms_byte);
+       // print_byte(ls_byte);
+       tag = std::to_integer<uint16_t>(swap_bits(ms_byte));
+       tag<<=8;
+       tag |= std::to_integer<uint16_t>(swap_bits(ls_byte));
+       // std::cout << tag << std::endl;
+   }
+}
+
+
+inline void ABACDecoder::update_tag() {
+  tag <<= 1;
+  tag += get_next_bit_from_codestream();
 }
 
 
 inline void ABACDecoder::update_low_high_and_tag() {
-  mLow = mLow << 1;
-  mHigh = mHigh << 1;
+  mLow <<= 1;
+  mHigh <<= 1;
   ++mHigh;
-  update_mTag();
+  update_tag();
+}
+
+
+inline void ABACDecoder::mask_low_high_and_tag() {
+  mLow ^= MSB_MASK;
+  mHigh ^= MSB_MASK;
+  tag ^= MSB_MASK;
 }
 
 
@@ -67,28 +96,30 @@ void ABACDecoder::start() {
   number_of_bits_in_byte = 0;
   mLow = 0;
   mHigh = MAXINT;
-  mTag = 0;
+  tag = 0;
 
-
-  for (auto n = decltype(INTERVAL_PRECISION){0}; n < INTERVAL_PRECISION; ++n) {
-    update_mTag();
-  }
+  init_tag();
+  // for (auto n = decltype(INTERVAL_PRECISION){0}; n < INTERVAL_PRECISION; ++n) {
+  //   update_tag();
+  // }
+  // std::cout << tag << std::endl;
 
 }
 
-int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
+bool ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
   uint64_t acumFreq_0 = mPmodel.get_frequency_of_zeros();
   uint64_t acumFreq_1 = mPmodel.get_frequency_of_ones();
-  uint16_t bitDecoded;
   uint64_t threshold =
-      (((mTag - mLow + 1) * acumFreq_1 - 1) / (mHigh - mLow + 1));
+      (((tag - mLow + 1) * acumFreq_1 - 1) / (mHigh - mLow + 1));
   uint64_t length_0 = (((mHigh - mLow + 1) * acumFreq_0) / acumFreq_1);
 
+  bool bit_decoded;
+
   if (threshold < acumFreq_0) {
-    bitDecoded = 0;
+    bit_decoded = 0;
     mHigh = mLow + length_0 - 1;
   } else {
-    bitDecoded = 1;
+    bit_decoded = 1;
     mLow = mLow + length_0;
   }
 
@@ -99,27 +130,23 @@ int ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
     }
     if ((mLow >= SECOND_MSB_MASK) && (mHigh < (TWO_MSBS_MASK))) {
       update_low_high_and_tag();
-      mLow = mLow ^ MSB_MASK;
-      mHigh = mHigh ^ MSB_MASK;
-      mTag = mTag ^ MSB_MASK;
+      mask_low_high_and_tag();
     }
   }
 
-  return (bitDecoded);
+  return bit_decoded;
 }
 
 
-uint16_t ABACDecoder::ReadBitFromFile() {
-  uint16_t bit;
+bool ABACDecoder::get_next_bit_from_codestream() {
   if (number_of_bits_in_byte == 0) {
     number_of_bits_in_byte = 8;
     if (codestream_code.is_next_valid()) {
-      std::byte byte = codestream_code.get_next_byte();
-      mBitBuffer = std::to_integer<int>(byte);
+      byte_buffer = codestream_code.get_next_byte();
     }
   }
-  bit = mBitBuffer & 01;
-  mBitBuffer = mBitBuffer >> 1;
+  auto byte_copy = std::to_integer<uint8_t>(byte_buffer);
+  byte_buffer>>= 1;
   --number_of_bits_in_byte;
-  return (bit);
+  return byte_copy & 0x01;
 }

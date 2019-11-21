@@ -41,22 +41,27 @@
 #ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_ABACDECODER_H__
 #define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_ABACDECODER_H__
 
+
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 
 class ABACDecoder : public ABACCodec {
-private:
+ private:
   const ContiguousCodestreamCode& codestream_code;
-  uint16_t mTag;                  /*!< received tag */
-public:  
-  ABACDecoder(const ContiguousCodestreamCode& codestream_code) : ABACCodec(), codestream_code(codestream_code) {}
+  uint16_t tag; /*!< received tag */
+  inline void update_low_high_and_tag();
+  inline void mask_low_high_and_tag();
+  inline void update_tag();
+  inline void init_tag();
+  bool get_next_bit_from_codestream();
+ public:
+  ABACDecoder(const ContiguousCodestreamCode& codestream_code)
+      : ABACCodec(), codestream_code(codestream_code) {
+  }
   ~ABACDecoder() = default;
   void start();
-  inline void update_low_high_and_tag();
-  inline void update_mTag();
-  int decode_bit(const ProbabilityModel& mPmodel);
-  uint16_t ReadBitFromFile();
+  bool decode_bit(const ProbabilityModel& mPmodel);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_ABACDECODER_H__ */
