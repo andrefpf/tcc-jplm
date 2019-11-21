@@ -99,11 +99,6 @@ void ABACDecoder::start() {
   tag = 0;
 
   init_tag();
-  // for (auto n = decltype(INTERVAL_PRECISION){0}; n < INTERVAL_PRECISION; ++n) {
-  //   update_tag();
-  // }
-  // std::cout << tag << std::endl;
-
 }
 
 bool ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
@@ -138,6 +133,7 @@ bool ABACDecoder::decode_bit(const ProbabilityModel& mPmodel) {
 }
 
 
+//reads lsb first
 bool ABACDecoder::get_next_bit_from_codestream() {
   if (number_of_bits_in_byte == 0) {
     number_of_bits_in_byte = 8;
