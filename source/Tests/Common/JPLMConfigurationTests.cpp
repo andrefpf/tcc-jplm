@@ -111,8 +111,8 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());
-  EXPECT_STRNE("/home/PLENO/DATASETS/LENSLETS/OUTRO",
-      config.get_input_filename().c_str());
+//  EXPECT_STRNE("/home/PLENO/DATASETS/LENSLETS/OUTRO",
+//      config.get_input_filename().c_str());
 }
 
 
@@ -176,7 +176,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam3) {
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-                        "../resources/out_small_greek/", "--type", "0"};
+      "../resources/out_small_greek/", "--type", "0"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_EQ(Type::transform_mode, config.get_type());
@@ -184,7 +184,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-                        "../resources/out_small_greek/", "--type", "1"};
+      "../resources/out_small_greek/", "--type", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_EQ(Type::prediction_mode, config.get_type());
@@ -192,12 +192,11 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-                        "../resources/out_small_greek/", "--type", "1"};
+      "../resources/out_small_greek/", "--type", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_NE(Type::transform_mode, config.get_type());
 }
-
 
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
@@ -336,6 +335,5 @@ int main(int argc, char* argv[]) {
   if (argc > 1) {
     root_path = std::string(argv[1]);
   }
- return RUN_ALL_TESTS();
+  return RUN_ALL_TESTS();
 }
-

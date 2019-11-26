@@ -115,73 +115,8 @@ class JPLMConfiguration {
   std::string input;
   std::string output;
   void parse_cli(int argc, char **argv);
-  void validate_param(std::string param);
+  bool validate_param(std::string param);
 };
 
-const std::string &JPLMConfiguration::get_input_filename() const {
-  return input;
-}
-
-const std::string &JPLMConfiguration::get_output_filename() const {
-  return output;
-}
-
-JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
-  arguments.push_back(
-      {"--help", "-h", "Print this help message and exit", [this](std::any v) {
-         std::cout << "JPLM Codec" << std::endl;
-         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]"
-                   << std::endl;
-         std::cout << "Options:" << std::endl;
-         ConsoleTable table(1, 1, samilton::Alignment::centre);
-         unsigned int count = 0;
-         for (auto o : this->arguments) {
-           table[count][1] = o.getShortOption() + "," + o.getLongOption();
-           table[count][2] = o.getDescription();
-           count++;
-         }
-         std::cout << table << std::endl;
-         //exit(0);
-       }});
-  arguments.push_back({"--input", "-i",
-      "Input directory containing a set of uncompressed light-field images "
-      "(xxx_yyy.ppm).",
-      [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
-  arguments.push_back({"--output", "-o",
-      "Output directory containing temporary light-field data and the "
-      "compressed bitstream.",
-      [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
-  this->parse_cli(argc, argv);
-}
-
-void JPLMConfiguration::validate_param(std::string param) {
-  auto lambda = [param](CLIArgument &s) {
-    return ((s.getShortOption() == param) || (s.getLongOption() == param));
-  };
-
-  auto starts_with = [param](std::string prefix) {
-    if (prefix.length() > 0 && param.length() > prefix.length()) {
-      for(int i=0; i < prefix.length(); ++i)
-        if (param[i] != prefix[i])
-          return false;
-      return true;
-    }
-    return false;
-  };
-
-  if (starts_with("-") &&
-      std::none_of(arguments.begin(), arguments.end(), lambda))
-    throw UnknownCLIParameterException(param);
-}
-
-void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  for (int n = 1; n < argc; n++) {
-    std::string key = argv[n];
-    //validate_param(key);
-    std::string value = argv[n + 1];
-    std::for_each(arguments.begin(), arguments.end(),
-        [key, value](CLIArgument &s) { s.parse(key, value); });
-  }
-}
 
 #endif  //JPLM_JPLMConfiguration_H
