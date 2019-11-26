@@ -100,7 +100,7 @@ class UnknownCLIParameterException : public exception {
 
  public:
   UnknownCLIParameterException(string m)
-      : msg("CLI parameter  " + m + " is not known.") {
+      : msg("CLI parameter " + m + " is not known.") {
   }
 
   const char* what() const throw() {
