@@ -163,77 +163,85 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         std::string typed_string = std::any_cast<std::string>(v);
         std::string::size_type sz;
         this->lambda = std::stod(typed_string, &sz);
-  }});
+      }});
 
-//  arguments.push_back({"--transform_size_maximum_inter_view_vertical",
-//      "--transform_size_maximum_inter_view_vertical",
-//      "Maximum 4D transform size in inter-view vertical direction.",
-//      [this](std::any v) {
-//        this->maximal_transform_size_inter_view_vertical_t =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
-//      "--transform_size_maximum_inter_view_horizontal",
-//      "Maximum 4D transform size in inter-view horizontal direction.",
-//      [this](std::any v) {
-//        this->maximal_transform_size_inter_view_horizontal_s =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_maximum_intra_view_vertical",
-//      "--transform_size_maximum_intra_view_vertical",
-//      "Maximum 4D transform size in intra-view vertical direction.",
-//      [this](std::any v) {
-//        this->maximal_transform_size_intra_view_vertical_v =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
-//      "--transform_size_maximum_intra_view_horizontal",
-//      "Maximum 4D transform size in intra-view horizontal direction.",
-//      [this](std::any v) {
-//        this->maximal_transform_size_intra_view_horizontal_u =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//
-//  arguments.push_back({"--transform_size_minimum_inter_view_vertical",
-//      "--transform_size_minimum_inter_view_vertical",
-//      "Minimum 4D transform size in inter-view vertical direction.",
-//      [this](std::any v) {
-//        this->minimal_transform_size_inter_view_vertical_t =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
-//      "--transform_size_minimum_inter_view_horizontal",
-//      "Minimum 4D transform size in inter-view horizontal direction.",
-//      [this](std::any v) {
-//        this->minimal_transform_size_inter_view_horizontal_s =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_minimum_intra_view_vertical",
-//      "--transform_size_minimum_intra_view_vertical",
-//      "Minimum 4D transform size in intra-view vertical direction.",
-//      [this](std::any v) {
-//        this->minimal_transform_size_intra_view_vertical_v =
-//            std::any_cast<uint32_t>(v);
-//      }});
-//
-//  arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
-//      "--transform_size_minimum_intra_view_horizontal",
-//      "Minimum 4D transform size in intra-view horizontal direction.",
-//      [this](std::any v) {
-//        this->minimal_transform_size_intra_view_horizontal_u =
-//            std::any_cast<uint32_t>(v);
-//      }});
+  arguments.push_back({"--transform_size_maximum_inter_view_vertical",
+      "--transform_size_maximum_inter_view_vertical",
+      "Maximum 4D transform size in inter-view vertical direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->maximal_transform_size_inter_view_vertical_t =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
+      "--transform_size_maximum_inter_view_horizontal",
+      "Maximum 4D transform size in inter-view horizontal direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->maximal_transform_size_inter_view_horizontal_s =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_maximum_intra_view_vertical",
+      "--transform_size_maximum_intra_view_vertical",
+      "Maximum 4D transform size in intra-view vertical direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->maximal_transform_size_intra_view_vertical_v =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
+      "--transform_size_maximum_intra_view_horizontal",
+      "Maximum 4D transform size in intra-view horizontal direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->maximal_transform_size_intra_view_horizontal_u =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+
+  arguments.push_back({"--transform_size_minimum_inter_view_vertical",
+      "--transform_size_minimum_inter_view_vertical",
+      "Minimum 4D transform size in inter-view vertical direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->minimal_transform_size_inter_view_vertical_t =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
+      "--transform_size_minimum_inter_view_horizontal",
+      "Minimum 4D transform size in inter-view horizontal direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->minimal_transform_size_inter_view_horizontal_s =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_minimum_intra_view_vertical",
+      "--transform_size_minimum_intra_view_vertical",
+      "Minimum 4D transform size in intra-view vertical direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->minimal_transform_size_intra_view_vertical_v =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
+
+  arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
+      "--transform_size_minimum_intra_view_horizontal",
+      "Minimum 4D transform size in intra-view horizontal direction.",
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        this->minimal_transform_size_intra_view_horizontal_u =
+            static_cast<uint32_t>(std::stoul(typed_string));
+      }});
 
   this->parse_cli(argc, argv);
-//  if (!config.empty())
- //   parse_json(config);
- // init_transform_size();
+  //  if (!config.empty())
+  //   parse_json(config);
+  // init_transform_size();
 }
 
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
