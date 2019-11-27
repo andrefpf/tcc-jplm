@@ -42,26 +42,46 @@
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 
 #include <tuple>
-#include "Lib/Common/JPLMEncoderConfiguration.h"
+#include <cstdint>
+#include <filesystem>
+#include <optional>
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "CLI/CLI.hpp"
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "Lib/Utils/Image/ColorSpaces.h"
+#include "nlohmann/json.hpp"
 
-//stub
 class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
  public:
   JPLMEncoderConfigurationLightField(int argc, char **argv);
   LightfieldIOConfiguration get_lightfield_io_configurations() const;
+  uint32_t get_number_of_rows_t() const;
+  uint32_t get_number_of_columns_s() const;
+  uint32_t get_view_height_v() const;
+  uint32_t get_view_width_u() const;
   virtual Type get_type() const;
   virtual Type get_compression_type() const;
 
+
  protected:
   void parse_json(string path);
+  void parse_number_of_rows_t(const json &conf);
+  void parse_number_of_columns_s(const json &conf);
+  void parse_view_height_v(const json &conf);
+  void parse_view_width_u(const json &conf);
+  uint32_t number_of_rows_t;
+  uint32_t number_of_columns_s;
+  uint32_t view_height_v;
+  uint32_t view_width_u;
+
 
  private:
   void parse_mode_type(const json &conf);
   void check_inconsistencies();
-
   CompressionTypeLightField type;
 };
 
@@ -77,11 +97,28 @@ JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
         int type = std::stoi(typed_string);
         this->type = static_cast<Type>(type);
       }});
+
+  arguments.push_back({"--view_height", "-v", "Single-view height dimension",
+      [this](std::any value) {
+        this->view_height_v = std::stoi(std::any_cast<string>(value));
+      }});
+
+  arguments.push_back({"--view_width", "-u", "Single-view width dimension",
+      [this](std::any value) {
+        this->view_width_u = std::stoi(std::any_cast<string>(value));
+      }});
+
+  arguments.push_back({"--number_of_rows", "-t",
+      "Number of light-field views rows", [this](std::any value) {
+        this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
+      }});
+
+  arguments.push_back({"--number_of_columns", "-s",
+      "Number of light-field views columns", [this](std::any value) {
+        this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
+      }});
+
   this->parse_cli(argc, argv);
-  //  if (!config.empty())
-  //    parse_json(config);
-  //  this->part = JpegPlenoPart::LightField;
-  //  check_inconsistencies();
 }
 
 
@@ -119,10 +156,14 @@ void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
 
 
 void JPLMEncoderConfigurationLightField::parse_json(string path) {
-  JPLMEncoderConfiguration::parse_json(path);
+  JPLMEncoderConfigurationLightField::parse_json(path);
   ifstream ifs(path);
   json conf = json::parse(ifs);
   parse_mode_type(conf);
+  parse_number_of_columns_s(conf);
+  parse_number_of_rows_t(conf);
+  parse_view_height_v(conf);
+  parse_view_width_u(conf);
 }
 
 /**
@@ -146,6 +187,42 @@ void JPLMEncoderConfigurationLightField::check_inconsistencies() {
 
 Type JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
+}
+
+void JPLMEncoderConfigurationLightField::parse_number_of_rows_t(const json &conf) {
+  if (conf.contains("number_of_rows"))
+    number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
+}
+
+void JPLMEncoderConfigurationLightField::parse_number_of_columns_s(const json &conf) {
+  if (conf.contains("number_of_columns"))
+    number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
+}
+
+void JPLMEncoderConfigurationLightField::parse_view_height_v(const json &conf) {
+  if (conf.contains("view_height"))
+    view_height_v = conf["view_height"].get<uint32_t>();
+}
+
+void JPLMEncoderConfigurationLightField::parse_view_width_u(const json &conf) {
+  if (conf.contains("view_width"))
+    view_width_u = conf["view_width"].get<uint32_t>();
+}
+
+uint32_t JPLMEncoderConfigurationLightField::get_number_of_rows_t() const {
+  return number_of_rows_t;
+}
+
+uint32_t JPLMEncoderConfigurationLightField::get_number_of_columns_s() const {
+  return number_of_columns_s;
+}
+
+uint32_t JPLMEncoderConfigurationLightField::get_view_height_v() const {
+  return view_height_v;
+}
+
+uint32_t JPLMEncoderConfigurationLightField::get_view_width_u() const {
+  return view_width_u;
 }
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */

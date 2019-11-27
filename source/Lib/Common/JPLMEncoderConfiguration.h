@@ -62,25 +62,9 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
   void parse_json(string path);
   void parse_jpeg_pleno_part(const json &conf);
-
-  void parse_number_of_rows_t(const json &conf);
-  void parse_number_of_columns_s(const json &conf);
-  void parse_view_height_v(const json &conf);
-  void parse_view_width_u(const json &conf);
   void parse_colorspace(const json &conf);
 
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-  //  app.add_option(
-  //  "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
-  //  app.add_option("-s,--number_of_columns", number_of_columns_s,
-  //  "Number of light-field columns");
-  //  app.add_option(
-  //  "-v,--view_height", view_height_v, "Single-view height dimension");
-  //  app.add_option(
-  //  "-u,--view_width", view_width_u, "Single-view width dimension");
+
 
   std::string config;
   // Belongs to JPLMEncoderConfiguration
@@ -95,18 +79,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;
-
   const string &get_config() const;
-
-  uint32_t get_number_of_rows_t() const;
-
-  uint32_t get_number_of_columns_s() const;
-
-  uint32_t get_view_height_v() const;
-
-  uint32_t get_view_width_u() const;
-
-
   ColorSpaces::ColorSpace get_colorspace() const;
 
   JPLMEncoderConfiguration(int argc, char **argv);
@@ -145,10 +118,6 @@ void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
   parse_jpeg_pleno_part(conf);
-  parse_number_of_columns_s(conf);
-  parse_number_of_rows_t(conf);
-  parse_view_height_v(conf);
-  parse_view_width_u(conf);
   parse_colorspace(conf);
 }
 
@@ -163,30 +132,6 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
     else
       throw NotImplementedYetInputTypeParseException(p);
   }
-}
-
-
-void JPLMEncoderConfiguration::parse_number_of_rows_t(const json &conf) {
-  if (conf.contains("number_of_rows"))
-    number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_number_of_columns_s(const json &conf) {
-  if (conf.contains("number_of_columns"))
-    number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_view_height_v(const json &conf) {
-  if (conf.contains("view_height"))
-    view_height_v = conf["view_height"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_view_width_u(const json &conf) {
-  if (conf.contains("view_width"))
-    view_width_u = conf["view_width"].get<uint32_t>();
 }
 
 
@@ -218,26 +163,6 @@ JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
 
 const string &JPLMEncoderConfiguration::get_config() const {
   return config;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_number_of_rows_t() const {
-  return number_of_rows_t;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_number_of_columns_s() const {
-  return number_of_columns_s;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_view_height_v() const {
-  return view_height_v;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_view_width_u() const {
-  return view_width_u;
 }
 
 
