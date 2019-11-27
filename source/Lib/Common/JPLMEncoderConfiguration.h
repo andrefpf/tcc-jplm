@@ -126,6 +126,17 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
            }
          }
        }});
+
+  arguments.push_back({"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
+      [this](std::any value) {
+        int part = std::stoi(std::any_cast<string>(value));
+        if (part == 2)
+          this->part = JpegPlenoPart::LightField;
+        else
+          throw NotImplementedYetInputTypeParseException(
+              "Part " + std::to_string(part));
+      }});
+
   this->parse_cli(argc, argv);
 }
 
