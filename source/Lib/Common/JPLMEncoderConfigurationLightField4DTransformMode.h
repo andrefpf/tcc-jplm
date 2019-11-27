@@ -236,9 +236,9 @@ JPLMEncoderConfigurationLightField4DTransformMode::
       }});
 
   this->parse_cli(argc, argv);
-  //  if (!config.empty())
-  //   parse_json(config);
-  // init_transform_size();
+  if (!config.empty())
+    parse_json(config);
+  init_transform_size();
 }
 
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()

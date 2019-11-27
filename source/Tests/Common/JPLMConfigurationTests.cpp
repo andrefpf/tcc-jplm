@@ -246,35 +246,35 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
   EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
   EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
 }
-//
-//
-//TEST(JPLMEncoderConfigurationLightField4DTransformMode,
-//    TransformParametersFromCLI_BasicWithPropertiesBinding) {
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-//      "../resources/out_small_greek/", "-l", "0.5",
-//      "--transform_size_maximum_intra_view_vertical", "31",
-//      "--transform_size_minimum_intra_view_vertical", "4",
-//      "--transform_size_maximum_intra_view_horizontal", "31",
-//      "--transform_size_minimum_intra_view_horizontal", "4",
-//      "--transform_size_maximum_inter_view_vertical", "13",
-//      "--transform_size_minimum_inter_view_vertical", "13",
-//      "--transform_size_maximum_inter_view_horizontal", "13",
-//      "--transform_size_minimum_inter_view_horizontal", "13"};
-//  int argc = 23;
-//  JPLMEncoderConfigurationLightField4DTransformMode config(
-//      argc, const_cast<char**>(argv));
-//  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
-//  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
-//  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
-//  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
-//  EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
-//  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
-//  EXPECT_EQ(13, config.transform_size.minimum.inter_view.vertical);
-//  EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
-//  EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
-//}
-//
-//
+
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+    TransformParametersFromCLI_BasicWithPropertiesBinding) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "0.5",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_maximum_intra_view_horizontal", "31",
+      "--transform_size_minimum_intra_view_horizontal", "4",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_vertical", "13",
+      "--transform_size_maximum_inter_view_horizontal", "13",
+      "--transform_size_minimum_inter_view_horizontal", "13"};
+  int argc = 23;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
+}
+
+
 //TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 //    TransformParametersFromCLI_DifferentWithPropertiesBinding) {
 //  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
