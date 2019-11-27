@@ -220,32 +220,32 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
   EXPECT_DOUBLE_EQ(12, config.get_lambda());
 }
 
-//
-//TEST(JPLMEncoderConfigurationLightField4DTransformMode,
-//    TransformParametersFromCLI_Basic) {
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-//      "../resources/out_small_greek/", "-l", "0.5",
-//      "--transform_size_maximum_intra_view_vertical", "31",
-//      "--transform_size_minimum_intra_view_vertical", "4",
-//      "--transform_size_maximum_intra_view_horizontal", "31",
-//      "--transform_size_minimum_intra_view_horizontal", "4",
-//      "--transform_size_maximum_inter_view_vertical", "13",
-//      "--transform_size_minimum_inter_view_vertical", "13",
-//      "--transform_size_maximum_inter_view_horizontal", "13",
-//      "--transform_size_minimum_inter_view_horizontal", "13"};
-//  int argc = 23;
-//  JPLMEncoderConfigurationLightField4DTransformMode config(
-//      argc, const_cast<char**>(argv));
-//  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
-//  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
-//  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
-//  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
-//  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
-//  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
-//  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
-//  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
-//  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
-//}
+
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+    TransformParametersFromCLI_Basic) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-l", "0.5",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_maximum_intra_view_horizontal", "31",
+      "--transform_size_minimum_intra_view_horizontal", "4",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_vertical", "13",
+      "--transform_size_maximum_inter_view_horizontal", "13",
+      "--transform_size_minimum_inter_view_horizontal", "13"};
+  int argc = 23;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_DOUBLE_EQ(0.5, config.get_lambda());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
+}
 //
 //
 //TEST(JPLMEncoderConfigurationLightField4DTransformMode,
