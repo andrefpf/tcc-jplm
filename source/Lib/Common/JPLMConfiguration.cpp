@@ -71,8 +71,8 @@
  */
 
 /** \file     JPLMConfiguration.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    Implements JPLMCOnfiguration
+ *  \details
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-11-26
  */
@@ -90,28 +90,29 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back(
       {"--help", "-h", "Print this help message and exit", [this](std::any v) {
-        std::cout << "JPLM Codec" << std::endl;
-        std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]"
-                  << std::endl;
-        std::cout << "Options:" << std::endl;
-        ConsoleTable table(1, 1, samilton::Alignment::centre);
-        unsigned int count = 0;
-        for (auto o : this->arguments) {
-          table[count][1] = o.getShortOption() + "," + o.getLongOption();
-          table[count][2] = o.getDescription();
-          count++;
-        }
-        std::cout << table << std::endl;
-        //exit(0);
-      }});
+         std::cout << "JPLM Codec" << std::endl;
+         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]"
+                   << std::endl;
+         std::cout << "Options:" << std::endl;
+         ConsoleTable table(1, 1, samilton::Alignment::centre);
+         unsigned int count = 0;
+         for (auto o : this->arguments) {
+           table[count][1] = o.getShortOption() + "," + o.getLongOption();
+           table[count][2] = o.getDescription();
+           count++;
+         }
+         std::cout << table << std::endl;
+         //exit(0);
+       }});
+
   arguments.push_back({"--input", "-i",
-                       "Input directory containing a set of uncompressed light-field images "
-                       "(xxx_yyy.ppm).",
-                       [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
+      "Input directory containing a set of uncompressed light-field images "
+      "(xxx_yyy.ppm).",
+      [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
   arguments.push_back({"--output", "-o",
-                       "Output directory containing temporary light-field data and the "
-                       "compressed bitstream.",
-                       [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
+      "Output directory containing temporary light-field data and the "
+      "compressed bitstream.",
+      [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
   this->parse_cli(argc, argv);
 }
 
@@ -130,13 +131,13 @@ bool JPLMConfiguration::validate_param(std::string param) {
     return false;
   };
 
-  std::cout << "PARAM=" << param
-            << " OPT=" << std::none_of(arguments.begin(), arguments.end(), opt)
-            << std::endl;
-
-  //if (starts_with("-") &&
-  //    std::none_of(arguments.begin(), arguments.end(), opt))
-  //  throw UnknownCLIParameterException(param);
+  if (starts_with("-")) {
+    //if (std::none_of(arguments.begin(), arguments.end(), opt))
+    //  throw UnknownCLIParameterException(param);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
@@ -145,7 +146,7 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
     if (validate_param(key)) {
       std::string value(reinterpret_cast<char *>(argv[n + 1]));
       std::for_each(arguments.begin(), arguments.end(),
-                    [key, value](CLIArgument &s) { s.parse(key, value); });
+          [key, value](CLIArgument &s) { s.parse(key, value); });
     }
   }
 }

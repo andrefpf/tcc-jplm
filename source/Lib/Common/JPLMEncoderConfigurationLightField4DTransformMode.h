@@ -157,7 +157,6 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
-  std::cout << "AO MENOS INICIALIZEI" << std::endl;
   arguments.push_back({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
       [this](std::any v) {
