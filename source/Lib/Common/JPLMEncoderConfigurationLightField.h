@@ -156,7 +156,7 @@ void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
 
 
 void JPLMEncoderConfigurationLightField::parse_json(string path) {
-  JPLMEncoderConfigurationLightField::parse_json(path);
+  JPLMEncoderConfiguration::parse_json(path);
   ifstream ifs(path);
   json conf = json::parse(ifs);
   parse_mode_type(conf);

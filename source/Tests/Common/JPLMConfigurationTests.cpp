@@ -39,6 +39,7 @@
  */
 
 #include <exception>
+#include <filesystem>
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
@@ -47,7 +48,7 @@
 
 
 using namespace std;
-std::string root_path = "../";
+std::string root_path = ".";
 
 
 TEST(JPLMConfiguration, SimpleTestWithInput) {
@@ -126,7 +127,7 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 
 //
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
-  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
@@ -137,7 +138,7 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 
 TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
-  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
@@ -304,7 +305,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode,
     TransformParametersFromJSON_DifferentWithPropertiesBinding) {
-  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", a.c_str()};
   int argc = 7;
@@ -322,24 +323,24 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
-//TEST(JPLMEncoderConfigurationLightField4DTransformMode,
-//    TransformParametersFromJSON_DifferentWithPropertiesGet) {
-//  string a(root_path + "/cfg/part2/4DTransformMode/I01_Bikes_22016.json");
-//  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-//      "../resources/out_small_greek/", "-c", a.c_str()};
-//  int argc = 7;
-//  JPLMEncoderConfigurationLightField4DTransformMode config(
-//      argc, const_cast<char**>(argv));
-//  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
-//  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
-//  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
-//  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
-//
-//  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
-//  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
-//  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
-//  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
-//}
+TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+    TransformParametersFromJSON_DifferentWithPropertiesGet) {
+  string a(root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+                        "../resources/out_small_greek/", "-c", a.c_str()};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
+
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
+}
 
 
 int main(int argc, char* argv[]) {
