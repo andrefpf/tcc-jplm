@@ -113,19 +113,9 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());
-  //  EXPECT_STRNE("/home/PLENO/DATASETS/LENSLETS/OUTRO",
-  //      config.get_input_filename().c_str());
 }
 
 
-//TEST(JPLMConfiguration, SimpleTestWithNonExpectedParameter) {
-//  const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg", "--alface"};
-//  int argc = 4;
-//  EXPECT_THROW({ JPLMConfiguration config(argc, const_cast<char**>(argv)); },
-//               UnknownCLIParameterException);
-//}
-
-//
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   string a(root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
