@@ -44,6 +44,8 @@
 #include <string>
 #include "JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
+
 
 // \todo: Refactor and improve the redundancies in this class
 class JPLMEncoderConfigurationLightField4DTransformMode
@@ -79,8 +81,9 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t minimal_transform_size_intra_view_vertical_v = 100000;
   uint32_t minimal_transform_size_intra_view_horizontal_u = 100000;
 
-
   double lambda;
+  BorderBlocksPolicy
+      border_policy;  //TODO: add a default value such as BorderBlocksPolicy::truncate
 
   double transform_scale_t = 1.0;
   double transform_scale_s = 1.0;
@@ -113,6 +116,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_maximal_transform_size_inter_view_vertical();
   uint32_t get_minimal_transform_size_inter_view_horizontal();
   uint32_t get_maximal_transform_size_inter_view_horizontal();
+  BorderBlocksPolicy get_border_blocks_policy();
 
   BorderBlocksPolicy get_border_blocks_policy() const {
     return this->border_policy;
@@ -158,6 +162,18 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv) {
+  arguments.push_back({"--border_policy", "-B",
+      "Policy to treat border 4D limits.", [this](std::any v) {
+        std::string s = std::any_cast<std::string>(v);
+        std::transform(s.begin(), s.end(), s.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (s == "0" || s == "padding") {
+          this->border_policy = BorderBlocksPolicy::padding;
+        } else {
+          this->border_policy = BorderBlocksPolicy::truncate;
+        }
+      }});
+
   arguments.push_back({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
       [this](std::any v) {
@@ -309,6 +325,13 @@ uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_maximal_transform_size_inter_view_horizontal() {
   return maximal_transform_size_inter_view_horizontal_s;
 }
+
+
+BorderBlocksPolicy
+JPLMEncoderConfigurationLightField4DTransformMode::get_border_blocks_policy() {
+  return border_policy;
+}
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::init_transform_size() {
   IntraView transform_size_maximum_intra_view{
