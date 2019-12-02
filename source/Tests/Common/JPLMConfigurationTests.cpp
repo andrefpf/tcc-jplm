@@ -39,7 +39,6 @@
  */
 
 #include <exception>
-#include <filesystem>
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
@@ -48,6 +47,8 @@
 
 
 using namespace std;
+
+
 std::string root_path = ".";
 
 
