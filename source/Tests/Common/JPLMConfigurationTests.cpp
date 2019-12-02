@@ -359,6 +359,8 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
   EXPECT_EQ(13, config.get_number_of_columns_s());
   EXPECT_EQ(13, config.get_number_of_rows_t());
+  EXPECT_EQ(434, config.get_view_height_v());
+  EXPECT_EQ(626, config.get_view_width_u());
 
   EXPECT_NEAR(22016, config.get_lambda(), 0.1);
 }

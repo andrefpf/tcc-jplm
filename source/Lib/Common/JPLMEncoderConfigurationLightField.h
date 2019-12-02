@@ -41,17 +41,17 @@
 #ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
 
-#include <tuple>
 #include <cstdint>
 #include <filesystem>
 #include <optional>
+#include <tuple>
+#include "CLI/CLI.hpp"
+#include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "CLI/CLI.hpp"
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
@@ -189,24 +189,30 @@ Type JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
 }
 
-void JPLMEncoderConfigurationLightField::parse_number_of_rows_t(const json &conf) {
+void JPLMEncoderConfigurationLightField::parse_number_of_rows_t(
+    const json &conf) {
   if (conf.contains("number_of_rows"))
     number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
 }
 
-void JPLMEncoderConfigurationLightField::parse_number_of_columns_s(const json &conf) {
+void JPLMEncoderConfigurationLightField::parse_number_of_columns_s(
+    const json &conf) {
   if (conf.contains("number_of_columns"))
     number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
 }
 
 void JPLMEncoderConfigurationLightField::parse_view_height_v(const json &conf) {
-  if (conf.contains("view_height"))
-    view_height_v = conf["view_height"].get<uint32_t>();
+  if (conf.contains("view_height") || conf.contains("image_height"))
+    view_height_v = (conf.contains("view_height"))
+                        ? conf["view_height"].get<uint32_t>()
+                        : conf["image_height"].get<uint32_t>();
 }
 
 void JPLMEncoderConfigurationLightField::parse_view_width_u(const json &conf) {
-  if (conf.contains("view_width"))
-    view_width_u = conf["view_width"].get<uint32_t>();
+  if (conf.contains("view_width") || conf.contains("image_width"))
+    view_width_u = (conf.contains("view_width"))
+                       ? conf["view_width"].get<uint32_t>()
+                       : conf["image_width"].get<uint32_t>();
 }
 
 uint32_t JPLMEncoderConfigurationLightField::get_number_of_rows_t() const {
