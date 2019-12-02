@@ -6,6 +6,9 @@
   "number_of_columns": 13,
   "is_lenslet13x13": true,
   "lambda": 22016,
+  "colorspace": "bt601",
+  "use_xml_box": true,
+  "border_policy": "padding",
   "offset": {
     "horizontal": 1,
     "vertical": 1

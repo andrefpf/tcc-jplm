@@ -214,6 +214,16 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest, LambdaFromCLI) {
   EXPECT_DOUBLE_EQ(12, config.get_lambda());
 }
 
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
+    BorderPolicyPadding) {
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-B", "padding"};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(BorderBlocksPolicy::padding, config.get_border_blocks_policy());
+}
+
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromCLI_Basic) {
@@ -222,7 +232,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
       "--transform_size_maximum_intra_view_vertical", "31",
       "--transform_size_minimum_intra_view_vertical", "4",
       "--transform_size_maximum_intra_view_horizontal", "31",
-      "--transform_size_minimum_intra_view_horizontal", "4",
+      "--transform_size_minimum_intra_view_horizoauntal", "4",
       "--transform_size_maximum_inter_view_vertical", "13",
       "--transform_size_minimum_inter_view_vertical", "13",
       "--transform_size_maximum_inter_view_horizontal", "13",
@@ -362,7 +372,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
   EXPECT_EQ(434, config.get_view_height_v());
   EXPECT_EQ(626, config.get_view_width_u());
 
-  EXPECT_NEAR(22016, config.get_lambda(), 0.1);
+  EXPECT_DOUBLE_EQ(22016, config.get_lambda());
 }
 
 
