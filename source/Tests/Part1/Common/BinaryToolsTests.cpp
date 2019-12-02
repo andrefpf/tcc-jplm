@@ -85,31 +85,36 @@ TEST_P(UInt16_T_Test, uint16tChangesBytesIfNotOnSameEndianess) {
 }
 
 
-
 TEST(ValueFromByteVector, OneByteOnly) {
   auto bytes = std::vector<std::byte>({std::byte{255}});
-  auto value = BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes);
+  auto value =
+      BinaryTools::get_value_from_big_endian_byte_vector<uint8_t>(bytes);
   EXPECT_EQ(value, 255);
 }
 
 
 TEST(ValueFromByteVector, TwoBytes) {
   auto bytes = std::vector<std::byte>({std::byte{0}, std::byte{255}});
-  auto value = BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
+  auto value =
+      BinaryTools::get_value_from_big_endian_byte_vector<uint16_t>(bytes);
   EXPECT_EQ(value, 255);
 }
 
 
 TEST(ValueFromByteVector, FourBytes) {
-  auto bytes = std::vector<std::byte>({std::byte{0}, std::byte{0}, std::byte{0}, std::byte{255}});
-  auto value = BinaryTools::get_value_from_big_endian_byte_vector<uint32_t>(bytes);
+  auto bytes = std::vector<std::byte>(
+      {std::byte{0}, std::byte{0}, std::byte{0}, std::byte{255}});
+  auto value =
+      BinaryTools::get_value_from_big_endian_byte_vector<uint32_t>(bytes);
   EXPECT_EQ(value, 255);
 }
 
 
 TEST(ValueFromByteVector, FourBytesOtherValue) {
-  auto bytes = std::vector<std::byte>({std::byte{0}, std::byte{0}, std::byte{255}, std::byte{255}});
-  auto value = BinaryTools::get_value_from_big_endian_byte_vector<uint32_t>(bytes);
+  auto bytes = std::vector<std::byte>(
+      {std::byte{0}, std::byte{0}, std::byte{255}, std::byte{255}});
+  auto value =
+      BinaryTools::get_value_from_big_endian_byte_vector<uint32_t>(bytes);
   EXPECT_EQ(value, 65535);
 }
 
