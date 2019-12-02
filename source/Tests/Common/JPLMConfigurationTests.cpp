@@ -205,7 +205,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest, LambdaFromCLI) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-l", "12"};
   int argc = 7;
@@ -215,7 +215,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode, LambdaFromCLI) {
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromCLI_Basic) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-l", "0.5",
@@ -242,7 +242,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromCLI_BasicWithPropertiesBinding) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-l", "0.5",
@@ -269,7 +269,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromCLI_DifferentWithPropertiesBinding) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-l", "0.5",
@@ -296,7 +296,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesBinding) {
   string a(
       root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
@@ -317,7 +317,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 }
 
 
-TEST(JPLMEncoderConfigurationLightField4DTransformMode,
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesGet) {
   string a(
       root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
@@ -335,6 +335,32 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
   EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
   EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
   EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
+}
+
+
+TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
+    WholeConfigurationValidFile) {
+  string conf(
+      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
+      "../resources/out_small_greek/", "-c", conf.c_str()};
+  int argc = 7;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
+  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
+
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_vertical());
+  EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_horizontal());
+  EXPECT_EQ(13, config.get_minimal_transform_size_inter_view_horizontal());
+
+  EXPECT_EQ(13, config.get_number_of_columns_s());
+  EXPECT_EQ(13, config.get_number_of_rows_t());
+
+  EXPECT_NEAR(22016, config.get_lambda(), 0.1);
 }
 
 

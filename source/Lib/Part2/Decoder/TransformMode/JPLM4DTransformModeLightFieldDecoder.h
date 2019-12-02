@@ -60,7 +60,8 @@ class JPLM4DTransformModeLightFieldDecoder
   PartitionDecoder partition_decoder;
   const ContiguousCodestreamCode& codestream_code;
   Hierarchical4DDecoder hierarchical_4d_decoder;
-  LightFieldTransformMode<PelType>& ref_to_lightfield; //! \todo move this to transform mode codec...
+  LightFieldTransformMode<PelType>&
+      ref_to_lightfield;  //! \todo move this to transform mode codec...
 
   // const JPLFile&
   //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
@@ -68,20 +69,22 @@ class JPLM4DTransformModeLightFieldDecoder
   // JPLM4DTransformModeLightFieldDecoder() = default;
 
   // auto decoder = JPLM4DTransformModeLightFieldDecoder(jpl_file, codestream, configuration->get_output_filename());
-  JPLM4DTransformModeLightFieldDecoder(std::shared_ptr<JPLFile> jpl_file, // ! \todo use this as the JPLCodec file
+  JPLM4DTransformModeLightFieldDecoder(
+      std::shared_ptr<JPLFile>
+          jpl_file,  // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
       const std::string& lightfield_path,
       const LightfieldDimension<uint32_t>& block_4d_dimension)
       : JPLMLightFieldCodec<PelType>(
-            jpl_file,
-            std::make_unique<LightFieldTransformMode<PelType>>(
-                LightfieldIOConfiguration(lightfield_path,
-                    light_field_box.get_ref_to_contents()
-                        .get_ref_to_light_field_header_box()
-                        .get_ref_to_contents()
-                        .get_ref_to_light_field_header_box()
-                        .get_ref_to_contents()
-                        .get_light_field_dimension<std::size_t>()), 1023, PixelMapType::P6)),
+            jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
+                          LightfieldIOConfiguration(lightfield_path,
+                              light_field_box.get_ref_to_contents()
+                                  .get_ref_to_light_field_header_box()
+                                  .get_ref_to_contents()
+                                  .get_ref_to_light_field_header_box()
+                                  .get_ref_to_contents()
+                                  .get_light_field_dimension<std::size_t>()),
+                          1023, PixelMapType::P6)),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -105,9 +108,9 @@ class JPLM4DTransformModeLightFieldDecoder
     //initializes possible extension lenghs
     // initialize_extension_lenghts();
 
-     auto& view_io_policy = ref_to_lightfield.get_ref_to_view_io_policy();
-  view_io_policy.set_save_image_when_release(true)
-      .set_overwrite_image_when_save_if_file_already_exists(true);
+    auto& view_io_policy = ref_to_lightfield.get_ref_to_view_io_policy();
+    view_io_policy.set_save_image_when_release(true)
+        .set_overwrite_image_when_save_if_file_already_exists(true);
 
     hierarchical_4d_decoder.start();
   }
@@ -167,8 +170,7 @@ class JPLM4DTransformModeLightFieldDecoder
     hierarchical_4d_decoder.set_lightfield_dimension({number_of_vertical_views,
         number_of_horizontal_views, mNumberOfViewLines, mNumberOfViewColumns});
 
-    auto level_shift =
-        read_int_from_codestream_code(codestream_code);
+    auto level_shift = read_int_from_codestream_code(codestream_code);
     hierarchical_4d_decoder.set_level_shift(level_shift);
 
     std::cout << "superior_bit_plane: " << superior_bit_plane << "\n";
@@ -180,12 +182,13 @@ class JPLM4DTransformModeLightFieldDecoder
     std::cout << "min_transform_length_s: " << min_transform_length_s << "\n";
     std::cout << "min_transform_length_v: " << min_transform_length_v << "\n";
     std::cout << "min_transform_length_u: " << min_transform_length_u << "\n";
-    std::cout << "number_of_vertical_views: " << number_of_vertical_views << "\n";
-    std::cout << "number_of_horizontal_views: " << number_of_horizontal_views << "\n";
+    std::cout << "number_of_vertical_views: " << number_of_vertical_views
+              << "\n";
+    std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
+              << "\n";
     std::cout << "mNumberOfViewLines: " << mNumberOfViewLines << "\n";
     std::cout << "mNumberOfViewColumns: " << mNumberOfViewColumns << "\n";
     std::cout << "level_shift: " << level_shift << std::endl;
-
   }
 
   virtual ~JPLM4DTransformModeLightFieldDecoder() = default;
@@ -195,7 +198,8 @@ class JPLM4DTransformModeLightFieldDecoder
   }
 
   virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      [[maybe_unused]] const int32_t level_shift,
+      const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
     auto decoded_block =
