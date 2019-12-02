@@ -78,6 +78,7 @@
  */
 
 #include "Lib/Common/JPLMConfiguration.h"
+#include <cstddef>
 
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
@@ -123,7 +124,7 @@ bool JPLMConfiguration::validate_param(std::string param) {
 
   auto starts_with = [param](std::string prefix) {
     if (prefix.length() > 0 && param.length() > prefix.length()) {
-      for (int i = 0; i < prefix.length(); ++i)
+      for (size_t i = 0; i < prefix.length(); ++i)
         if (param[i] != prefix[i])
           return false;
       return true;
