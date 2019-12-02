@@ -85,39 +85,37 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& range) const {
   using LF = LightFieldDimension;
-  auto threshold = 1 << bitplane;
+  const auto threshold = 1 << bitplane;
 
-  auto elements_to_compute_in_t =
+  const auto elements_to_compute_in_t =
       std::get<LF::T>(range) - std::get<LF::T>(position);
-  auto elements_to_skip_before_in_t =
+  const auto elements_to_skip_before_in_t =
       std::get<LF::T>(position) * mSubbandLF.stride_t;
 
-  auto elements_to_compute_in_s =
+  const auto elements_to_compute_in_s =
       std::get<LF::S>(range) - std::get<LF::S>(position);
-  auto elements_to_skip_before_in_s =
+  const auto elements_to_skip_before_in_s =
       std::get<LF::S>(position) * mSubbandLF.stride_s;
-  auto elements_to_skip_after_in_s =
+  const auto elements_to_skip_after_in_s =
       (mSubbandLF.mlength_s - elements_to_compute_in_s -
           std::get<LF::S>(position)) *
       mSubbandLF.stride_s;
 
-  auto elements_to_compute_in_v =
+  const auto elements_to_compute_in_v =
       std::get<LF::V>(range) - std::get<LF::V>(position);
-  auto elements_to_skip_before_in_v =
+  const auto elements_to_skip_before_in_v =
       std::get<LF::V>(position) * mSubbandLF.stride_v;
-  auto elements_to_skip_after_in_v =
+  const auto elements_to_skip_after_in_v =
       (mSubbandLF.mlength_v - elements_to_compute_in_v -
           std::get<LF::V>(position)) *
       mSubbandLF.stride_v;
 
-  auto elements_to_compute_in_u =
+  const auto elements_to_compute_in_u =
       std::get<LF::U>(range) - std::get<LF::U>(position);
-  auto elements_to_skip_before_in_u = std::get<LF::U>(position);
-  auto elements_to_skip_after_in_u = mSubbandLF.mlength_u -
-                                     elements_to_compute_in_u -
+  const auto elements_to_skip_before_in_u = std::get<LF::U>(position);
+  const auto elements_to_skip_after_in_u = mSubbandLF.mlength_u -
                                      std::get<LF::U>(position);
 
-  block4DElementType coefficient;
 
   auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
   for (auto t = 0; t < elements_to_compute_in_t; ++t) {
@@ -126,11 +124,10 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
       data_ptr += elements_to_skip_before_in_v;
       for (auto v = 0; v < elements_to_compute_in_v; ++v) {
         data_ptr += elements_to_skip_before_in_u;
-        for (auto u = 0; u < elements_to_compute_in_u; ++u) {
-          coefficient = std::abs(*data_ptr);
-          if (coefficient >= threshold)
-            return true;
-          data_ptr++;
+        auto data_ptr_end = data_ptr+elements_to_compute_in_u;
+        auto result = std::find_if(data_ptr, data_ptr_end, [threshold](const auto& coefficient){return std::abs(coefficient) >= threshold;});
+        if(result != data_ptr_end) {
+          return true;
         }
         data_ptr += elements_to_skip_after_in_u;
       }
