@@ -98,6 +98,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   void parse_maximal_transform_size_inter_view_vertical(const json &conf);
   void parse_minimal_transform_size_inter_view_horizontal(const json &conf);
   void parse_maximal_transform_size_inter_view_horizontal(const json &conf);
+  void parse_lambda(const json &conf);
 
 
  public:
@@ -265,6 +266,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(string p) {
   parse_maximal_transform_size_inter_view_vertical(conf);
   parse_minimal_transform_size_inter_view_horizontal(conf);
   parse_maximal_transform_size_inter_view_horizontal(conf);
+  parse_lambda(conf);
 }
 
 
@@ -423,6 +425,12 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
           maximal_transform_size_inter_view_horizontal_s =
               conf["transform_size"]["maximum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();
+}
+
+void JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
+    const json &conf) {
+  if (conf.contains("lambda"))
+    this->lambda = conf["lambda"].get<double>();
 }
 
 
