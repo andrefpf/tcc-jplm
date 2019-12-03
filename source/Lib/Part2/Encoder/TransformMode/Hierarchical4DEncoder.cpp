@@ -41,15 +41,16 @@
 #include "Hierarchical4DEncoder.h"
 
 
-ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code() const {
+ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code()
+    const {
   return mEntropyCoder.get_ref_to_codestream_code();
 }
 
 
-std::unique_ptr<ContiguousCodestreamCode>&& Hierarchical4DEncoder::move_codestream_code_out() {
+std::unique_ptr<ContiguousCodestreamCode>&&
+Hierarchical4DEncoder::move_codestream_code_out() {
   return mEntropyCoder.move_codestream_code_out();
 }
-
 
 
 void Hierarchical4DEncoder::reset_optimization_models() {
@@ -71,7 +72,7 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-    rd_optimize_hexadecatree(
+  rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
@@ -84,52 +85,49 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& range) const {
   using LF = LightFieldDimension;
-  auto threshold = 1 << bitplane;
+  const auto threshold = 1 << bitplane;
 
-  auto elements_to_compute_in_t =
+  const auto elements_to_compute_in_t =
       std::get<LF::T>(range) - std::get<LF::T>(position);
-  auto elements_to_skip_before_in_t =
+  const auto elements_to_skip_before_in_t =
       std::get<LF::T>(position) * mSubbandLF.stride_t;
 
-  auto elements_to_compute_in_s =
+  const auto elements_to_compute_in_s =
       std::get<LF::S>(range) - std::get<LF::S>(position);
-  auto elements_to_skip_before_in_s =
+  const auto elements_to_skip_before_in_s =
       std::get<LF::S>(position) * mSubbandLF.stride_s;
-  auto elements_to_skip_after_in_s =
+  const auto elements_to_skip_after_in_s =
       (mSubbandLF.mlength_s - elements_to_compute_in_s -
           std::get<LF::S>(position)) *
       mSubbandLF.stride_s;
 
-  auto elements_to_compute_in_v =
+  const auto elements_to_compute_in_v =
       std::get<LF::V>(range) - std::get<LF::V>(position);
-  auto elements_to_skip_before_in_v =
+  const auto elements_to_skip_before_in_v =
       std::get<LF::V>(position) * mSubbandLF.stride_v;
-  auto elements_to_skip_after_in_v =
+  const auto elements_to_skip_after_in_v =
       (mSubbandLF.mlength_v - elements_to_compute_in_v -
           std::get<LF::V>(position)) *
       mSubbandLF.stride_v;
 
-  auto elements_to_compute_in_u =
+  const auto elements_to_compute_in_u =
       std::get<LF::U>(range) - std::get<LF::U>(position);
-  auto elements_to_skip_before_in_u = std::get<LF::U>(position);
-  auto elements_to_skip_after_in_u = mSubbandLF.mlength_u -
-                                     elements_to_compute_in_u -
+  const auto elements_to_skip_before_in_u = std::get<LF::U>(position);
+  const auto elements_to_skip_after_in_u = mSubbandLF.mlength_u -
                                      std::get<LF::U>(position);
 
-  block4DElementType coefficient;
 
   auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
-  for (auto t = 0; t < elements_to_compute_in_t; t++) {
+  for (auto t = 0; t < elements_to_compute_in_t; ++t) {
     data_ptr += elements_to_skip_before_in_s;
-    for (auto s = 0; s < elements_to_compute_in_s; s++) {
+    for (auto s = 0; s < elements_to_compute_in_s; ++s) {
       data_ptr += elements_to_skip_before_in_v;
-      for (auto v = 0; v < elements_to_compute_in_v; v++) {
+      for (auto v = 0; v < elements_to_compute_in_v; ++v) {
         data_ptr += elements_to_skip_before_in_u;
-        for (auto u = 0; u < elements_to_compute_in_u; u++) {
-          coefficient = std::abs(*data_ptr);
-          if (coefficient >= threshold)
-            return true;
-          data_ptr++;
+        auto data_ptr_end = data_ptr+elements_to_compute_in_u;
+        auto result = std::find_if(data_ptr, data_ptr_end, [threshold](const auto& coefficient){return std::abs(coefficient) >= threshold;});
+        if(result != data_ptr_end) {
+          return true;
         }
         data_ptr += elements_to_skip_after_in_u;
       }
@@ -148,16 +146,16 @@ void Hierarchical4DEncoder::create_temporary_buffer() {
 
 std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
-    const std::tuple<int, int, int, int>& lengths, double lambda, uint8_t bitplane,
-    std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
+    const std::tuple<int, int, int, int>& lengths, double lambda,
+    uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
   using LF = LightFieldDimension;
 
   if (bitplane < inferior_bit_plane) {
     double signal_energy = 0.0;
     auto temp = temporary_buffer.get();
-    for (auto t = 0; t < std::get<LF::T>(lengths); t++) {
-      for (auto s = 0; s < std::get<LF::S>(lengths); s++) {
-        for (auto v = 0; v < std::get<LF::V>(lengths); v++) {
+    for (auto t = 0; t < std::get<LF::T>(lengths); ++t) {
+      for (auto s = 0; s < std::get<LF::S>(lengths); ++s) {
+        for (auto v = 0; v < std::get<LF::V>(lengths); ++v) {
           // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
           auto initial_ptr =
               mSubbandLF.mPixelData +
@@ -186,26 +184,26 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     auto there_is_one = false;
     double accumulatedRate = 0.0;
     for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
-         bit_position--) {
+         --bit_position) {
       int bit = (magnitude >> bit_position) & 01;
       if (bit) {
         there_is_one = true;
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                    SYMBOL_PROBABILITY_MODEL_INDEX]
+                                            SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<1>();
         if (bit_position > BITPLANE_BYPASS)
           optimization_probability_models[bit_position +
-                  SYMBOL_PROBABILITY_MODEL_INDEX]
+                                          SYMBOL_PROBABILITY_MODEL_INDEX]
               .update<1>();
       } else {
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                    SYMBOL_PROBABILITY_MODEL_INDEX]
+                                            SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<0>();
         if (bit_position > BITPLANE_BYPASS)
           optimization_probability_models[bit_position +
-                  SYMBOL_PROBABILITY_MODEL_INDEX]
+                                          SYMBOL_PROBABILITY_MODEL_INDEX]
               .update<0>();
       }
     }
@@ -246,28 +244,26 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
 
   auto segmentation_flags_j_cost =
-      lambda * optimization_probability_models
-                   [(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX]
-                       .get_rate<0>() +
-      lambda *
-          optimization_probability_models
-              [(bitplane << 1) + 1 + SEGMENTATION_PROB_MODEL_INDEX]
-                  .get_rate(Significance);
+      lambda * optimization_probability_models[(bitplane << 1) +
+                                               SEGMENTATION_PROB_MODEL_INDEX]
+                   .get_rate<0>() +
+      lambda * optimization_probability_models[(bitplane << 1) + 1 +
+                                               SEGMENTATION_PROB_MODEL_INDEX]
+                   .get_rate(Significance);
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
   auto j_skip =
-      lambda *
-      optimization_probability_models[(bitplane << 1) +
-              SEGMENTATION_PROB_MODEL_INDEX]
-          .get_rate<1>();
+      lambda * optimization_probability_models[(bitplane << 1) +
+                                               SEGMENTATION_PROB_MODEL_INDEX]
+                   .get_rate<1>();
 
   if (bitplane > BITPLANE_BYPASS_FLAGS) {
     optimization_probability_models[(bitplane << 1) +
-            SEGMENTATION_PROB_MODEL_INDEX]
+                                    SEGMENTATION_PROB_MODEL_INDEX]
         .update<0>();
     optimization_probability_models[(bitplane << 1) + 1 +
-            SEGMENTATION_PROB_MODEL_INDEX]
+                                    SEGMENTATION_PROB_MODEL_INDEX]
         .update(Significance);
   }
 
@@ -284,14 +280,14 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     auto number_of_subdivisions = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
 
-    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); t++) {
+    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); ++t) {
       int new_position_t =
           std::get<LF::T>(position) + t * std::get<LF::T>(half_lengths);
       int new_length_t =
           (t == 0) ? std::get<LF::T>(half_lengths)
                    : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lengths));
 
-      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); s++) {
+      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); ++s) {
         int new_position_s =
             std::get<LF::S>(position) + s * std::get<LF::S>(half_lengths);
         int new_length_s =
@@ -299,7 +295,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                 ? std::get<LF::S>(half_lengths)
                 : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lengths));
 
-        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); v++) {
+        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); ++v) {
           int new_position_v =
               std::get<LF::V>(position) + v * std::get<LF::V>(half_lengths);
           int new_length_v =
@@ -307,7 +303,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                   ? std::get<LF::V>(half_lengths)
                   : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lengths));
 
-          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); u++) {
+          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); ++u) {
             int new_position_u =
                 std::get<LF::U>(position) + u * std::get<LF::U>(half_lengths);
             int new_length_u = (u == 0) ? std::get<LF::U>(half_lengths)
@@ -317,8 +313,8 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
             std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
 
             auto temp_j_and_energy =
-                    rd_optimize_hexadecatree({new_position_t, new_position_s,
-                                           new_position_v, new_position_u},
+                rd_optimize_hexadecatree({new_position_t, new_position_s,
+                                             new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
                     lambda, bitplane, hexadecatree_flags_1);
             std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
@@ -360,7 +356,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
     if (bitplane > BITPLANE_BYPASS_FLAGS)
       optimization_probability_models[(bitplane << 1) +
-              SEGMENTATION_PROB_MODEL_INDEX]
+                                      SEGMENTATION_PROB_MODEL_INDEX]
           .update<1>();
   }
 
@@ -407,23 +403,23 @@ void Hierarchical4DEncoder::encode_hexadecatree(int position_t, int position_s,
       int number_of_subdivisions_v = (length_v > 1) ? 2 : 1;
       int number_of_subdivisions_u = (length_u > 1) ? 2 : 1;
 
-      for (int index_t = 0; index_t < number_of_subdivisions_t; index_t++) {
+      for (int index_t = 0; index_t < number_of_subdivisions_t; ++index_t) {
         int new_position_t = position_t + index_t * half_length_t;
         int new_length_t =
             (index_t == 0) ? half_length_t : (length_t - half_length_t);
 
-        for (int index_s = 0; index_s < number_of_subdivisions_s; index_s++) {
+        for (int index_s = 0; index_s < number_of_subdivisions_s; ++index_s) {
           int new_position_s = position_s + index_s * half_length_s;
           int new_length_s =
               (index_s == 0) ? half_length_s : (length_s - half_length_s);
 
-          for (int index_v = 0; index_v < number_of_subdivisions_v; index_v++) {
+          for (int index_v = 0; index_v < number_of_subdivisions_v; ++index_v) {
             int new_position_v = position_v + index_v * half_length_v;
             int new_length_v =
                 (index_v == 0) ? half_length_v : (length_v - half_length_v);
 
             for (int index_u = 0; index_u < number_of_subdivisions_u;
-                 index_u++) {
+                 ++index_u) {
               int new_position_u = position_u + index_u * half_length_u;
               int new_length_u =
                   (index_u == 0) ? half_length_u : (length_u - half_length_u);
@@ -441,7 +437,8 @@ void Hierarchical4DEncoder::encode_hexadecatree(int position_t, int position_s,
 }
 
 
-void Hierarchical4DEncoder::encode_coefficient(int coefficient, uint8_t bitplane) {
+void Hierarchical4DEncoder::encode_coefficient(
+    int coefficient, uint8_t bitplane) {
   int sign = 0;
   auto there_is_one = false;
   int magnitude = std::abs(coefficient);
@@ -465,42 +462,49 @@ void Hierarchical4DEncoder::encode_coefficient(int coefficient, uint8_t bitplane
 
 
 void Hierarchical4DEncoder::encode_segmentation_lowerBitPlane_flag(
-        uint8_t bitplane) {
-  auto& probability_model_0 =   probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
-  auto& probability_model_1 =   probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX + 1 ];
+    uint8_t bitplane) {
+  auto& probability_model_0 =
+      probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
+  auto& probability_model_1 =
+      probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX + 1];
 
-    mEntropyCoder.encode_bit<0>(probability_model_0);
-    mEntropyCoder.encode_bit<0>(probability_model_1);
+  mEntropyCoder.encode_bit<0>(probability_model_0);
+  mEntropyCoder.encode_bit<0>(probability_model_1);
 
-    if (bitplane > BITPLANE_BYPASS_FLAGS) {
-        probability_model_0.update<0>();
-        probability_model_1.update<0>();
-    }
+  if (bitplane > BITPLANE_BYPASS_FLAGS) {
+    probability_model_0.update<0>();
+    probability_model_1.update<0>();
+  }
 }
 
 
-void Hierarchical4DEncoder::encode_segmentation_splitBlock_flag(uint8_t bitplane) {
-  auto& probability_model_0 =   probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
-  auto& probability_model_1 =   probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX + 1 ];
+void Hierarchical4DEncoder::encode_segmentation_splitBlock_flag(
+    uint8_t bitplane) {
+  auto& probability_model_0 =
+      probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
+  auto& probability_model_1 =
+      probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX + 1];
 
   mEntropyCoder.encode_bit<0>(probability_model_0);
   mEntropyCoder.encode_bit<1>(probability_model_1);
 
   if (bitplane > BITPLANE_BYPASS_FLAGS) {
-      probability_model_0.update<0>();
-      probability_model_1.update<1>();
+    probability_model_0.update<0>();
+    probability_model_1.update<1>();
   }
 }
 
 
-void Hierarchical4DEncoder::encode_segmentation_zeroBlock_flag(uint8_t bitplane) {
-    auto& probability_model_0 =   probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
+void Hierarchical4DEncoder::encode_segmentation_zeroBlock_flag(
+    uint8_t bitplane) {
+  auto& probability_model_0 =
+      probability_models[(bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX];
 
-    mEntropyCoder.encode_bit<1>(probability_model_0);
+  mEntropyCoder.encode_bit<1>(probability_model_0);
 
-    if (bitplane > BITPLANE_BYPASS_FLAGS) {
-        probability_model_0.update<1>();
-    }
+  if (bitplane > BITPLANE_BYPASS_FLAGS) {
+    probability_model_0.update<1>();
+  }
 }
 
 
@@ -524,9 +528,9 @@ void Hierarchical4DEncoder::encode_partition_viewSplit_flag() {
 
 
 void Hierarchical4DEncoder::encode_inferior_bit_plane_value() {
-    const auto& probability_model = probability_models[0];
-  for (int n = MINIMUM_BITPLANE_PRECISION - 1; n >= 0; n--) {
-    int bit = (inferior_bit_plane >> n) & 01;
+  const auto& probability_model = probability_models[0];
+  for (int n = MINIMUM_BITPLANE_PRECISION - 1; n >= 0; --n) {
+    int bit = (inferior_bit_plane >> n) & 0x01;
     mEntropyCoder.encode_bit(bit, probability_model);
   }
 }
@@ -550,11 +554,11 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
     int threshold = (1 << bit_position);
 
     for (auto data_ptr = mSubbandLF.mPixelData;
-         data_ptr < mSubbandLF.mPixelData + subbandSize; data_ptr++) {
+         data_ptr < mSubbandLF.mPixelData + subbandSize; ++data_ptr) {
       int magnitude = std::abs(*data_ptr);
       int quantizedMagnitude = magnitude & bitMask;
       if (quantizedMagnitude > 0) {
-        signalRate++;
+        ++signalRate;
         quantizedMagnitude += (threshold >> 1);
       }
       double error = magnitude - quantizedMagnitude;
@@ -563,10 +567,10 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
         int bit = (magnitude >> bit_position) & 01;
         accumulatedRate +=
             optimization_probability_models[bit_position +
-                    SYMBOL_PROBABILITY_MODEL_INDEX]
+                                            SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate(bit);
         optimization_probability_models[bit_position +
-                SYMBOL_PROBABILITY_MODEL_INDEX]
+                                        SYMBOL_PROBABILITY_MODEL_INDEX]
             .update(bit);
       }
     }

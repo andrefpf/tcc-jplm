@@ -97,7 +97,7 @@ void ABACEncoder::push_current_byte_to_codestream_code() {
     byte_buffer = std::byte{0};
 }
 
-
+//outputs bits from the least significant to the most
 template<bool bit>
 void ABACEncoder::output_bit() {
   if constexpr (bit) {  //==1
