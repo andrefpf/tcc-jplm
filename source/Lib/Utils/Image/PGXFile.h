@@ -38,11 +38,19 @@
  *  \date     2019-12-05
  */
 
+#include <cstddef>
+
+
+enum class PGXEndianess {
+	BIG_ENDIAN = 0,
+	LITTLE_ENDIAN = 1
+};
+
 
 class PGXFile
 {
 public:
-	PGXFile();
+	PGXFile(std::size_t height, std::size_t witdh, std::size_t depth, bool is_signed, PGXEndianess endianess);
 	~PGXFile();
 	
 };
