@@ -68,5 +68,10 @@ class PGXFile : public ImageFile {
   }
 
 
+  auto get_endianess() const noexcept {
+  	return endianess;
+  }
+
+
   ~PGXFile() = default;
 };

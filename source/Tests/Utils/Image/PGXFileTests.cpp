@@ -81,6 +81,12 @@ TEST_F(PGXFileCheck, CanGetDepth) {
 }
 
 
+TEST_F(PGXFileCheck, CanGetEndianess) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
+ 	EXPECT_EQ(endianess, pgx_file.get_endianess());
+}
+
+
 // TEST(ExceptionsTestWhenOpeningForRead, InvalidPixMapZeroHeightThrowsException) {
 // }
 
