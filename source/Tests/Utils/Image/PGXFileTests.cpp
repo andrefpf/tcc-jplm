@@ -81,6 +81,24 @@ TEST_F(PGXFileCheck, CanGetDepth) {
 }
 
 
+TEST_F(PGXFileCheck, CanGetSigned) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
+ 	EXPECT_EQ(is_signed, pgx_file.is_signed());
+}
+
+
+TEST_F(PGXFileCheck, CanGetSignedFALSE) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, false, endianess);
+ 	EXPECT_FALSE(pgx_file.is_signed());
+}
+
+
+TEST_F(PGXFileCheck, CanGetSignedTRUE) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, true, endianess);
+ 	EXPECT_TRUE(pgx_file.is_signed());
+}
+
+
 TEST_F(PGXFileCheck, CanGetEndianess) {
  	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
  	EXPECT_EQ(endianess, pgx_file.get_endianess());
