@@ -31,18 +31,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     PGXFile.h
+/** \file     PGXFileTests.cpp
  *  \brief    
  *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \author   iseidel <i.seidel@samsung.com>
  *  \date     2019-12-05
  */
 
 
-class PGXFile
-{
-public:
-	PGXFile();
-	~PGXFile();
-	
-};
+#include <iostream>
+#include "Lib/Utils/Image/PGXFile.h"
+#include "gtest/gtest.h"
+
+
+std::string resources_path = "../resources";
+
+
+
+// TEST(ExceptionsTestWhenOpeningForRead, InvalidPixMapZeroHeightThrowsException) {
+// }
+
+
+int main(int argc, char *argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  //this is to enable ctest to run the test passing the path to the resources
+  if (argc > 1) {
+    resources_path = std::string(argv[1]);
+  }
+  return RUN_ALL_TESTS();
+}
