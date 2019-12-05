@@ -291,4 +291,21 @@ class OverflowException : public std::exception {
 
 }  // namespace ImageUtilsExceptions
 
+
+namespace PGXFileExceptions {
+  class InvalidIdException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidIdException(const std::string obtained_id) {
+    message_ = "Obtained a valid ID: "+obtained_id+". Expecting PG";
+  }
+  
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+}
+
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */
