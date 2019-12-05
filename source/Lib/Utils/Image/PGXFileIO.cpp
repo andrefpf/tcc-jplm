@@ -39,3 +39,19 @@
  */
 
 #include "PGXFileIO.h"
+
+
+void check_header(std::ifstream& ifstream) {
+  std::string id;
+  ifstream >> id;
+  if (id != "PG") {
+    throw PGXFileExceptions::InvalidIdException(id);
+  }
+}
+
+
+std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
+  std::ifstream file(filename, std::ios::in);
+  check_header(file);
+  return nullptr;
+}

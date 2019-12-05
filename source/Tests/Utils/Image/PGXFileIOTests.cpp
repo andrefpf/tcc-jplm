@@ -41,7 +41,8 @@
 
 
 #include <iostream>
-#include "Lib/Utils/Image/PGXFile.h"
+#include "Lib/Utils/Image/PGXFileIO.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
 #include "gtest/gtest.h"
 
 
@@ -56,6 +57,11 @@ struct PGXFileCheck : public testing::Test {
   bool is_signed = false;
   PGXEndianess endianess = PGXEndianess::PGX_ML_BIG_ENDIAN;
 };
+
+
+TEST_F(PGXFileCheck, CanUnderstandAValidId) {
+	EXPECT_NO_THROW(auto pgx_file = PGXFileIO::open(filename));
+}
 
 
 int main(int argc, char *argv[]) {

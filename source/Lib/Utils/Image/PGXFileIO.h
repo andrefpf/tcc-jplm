@@ -40,10 +40,11 @@
 
 #include <filesystem>
 #include <fstream>
-#include <sstream>
 #include <iostream>
 #include <memory>
-#include "PGXFile.h"
+#include <sstream>
+#include "Lib/Utils/Image/PGXFile.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
 
 namespace PGXFileIO {
 
