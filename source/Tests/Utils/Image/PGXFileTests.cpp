@@ -63,6 +63,11 @@ TEST_F(PGXFileCheck, CanCreateAPGXFile) {
 }
 
 
+TEST_F(PGXFileCheck, CanGetWidth) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
+ 	EXPECT_EQ(width, pgx_file.get_width());
+}
+
 
 // TEST(ExceptionsTestWhenOpeningForRead, InvalidPixMapZeroHeightThrowsException) {
 // }
