@@ -64,6 +64,11 @@ TEST_F(PGXFileCheck, CanUnderstandAValidId) {
 }
 
 
+TEST_F(PGXFileCheck, ThrowsForInvalidId) {
+	EXPECT_THROW(auto pgx_file = PGXFileIO::open(resources_path+"/pgx_tests/invalid_id.pgx"), PGXFileExceptions::InvalidIdException);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
