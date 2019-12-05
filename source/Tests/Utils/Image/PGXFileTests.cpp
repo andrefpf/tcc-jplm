@@ -105,6 +105,19 @@ TEST_F(PGXFileCheck, CanGetEndianess) {
 }
 
 
+TEST_F(PGXFileCheck, CanGetEndianessBig) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, PGXEndianess::PGX_ML_BIG_ENDIAN);
+ 	EXPECT_EQ(PGXEndianess::PGX_ML_BIG_ENDIAN, pgx_file.get_endianess());
+}
+
+
+TEST_F(PGXFileCheck, CanGetEndianessLittle) {
+ 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, PGXEndianess::PGX_LM_LITTLE_ENDIAN);
+ 	EXPECT_EQ(PGXEndianess::PGX_LM_LITTLE_ENDIAN, pgx_file.get_endianess());
+}
+
+
+
 // TEST(ExceptionsTestWhenOpeningForRead, InvalidPixMapZeroHeightThrowsException) {
 // }
 
