@@ -57,7 +57,7 @@
 
 //! \todo  Implement other types of image file to allow easy reading
 //! like PGM, PNG, BMP, etc
-enum class ImageFileType { PixelMap = 0 };
+enum class ImageFileType { PixelMap = 0 , PGX = 1};
 
 
 class ImageFile {
