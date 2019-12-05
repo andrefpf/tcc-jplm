@@ -45,7 +45,7 @@
 #include <memory>
 #include "PGXFile.h"
 
-namespace PGCFileIO {
+namespace PGXFileIO {
 
 std::unique_ptr<PGXFile> open(const std::string& filename);
 }
