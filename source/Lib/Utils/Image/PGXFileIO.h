@@ -38,3 +38,14 @@
  *  \date     2019-12-05
  */
 
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <memory>
+#include "PGXFile.h"
+
+namespace PGCFileIO {
+
+std::unique_ptr<PGXFile> open(const std::string& filename);
+}
