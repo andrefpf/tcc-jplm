@@ -63,5 +63,10 @@ class PGXFile : public ImageFile {
   }
 
 
+  auto get_depth() const noexcept {
+  	return depth;
+  }
+
+
   ~PGXFile() = default;
 };
