@@ -47,6 +47,22 @@
 std::string resources_path = "../resources";
 
 
+struct PGXFileCheck : public testing::Test {
+  std::string filename = "undefined.pgx";
+  std::size_t width = 4;
+  std::size_t height = 3;
+  std::size_t depth = 12;
+  bool is_signed = false;
+  PGXEndianess endianess = PGXEndianess::PGX_ML_BIG_ENDIAN;
+};
+
+
+
+TEST_F(PGXFileCheck, CanCreateAPGXFile) {
+ 	[[maybe_unused]] auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
+}
+
+
 
 // TEST(ExceptionsTestWhenOpeningForRead, InvalidPixMapZeroHeightThrowsException) {
 // }

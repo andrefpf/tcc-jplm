@@ -39,18 +39,29 @@
  */
 
 #include <cstddef>
+#include "Lib/Utils/Image/ImageFile.h"
+
+enum class PGXEndianess { PGX_ML_BIG_ENDIAN = 0, PGX_LM_LITTLE_ENDIAN = 1 };
 
 
-enum class PGXEndianess {
-	BIG_ENDIAN = 0,
-	LITTLE_ENDIAN = 1
-};
+class PGXFile : public ImageFile {
+ private:
+  std::size_t depth;
+  bool _is_signed;
+  PGXEndianess endianess;
+
+ public:
+  PGXFile(const std::string& file_name, std::size_t width, std::size_t height,
+      std::size_t depth, bool is_signed, PGXEndianess endianess)
+      : ImageFile(ImageFileType::PGX, file_name, width, height), depth(depth),
+        _is_signed(is_signed), endianess(endianess) {
+  }
 
 
-class PGXFile
-{
-public:
-	PGXFile(std::size_t height, std::size_t witdh, std::size_t depth, bool is_signed, PGXEndianess endianess);
-	~PGXFile();
-	
+  bool is_signed() const noexcept {
+  	return _is_signed;
+  }
+
+
+  ~PGXFile() = default;
 };
