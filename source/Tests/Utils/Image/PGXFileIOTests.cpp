@@ -39,10 +39,9 @@
  */
 
 
-
 #include <iostream>
-#include "Lib/Utils/Image/PGXFileIO.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
+#include "Lib/Utils/Image/PGXFileIO.h"
 #include "gtest/gtest.h"
 
 
@@ -50,7 +49,8 @@ std::string resources_path = "../resources";
 
 
 struct PGXFileCheck : public testing::Test {
-  std::string filename = std::string(resources_path+"/pgx_tests/unsigned_big_endian_4x3x12.pgx");
+  std::string filename =
+      std::string(resources_path + "/pgx_tests/unsigned_big_endian_4x3x12.pgx");
   std::size_t width = 4;
   std::size_t height = 3;
   std::size_t depth = 12;
@@ -60,13 +60,24 @@ struct PGXFileCheck : public testing::Test {
 
 
 TEST_F(PGXFileCheck, CanUnderstandAValidId) {
-	EXPECT_NO_THROW(auto pgx_file = PGXFileIO::open(filename));
+  EXPECT_NO_THROW(auto pgx_file = PGXFileIO::open(filename));
 }
 
 
 TEST_F(PGXFileCheck, ThrowsForInvalidId) {
-	EXPECT_THROW(auto pgx_file = PGXFileIO::open(resources_path+"/pgx_tests/invalid_id.pgx"), PGXFileExceptions::InvalidIdException);
+  EXPECT_THROW(auto pgx_file = PGXFileIO::open(
+                   resources_path + "/pgx_tests/invalid_id.pgx"),
+      PGXFileExceptions::InvalidIdException);
 }
+
+
+TEST_F(PGXFileCheck, GetsNotNullPGXfile) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_TRUE(pgx_file);
+}
+
+
+
 
 
 int main(int argc, char *argv[]) {
