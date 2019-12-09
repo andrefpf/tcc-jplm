@@ -53,5 +53,6 @@ void check_header(std::ifstream& ifstream) {
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   std::ifstream file(filename, std::ios::in);
   check_header(file);
-  return nullptr;
+
+  return std::make_unique<PGXFile>(filename, 1, 1, 1, true, PGXEndianess::PGX_ML_BIG_ENDIAN);
 }
