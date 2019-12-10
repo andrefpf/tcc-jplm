@@ -77,7 +77,10 @@ TEST_F(PGXFileCheck, GetsNotNullPGXfile) {
 }
 
 
-
+TEST_F(PGXFileCheck, GetsEndianessFromFile) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_EQ(endianess, pgx_file->get_endianess());
+}
 
 
 int main(int argc, char *argv[]) {

@@ -50,9 +50,23 @@ void check_header(std::ifstream& ifstream) {
 }
 
 
+auto get_endianess(std::ifstream& ifstream) {
+	std::string endianess;
+	ifstream >> endianess;
+	if(endianess == "ML") {
+		return PGXEndianess::PGX_ML_BIG_ENDIAN;
+	}
+	if(endianess != "LM") {
+		//error...
+	}
+	return PGXEndianess::PGX_LM_LITTLE_ENDIAN;
+}
+
+
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   std::ifstream file(filename, std::ios::in);
   check_header(file);
+  const auto endianess = get_endianess(file);
 
-  return std::make_unique<PGXFile>(filename, 1, 1, 1, true, PGXEndianess::PGX_ML_BIG_ENDIAN);
+  return std::make_unique<PGXFile>(filename, 1, 1, 1, true, endianess);
 }
