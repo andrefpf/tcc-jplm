@@ -57,7 +57,7 @@ auto get_endianess(std::ifstream& ifstream) {
 		return PGXEndianess::PGX_ML_BIG_ENDIAN;
 	}
 	if(endianess != "LM") {
-		//error...
+		throw PGXFileExceptions::InvalidEndianessException(endianess);
 	}
 	return PGXEndianess::PGX_LM_LITTLE_ENDIAN;
 }
