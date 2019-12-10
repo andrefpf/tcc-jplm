@@ -119,6 +119,43 @@ TEST_F(PGXFileCheck, ThrowsForInvalidSign) {
 }
 
 
+TEST_F(PGXFileCheck, GetsDepthFromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_EQ(depth, pgx_file->get_depth());
+}
+
+
+TEST_F(PGXFileCheck, GetsDepth10FromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(resources_path + "/pgx_tests/unsigned_big_endian_3x4x10.pgx");
+  EXPECT_EQ(10, pgx_file->get_depth());
+}
+
+
+TEST_F(PGXFileCheck, GetsWidthFromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_EQ(width, pgx_file->get_width());
+}
+
+
+TEST_F(PGXFileCheck, GetsWidth3FromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(resources_path + "/pgx_tests/unsigned_big_endian_3x4x10.pgx");
+  EXPECT_EQ(3, pgx_file->get_width());
+}
+
+
+TEST_F(PGXFileCheck, GetsHeightFromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_EQ(height, pgx_file->get_height());
+}
+
+
+TEST_F(PGXFileCheck, GetsHeight4FromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(resources_path + "/pgx_tests/unsigned_big_endian_3x4x10.pgx");
+  EXPECT_EQ(4, pgx_file->get_height());
+}
+
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

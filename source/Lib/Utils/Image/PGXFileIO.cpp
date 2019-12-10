@@ -78,11 +78,21 @@ auto get_is_signed(std::ifstream& ifstream) {
 }
 
 
+auto get_value(std::ifstream& ifstream) {
+	std::size_t value;
+	ifstream >> value;
+	return value;
+}
+
+
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   std::ifstream file(filename, std::ios::in);
   check_header(file);
   const auto endianess = get_endianess(file);
   const auto is_signed = get_is_signed(file);
+  const auto depth = get_value(file);
+  const auto width = get_value(file);
+  const auto height = get_value(file);
 
-  return std::make_unique<PGXFile>(filename, 1, 1, 1, is_signed, endianess);
+  return std::make_unique<PGXFile>(filename, width, height, depth, is_signed, endianess);
 }
