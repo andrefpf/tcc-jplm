@@ -293,19 +293,37 @@ class OverflowException : public std::exception {
 
 
 namespace PGXFileExceptions {
-  class InvalidIdException : public std::exception {
+class InvalidIdException : public std::exception {
  private:
   std::string message_;
 
  public:
   explicit InvalidIdException(const std::string obtained_id) {
-    message_ = "Obtained a valid ID: "+obtained_id+". Expecting PG";
+    message_ = "Obtained an invalid ID: " + obtained_id + ". Expecting PG";
   }
-  
+
   virtual const char* what() const throw() {
     return message_.c_str();
   }
 };
-}
+
+
+class InvalidEndianessException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidEndianessException(const std::string obtained_endianess) {
+    message_ = "Obtained an invalid Endianess: " + obtained_endianess +
+               ". Expecting ML (Big endian) or LM (Little endian)";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+}  // namespace PGXFileExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

@@ -77,9 +77,24 @@ TEST_F(PGXFileCheck, GetsNotNullPGXfile) {
 }
 
 
-TEST_F(PGXFileCheck, GetsEndianessFromFile) {
+TEST_F(PGXFileCheck, GetsEndianessFromFileBigEndian) {
   auto pgx_file = PGXFileIO::open(filename);
   EXPECT_EQ(endianess, pgx_file->get_endianess());
+}
+
+
+TEST_F(PGXFileCheck, GetsEndianessFromFileLittleEndian) {
+  auto pgx_file = PGXFileIO::open(
+      resources_path + "/pgx_tests/unsigned_little_endian_4x3x12.pgx");
+  EXPECT_EQ(PGXEndianess::PGX_LM_LITTLE_ENDIAN, pgx_file->get_endianess());
+}
+
+
+TEST_F(PGXFileCheck, ThrowsForInvalidEndianess) {
+  EXPECT_THROW(
+      auto pgx_file = PGXFileIO::open(
+          resources_path + "/pgx_tests/unsigned_invalid_endian_4x3x12.pgx"),
+      PGXFileExceptions::InvalidEndianessException);
 }
 
 
