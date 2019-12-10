@@ -51,25 +51,26 @@ class PGXFile : public ImageFile {
   PGXEndianess endianess;
 
  public:
-  PGXFile(const std::string& file_name, std::size_t width, std::size_t height,
-      std::size_t depth, bool is_signed, PGXEndianess endianess)
-      : ImageFile(ImageFileType::PGX, file_name, width, height), depth(depth),
+  PGXFile(const std::string& file_name, const std::streampos raster_begin,
+      std::size_t width, std::size_t height, std::size_t depth, bool is_signed,
+      PGXEndianess endianess)
+      : ImageFile(ImageFileType::PGX, file_name, raster_begin, width, height), depth(depth),
         _is_signed(is_signed), endianess(endianess) {
   }
 
 
   bool is_signed() const noexcept {
-  	return _is_signed;
+    return _is_signed;
   }
 
 
   auto get_depth() const noexcept {
-  	return depth;
+    return depth;
   }
 
 
   auto get_endianess() const noexcept {
-  	return endianess;
+    return endianess;
   }
 
 

@@ -109,5 +109,5 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   const auto height = get_value(file);
   advance_to_raster_begin(file);
 
-  return std::make_unique<PGXFile>(filename, width, height, depth, is_signed, endianess);
+  return std::make_unique<PGXFile>(filename, file.tellg(), width, height, depth, is_signed, endianess);
 }
