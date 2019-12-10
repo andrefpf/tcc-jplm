@@ -98,6 +98,27 @@ TEST_F(PGXFileCheck, ThrowsForInvalidEndianess) {
 }
 
 
+TEST_F(PGXFileCheck, GetsIsSignedFieldFromFileUnsigned) {
+  auto pgx_file = PGXFileIO::open(filename);
+  EXPECT_EQ(is_signed, pgx_file->is_signed());
+}
+
+
+TEST_F(PGXFileCheck, GetsIsSignedFieldFromFileSigned) {
+  auto pgx_file = PGXFileIO::open(
+      resources_path + "/pgx_tests/signed_big_endian_4x3x12.pgx");
+  EXPECT_EQ(true, pgx_file->is_signed());
+}
+
+
+TEST_F(PGXFileCheck, ThrowsForInvalidSign) {
+  EXPECT_THROW(
+      auto pgx_file = PGXFileIO::open(
+          resources_path + "/pgx_tests/invalid_sign_big_endian_4x3x12.pgx"),
+      PGXFileExceptions::InvalidSignFieldException);
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
