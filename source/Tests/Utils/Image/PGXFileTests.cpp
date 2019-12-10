@@ -53,67 +53,71 @@ struct PGXFileCheck : public testing::Test {
   std::size_t height = 3;
   std::size_t depth = 12;
   bool is_signed = false;
+  const std::streampos raster_begin =
+      3;  //raster begin is not tested for a valid position
   PGXEndianess endianess = PGXEndianess::PGX_ML_BIG_ENDIAN;
 };
 
 
-
 TEST_F(PGXFileCheck, CanCreateAPGXFile) {
- 	[[maybe_unused]] auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
+  [[maybe_unused]] auto pgx_file =
+      PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
 }
 
 
 TEST_F(PGXFileCheck, CanGetWidth) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
- 	EXPECT_EQ(width, pgx_file.get_width());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
+  EXPECT_EQ(width, pgx_file.get_width());
 }
 
 
 TEST_F(PGXFileCheck, CanGetHeight) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
- 	EXPECT_EQ(height, pgx_file.get_height());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
+  EXPECT_EQ(height, pgx_file.get_height());
 }
 
 
 TEST_F(PGXFileCheck, CanGetDepth) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
- 	EXPECT_EQ(depth, pgx_file.get_depth());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
+  EXPECT_EQ(depth, pgx_file.get_depth());
 }
 
 
 TEST_F(PGXFileCheck, CanGetSigned) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
- 	EXPECT_EQ(is_signed, pgx_file.is_signed());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
+  EXPECT_EQ(is_signed, pgx_file.is_signed());
 }
 
 
 TEST_F(PGXFileCheck, CanGetSignedFALSE) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, false, endianess);
- 	EXPECT_FALSE(pgx_file.is_signed());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, false, endianess);
+  EXPECT_FALSE(pgx_file.is_signed());
 }
 
 
 TEST_F(PGXFileCheck, CanGetSignedTRUE) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, true, endianess);
- 	EXPECT_TRUE(pgx_file.is_signed());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, true, endianess);
+  EXPECT_TRUE(pgx_file.is_signed());
 }
 
 
 TEST_F(PGXFileCheck, CanGetEndianess) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, endianess);
- 	EXPECT_EQ(endianess, pgx_file.get_endianess());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed, endianess);
+  EXPECT_EQ(endianess, pgx_file.get_endianess());
 }
 
 
 TEST_F(PGXFileCheck, CanGetEndianessBig) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, PGXEndianess::PGX_ML_BIG_ENDIAN);
- 	EXPECT_EQ(PGXEndianess::PGX_ML_BIG_ENDIAN, pgx_file.get_endianess());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed,
+      PGXEndianess::PGX_ML_BIG_ENDIAN);
+  EXPECT_EQ(PGXEndianess::PGX_ML_BIG_ENDIAN, pgx_file.get_endianess());
 }
 
 
 TEST_F(PGXFileCheck, CanGetEndianessLittle) {
- 	auto pgx_file = PGXFile(filename, width, height, depth, is_signed, PGXEndianess::PGX_LM_LITTLE_ENDIAN);
- 	EXPECT_EQ(PGXEndianess::PGX_LM_LITTLE_ENDIAN, pgx_file.get_endianess());
+  auto pgx_file = PGXFile(filename, raster_begin, width, height, depth, is_signed,
+      PGXEndianess::PGX_LM_LITTLE_ENDIAN);
+  EXPECT_EQ(PGXEndianess::PGX_LM_LITTLE_ENDIAN, pgx_file.get_endianess());
 }
 
 
