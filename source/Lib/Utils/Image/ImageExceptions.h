@@ -340,6 +340,22 @@ class InvalidSignFieldException : public std::exception {
 };
 
 
+class InvalidNewLine : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidNewLine(const std::string obtained_char) {
+    message_ = "Obtained an invalid sign field: " + obtained_char +
+               ". 0x0a";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
 }  // namespace PGXFileExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

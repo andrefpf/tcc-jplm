@@ -85,6 +85,20 @@ auto get_value(std::ifstream& ifstream) {
 }
 
 
+void advance_to_raster_begin(std::ifstream& ifstream) {
+  auto new_line_char = ifstream.get();
+  if (new_line_char == ' ') {
+  	new_line_char = ifstream.get();
+  }
+  if (new_line_char == 0x0d) {
+  	new_line_char = ifstream.get();
+  }
+  if(new_line_char != 0x0a) {
+  	throw PGXFileExceptions::InvalidNewLine(std::string(1, new_line_char));
+  }
+}
+
+
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   std::ifstream file(filename, std::ios::in);
   check_header(file);
@@ -93,6 +107,7 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   const auto depth = get_value(file);
   const auto width = get_value(file);
   const auto height = get_value(file);
+  advance_to_raster_begin(file);
 
   return std::make_unique<PGXFile>(filename, width, height, depth, is_signed, endianess);
 }
