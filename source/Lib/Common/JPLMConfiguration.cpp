@@ -89,22 +89,33 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
-  arguments.push_back(
-      {"--help", "-h", "Print this help message and exit", [this](std::any v) {
-         std::cout << "JPLM Codec" << std::endl;
-         std::cout << "Usage:" << std::any_cast<std::string>(v) << " [OPTIONS]"
-                   << std::endl;
-         std::cout << "Options:" << std::endl;
-         ConsoleTable table(1, 1, samilton::Alignment::centre);
-         unsigned int count = 0;
-         for (auto o : this->arguments) {
-           table[count][1] = o.getShortOption() + "," + o.getLongOption();
-           table[count][2] = o.getDescription();
-           count++;
-         }
-         std::cout << table << std::endl;
-         //exit(0);
-       }});
+  arguments.push_back({"--help", "-h", "Print this help message and exit",
+      [this, argv](std::any v) {
+        std::cout << "JPLM Codec" << std::endl;
+        std::cout << "Usage:" << argv[0] << " [OPTIONS]" << std::endl;
+        std::cout << "Options:" << std::endl;
+        ConsoleTable table(1, 1, samilton::Alignment::centre);
+        ConsoleTable::TableChars chars;
+        chars.topDownSimple = '\0';
+        chars.leftSeparation = '\0';
+        chars.centreSeparation = '\0';
+        chars.downLeft = '\0';
+        chars.downRight = '\0';
+        chars.leftRightSimple = '\0';
+        chars.rightSeparation = '\0';
+        chars.topLeft = '\0';
+        chars.topRight = '\0';
+        chars.topSeparation = '\0';
+        chars.downSeparation = '\0';
+        table.setTableChars(chars);
+        unsigned int count = 0;
+        for (auto o : this->arguments) {
+          table[count][1] = o.getShortOption() + "," + o.getLongOption();
+          table[count][2] = o.getDescription();
+          count++;
+        }
+        exit(0);
+      }});
 
   arguments.push_back({"--input", "-i",
       "Input directory containing a set of uncompressed light-field images "
@@ -118,36 +129,29 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
 }
 
 bool JPLMConfiguration::validate_param(std::string param) {
-  auto opt = [param](CLIArgument &s) {
-    return ((s.getShortOption() == param) || (s.getLongOption() == param));
-  };
-
-  auto starts_with = [param](std::string prefix) {
-    if (prefix.length() > 0 && param.length() > prefix.length()) {
-      for (size_t i = 0; i < prefix.length(); ++i)
-        if (param[i] != prefix[i])
-          return false;
-      return true;
-    }
-    return false;
-  };
-
-  if (starts_with("-")) {
-    //if (std::none_of(arguments.begin(), arguments.end(), opt))
-    //  throw UnknownCLIParameterException(param);
-    return true;
-  } else {
-    return false;
-  }
+  const std::string prefix = "-";
+  return !param.compare(0, prefix.size(), prefix);
 }
+
+bool JPLMConfiguration::validate_value(
+    unsigned int size, unsigned int pos, char **argv) {
+  return pos < size - 1;
+}
+
 
 void JPLMConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
     std::string key(reinterpret_cast<char *>(argv[n]));
     if (validate_param(key)) {
-      std::string value(reinterpret_cast<char *>(argv[n + 1]));
-      std::for_each(arguments.begin(), arguments.end(),
-          [key, value](CLIArgument &s) { s.parse(key, value); });
+      if (validate_value(argc, n, argv)) {
+        std::string value(reinterpret_cast<char *>(argv[n + 1]));
+        std::for_each(arguments.begin(), arguments.end(),
+            [key, value](CLIArgument &s) { s.parse(key, value); });
+      } else {
+        std::string value("");
+        std::for_each(arguments.begin(), arguments.end(),
+            [key, value](CLIArgument &s) { s.parse(key, value); });
+      }
     }
   }
 }
