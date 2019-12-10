@@ -118,6 +118,7 @@ class JPLMConfiguration {
   std::string output;
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
+  bool validate_value(unsigned int size, unsigned int pos, char **argv);
 };
 
 
