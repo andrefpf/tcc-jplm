@@ -324,6 +324,22 @@ class InvalidEndianessException : public std::exception {
 };
 
 
+class InvalidSignFieldException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidSignFieldException(const std::string obtained_sign) {
+    message_ = "Obtained an invalid sign field: " + obtained_sign +
+               ". Expecting '+'' (unsigned) or '-' (signed)";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
 }  // namespace PGXFileExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */
