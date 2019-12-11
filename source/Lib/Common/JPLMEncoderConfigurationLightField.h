@@ -119,6 +119,7 @@ JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
       }});
 
   this->parse_cli(argc, argv);
+  run_help();
 }
 
 

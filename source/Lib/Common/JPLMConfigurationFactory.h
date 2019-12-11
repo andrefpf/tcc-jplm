@@ -73,6 +73,15 @@ std::unique_ptr<JPLMConfiguration>
 JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
   auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
+
+  if (basic_config.is_help_mode()) {
+    std::vector<JPLMEncoderConfiguration> s {
+      JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
+      JPLMEncoderConfigurationLightField4DTransformMode(argc, const_cast<char**>(argv))
+    };
+    exit(0);
+  }
+
   if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
     auto light_field_config =
         JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
@@ -81,6 +90,7 @@ JPLMConfigurationFactory::get_encoder_configuration(
       return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
           argc, const_cast<char**>(argv));
   }
+
   throw NotImplementedYetPartException();
 }
 

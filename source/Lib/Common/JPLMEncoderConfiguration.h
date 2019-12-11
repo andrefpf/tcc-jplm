@@ -111,6 +111,7 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
       }});
 
   this->parse_cli(argc, argv);
+  run_help();
 }
 
 
