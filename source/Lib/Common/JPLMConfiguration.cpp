@@ -78,7 +78,13 @@
  */
 
 #include "Lib/Common/JPLMConfiguration.h"
-#include <cstddef>
+#include "CppConsoleTable/CppConsoleTable.hpp"
+
+
+using ConsoleTable = samilton::ConsoleTable;
+using sAlign = samilton::Alignment;
+using json = nlohmann::json;
+
 
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
@@ -88,33 +94,42 @@ const std::string &JPLMConfiguration::get_output_filename() const {
   return output;
 }
 
+void JPLMConfiguration::run_help() {
+  if (help_mode_flag) {
+    std::cout << "JPLM Codec" << std::endl;
+    std::cout << "Usage:" << executable_name << " [OPTIONS]" << std::endl;
+    std::cout << "Options:" << std::endl;
+    ConsoleTable table(1, 1, samilton::Alignment::centre);
+    ConsoleTable::TableChars chars;
+    chars.topDownSimple = '\0';
+    chars.leftSeparation = '\0';
+    chars.centreSeparation = '\0';
+    chars.downLeft = '\0';
+    chars.downRight = '\0';
+    chars.leftRightSimple = '\0';
+    chars.rightSeparation = '\0';
+    chars.topLeft = '\0';
+    chars.topRight = '\0';
+    chars.topSeparation = '\0';
+    chars.downSeparation = '\0';
+    table.setTableChars(chars);
+    unsigned int count = 0;
+    for (auto o : this->arguments) {
+      table[count][1](sAlign::right) =
+          o.getShortOption() + "," + o.getLongOption();
+      table[count][2](sAlign::left) = o.getDescription();
+      count++;
+    }
+    std::cout << table << std::endl;
+    //exit(0);
+  }
+}
+
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back({"--help", "-h", "Print this help message and exit",
       [this, argv](std::any v) {
-        std::cout << "JPLM Codec" << std::endl;
-        std::cout << "Usage:" << argv[0] << " [OPTIONS]" << std::endl;
-        std::cout << "Options:" << std::endl;
-        ConsoleTable table(1, 1, samilton::Alignment::centre);
-        ConsoleTable::TableChars chars;
-        chars.topDownSimple = '\0';
-        chars.leftSeparation = '\0';
-        chars.centreSeparation = '\0';
-        chars.downLeft = '\0';
-        chars.downRight = '\0';
-        chars.leftRightSimple = '\0';
-        chars.rightSeparation = '\0';
-        chars.topLeft = '\0';
-        chars.topRight = '\0';
-        chars.topSeparation = '\0';
-        chars.downSeparation = '\0';
-        table.setTableChars(chars);
-        unsigned int count = 0;
-        for (auto o : this->arguments) {
-          table[count][1] = o.getShortOption() + "," + o.getLongOption();
-          table[count][2] = o.getDescription();
-          count++;
-        }
-        exit(0);
+        this->help_mode_flag = true;
+        this->executable_name = argv[0];
       }});
 
   arguments.push_back({"--input", "-i",
@@ -126,6 +141,7 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
       "compressed bitstream.",
       [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
   this->parse_cli(argc, argv);
+  run_help();
 }
 
 bool JPLMConfiguration::validate_param(std::string param) {
@@ -154,4 +170,8 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
       }
     }
   }
+}
+
+const bool &JPLMConfiguration::is_help_mode() const {
+  return help_mode_flag;
 }

@@ -50,14 +50,11 @@
 #include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
-#include "CppConsoleTable/CppConsoleTable.hpp"
 #include "JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
-using ConsoleTable = samilton::ConsoleTable;
-using json = nlohmann::json;
 
 enum class JpegPlenoPart {
   LightField = 2,
@@ -70,6 +67,7 @@ class JPLMConfiguration {
 
   const std::string &get_input_filename() const;
   const std::string &get_output_filename() const;
+  const bool &is_help_mode() const;
 
  protected:
   struct CLIArgument {
@@ -114,9 +112,14 @@ class JPLMConfiguration {
   std::vector<CLIArgument> arguments;
   std::string input;
   std::string output;
+  void run_help();
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
+
+private:
+  bool help_mode_flag;
+  std::string executable_name;
 };
 
 
