@@ -186,11 +186,19 @@ std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
               image);
       return converted_image;
     }
+    case ImageFileType::PGX: {
+      return nullptr;
+    }
   }
 
   throw std::logic_error("Not fully implemented: ImageIO::read");
 }
 
+
+template<typename T>
+std::unique_ptr<Image<T>> read(ImageFile& image_file) {
+  
+}
 
 }  // namespace ImageIO
 

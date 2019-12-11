@@ -39,6 +39,7 @@
  */
 
 #include <cstddef>
+#include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageFile.h"
 
 enum class PGXEndianess { PGX_ML_BIG_ENDIAN = 0, PGX_LM_LITTLE_ENDIAN = 1 };
@@ -54,8 +55,8 @@ class PGXFile : public ImageFile {
   PGXFile(const std::string& file_name, const std::streampos raster_begin,
       std::size_t width, std::size_t height, std::size_t depth, bool is_signed,
       PGXEndianess endianess)
-      : ImageFile(ImageFileType::PGX, file_name, raster_begin, width, height), depth(depth),
-        _is_signed(is_signed), endianess(endianess) {
+      : ImageFile(ImageFileType::PGX, file_name, raster_begin, width, height),
+        depth(depth), _is_signed(is_signed), endianess(endianess) {
   }
 
 
@@ -74,5 +75,40 @@ class PGXFile : public ImageFile {
   }
 
 
-  ~PGXFile() = default;
+  virtual ~PGXFile() = default;
+
+  template<typename T>
+  std::unique_ptr<Image<T>> read_full_image() {
+    return nullptr;
+  }
+
+  std::variant<std::unique_ptr<Image<uint8_t>>, std::unique_ptr<Image<int8_t>>,
+      std::unique_ptr<Image<uint16_t>>, std::unique_ptr<Image<int16_t>>,
+      std::unique_ptr<Image<uint32_t>>, std::unique_ptr<Image<int32_t>>>
+  read_full_image() {
+    if (this->is_signed()) {
+      switch (this->depth) {
+        case 1 ... 8: {
+          return read_full_image<int8_t>();
+        }
+        case 9 ... 16: {
+          return read_full_image<int16_t>();
+        }
+        case 17 ... 32: {
+          return read_full_image<int32_t>();
+        }
+      }
+    }  //else (not signed)
+    switch (this->depth) {
+      case 1 ... 8: {
+        return read_full_image<uint8_t>();
+      }
+      case 9 ... 16: {
+        return read_full_image<uint16_t>();
+      }
+      case 17 ... 32: {
+        return read_full_image<uint32_t>();
+      }
+    }
+  }
 };
