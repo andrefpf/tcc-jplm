@@ -44,6 +44,8 @@
 #include "Lib/Utils/Image/PPMBinaryFile.h"
 #include "Lib/Utils/Image/PixelMapFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
+#include "Lib/Utils/Image/PGXFileIO.h"
+
 
 namespace ImageIO {
 
@@ -144,10 +146,17 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
         PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(image);
     return converted_image;
   }
+  if (name.extension() == fpath(".pgx")) {
+    [[maybe_unused]]auto pgx_file = PGXFileIO::open(filename);
+  }
   throw std::logic_error(
-      "Not fully implemented (for types other than ppm): ImageIO::imread");
+      "Not fully implemented (for types other than ppm and pgx): ImageIO::imread");
 }
 
+// template<typename T> 
+// std::unique_ptr<UndefinedImage<T>> imread(const std::string& filename) {
+//   return nullptr;
+// }
 
 /**
  * \brief      opens a image file pointer

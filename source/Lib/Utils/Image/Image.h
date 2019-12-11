@@ -45,7 +45,7 @@
 #include "Lib/Utils/Image/ImageChannel.h"
 
 //The BT types should also support full and reduced dynamic ranges
-enum ImageType { Invalid, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };
+enum ImageType { Invalid, Undefined, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };
 
 
 template<typename T>

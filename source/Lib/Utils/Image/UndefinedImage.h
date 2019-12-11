@@ -31,23 +31,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageIO.cpp
+/** \file     UndefinedImage.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-29
+ *  \date     2019-12-11
  */
 
-#include "ImageIO.h"
+template<typename T>
+class UndefinedImage : public Image<T>
+{
+public:
+  static constexpr auto image_type = ImageType::Undefined;
+  UndefinedImage(std::size_t width, std::size_t height, std::size_t bpp)
+      : ThreeChannelImage<T>(width, height, bpp, image_type){};
 
-std::unique_ptr<ImageFile> ImageIO::open(const std::string& filename) {
-  using fpath = std::filesystem::path;
-  auto name = fpath(filename);
-  if (name.extension() == fpath(".ppm")) {
-    return PixelMapFileIO::open(filename);
+
+  UndefinedImage(UndefinedImage<T>&& other) noexcept
+      : ThreeChannelImage<T>(std::move(other)) {
   }
-  if (name.extension() == fpath(".pgx")) {
-  	return PGXFileIO::open(filename);
+
+
+  UndefinedImage(const UndefinedImage<T>& other) : ThreeChannelImage<T>(other){};
+
+
+  UndefinedImage& operator=(UndefinedImage<T>&& other) {
+    ThreeChannelImage<T>::operator=(std::move(other));
+    return *this;
   }
-  throw std::logic_error("Not fully implemented: ImageIO::open");
-}
+
+
+  inline bool operator==(const UndefinedImage<T>& other) const {
+    return this->is_equal(other);
+  }
+
+
+  inline bool operator!=(const UndefinedImage<T>& other) const {
+    return !this->is_equal(other);
+  }
+
+
+  virtual UndefinedImage* generate_ptr_to_clone() const override {
+    return new UndefinedImage<T>(*this);
+  }
+
+
+  virtual ~UndefinedImage() = default;
+	
+	void merge(const UndefinedImage& other) {
+
+	}
+};

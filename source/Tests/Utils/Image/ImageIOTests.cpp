@@ -179,6 +179,29 @@ TEST(CLikeSyntaxTest, ImReadAndOpenPlusReadMustResultInTheSameImage) {
 }
 
 
+struct CLikeSyntaxTestPGXFiles : public testing::Test {
+  std::string filename =
+      std::string(resources_path + "/pgx_tests/unsigned_big_endian_4x3x12.pgx");
+  std::size_t width = 4;
+  std::size_t height = 3;
+  std::size_t depth = 12;
+  bool is_signed = false;
+  PGXEndianess endianess = PGXEndianess::PGX_ML_BIG_ENDIAN;
+};
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFile) {
+  EXPECT_NO_THROW(auto pgx_file = ImageIO::open(filename));
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileReadsHeader) {
+  auto pgx_file = ImageIO::open(filename);
+  EXPECT_EQ(width, pgx_file->get_width());
+  EXPECT_EQ(height, pgx_file->get_height());
+}
+
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
