@@ -118,7 +118,7 @@ class JPLMConfiguration {
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
 
 private:
-  bool help_mode_flag;
+  bool help_mode_flag = false;
   std::string executable_name;
 };
 

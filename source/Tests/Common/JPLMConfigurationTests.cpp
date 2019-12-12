@@ -376,6 +376,52 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 }
 
 
+TEST(
+    JPLMEncoderConfigurationLightField4DTransformModeTest, EncodeBikesDataset) {
+  const char* argv[] = {"", "--part", "2",
+                        "--type", "0",
+                        "--input", "~/DATASETS/I01_Bikes/",
+                        "--output", "./test_bikes.lf",
+                        "--transform_size_maximum_inter_view_vertical", "13",
+                        "--transform_size_maximum_inter_view_horizontal", "13",
+                        "--transform_size_maximum_intra_view_vertical", "31",
+                        "--transform_size_maximum_intra_view_horizontal", "31",
+                        "--transform_size_minimum_inter_view_vertical", "13",
+                        "--transform_size_minimum_inter_view_horizontal", "13",
+                        "--transform_size_minimum_intra_view_vertical", "4",
+                        "--transform_size_minimum_intra_view_horizontal", "4",
+                        "--lambda", "10000",
+                        "-t", "13",
+                        "-s", "9",
+                        "-v", "434",
+                        "-u", "626"
+                        };
+  int argc = 35;
+  JPLMEncoderConfigurationLightField4DTransformMode config(
+      argc, const_cast<char**>(argv));
+  EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
+  EXPECT_EQ( "~/DATASETS/I01_Bikes/", config.get_input_filename());
+  EXPECT_EQ( "./test_bikes.lf", config.get_output_filename());
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
+
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
+  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
+
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.vertical);
+  EXPECT_EQ(13, config.transform_size.minimum.inter_view.horizontal);
+
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
+  EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
+
+  EXPECT_DOUBLE_EQ(10000, config.get_lambda());
+  EXPECT_EQ(13, config.get_number_of_rows_t());
+  EXPECT_EQ(9, config.get_number_of_columns_s());
+  EXPECT_EQ(434, config.get_view_height_v());
+  EXPECT_EQ(626, config.get_view_width_u());
+}
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   if (argc > 1) {
