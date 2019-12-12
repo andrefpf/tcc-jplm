@@ -3,24 +3,24 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(jplm)
 
-set(JPLM_NAME "JPEG Pleno Model")
+set (JPLM_NAME "JPEG Pleno Model")
 
 # The version number.
-set(JPLM_VERSION_MAJOR 0)
-set(JPLM_VERSION_MINOR 1)
-set(JPLM_VERSION_PATCH 0)
+set (JPLM_VERSION_MAJOR 0)
+set (JPLM_VERSION_MINOR 1)
+set (JPLM_VERSION_PATCH 0)
 
 set(CMAKE_MODULE_PATH "${CMAKE_HOME_DIRECTORY}/cmake;${CMAKE_MODULE_PATH}")
 
 
 #configuring paths
-if (CMAKE_BUILD_TYPE MATCHES Debug)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
   set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib-debug)
   set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin-debug)
-else (CMAKE_BUILD_TYPE MATCHES Debug)
+else(CMAKE_BUILD_TYPE MATCHES Debug) 
   set(CMAKE_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/lib)
   set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
-endif (CMAKE_BUILD_TYPE MATCHES Debug)
+endif(CMAKE_BUILD_TYPE MATCHES Debug)
 
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
@@ -141,6 +141,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/TransformMode)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/TransformMode)
+
 
 
 enable_testing()

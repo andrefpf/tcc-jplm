@@ -55,19 +55,21 @@
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
+using namespace std;
+using json = nlohmann::json;
+using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {
   LightField = 2,
 };
 
+
 class JPLMConfiguration {
  public:
   JPLMConfiguration();
-
   JPLMConfiguration(int argc, char **argv);
 
   const std::string &get_input_filename() const;
-
   const std::string &get_output_filename() const;
   const bool &is_help_mode() const;
 
