@@ -88,6 +88,7 @@ class JPLMConfiguration {
         action(value);
         this->parsed = true;
       }
+<<<<<<< HEAD
     }
 
    public:
@@ -101,6 +102,8 @@ class JPLMConfiguration {
 
     const std::string &getDescription() const {
       return description;
+=======
+>>>>>>> Added unit tests to check if both long-styled and short-styled params are working together.
     }
 
    private:
