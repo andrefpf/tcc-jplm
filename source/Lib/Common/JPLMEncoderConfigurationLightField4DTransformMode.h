@@ -182,7 +182,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->lambda = std::stod(typed_string, &sz);
       }});
 
-  arguments.push_back({"--transform_maximum_inter_view_vertical",
+  arguments.push_back({"--transform_size_maximum_inter_view_vertical",
       "-TNIv",
       "Maximum 4D transform size in inter-view vertical direction.",
       [this](std::any v) {
@@ -191,7 +191,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_maximum_inter_view_horizontal",
+  arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
       "-TMIh",
       "Maximum 4D transform size in inter-view horizontal direction.",
       [this](std::any v) {
@@ -200,7 +200,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_maximum_intra_view_vertical",
+  arguments.push_back({"--transform_size_maximum_intra_view_vertical",
       "-TMiv",
       "Maximum 4D transform size in intra-view vertical direction.",
       [this](std::any v) {
@@ -209,7 +209,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_maximum_intra_view_horizontal",
+  arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
       "-TMih",
       "Maximum 4D transform size in intra-view horizontal direction.",
       [this](std::any v) {
@@ -219,7 +219,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
       }});
 
 
-  arguments.push_back({"--transform_minimum_inter_view_vertical",
+  arguments.push_back({"--transform_size_minimum_inter_view_vertical",
       "-TmIv",
       "Minimum 4D transform size in inter-view vertical direction.",
       [this](std::any v) {
@@ -228,7 +228,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_minimum_inter_view_horizontal",
+  arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
       "-TmIh",
       "Minimum 4D transform size in inter-view horizontal direction.",
       [this](std::any v) {
@@ -237,7 +237,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_minimum_intra_view_vertical",
+  arguments.push_back({"--transform_size_minimum_intra_view_vertical",
       "-Tmiv",
       "Minimum 4D transform size in intra-view vertical direction.",
       [this](std::any v) {
@@ -246,7 +246,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       }});
 
-  arguments.push_back({"--transform_minimum_intra_view_horizontal",
+  arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
       "-Tmih",
       "Minimum 4D transform size in intra-view horizontal direction.",
       [this](std::any v) {

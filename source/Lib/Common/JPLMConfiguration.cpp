@@ -95,9 +95,9 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 void JPLMConfiguration::run_help() {
-  if (help_mode_flag) {
+  if (this->help_mode_flag) {
     std::cout << "JPLM Codec" << std::endl;
-    std::cout << "Usage:" << executable_name << " [OPTIONS]" << std::endl;
+    std::cout << "Usage:" << this->executable_name << " [OPTIONS]" << std::endl;
     std::cout << "Options:" << std::endl;
     ConsoleTable table(1, 1, samilton::Alignment::centre);
     ConsoleTable::TableChars chars;
@@ -129,7 +129,7 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back({"--help", "-h", "Print this help message and exit",
       [this, argv](std::any v) {
         this->help_mode_flag = true;
-        this->executable_name = argv[0];
+        this->executable_name = std::string(argv[0]);
       }});
 
   arguments.push_back({"--input", "-i",
