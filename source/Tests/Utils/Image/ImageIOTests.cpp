@@ -256,6 +256,24 @@ TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsNotSigned) {
   EXPECT_EQ(image_from_pgx_file->is_signed(), is_signed);
 }
 
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndDataIsCorrect) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 3),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 3),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 3),  0x03FF);
+}
+
  
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

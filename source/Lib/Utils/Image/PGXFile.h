@@ -137,6 +137,14 @@ class PGXFile : public ImageFile {
       }
     }
 
+    auto image_channel_ptr = image->get_channel(0).data();
+    auto vector_data = sample_vector.data();
+
+    for(auto i=decltype(number_of_samples){0};i<number_of_samples;++i) {
+      *image_channel_ptr= *(vector_data++);
+      ++image_channel_ptr;
+    }
+
     return image;
   }
 
