@@ -250,7 +250,13 @@ TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndCorrectBpp) {
 }
 
 
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsNotSigned) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->is_signed(), is_signed);
+}
 
+ 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

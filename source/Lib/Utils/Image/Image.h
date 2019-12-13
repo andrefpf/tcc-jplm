@@ -45,7 +45,16 @@
 #include "Lib/Utils/Image/ImageChannel.h"
 
 //The BT types should also support full and reduced dynamic ranges
-enum ImageType { Invalid, Undefined, GrayScale, RGB, BT601, BT709, BT2020, YCoCg };
+enum ImageType {
+  Invalid,
+  Undefined,
+  GrayScale,
+  RGB,
+  BT601,
+  BT709,
+  BT2020,
+  YCoCg
+};
 
 
 template<typename T>
@@ -356,14 +365,14 @@ class Image {
     return channels[i];
   }
 
-  
+
   void shift_pixels_by(int8_t shift) {
     for (auto& channel : channels) {
       channel.shift_pixels_by(shift);
     }
   }
 
-  
+
   auto begin() {
     return channels.begin();
   }
@@ -395,9 +404,16 @@ class Image {
 
 
   virtual std::vector<std::string> get_channel_names() const = 0;
+
+
+  bool is_signed() const noexcept {
+    if constexpr (std::is_signed_v<T>) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 };
-
-
 
 
 template<typename T>
