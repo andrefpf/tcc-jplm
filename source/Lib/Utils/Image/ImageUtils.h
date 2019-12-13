@@ -43,6 +43,7 @@
 
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
+#include "Lib/Utils/Image/UndefinedImage.h"
 
 namespace ImageUtils {
 
@@ -94,6 +95,30 @@ std::unique_ptr<ImageTout<Tout>> get_image_with_new_container_type(
       output_image_channel_iterator++;
     }
     output_image_iterator++;
+  }
+
+  return output_image;
+}
+
+//! \todo make this (get_undefined_images_as) variadic
+template<template<typename> class ImageOut, typename Tout>
+std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
+    const UndefinedImage<Tout>& channel_0,
+    const UndefinedImage<Tout>& channel_1,
+    const UndefinedImage<Tout>& channel_2) {
+  auto width = channel_0.get_width();
+  auto height = channel_0.get_height();
+  auto output_image =
+      std::make_unique<ImageOut<Tout>>(width, height, channel_0.get_bpp());
+  //std::size_t width, std::size_t height, std::size_t bpp//, std::size_t number_of_channels)
+
+  for (auto i = decltype(height){0}; i < height; ++i) {
+    for (auto j = decltype(width){0}; j < width; ++j) {
+      output_image->set_pixel_at(
+          {channel_0.get_value_at(0, i, j), channel_1.get_value_at(0, i, j),
+              channel_2.get_value_at(0, i, j)},
+          {i, j});
+    }
   }
 
   return output_image;
