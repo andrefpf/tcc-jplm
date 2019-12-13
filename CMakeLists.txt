@@ -57,22 +57,23 @@ include(ExternalCPPItertools)
 include(ExternalNlohmannJSON)
 include(ExternalOpenJPEG)
 
-option(VISUALIZATION_TOOL "Compiles the Light field Visualization tool" ON)
-
-FIND_PACKAGE(X11)
-if (VISUALIZATION_TOOL)
-  if (X11_FOUND)
-    message(STATUS "\nFOUND X11-LIBS")
-  else (X11_FOUND)
-    message(STATUS "\nX11-LIBS NOT FOUND")
-    message(STATUS "\nYou may use the cmake flag -DVISUALIZATION_TOOL=OFF to
-            skip the lightfield visualization tool compilation
-            (e.g ~/jplm/build$ cmake -DVISUALIZATION_TOOL=OFF ..).")
-    message(FATAL_ERROR "X11 is required for the Light field visualization tool.")
-  endif (X11_FOUND)
-else (VISUALIZATION_TOOL)
-  message(STATUS "\nLIGHTFIELD VISUALIZATION TOOL TARGET IS DISABLED")
-endif (VISUALIZATION_TOOL)
+if (UNIX)
+    option(VISUALIZATION_TOOL "Compiles the Light field Visualization tool" OFF)
+    FIND_PACKAGE(X11)
+    if (VISUALIZATION_TOOL)
+      if (X11_FOUND)
+        message(STATUS "\nFOUND X11-LIBS")
+      else (X11_FOUND)
+        message(STATUS "\nX11-LIBS NOT FOUND")
+        message(STATUS "\nYou may use the cmake flag -DVISUALIZATION_TOOL=OFF to
+                skip the lightfield visualization tool compilation
+                (e.g ~/jplm/build$ cmake -DVISUALIZATION_TOOL=OFF ..).")
+        message(FATAL_ERROR "X11 is required for the Light field visualization tool.")
+      endif (X11_FOUND)
+    else (VISUALIZATION_TOOL)
+      message(STATUS "\nLIGHTFIELD VISUALIZATION TOOL TARGET IS DISABLED")
+    endif (VISUALIZATION_TOOL)
+endif (UNIX)
 
 
 link_libraries(stdc++fs)
