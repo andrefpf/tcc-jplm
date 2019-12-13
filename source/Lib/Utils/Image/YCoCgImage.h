@@ -6,9 +6,11 @@
 template<typename T>
 class YCoCgImage : public ThreeChannelImage<T> {
  public:
+ static constexpr auto image_type = ImageType::YCoCg;
+
   YCoCgImage(
-      std::size_t width, std::size_t height, std::size_t bpp, ImageType type)
-      : ThreeChannelImage<T>(width, height, bpp, type){};
+      std::size_t width, std::size_t height, std::size_t bpp)
+      : ThreeChannelImage<T>(width, height, bpp, image_type){};
 
 
   YCoCgImage(YCoCgImage<T>&& other) noexcept

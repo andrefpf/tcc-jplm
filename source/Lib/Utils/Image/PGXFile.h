@@ -39,17 +39,34 @@
  */
 
 #include <cstddef>
+#include <type_traits>  //std::is_signed
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageFile.h"
+#include "Lib/Utils/Image/UndefinedImage.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 enum class PGXEndianess { PGX_ML_BIG_ENDIAN = 0, PGX_LM_LITTLE_ENDIAN = 1 };
 
 
 class PGXFile : public ImageFile {
- private:
+ protected:
   std::size_t depth;
   bool _is_signed;
-  PGXEndianess endianess;
+  const PGXEndianess endianess;
+
+  bool is_different_endianess() const {
+    if (this->endianess == PGXEndianess::PGX_ML_BIG_ENDIAN) {
+      if constexpr (BinaryTools::using_little_endian()) {
+        return true;
+      }
+    } else {
+      if constexpr (!BinaryTools::using_little_endian()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 
  public:
   PGXFile(const std::string& file_name, const std::streampos raster_begin,
@@ -77,38 +94,77 @@ class PGXFile : public ImageFile {
 
   virtual ~PGXFile() = default;
 
+
   template<typename T>
-  std::unique_ptr<Image<T>> read_full_image() {
-    return nullptr;
+  T change_endianess(T value) {
+    if constexpr (std::is_signed<T>::value) {
+      // typedef std::make_unsigned<T>::type unsiged_T_type;
+      return (T) BinaryTools::swap_endianess(
+          static_cast<typename std::make_unsigned<T>::type>(value));
+    } else {
+      return BinaryTools::swap_endianess(value);
+    }
   }
 
-  std::variant<std::unique_ptr<Image<uint8_t>>, std::unique_ptr<Image<int8_t>>,
-      std::unique_ptr<Image<uint16_t>>, std::unique_ptr<Image<int16_t>>,
-      std::unique_ptr<Image<uint32_t>>, std::unique_ptr<Image<int32_t>>>
-  read_full_image() {
-    if (this->is_signed()) {
-      switch (this->depth) {
-        case 1 ... 8: {
-          return read_full_image<int8_t>();
-        }
-        case 9 ... 16: {
-          return read_full_image<int16_t>();
-        }
-        case 17 ... 32: {
-          return read_full_image<int32_t>();
-        }
-      }
-    }  //else (not signed)
-    switch (this->depth) {
-      case 1 ... 8: {
-        return read_full_image<uint8_t>();
-      }
-      case 9 ... 16: {
-        return read_full_image<uint16_t>();
-      }
-      case 17 ... 32: {
-        return read_full_image<uint32_t>();
+
+  template<typename T>
+  std::unique_ptr<UndefinedImage<T>> read_full_image() {
+    if (!file.is_open()) {
+      file.open(this->filename.c_str());
+      if(!file.is_open()) {
+        //error
       }
     }
+
+    file.seekg(raster_begin);
+
+    auto image = std::make_unique<UndefinedImage<T>>(
+        this->width, this->height, 1, this->depth);
+    auto number_of_samples = this->width * this->height;
+    std::vector<T> sample_vector(number_of_samples);
+    file.read(reinterpret_cast<char*>(sample_vector.data()),
+        number_of_samples * sizeof(T));
+
+    if (!file) {
+      //error? less pixels than availabe in file file.gcount() (readed)
+    }
+
+    if constexpr (sizeof(T) > 1) {
+      if (is_different_endianess()) {
+        for (auto& value : sample_vector) {
+          value = change_endianess(value);
+        }
+      }
+    }
+
+    return image;
+  }
+
+  std::variant<std::unique_ptr<UndefinedImage<uint8_t>>, std::unique_ptr<UndefinedImage<int8_t>>,
+      std::unique_ptr<UndefinedImage<uint16_t>>, std::unique_ptr<UndefinedImage<int16_t>>,
+      std::unique_ptr<UndefinedImage<uint32_t>>, std::unique_ptr<UndefinedImage<int32_t>>>
+  read_full_image() {
+    if (this->is_signed()) {
+      if (depth <= 8) {
+        return read_full_image<int8_t>();
+      }
+      if (depth <= 16) {
+        return read_full_image<int16_t>();
+      }
+      if (depth <= 32) {
+        return read_full_image<int32_t>();
+      }
+      //throw..
+    }  //else (not signed)
+    if (depth <= 8) {
+      return read_full_image<uint8_t>();
+    }
+    if (depth <= 16) {
+      return read_full_image<uint16_t>();
+    }
+    if (depth <= 32) {
+      return read_full_image<uint32_t>();
+    }
+    //throw
   }
 };

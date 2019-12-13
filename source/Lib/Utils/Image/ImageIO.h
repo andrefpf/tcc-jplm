@@ -45,6 +45,7 @@
 #include "Lib/Utils/Image/PixelMapFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
 #include "Lib/Utils/Image/PGXFileIO.h"
+#include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 
 
 namespace ImageIO {
@@ -166,6 +167,23 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
 std::unique_ptr<ImageFile> open(const std::string& filename);
 
 
+  template<typename T>
+std::unique_ptr<Image<T>> read(ImageFile& image_file) {
+  switch(image_file.get_type()) {
+    case ImageFileType::PixelMap: {
+      auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
+      return PixelMapFileIO::extract_image_with_type_from_variant<RGBImage, T>(
+              image);
+    }
+    case ImageFileType::PGX: {
+      auto variant_image = dynamic_cast<PGXFile&>(image_file).read_full_image();
+      auto image = std::visit(PGXFileIO::UndefinedImageVisitor<T>(), variant_image);
+      return image;
+      // return nullptr;
+    }
+  }
+}
+
 /**
  * \brief      Function to read a image from a file
  *
@@ -178,27 +196,47 @@ std::unique_ptr<ImageFile> open(const std::string& filename);
  */
 template<template<typename> class ImageT, typename T>
 std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
-  switch (image_file.get_type()) {
-    case ImageFileType::PixelMap: {
-      auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
-      auto converted_image =
-          PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
-              image);
-      return converted_image;
-    }
-    case ImageFileType::PGX: {
-      return nullptr;
-    }
+  // switch (image_file.get_type()) {
+  //   case ImageFileType::PixelMap: {
+  //     auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
+  //     auto converted_image =
+  //         PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
+  //             image);
+  //     return converted_image;
+  //   }
+  //   case ImageFileType::PGX: {
+  //     // if constexpr (std::is_same_v<ImageT<T>, UndefinedImage<T>>) {
+  //     //   return 
+  //     // }
+  //     return nullptr;
+  //   }
+  // }
+
+  using namespace ImageColorSpaceConversion;
+  auto image = read<T>(image_file);
+
+  if(image->get_type() == ImageT<T>::image_type) {
+    return std::unique_ptr<ImageT<T>>(static_cast<ImageT<T>*>(image.release()));
   }
 
-  throw std::logic_error("Not fully implemented: ImageIO::read");
+  switch (image->get_type()) {
+    case ImageType::RGB : {
+      return std::make_unique<ImageT<T>>(std::move(convert::to<ImageT>(dynamic_cast<RGBImage<T>&>(*image))));
+    }
+    case ImageType::BT601 : {
+      return std::make_unique<ImageT<T>>(std::move(convert::to<ImageT>(dynamic_cast<BT601Image<T>&>(*image))));
+    }
+    case ImageType::Undefined : {
+      //
+    }
+  }
+  // return convert::to<ImageT<T>>(image);
+
+  // throw std::logic_error("Not fully implemented: ImageIO::read");
 }
 
 
-template<typename T>
-std::unique_ptr<Image<T>> read(ImageFile& image_file) {
-  
-}
+
 
 }  // namespace ImageIO
 
