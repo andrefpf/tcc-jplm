@@ -44,7 +44,6 @@
 #ifndef JPLM_JPLMConfiguration_H
 #define JPLM_JPLMConfiguration_H
 
-#include <getopt.h>
 #include <algorithm>
 #include <any>
 #include <iostream>
