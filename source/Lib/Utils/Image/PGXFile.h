@@ -119,7 +119,7 @@ class PGXFile : public ImageFile {
     file.seekg(raster_begin);
 
     auto image = std::make_unique<UndefinedImage<T>>(
-        this->width, this->height, 1, this->depth);
+        this->width, this->height, this->depth, 1);
     auto number_of_samples = this->width * this->height;
     std::vector<T> sample_vector(number_of_samples);
     file.read(reinterpret_cast<char*>(sample_vector.data()),
