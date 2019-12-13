@@ -48,5 +48,33 @@
 
 namespace PGXFileIO {
 
+template<typename T>	
+struct UndefinedImageVisitor {
+  template<typename T0>
+  std::unique_ptr<UndefinedImage<T>> operator()(
+      std::unique_ptr<UndefinedImage<T0>>& image) {
+    if constexpr (std::is_same<T0, T>::value) {
+      return std::unique_ptr<UndefinedImage<T>>(
+          static_cast<UndefinedImage<T>*>(image.release()));
+    }
+
+    auto output_image = std::make_unique<UndefinedImage<T>>(
+        image->get_width(), image->get_height(), 1, image->get_bpp());
+    auto output_image_iterator = output_image->begin();
+
+    for (const auto& channel : *(image)) {
+      auto output_image_channel_iterator = output_image_iterator->begin();
+      for (const auto value : channel) {
+        *output_image_channel_iterator = static_cast<T>(value);
+        ++output_image_channel_iterator;
+      }
+      ++output_image_iterator;
+    }
+
+    return output_image;
+  }
+};
+
+
 std::unique_ptr<PGXFile> open(const std::string& filename);
 }

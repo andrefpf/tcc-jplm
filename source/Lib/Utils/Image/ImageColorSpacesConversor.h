@@ -217,6 +217,17 @@ ImageOut<T> to(const ImageIn<T>& source) {
   static_assert(std::is_base_of<Image<T>, ImageOut<T>>::value,
       "The output for conversion must be an image...");
 
+  if constexpr(std::is_same_v<Image<T>, ImageIn<T>>) {
+    switch (source.get_type()) {
+      case ImageType::RGB : {
+        return to<ImageOut>(dynamic_cast<const RGBImage<T>&>(source));
+      }
+      case ImageType::BT601 : {
+        return to<ImageOut>(dynamic_cast<const BT601Image<T>&>(source));
+      }
+    }
+  }
+
   //first check if both images are from the same type (in and out)
   if constexpr (std::is_same<ImageIn<T>, ImageOut<T>>::value) {
     return source;  //no need for conversion, returns a copy of source

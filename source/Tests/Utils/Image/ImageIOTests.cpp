@@ -195,6 +195,12 @@ TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFile) {
 }
 
 
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReads) {
+  auto pgx_file = ImageIO::open(filename);
+  EXPECT_NO_THROW(auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file));
+}
+
+
 TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileReadsHeader) {
   auto pgx_file = ImageIO::open(filename);
   EXPECT_EQ(width, pgx_file->get_width());

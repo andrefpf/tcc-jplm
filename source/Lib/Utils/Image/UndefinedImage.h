@@ -38,25 +38,27 @@
  *  \date     2019-12-11
  */
 
+#include "Lib/Utils/Image/Image.h"
+
 template<typename T>
 class UndefinedImage : public Image<T>
 {
 public:
   static constexpr auto image_type = ImageType::Undefined;
-  UndefinedImage(std::size_t width, std::size_t height, std::size_t bpp)
-      : ThreeChannelImage<T>(width, height, bpp, image_type){};
+  UndefinedImage(std::size_t width, std::size_t height, std::size_t number_of_channels, std::size_t bpp)
+      : Image<T>(width, height, number_of_channels, bpp, image_type){};
 
 
   UndefinedImage(UndefinedImage<T>&& other) noexcept
-      : ThreeChannelImage<T>(std::move(other)) {
+      : Image<T>(std::move(other)) {
   }
 
 
-  UndefinedImage(const UndefinedImage<T>& other) : ThreeChannelImage<T>(other){};
+  UndefinedImage(const UndefinedImage<T>& other) : Image<T>(other){};
 
 
   UndefinedImage& operator=(UndefinedImage<T>&& other) {
-    ThreeChannelImage<T>::operator=(std::move(other));
+    Image<T>::operator=(std::move(other));
     return *this;
   }
 
@@ -78,7 +80,12 @@ public:
 
   virtual ~UndefinedImage() = default;
 	
-	void merge(const UndefinedImage& other) {
 
-	}
+  virtual std::vector<std::string> get_channel_names() const override {
+    return std::vector<std::string>(this->get_number_of_channels(), "Unnamed");
+  }
+
+	// void merge(const UndefinedImage& other) {
+
+	// }
 };
