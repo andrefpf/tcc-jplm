@@ -313,7 +313,7 @@ class Image {
 
   void set_pixel_at(T value, const std::size_t channel, const std::size_t i,
       const std::size_t j) {
-    channels.at(channel).set_value_at(i, j, value);
+    channels.at(channel).set_value_at(value, i, j);
   }
 
 

@@ -99,7 +99,7 @@ class ThreeChannelImage : public Image<T> {
 
   void set_pixel_at(const std::tuple<T, T, T>& pixel,
       std::pair<std::size_t, std::size_t> coordinate) {
-    set_value_at(pixel, std::get<0>(coordinate), std::get<1>(coordinate));
+    set_pixel_at(pixel, std::get<0>(coordinate), std::get<1>(coordinate));
   }
 
 

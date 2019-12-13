@@ -38,6 +38,9 @@
  *  \date     2019-12-11
  */
 
+#ifndef JPLM_LIB_UTILS_IMAGE_UNDEFINEDIMAGE_H__
+#define JPLM_LIB_UTILS_IMAGE_UNDEFINEDIMAGE_H__
+
 #include "Lib/Utils/Image/Image.h"
 
 template<typename T>
@@ -79,13 +82,15 @@ public:
 
 
   virtual ~UndefinedImage() = default;
-	
+  
 
   virtual std::vector<std::string> get_channel_names() const override {
     return std::vector<std::string>(this->get_number_of_channels(), "Unnamed");
   }
 
-	// void merge(const UndefinedImage& other) {
+  // void merge(const UndefinedImage& other) {
 
-	// }
+  // }
 };
+
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_UNDEFINEDIMAGE_H__ */
