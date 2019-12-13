@@ -45,8 +45,8 @@ class UndefinedImage : public Image<T>
 {
 public:
   static constexpr auto image_type = ImageType::Undefined;
-  UndefinedImage(std::size_t width, std::size_t height, std::size_t number_of_channels, std::size_t bpp)
-      : Image<T>(width, height, number_of_channels, bpp, image_type){};
+  UndefinedImage(std::size_t width, std::size_t height, std::size_t bpp, std::size_t number_of_channels)
+      : Image<T>(width, height, bpp, number_of_channels, image_type){};
 
 
   UndefinedImage(UndefinedImage<T>&& other) noexcept
