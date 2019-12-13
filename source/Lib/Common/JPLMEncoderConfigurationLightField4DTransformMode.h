@@ -82,8 +82,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t minimal_transform_size_intra_view_horizontal_u = 100000;
 
   double lambda;
-  BorderBlocksPolicy
-      border_policy;  //TODO: add a default value such as BorderBlocksPolicy::truncate
+  BorderBlocksPolicy border_policy = BorderBlocksPolicy::truncate;
 
   double transform_scale_t = 1.0;
   double transform_scale_s = 1.0;
@@ -102,6 +101,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   void parse_minimal_transform_size_inter_view_horizontal(const json &conf);
   void parse_maximal_transform_size_inter_view_horizontal(const json &conf);
   void parse_lambda(const json &conf);
+  void parse_border_policy(const json &conf);
 
 
  public:
