@@ -81,12 +81,26 @@ class NotImplementedYetModeException : public exception {
 };
 
 class ConfigFileDoesNotExistException : public std::exception {
-private:
+ private:
   string msg;
 
-public:
+ public:
   ConfigFileDoesNotExistException(string m)
       : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+class UnknownCLIParameterException : public exception {
+ private:
+  string msg;
+
+ public:
+  UnknownCLIParameterException(string m)
+      : msg("CLI parameter " + m + " is not known.") {
   }
 
   const char* what() const throw() {

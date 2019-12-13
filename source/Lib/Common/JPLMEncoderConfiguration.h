@@ -57,46 +57,61 @@ using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 namespace fs = std::filesystem;
 
+// TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
 class JPLMEncoderConfiguration : public JPLMConfiguration {
- public:
-  JpegPlenoPart get_jpeg_pleno_part() const;
-
-  const string &get_config() const;
-
-  uint32_t get_number_of_rows_t() const;
-
-  uint32_t get_number_of_columns_s() const;
-
-  uint32_t get_view_height_v() const;
-
-  uint32_t get_view_width_u() const;
-
-
-  ColorSpaces::ColorSpace get_colorspace() const;
-
-  JPLMEncoderConfiguration(int argc, char **argv);
-
  protected:
   void parse_json(string path);
   void parse_jpeg_pleno_part(const json &conf);
-
-  void parse_number_of_rows_t(const json &conf);
-  void parse_number_of_columns_s(const json &conf);
-  void parse_view_height_v(const json &conf);
-  void parse_view_width_u(const json &conf);
   void parse_colorspace(const json &conf);
+
+
+
+  std::string config;
+  // Belongs to JPLMEncoderConfiguration
+  // app.add_option("-c,--config", config, "Path to config file");
+
+  JpegPlenoPart part;
+  //  app.add_set(
+  //  "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
+  //  ->type_name("enum/JpegPlenoPart in { LightField=2 }");
+
+  ColorSpaces::ColorSpace colorspace;
+
+ public:
+  JpegPlenoPart get_jpeg_pleno_part() const;
+  const string &get_config() const;
+  ColorSpaces::ColorSpace get_colorspace() const;
+
+  JPLMEncoderConfiguration(int argc, char **argv);
 };
 
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
-  if (!config.empty()) {
-    if (fs::exists(config)) {
-      parse_json(config);
-    } else {
-      throw ConfigFileDoesNotExistException(config);
-    }
-  }
+  arguments.push_back(
+      {"--config", "-c", "Path to config file", [this](std::any v) {
+         this->config = std::any_cast<std::string>(v);
+         if (!this->config.empty()) {
+           if (fs::exists(this->config)) {
+             parse_json(this->config);
+           } else {
+             throw ConfigFileDoesNotExistException(this->config);
+           }
+         }
+       }});
+
+  arguments.push_back({"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
+      [this](std::any value) {
+        int part = std::stoi(std::any_cast<string>(value));
+        if (part == 2)
+          this->part = JpegPlenoPart::LightField;
+        else
+          throw NotImplementedYetInputTypeParseException(
+              "Part " + std::to_string(part));
+      }});
+
+  this->parse_cli(argc, argv);
+  run_help();
 }
 
 
@@ -104,10 +119,6 @@ void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
   parse_jpeg_pleno_part(conf);
-  parse_number_of_columns_s(conf);
-  parse_number_of_rows_t(conf);
-  parse_view_height_v(conf);
-  parse_view_width_u(conf);
   parse_colorspace(conf);
 }
 
@@ -119,32 +130,9 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
         [](unsigned char c) { return std::tolower(c); });
     if (p == "part 2" || p == "part2" || p == "part_2" || p == "light_fields")
       part = JpegPlenoPart::LightField;
-    throw NotImplementedYetInputTypeParseException(p);
+    else
+      throw NotImplementedYetInputTypeParseException(p);
   }
-}
-
-
-void JPLMEncoderConfiguration::parse_number_of_rows_t(const json &conf) {
-  if (conf.contains("number_of_rows"))
-    number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_number_of_columns_s(const json &conf) {
-  if (conf.contains("number_of_columns"))
-    number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_view_height_v(const json &conf) {
-  if (conf.contains("view_height"))
-    view_height_v = conf["view_height"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfiguration::parse_view_width_u(const json &conf) {
-  if (conf.contains("view_width"))
-    view_width_u = conf["view_width"].get<uint32_t>();
 }
 
 
@@ -176,26 +164,6 @@ JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
 
 const string &JPLMEncoderConfiguration::get_config() const {
   return config;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_number_of_rows_t() const {
-  return number_of_rows_t;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_number_of_columns_s() const {
-  return number_of_columns_s;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_view_height_v() const {
-  return view_height_v;
-}
-
-
-uint32_t JPLMEncoderConfiguration::get_view_width_u() const {
-  return view_width_u;
 }
 
 

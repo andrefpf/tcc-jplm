@@ -32,8 +32,8 @@
  */
 
 /** \file     JPLM4DTransformModeLightFieldDecoder.h
- *  \brief    
- *  \details  
+ *  \brief
+ *  \details
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
@@ -59,7 +59,7 @@ template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
- private:
+private:
   PartitionDecoder partition_decoder;
   const ContiguousCodestreamCode& codestream_code;
   Hierarchical4DDecoder hierarchical_4d_decoder;
@@ -70,22 +70,22 @@ class JPLM4DTransformModeLightFieldDecoder
 
   // const JPLFile&
   //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
- public:
+public:
   JPLM4DTransformModeLightFieldDecoder(
       std::shared_ptr<JPLFile>
-          jpl_file,  // ! \todo use this as the JPLCodec file
+      jpl_file,  // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
       const std::string& lightfield_path)
       : JPLMLightFieldCodec<PelType>(
-            jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
-                          LightfieldIOConfiguration(lightfield_path,
-                              light_field_box.get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_light_field_dimension<std::size_t>()),
-                          1023, PixelMapType::P6)),
+      jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
+          LightfieldIOConfiguration(lightfield_path,
+                                    light_field_box.get_ref_to_contents()
+                                        .get_ref_to_light_field_header_box()
+                                        .get_ref_to_contents()
+                                        .get_ref_to_light_field_header_box()
+                                        .get_ref_to_contents()
+                                        .get_light_field_dimension<std::size_t>()),
+          1023, PixelMapType::P6)),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -100,11 +100,11 @@ class JPLM4DTransformModeLightFieldDecoder
                             .get_ref_to_code()),
         hierarchical_4d_decoder(codestream_code),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
-            *(this->light_field))) {
+                              *(this->light_field))) {
     read_initial_data_from_compressed_file();
     this->setup_transform_coefficients(false,
-        hierarchical_4d_decoder.get_transform_dimensions(),
-        {1.0, 1.0, 1.0, 1.0});
+                                       hierarchical_4d_decoder.get_transform_dimensions(),
+                                       {1.0, 1.0, 1.0, 1.0});
 
     //initializes possible extension lenghs
     // initialize_extension_lengths();
@@ -119,11 +119,11 @@ class JPLM4DTransformModeLightFieldDecoder
     auto bytes = Markers::get_bytes(marker);
     if (auto byte = codestream_code.get_next_byte(); byte != bytes[0]) {
       throw JPLM4DTransformModeLightFieldDecoderExceptions::
-          ExpectingAMarkerException(marker);
+      ExpectingAMarkerException(marker);
     }
     if (auto byte = codestream_code.get_next_byte(); byte != bytes[1]) {
       throw JPLM4DTransformModeLightFieldDecoderExceptions::
-          ExpectingAMarkerException(marker);
+      ExpectingAMarkerException(marker);
     }
   }
 
@@ -135,7 +135,7 @@ class JPLM4DTransformModeLightFieldDecoder
     // LightFieldConfigurationMarkerSegment
     auto lightfield_configuration_marker_segment =
         LightFieldContigurationMarkerSegmentParser::
-            get_light_field_configuration_marker_segment(codestream_code);
+        get_light_field_configuration_marker_segment(codestream_code);
 
 
     //gets the superior bit plane value from the LFC marker segment
@@ -145,9 +145,9 @@ class JPLM4DTransformModeLightFieldDecoder
 
     //gets the maximum transform sizes from the LFC marker segment
     const auto& [transform_length_t, transform_length_s, transform_length_v,
-                    transform_length_u] =
-        lightfield_configuration_marker_segment.get_ref_to_block_dimension()
-            .as_tuple();
+    transform_length_u] =
+    lightfield_configuration_marker_segment.get_ref_to_block_dimension()
+        .as_tuple();
     hierarchical_4d_decoder.set_transform_dimension(
         lightfield_configuration_marker_segment.get_ref_to_block_dimension());
 
@@ -156,9 +156,9 @@ class JPLM4DTransformModeLightFieldDecoder
         lightfield_configuration_marker_segment.get_ref_to_block_dimension();
 
     const auto& [number_of_vertical_views, number_of_horizontal_views,
-                    mNumberOfViewLines, mNumberOfViewColumns] =
-        lightfield_configuration_marker_segment
-            .get_ref_to_lightfield_dimension();
+    mNumberOfViewLines, mNumberOfViewColumns] =
+    lightfield_configuration_marker_segment
+        .get_ref_to_lightfield_dimension();
     hierarchical_4d_decoder.set_lightfield_dimension(
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension());
@@ -204,8 +204,8 @@ class JPLM4DTransformModeLightFieldDecoder
 
 
   virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
-      const LightfieldDimension<uint32_t>& size) override {
+                                const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+                                const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
 
 
@@ -213,7 +213,7 @@ class JPLM4DTransformModeLightFieldDecoder
         partition_decoder.decode_partition(hierarchical_4d_decoder, size);
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
-    
+
     decoded_block.clip(0, hierarchical_4d_decoder.get_level_shift());
 
     ref_to_lightfield.set_block_4D_at(decoded_block, channel, position);

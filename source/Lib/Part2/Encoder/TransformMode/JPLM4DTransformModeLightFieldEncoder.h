@@ -53,7 +53,7 @@ template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldEncoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldEncoder<PelType> {
- protected:
+protected:
   std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
       transform_mode_configuration;
   Hierarchical4DEncoder hierarchical_4d_encoder;
@@ -61,42 +61,42 @@ class JPLM4DTransformModeLightFieldEncoder
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
- public:
+public:
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
-          configuration)
+      configuration)
       : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightFieldTransformMode<PelType>>(
-                configuration->get_lightfield_io_configurations())),
+      std::make_unique<LightFieldTransformMode<PelType>>(
+          configuration->get_lightfield_io_configurations())),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             {configuration->get_lightfield_io_configurations().get_size()},
             {configuration->get_maximal_transform_sizes()}),
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_configuration(std::move(configuration)),
         tp(transform_mode_configuration->get_minimal_transform_dimension()),
-        //        hierarchical_4d_encoder(*transform_mode_configuration),
+      //        hierarchical_4d_encoder(*transform_mode_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
-            *(this->light_field))),
+                              *(this->light_field))),
         lightfield_configuration_marker_segment(
             {transform_mode_configuration->get_lightfield_io_configurations()
-                    .get_size()},  //lightfield_dimension,
+                 .get_size()},  //lightfield_dimension,
             {ComponentSsizParameter(10), ComponentSsizParameter(10),
-                ComponentSsizParameter(10)},  //Ssiz
+             ComponentSsizParameter(10)},  //Ssiz
             {transform_mode_configuration
-                    ->get_maximal_transform_sizes()},  //block_dimension,
+                 ->get_maximal_transform_sizes()},  //block_dimension,
             {30, 30, 30},  //max_bitplane
             (transform_mode_configuration->get_border_blocks_policy() ==
-                BorderBlocksPolicy::truncate)
-                ? true
-                : false  //truncate
+             BorderBlocksPolicy::truncate)
+            ? true
+            : false  //truncate
         ) {
     tp.mPartitionData.set_dimension(
         transform_mode_configuration->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
 
     this->setup_transform_coefficients(true,
-        transform_mode_configuration->get_maximal_transform_sizes(),
-        transform_mode_configuration->get_transform_scalings());
+                                       transform_mode_configuration->get_maximal_transform_sizes(),
+                                       transform_mode_configuration->get_transform_scalings());
 
     // write_initial_data_to_encoded_file();
     hierarchical_4d_encoder.write_marker(
@@ -148,14 +148,14 @@ class JPLM4DTransformModeLightFieldEncoder
 
 
   virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
-      const LightfieldDimension<uint32_t>& size) override {
+                                const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+                                const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_encoder.write_marker(Marker::SOB);
 
     auto block_4d =
         ref_to_lightfield.get_block_4D_from(channel, position, size);
     block_4d += 0 - level_shift;
-    
+
 
     const auto lambda = transform_mode_configuration->get_lambda();
     tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);

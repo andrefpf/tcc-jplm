@@ -43,10 +43,15 @@
  */
 #ifndef JPLM_JPLMConfiguration_H
 #define JPLM_JPLMConfiguration_H
+
+#include <getopt.h>
+#include <algorithm>
+#include <any>
+#include <iostream>
 #include <string>
 #include "CLI/CLI.hpp"
+#include "JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
@@ -61,137 +66,65 @@ enum class JpegPlenoPart {
 
 class JPLMConfiguration {
  public:
-  const string &get_input_filename() const;
-  
-
   JPLMConfiguration();
-
-
-  const string &get_output_filename() const;
-
-
   JPLMConfiguration(int argc, char **argv);
 
+  const std::string &get_input_filename() const;
+  const std::string &get_output_filename() const;
+  const bool &is_help_mode() const;
+
  protected:
-  CLI::App app{"JPLM"};
-  string input;
-  string output;
-  JpegPlenoPart part;
-  string config;
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-  ColorSpaces::ColorSpace colorspace;
-  double lambda;
-  Type type;
-  BorderBlocksPolicy border_policy = BorderBlocksPolicy::truncate;
+  struct CLIArgument {
+   public:
+    CLIArgument(const std::string &longOption, const std::string &short_option,
+        const std::string &description,
+        const std::function<void(std::any)> &action)
+        : long_option(longOption), short_option(short_option),
+          description(description), action(action) {
+      this->parsed = false;
+    }
 
+    void parse(std::string key, std::any value) {
+      if (!this->parsed && (key == long_option || key == short_option)) {
+        action(value);
+        this->parsed = true;
+      }
+    }
 
-  uint32_t maximal_transform_size_inter_view_vertical_t;
-  uint32_t maximal_transform_size_inter_view_horizontal_s;
-  uint32_t maximal_transform_size_intra_view_vertical_v;
-  uint32_t maximal_transform_size_intra_view_horizontal_u;
+   public:
+    const std::string &getLongOption() const {
+      return long_option;
+    }
 
-  uint32_t minimal_transform_size_inter_view_vertical_t;
-  uint32_t minimal_transform_size_inter_view_horizontal_s;
-  uint32_t minimal_transform_size_intra_view_vertical_v;
-  uint32_t minimal_transform_size_intra_view_horizontal_u;
+    const std::string &getShortOption() const {
+      return short_option;
+    }
 
-  double transform_scale_t = 1.0;
-  double transform_scale_s = 1.0;
-  double transform_scale_v = 1.0;
-  double transform_scale_u = 1.0;
+    const std::string &getDescription() const {
+      return description;
+    }
 
- private:
+   private:
+    std::string long_option;
+    std::string short_option;
+    std::string description;
+    bool parsed;
+    std::function<void(std::any)> action;
+  };
+
+ protected:
+  std::vector<CLIArgument> arguments;
+  std::string input;
+  std::string output;
+  void run_help();
   void parse_cli(int argc, char **argv);
+  bool validate_param(std::string param);
+  bool validate_value(unsigned int size, unsigned int pos, char **argv);
+
+private:
+  bool help_mode_flag = false;
+  std::string executable_name;
 };
-
-const string &JPLMConfiguration::get_input_filename() const {
-  return input;
-}
-
-const string &JPLMConfiguration::get_output_filename() const {
-  return output;
-}
-
-JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
-  parse_cli(argc, argv);
-}
-
-void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  // Belongs to JPLMConfiguration
-  app.add_option("-i,--input", input,
-      "Input (If Part II, it is a directory containing a set of uncompressed "
-      "light-field images xxx_yyy.ppm).");
-  app.add_option("-o,--output", output, "Output compressed bitstream");
-
-  // Belongs to JPLMEncoderConfiguration
-  app.add_option("-c,--config", config, "Path to config file");
-  app.add_set(
-         "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
-      ->type_name("enum/JpegPlenoPart in { LightField=2 }");
-
-  app.add_option(
-      "-t,--number_of_rows", number_of_rows_t, "Number of light-field rows");
-  app.add_option("-s,--number_of_columns", number_of_columns_s,
-      "Number of light-field columns");
-  app.add_option(
-      "-v,--view_height", view_height_v, "Single-view height dimension");
-  app.add_option(
-      "-u,--view_width", view_width_u, "Single-view width dimension");
-
-  // Belongs to JPLMEncoderConfigurationLightField4DTransformMode
-  app.add_option("-l,--lambda", lambda,
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.");
-
-  // Belongs to JPLMEncoderConfigurationLightField
-  app.add_set("-T,--type", type, {Type::transform_mode, Type::prediction_mode},
-         "Codec type")
-      ->type_name(
-          "enum/CompressionTypeLightField in {transform_mode=0, "
-          "prediction_mode=1}");
-
-  app.add_set("-B,--border_policy", border_policy, {BorderBlocksPolicy::padding, BorderBlocksPolicy::truncate},
-         "Policy to treat border 4D blocks.")
-      ->type_name(
-          "enum/BorderBlocksPolicy in {padding=0, "
-          "truncate=1}");
-
-
-  app.add_option("--transform_size_maximum_inter_view_vertical",
-                   maximal_transform_size_inter_view_vertical_t,
-                   "Maximum 4D transform size in inter-view vertical direction.");
-    app.add_option("--transform_size_maximum_inter_view_horizontal",
-                   maximal_transform_size_inter_view_horizontal_s,
-                   "Maximum 4D transform size in inter-view horizontal direction.");
-    app.add_option("--transform_size_maximum_intra_view_vertical",
-                   maximal_transform_size_intra_view_vertical_v,
-                   "Maximum 4D transform size in intra-view vertical direction.");
-    app.add_option("--transform_size_maximum_intra_view_horizontal",
-                   maximal_transform_size_intra_view_horizontal_u,
-                   "Maximum 4D transform size in intra-view horizontal direction.");
-
-
-
-
-    app.add_option("--transform_size_minimum_inter_view_vertical",
-      minimal_transform_size_inter_view_vertical_t,
-      "Minimum 4D transform size in inter-view vertical direction.");
-    app.add_option("--transform_size_minimum_inter_view_horizontal",
-                   minimal_transform_size_inter_view_horizontal_s,
-                   "Minimum 4D transform size in inter-view horizontal direction.");
-    app.add_option("--transform_size_minimum_intra_view_vertical",
-                   minimal_transform_size_intra_view_vertical_v,
-                   "Minimum 4D transform size in intra-view vertical direction.");
-    app.add_option("--transform_size_minimum_intra_view_horizontal",
-                   minimal_transform_size_intra_view_horizontal_u,
-                   "Minimum 4D transform size in intra-view horizontal direction.");
-
-
-
-  app.parse(argc, argv);
-}
 
 
 #endif  //JPLM_JPLMConfiguration_H
