@@ -136,24 +136,11 @@ std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(const ImageIn
 
   for(const auto& channel: input_image) {
     auto image = std::make_unique<UndefinedImage<Tin>>(width, height, bpp, 1);
-    // std::cout << "created one image" << std::endl;
     (*image)[0] = channel;
-    // std::cout << "copied one image" << std::endl;
     output_images.push_back(std::move(image));
-    // std::cout << "emplaced one image" << std::endl;
   }
 
-  // for(const auto& image: output_images) {
-  //   std::cout << "on the get_splitting_of fooorrr" << std::endl;
-  //   if(!image) {
-  //     std::cout << "Image is currently null!" << std::endl;
-  //   } else {
-  //     std::cout << "Image is valid" << std::endl;
-  //   }
-  //   // EXPECT_EQ(image->get_type(), ImageType::Undefined);
-  // }
-
-  return std::move(output_images);
+  return output_images;
 }
 
 
