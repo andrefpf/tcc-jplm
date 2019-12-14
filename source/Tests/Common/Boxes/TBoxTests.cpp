@@ -60,8 +60,9 @@ TEST(TBoxBasicTest, TBoxWriteToStringOStream) {
 
 TEST(TBoxBasicTest, TBoxWriteToBinaryOStream) {
   namespace fs = std::filesystem;
-  auto path = std::string(std::string(fs::temp_directory_path()) +
-                          "/TBoxWriteToBinaryOStream.test");
+  fs::path tdp = fs::temp_directory_path();
+  std::string path = tdp.string() + "/TBoxWriteToBinaryOStream.test";
+  
   if (fs::exists(path)) {
     fs::remove(path);
   }
@@ -73,7 +74,7 @@ TEST(TBoxBasicTest, TBoxWriteToBinaryOStream) {
   std::ifstream infile(path.c_str(), std::ofstream::binary);
   uint32_t test;
   infile.read(reinterpret_cast<char *>(&test), sizeof(uint32_t));
-  test=BinaryTools::ensure_machines_endianess(test);
+  test = BinaryTools::ensure_machines_endianess(test);
 
   EXPECT_EQ(test, 42);
 }

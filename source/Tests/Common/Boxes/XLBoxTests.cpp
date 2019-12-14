@@ -60,8 +60,9 @@ TEST(XLBoxBasicTest, XLBoxWriteToStringOStream) {
 
 TEST(XLBoxBasicTest, XLBoxWriteToBinaryOStream) {
   namespace fs = std::filesystem;
-  auto path = std::string(std::string(fs::temp_directory_path()) +
-                          "/XLBoxWriteToBinaryOStream.test");
+  fs::path tdp = fs::temp_directory_path();
+  std::string path = tdp.string() + "/XLBoxWriteToBinaryOStream.test";
+  
   if (fs::exists(path)) {
     fs::remove(path);
   }
@@ -80,12 +81,12 @@ TEST(XLBoxBasicTest, XLBoxWriteToBinaryOStream) {
 
 
 TEST(XLBoxBasicTest, XLBoxContructionWithMinValueNotAllowedThrows) {
-	EXPECT_THROW(XLBox(0), BoxExceptions::ValueNotAllowedException);
+  EXPECT_THROW(XLBox(0), BoxExceptions::ValueNotAllowedException);
 }
 
 
 TEST(XLBoxBasicTest, XLBoxContructionWithMaxValueNotAllowedThrows) {
-	EXPECT_THROW(XLBox(15), BoxExceptions::ValueNotAllowedException);
+  EXPECT_THROW(XLBox(15), BoxExceptions::ValueNotAllowedException);
 }
 
 

@@ -111,8 +111,9 @@ struct JpegPlenoSignatureBoxToFile : public testing::Test {
  public:
   std::string write_to_file() {  //returns the filename
     namespace fs = std::filesystem;
-    auto path = std::string(
-        std::string(fs::temp_directory_path())+std::string("/")+ get_test_full_name());
+    fs::path tdp = fs::temp_directory_path();
+    std::string path = tdp.string() + "/XLBoxWriteToBinaryOStream.test";
+
     if (fs::exists(path)) {
       fs::remove(path);
     }
