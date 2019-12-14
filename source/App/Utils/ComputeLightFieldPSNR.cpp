@@ -89,8 +89,8 @@ void show_psnr(
   decoded_lightfield->set_view_io_policy(std::move(decoded_policy));*/
 
   auto printer = ImageMetrics::visitors::PSNRPrinter();
-  for(auto t=0;t<t_max;++t) {
-  	for(auto s=0; s<s_max; ++s) {
+  for(auto t=decltype(t_max){0};t<t_max;++t) {
+  	for(auto s=decltype(s_max){0}; s<s_max; ++s) {
   		std::cout << "T: " << t << "   S: " << s << std::endl;
   		auto original_image = std::make_unique<RGBImage<uint16_t>>(original_lightfield->get_image_at<RGBImage>({t, s}));
   		auto decoded_image = std::make_unique<RGBImage<uint16_t>>(decoded_lightfield->get_image_at<RGBImage>({t, s}));

@@ -1,12 +1,16 @@
 add_executable(lenslet_13x13_shifter Lenslet13x13Shifter.cpp)
 target_link_libraries(lenslet_13x13_shifter image)
+target_link_libraries(lenslet_13x13_shifter stream)
+
 
 add_executable(compute_psnr ComputePSNR.cpp)
-target_link_libraries(compute_psnr image)
+target_link_libraries(compute_psnr PRIVATE image)
+target_link_libraries(compute_psnr PRIVATE stream)
 
 if(VISUALIZATION_TOOL)
 	add_executable(lightfield_visualizer LightfieldVisualization.cpp)
 	target_link_libraries(lightfield_visualizer image)
+	target_link_libraries(lightfield_visualizer stream)
 	target_link_libraries(lightfield_visualizer jplm_part2_common)
 	target_link_libraries(lightfield_visualizer X11)
 endif(VISUALIZATION_TOOL)
@@ -14,7 +18,10 @@ endif(VISUALIZATION_TOOL)
 
 add_executable(compute_lightfield_psnr ComputeLightFieldPSNR.cpp)
 target_link_libraries(compute_lightfield_psnr image)
+target_link_libraries(compute_lightfield_psnr stream)
 target_link_libraries(compute_lightfield_psnr jplm_part2_common)
 
 
 add_executable(convert_ppm_to_pgx PPMToPGX.cpp)
+target_link_libraries(convert_ppm_to_pgx PRIVATE image)
+target_link_libraries(convert_ppm_to_pgx PRIVATE stream)

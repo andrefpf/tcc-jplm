@@ -108,10 +108,56 @@ class PGXFile : public ImageFile {
 
 
   template<typename T>
+  void write_image_to_file(const UndefinedImage<T>& image) {
+    if (image.get_number_of_channels() != 1) {
+      //! \todo throw error if number of channels of the current undefined image is not 1
+      //throw error
+      std::cout << "there is more than one channel..." << std::endl;
+    }
+
+    if (!file.is_open()) {
+      if (!std::filesystem::exists(filename)) {
+        file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
+        //should write
+      } else {
+        file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
+        //should read
+      }
+      std::cout << "for some reason the file was not open..." << std::endl;
+    }
+
+    auto bytes_per_pixel = std::ceil(image.get_bpp() / (double) 8.0);
+
+    if (sizeof(T) != bytes_per_pixel) {
+      //what to do?
+      std::cout << "I should do something here..." << std::endl;
+    }
+
+    file.seekp(this->raster_begin);
+
+    if constexpr (sizeof(T) > 1) {
+      if (is_different_endianess()) {
+        std::vector<T> values;
+        values.reserve(image.get_number_of_pixels());
+        for (const auto& value : image.get_channel(0)) {
+          values.push_back(change_endianess(value));
+        }
+        file.write(reinterpret_cast<const char*>(values.data()),
+            image.get_number_of_pixels_per_channel() * sizeof(T));
+        return;
+      }
+    }
+
+    file.write(reinterpret_cast<const char*>(image.get_channel(0).data()),
+        image.get_number_of_pixels_per_channel() * sizeof(T));
+  }
+
+
+  template<typename T>
   std::unique_ptr<UndefinedImage<T>> read_full_image() {
     if (!file.is_open()) {
       file.open(this->filename.c_str());
-      if(!file.is_open()) {
+      if (!file.is_open()) {
         //error
       }
     }
@@ -140,17 +186,20 @@ class PGXFile : public ImageFile {
     auto image_channel_ptr = image->get_channel(0).data();
     auto vector_data = sample_vector.data();
 
-    for(auto i=decltype(number_of_samples){0};i<number_of_samples;++i) {
-      *image_channel_ptr= *(vector_data++);
+    for (auto i = decltype(number_of_samples){0}; i < number_of_samples; ++i) {
+      *image_channel_ptr = *(vector_data++);
       ++image_channel_ptr;
     }
 
     return image;
   }
 
-  std::variant<std::unique_ptr<UndefinedImage<uint8_t>>, std::unique_ptr<UndefinedImage<int8_t>>,
-      std::unique_ptr<UndefinedImage<uint16_t>>, std::unique_ptr<UndefinedImage<int16_t>>,
-      std::unique_ptr<UndefinedImage<uint32_t>>, std::unique_ptr<UndefinedImage<int32_t>>>
+  std::variant<std::unique_ptr<UndefinedImage<uint8_t>>,
+      std::unique_ptr<UndefinedImage<int8_t>>,
+      std::unique_ptr<UndefinedImage<uint16_t>>,
+      std::unique_ptr<UndefinedImage<int16_t>>,
+      std::unique_ptr<UndefinedImage<uint32_t>>,
+      std::unique_ptr<UndefinedImage<int32_t>>>
   read_full_image() {
     if (this->is_signed()) {
       if (depth <= 8) {

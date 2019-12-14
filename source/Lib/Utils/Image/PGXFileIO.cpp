@@ -41,10 +41,35 @@
 #include "PGXFileIO.h"
 
 
+inline std::string get_header_id_string() noexcept {
+  return "PG";
+}
+
+
+inline std::string get_big_endian_string() noexcept {
+  return "ML";
+}
+
+
+inline std::string get_little_endian_string() noexcept {
+  return "LM";
+}
+
+
+inline char get_unsigned_char() noexcept {
+  return '+';
+}
+
+
+inline char get_signed_char() noexcept {
+  return '-';
+}
+
+
 void check_header(std::ifstream& ifstream) {
   std::string id;
   ifstream >> id;
-  if (id != "PG") {
+  if (id != get_header_id_string()) {
     throw PGXFileExceptions::InvalidIdException(id);
   }
 }
@@ -53,10 +78,10 @@ void check_header(std::ifstream& ifstream) {
 auto get_endianess(std::ifstream& ifstream) {
   std::string endianess;
   ifstream >> endianess;
-  if (endianess == "ML") {
+  if (endianess == get_big_endian_string()) {
     return PGXEndianess::PGX_ML_BIG_ENDIAN;
   }
-  if (endianess != "LM") {
+  if (endianess != get_little_endian_string()) {
     throw PGXFileExceptions::InvalidEndianessException(endianess);
   }
   return PGXEndianess::PGX_LM_LITTLE_ENDIAN;
@@ -66,12 +91,12 @@ auto get_endianess(std::ifstream& ifstream) {
 auto get_is_signed(std::ifstream& ifstream) {
   auto sign = ifstream.get();
   if (sign == ' ') {
-  	sign = ifstream.get();
+    sign = ifstream.get();
   }
-  if (sign == '-') {
+  if (sign == get_signed_char()) {
     return true;
   }
-  if (sign != '+') {
+  if (sign != get_unsigned_char()) {
     throw PGXFileExceptions::InvalidSignFieldException(std::string(1, sign));
   }
   return false;
@@ -79,22 +104,22 @@ auto get_is_signed(std::ifstream& ifstream) {
 
 
 auto get_value(std::ifstream& ifstream) {
-	std::size_t value;
-	ifstream >> value;
-	return value;
+  std::size_t value;
+  ifstream >> value;
+  return value;
 }
 
 
 void advance_to_raster_begin(std::ifstream& ifstream) {
   auto new_line_char = ifstream.get();
   if (new_line_char == ' ') {
-  	new_line_char = ifstream.get();
+    new_line_char = ifstream.get();
   }
   if (new_line_char == 0x0d) {
-  	new_line_char = ifstream.get();
+    new_line_char = ifstream.get();
   }
-  if(new_line_char != 0x0a) {
-  	throw PGXFileExceptions::InvalidNewLine(std::string(1, new_line_char));
+  if (new_line_char != 0x0a) {
+    throw PGXFileExceptions::InvalidNewLine(std::string(1, new_line_char));
   }
 }
 
@@ -109,5 +134,32 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   const auto height = get_value(file);
   advance_to_raster_begin(file);
 
-  return std::make_unique<PGXFile>(filename, file.tellg(), width, height, depth, is_signed, endianess);
+  return std::make_unique<PGXFile>(
+      filename, file.tellg(), width, height, depth, is_signed, endianess);
+}
+
+
+std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
+    std::size_t width, std::size_t height, std::size_t depth, bool is_signed) {
+  std::ofstream file(filename, std::ios::out);
+
+  file << get_header_id_string() << " ";
+
+  //assuming that we are always going to write in big endian
+  file << get_big_endian_string() << " ";
+
+  if (is_signed) {
+    file << get_signed_char();
+  } else {
+    file << get_unsigned_char();
+  }
+
+  file << std::to_string(depth) << " ";
+  file << std::to_string(width) << " ";
+  file << std::to_string(height) << " ";
+
+  file << std::endl;
+
+  return std::make_unique<PGXFile>(filename, file.tellp(), width, height, depth,
+      is_signed, PGXEndianess::PGX_ML_BIG_ENDIAN);
 }

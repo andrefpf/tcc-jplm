@@ -246,7 +246,6 @@ class ImageChannel : public Generic2DStructure<T> {
     //Copies the content (elements/values) of the other image to this image.
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
-    std::cout << "Copy assignment of ImageChannel was called!!!" << std::endl;
   }
 
   
@@ -266,6 +265,7 @@ class ImageChannel : public Generic2DStructure<T> {
       ++diff_ptr;
       ++this_ptr;
       ++other_ptr;
+      
     }
 
     return difference_image;

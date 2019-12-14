@@ -77,4 +77,9 @@ struct UndefinedImageVisitor {
 
 
 std::unique_ptr<PGXFile> open(const std::string& filename);
+
+
+std::unique_ptr<PGXFile> open(const std::string& filename,
+    std::size_t width, std::size_t height, std::size_t depth, bool is_signed);
+
 }
