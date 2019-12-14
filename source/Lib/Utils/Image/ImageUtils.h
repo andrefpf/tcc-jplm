@@ -125,6 +125,38 @@ std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
 }
 
 
+template<template<typename> class ImageIn, typename Tin>
+std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(const ImageIn<Tin>& input_image) {
+  auto width = input_image.get_width();
+  auto height = input_image.get_height();
+  auto bpp = input_image.get_bpp();
+
+  auto output_images = std::vector<std::unique_ptr<UndefinedImage<Tin>>>();
+  output_images.reserve(input_image.get_number_of_channels());
+
+  for(const auto& channel: input_image) {
+    auto image = std::make_unique<UndefinedImage<Tin>>(width, height, bpp, 1);
+    // std::cout << "created one image" << std::endl;
+    (*image)[0] = channel;
+    // std::cout << "copied one image" << std::endl;
+    output_images.push_back(std::move(image));
+    // std::cout << "emplaced one image" << std::endl;
+  }
+
+  // for(const auto& image: output_images) {
+  //   std::cout << "on the get_splitting_of fooorrr" << std::endl;
+  //   if(!image) {
+  //     std::cout << "Image is currently null!" << std::endl;
+  //   } else {
+  //     std::cout << "Image is valid" << std::endl;
+  //   }
+  //   // EXPECT_EQ(image->get_type(), ImageType::Undefined);
+  // }
+
+  return std::move(output_images);
+}
+
+
 }  // namespace ImageUtils
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEUTILS_H__ */

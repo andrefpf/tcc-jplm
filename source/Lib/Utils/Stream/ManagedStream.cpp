@@ -80,6 +80,11 @@ ManagedStream ManagedStream::get_remaining_sub_managed_stream() {
 }
 
 
+/**
+ * \brief      Rewinds the managed stream to its beginning
+ *
+ * \return     Reference to the current ManagedStream (this)
+ */
 ManagedStream& ManagedStream::rewind() {
   ref_to_stream.seekg(static_cast<int64_t>(initial_pos), std::ios_base::beg);
   return *this;
