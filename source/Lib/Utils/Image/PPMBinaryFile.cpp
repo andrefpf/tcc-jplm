@@ -44,7 +44,7 @@ void correct_endianess(
     std::vector<std::tuple<uint16_t, uint16_t, uint16_t>>& pixel_vector) {
   if constexpr (using_little_endian()) {
     for (auto& pixel : pixel_vector) {
-      pixel = std::experimental::apply(
+      pixel = std::apply(
           [](auto... x) { return std::make_tuple((x << 8) | (x >> 8)...); },
           pixel);
     }

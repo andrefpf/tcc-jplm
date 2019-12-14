@@ -109,7 +109,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
 
         if constexpr (sizeof(T) == 2 && using_little_endian()) {
           for (auto& pixel : rgb_vector) {
-            pixel = std::experimental::apply(
+            pixel = std::apply(
                 [](auto... x) {
                   return std::make_tuple((x << 8) | (x >> 8)...);
                 },

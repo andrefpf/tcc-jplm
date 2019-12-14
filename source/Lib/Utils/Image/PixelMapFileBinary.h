@@ -43,11 +43,16 @@
 
 #include "Lib/Utils/Image/PixelMapFile.h"
 
-//this must be better placed
+//TODO
+// \todo: It is the same function defined at BinaryTools.h
 constexpr bool using_little_endian() {
+#ifdef _WIN32
+  return true;
+#else
   if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
     return true;
   return false;
+#endif
 }
 
 //P4 to P6 stores images in binary

@@ -75,8 +75,9 @@ if (UNIX)
     endif (VISUALIZATION_TOOL)
 endif (UNIX)
 
-
-link_libraries(stdc++fs)
+if(CMAKE_COMPILER_IS_GNUCXX)
+    link_libraries(stdc++fs)
+endif()
 
 # directories here header files may be found
 # include_directories(.)
