@@ -125,8 +125,10 @@ std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
 }
 
 
+//! \todo implement a get_splitting_of from ImageIn<Tin>&& or std::unique_ptr<ImageIn<Tin>>&&
 template<template<typename> class ImageIn, typename Tin>
-std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(const ImageIn<Tin>& input_image) {
+std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(
+    const ImageIn<Tin>& input_image) {
   auto width = input_image.get_width();
   auto height = input_image.get_height();
   auto bpp = input_image.get_bpp();
@@ -134,7 +136,7 @@ std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(const ImageIn
   auto output_images = std::vector<std::unique_ptr<UndefinedImage<Tin>>>();
   output_images.reserve(input_image.get_number_of_channels());
 
-  for(const auto& channel: input_image) {
+  for (const auto& channel : input_image) {
     auto image = std::make_unique<UndefinedImage<Tin>>(width, height, bpp, 1);
     (*image)[0] = channel;
     output_images.push_back(std::move(image));
