@@ -110,12 +110,9 @@ struct MergingOfUndefinedImages : public testing::Test {
     uint16_t pel = 0;
     for (auto i = decltype(height){0}; i < height; ++i) {
       for (auto j = decltype(width){0}; j < width; ++j) {
-        channel_0->set_pixel_at(
-            pel++, 0, i, j);
-        channel_1->set_pixel_at(
-            pel++, 0, i, j);
-        channel_2->set_pixel_at(
-            pel++, 0, i, j);
+        channel_0->set_pixel_at(pel++, 0, i, j);
+        channel_1->set_pixel_at(pel++, 0, i, j);
+        channel_2->set_pixel_at(pel++, 0, i, j);
       }
     }
   }
@@ -123,88 +120,119 @@ struct MergingOfUndefinedImages : public testing::Test {
 
 
 TEST_F(MergingOfUndefinedImages, MergingDoesNotThrow) {
-  EXPECT_NO_THROW(auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2));
+  EXPECT_NO_THROW(auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+                      *channel_0, *channel_1, *channel_2));
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsInThreeChannels) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   EXPECT_EQ(merged->get_number_of_channels(), 3);
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheSameWidth) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   EXPECT_EQ(merged->get_width(), channel_0->get_width());
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheSameHeight) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   EXPECT_EQ(merged->get_height(), channel_0->get_height());
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheSameBpp) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   EXPECT_EQ(merged->get_bpp(), channel_0->get_bpp());
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheExpectedType) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   EXPECT_EQ(merged->get_type(), ImageType::BT601);
 }
 
 
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheCorrectValues) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   for (auto i = decltype(height){0}; i < height; ++i) {
     for (auto j = decltype(width){0}; j < width; ++j) {
-      EXPECT_EQ(merged->get_value_at(0, i, j), channel_0->get_value_at(0, i, j));
-      EXPECT_EQ(merged->get_value_at(1, i, j), channel_1->get_value_at(0, i, j));
-      EXPECT_EQ(merged->get_value_at(2, i, j), channel_2->get_value_at(0, i, j));
+      EXPECT_EQ(
+          merged->get_value_at(0, i, j), channel_0->get_value_at(0, i, j));
+      EXPECT_EQ(
+          merged->get_value_at(1, i, j), channel_1->get_value_at(0, i, j));
+      EXPECT_EQ(
+          merged->get_value_at(2, i, j), channel_2->get_value_at(0, i, j));
     }
   }
 }
 
 
 TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheExpectedType) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   auto split = ImageUtils::get_splitting_of(*merged);
 
-  for(const auto& image: split) {
+  for (const auto& image : split) {
     EXPECT_EQ(image->get_type(), ImageType::Undefined);
   }
 }
 
 
 TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheExpectedWidth) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   auto split = ImageUtils::get_splitting_of(*merged);
 
-  for(const auto& image: split) {
+  for (const auto& image : split) {
     EXPECT_EQ(image->get_width(), width);
   }
 }
 
 
 TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheExpectedHeight) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   auto split = ImageUtils::get_splitting_of(*merged);
 
-  for(const auto& image: split) {
+  for (const auto& image : split) {
     EXPECT_EQ(image->get_height(), height);
   }
 }
 
 
 TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheExpectedBpp) {
-  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
   auto split = ImageUtils::get_splitting_of(*merged);
 
-  for(const auto& image: split) {
+  for (const auto& image : split) {
     EXPECT_EQ(image->get_bpp(), bpp);
+  }
+}
+
+
+TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheCorrectValues) {
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(
+      *channel_0, *channel_1, *channel_2);
+  auto split = ImageUtils::get_splitting_of(*merged);
+  for (auto i = decltype(height){0}; i < height; ++i) {
+    for (auto j = decltype(width){0}; j < width; ++j) {
+      EXPECT_EQ(
+          split[0]->get_value_at(0, i, j), channel_0->get_value_at(0, i, j));
+      EXPECT_EQ(
+          split[1]->get_value_at(0, i, j), channel_1->get_value_at(0, i, j));
+      EXPECT_EQ(
+          split[2]->get_value_at(0, i, j), channel_2->get_value_at(0, i, j));
+    }
   }
 }
 
