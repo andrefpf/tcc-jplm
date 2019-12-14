@@ -156,6 +156,7 @@ TEST_F(MergingOfUndefinedImages, MergingResultsOnTheExpectedType) {
   EXPECT_EQ(merged->get_type(), ImageType::BT601);
 }
 
+
 TEST_F(MergingOfUndefinedImages, MergingResultsOnTheCorrectValues) {
   auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
   for (auto i = decltype(height){0}; i < height; ++i) {
@@ -168,6 +169,14 @@ TEST_F(MergingOfUndefinedImages, MergingResultsOnTheCorrectValues) {
 }
 
 
+TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheExpectedType) {
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(*channel_0, *channel_1, *channel_2);
+  auto split = ImageUtils::get_splitting_of(*merged);
+
+  for(const auto& image: split) {
+    EXPECT_EQ(image->get_type(), ImageType::Undefined);
+  }
+}
 
 
 
