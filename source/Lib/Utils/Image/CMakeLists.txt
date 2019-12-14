@@ -8,3 +8,4 @@ set(PIXMAP_SOURCES PixelMapFile.cpp PixelMapFileBinary.h PPMBinaryFile.cpp Pixel
 set(PGX_SOURCES PGXFile.cpp PGXFileIO.cpp)
 
 add_library(image ${IMAGE_SOURCES} ${IMAGE_FILE_SOURCES} ${PIXMAP_SOURCES} ${PGX_SOURCES})
+target_link_libraries(image stream)

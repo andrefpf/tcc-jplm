@@ -42,6 +42,7 @@
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
 #include <sstream>
+#include "Lib/Utils/Image/ImageIO.h"
 
 bool are_input_and_output_paths_valid(
     const std::string& input_path, const std::string& output_path) {
@@ -79,7 +80,43 @@ int main(int argc, char const* argv[]) {
     exit(1);
   }
 
+
+  auto image_file = ImageIO::open(input_path);
+
+  auto image_from_file = ImageIO::read<BT601Image, uint16_t>(*image_file);
+
+  std::cout << image_from_file->get_type() << std::endl;
+
+
+  auto split_images = ImageUtils::get_splitting_of(*image_from_file);
+
+  std::cout << split_images.size() << std::endl;
+
+
+  ImageIO::imwrite(*split_images[0], "teste_0.pgx");
+  ImageIO::imwrite(*split_images[1], "teste_1.pgx");
+  ImageIO::imwrite(*split_images[2], "teste_2.pgx");
+
+
+  auto im_0 = ImageIO::open("teste_0.pgx");
+  auto imag_0 = ImageIO::read<UndefinedImage, uint16_t>(*im_0);
+  std::cout << "readed image 0" << std::endl;
+  auto im_1 = ImageIO::open("teste_1.pgx");
+  auto imag_1 = ImageIO::read<UndefinedImage, uint16_t>(*im_1);
+  std::cout << "readed image 1" << std::endl;
+  auto im_2 = ImageIO::open("teste_2.pgx");
+  auto imag_2 = ImageIO::read<UndefinedImage, uint16_t>(*im_2);
+  std::cout << "readed image 2" << std::endl;
   
-  
+  std::cout << imag_0->get_width() << "x" << imag_0->get_height() << std::endl;
+  std::cout << imag_1->get_width() << "x" << imag_1->get_height() << std::endl;
+  std::cout << imag_2->get_width() << "x" << imag_2->get_height() << std::endl;
+
+  auto image_sum = ImageUtils::get_undefined_images_as<BT601Image>(*imag_0, *imag_1, *imag_2);
+
+
+  ImageIO::imwrite(*image_sum, "output.ppm");
+
+
   return 0;
 }
