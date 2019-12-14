@@ -15,3 +15,6 @@ endif(VISUALIZATION_TOOL)
 add_executable(compute_lightfield_psnr ComputeLightFieldPSNR.cpp)
 target_link_libraries(compute_lightfield_psnr image)
 target_link_libraries(compute_lightfield_psnr jplm_part2_common)
+
+
+add_executable(convert_ppm_to_pgx PPMToPGX.cpp)
