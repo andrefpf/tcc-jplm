@@ -100,6 +100,38 @@ std::unique_ptr<ImageTout<Tout>> get_image_with_new_container_type(
   return output_image;
 }
 
+
+template<template<typename> class ImageOut, typename Tout>
+std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
+    const std::vector<std::unique_ptr<UndefinedImage<Tout>>>& images) {
+  auto width = images[0]->get_width();
+  auto height = images[0]->get_height();
+  auto output_image =
+      std::make_unique<ImageOut<Tout>>(width, height, images[0]->get_bpp());
+
+  auto number_of_channels = output_image->get_number_of_channels();
+  if (number_of_channels != images.size()) {
+    //! \todo throw exception if the number of channels in the returned image is different from the number of input images
+    //throw expression
+  }
+
+  for (auto i=decltype(number_of_channels){0};i<number_of_channels;++i) {
+    (*output_image)[i] = (*(images[i]))[0];
+  }
+
+    // for (auto i = decltype(height){0}; i < height; ++i) {
+    //   for (auto j = decltype(width){0}; j < width; ++j) {
+    //     output_image[i] =
+    //     output_image->set_pixel_at(
+    //         {channel_0.get_value_at(0, i, j), channel_1.get_value_at(0, i, j),
+    //             channel_2.get_value_at(0, i, j)},
+    //         {i, j});
+    //   }
+    // }
+
+    return output_image;
+}
+
 //! \todo make this (get_undefined_images_as) variadic
 template<template<typename> class ImageOut, typename Tout>
 std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
