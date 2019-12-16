@@ -237,6 +237,85 @@ TEST_F(MergingOfUndefinedImages, SplittigResultsOnTheCorrectValues) {
 }
 
 
+TEST_F(MergingOfUndefinedImages, MergingFromVectorDoesNotThrow) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  EXPECT_NO_THROW(
+      auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images));
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsInThreeChannels) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  EXPECT_EQ(merged->get_number_of_channels(), 3);
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsOnTheSameWidth) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  EXPECT_EQ(merged->get_width(), width);
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsOnTheSameHeight) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  EXPECT_EQ(merged->get_height(), height);
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsOnTheSameBpp) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  EXPECT_EQ(merged->get_bpp(), bpp);
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsOnTheExpectedType) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::move(channel_0));
+  images.push_back(std::move(channel_1));
+  images.push_back(std::move(channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  EXPECT_EQ(merged->get_type(), ImageType::BT601);
+}
+
+
+TEST_F(MergingOfUndefinedImages, MergingFromVectorResultsOnTheCorrectValues) {
+  auto images = std::vector<std::unique_ptr<UndefinedImage<uint16_t>>>();
+  images.push_back(std::make_unique<UndefinedImage<uint16_t>>(*channel_0));
+  images.push_back(std::make_unique<UndefinedImage<uint16_t>>(*channel_1));
+  images.push_back(std::make_unique<UndefinedImage<uint16_t>>(*channel_2));
+  auto merged = ImageUtils::get_undefined_images_as<BT601Image>(images);
+  for (auto i = decltype(height){0}; i < height; ++i) {
+    for (auto j = decltype(width){0}; j < width; ++j) {
+      EXPECT_EQ(
+          merged->get_value_at(0, i, j), channel_0->get_value_at(0, i, j));
+      EXPECT_EQ(
+          merged->get_value_at(1, i, j), channel_1->get_value_at(0, i, j));
+      EXPECT_EQ(
+          merged->get_value_at(2, i, j), channel_2->get_value_at(0, i, j));
+    }
+  }
+}
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
