@@ -25,3 +25,8 @@ target_link_libraries(compute_lightfield_psnr jplm_part2_common)
 add_executable(convert_ppm_to_pgx PPMToPGX.cpp)
 target_link_libraries(convert_ppm_to_pgx PRIVATE image)
 target_link_libraries(convert_ppm_to_pgx PRIVATE stream)
+
+
+add_executable(convert_pgx_to_ppm PGXToPPM.cpp)
+target_link_libraries(convert_pgx_to_ppm PRIVATE image)
+target_link_libraries(convert_pgx_to_ppm PRIVATE stream)
