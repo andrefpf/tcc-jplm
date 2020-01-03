@@ -127,7 +127,7 @@ void JPLMConfiguration::run_help() {
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back({"--help", "-h", "Print this help message and exit",
-      [this, argv](std::any v) {
+      [this, argv]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(argv[0]);
       }});
@@ -135,11 +135,15 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
   arguments.push_back({"--input", "-i",
       "Input directory containing a set of uncompressed light-field images "
       "(xxx_yyy.ppm).",
-      [this](std::any v) { this->input = std::any_cast<std::string>(v); }});
+      [this]([[maybe_unused]] std::any v) {
+        this->input = std::any_cast<std::string>(v);
+      }});
   arguments.push_back({"--output", "-o",
       "Output directory containing temporary light-field data and the "
       "compressed bitstream.",
-      [this](std::any v) { this->output = std::any_cast<std::string>(v); }});
+      [this]([[maybe_unused]] std::any v) {
+        this->output = std::any_cast<std::string>(v);
+      }});
   this->parse_cli(argc, argv);
   run_help();
 }
@@ -150,7 +154,7 @@ bool JPLMConfiguration::validate_param(std::string param) {
 }
 
 bool JPLMConfiguration::validate_value(
-    unsigned int size, unsigned int pos, char **argv) {
+    unsigned int size, unsigned int pos, [[maybe_unused]] char **argv) {
   return pos < size - 1;
 }
 
