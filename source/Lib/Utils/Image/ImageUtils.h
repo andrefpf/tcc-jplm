@@ -119,16 +119,6 @@ std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
     (*output_image)[i] = (*(images[i]))[0];
   }
 
-    // for (auto i = decltype(height){0}; i < height; ++i) {
-    //   for (auto j = decltype(width){0}; j < width; ++j) {
-    //     output_image[i] =
-    //     output_image->set_pixel_at(
-    //         {channel_0.get_value_at(0, i, j), channel_1.get_value_at(0, i, j),
-    //             channel_2.get_value_at(0, i, j)},
-    //         {i, j});
-    //   }
-    // }
-
     return output_image;
 }
 

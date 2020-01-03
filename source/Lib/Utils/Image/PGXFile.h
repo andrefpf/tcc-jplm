@@ -38,12 +38,17 @@
  *  \date     2019-12-05
  */
 
+
+#ifndef JPLM_LIB_UTILS_IMAGE_PGXFILE_H__
+#define JPLM_LIB_UTILS_IMAGE_PGXFILE_H__
+
 #include <cstddef>
 #include <type_traits>  //std::is_signed
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageFile.h"
 #include "Lib/Utils/Image/UndefinedImage.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+
 
 enum class PGXEndianess { PGX_ML_BIG_ENDIAN = 0, PGX_LM_LITTLE_ENDIAN = 1 };
 
@@ -225,3 +230,5 @@ class PGXFile : public ImageFile {
     //throw
   }
 };
+
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PGXFILE_H__ */

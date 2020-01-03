@@ -40,20 +40,45 @@
 
 #include "ViewToFilenameTranslator.h"
 
+
+void check_for_overflow(const std::pair<std::size_t, std::size_t>& position) {
+  const auto& [t, s] = position;
+  if (t > 999) {
+    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+  }
+  if (s > 999) {
+    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
+  }
+}
+
+
+std::ostringstream get_name_from_position(
+    const std::pair<std::size_t, std::size_t>& position) {
+  const auto& [t, s] = position;
+  std::ostringstream string_stream;
+  string_stream << std::setw(3) << std::setfill('0') << s << '_' << std::setw(3)
+                << std::setfill('0') << t;
+  return string_stream;
+}
+
+
 std::string PPM3CharViewToFilename::view_position_to_filename(
     const std::pair<std::size_t, std::size_t>& position) const {
-	const auto& [t, s] = position;
-	if(t > 999) {
-		throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-	}
-	if (s > 999)
-	{
-		throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-	}
-  //the view is acessed as s_t 
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << s
-                << '_' << std::setw(3) << std::setfill('0')
-                << t << ".ppm";
+  check_for_overflow(position);
+
+  auto string_stream = get_name_from_position(position);
+  string_stream << ".ppm";
+
+  return string_stream.str();
+}
+
+
+std::string PGX3CharViewToFilename::view_position_to_filename(
+    const std::pair<std::size_t, std::size_t>& position) const {
+  check_for_overflow(position);
+
+  auto string_stream = get_name_from_position(position);
+  string_stream << ".pgx";
+
   return string_stream.str();
 }

@@ -38,6 +38,9 @@
  *  \date     2019-12-05
  */
 
+#ifndef JPLM_LIB_UTILS_IMAGE_PGXFILEIO_H__
+#define JPLM_LIB_UTILS_IMAGE_PGXFILEIO_H__
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -45,6 +48,7 @@
 #include <sstream>
 #include "Lib/Utils/Image/PGXFile.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
+
 
 namespace PGXFileIO {
 
@@ -83,3 +87,5 @@ std::unique_ptr<PGXFile> open(const std::string& filename,
     std::size_t width, std::size_t height, std::size_t depth, bool is_signed);
 
 }
+
+#endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PGXFILEIO_H__ */
