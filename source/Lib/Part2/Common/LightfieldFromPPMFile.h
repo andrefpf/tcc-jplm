@@ -43,6 +43,7 @@
 
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/ViewFromPGXFile.h"
 #include "Lib/Part2/Common/ViewFromPPMFile.h"
 
 
@@ -55,7 +56,6 @@
 template<typename T>
 class LightfieldFromPPMFile : public Lightfield<T> {
  public:
-
   /**
    * \brief      Constructs the object.
    *
@@ -71,25 +71,54 @@ class LightfieldFromPPMFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
-      this->set_view_at(
-          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate)),
-          coordinate);
+    bool using_pgx = true;
+
+    if (using_pgx) {
+      for (const auto& coordinate :
+          configuration.get_raster_view_coordinates()) {
+        this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
+                              configuration.get_path(), coordinate)),
+            coordinate);
+      }
+    } else {  //using PPM
+      for (const auto& coordinate :
+          configuration.get_raster_view_coordinates()) {
+        this->set_view_at(std::move(std::make_unique<ViewFromPPMFile<T>>(
+                              configuration.get_path(), coordinate)),
+            coordinate);
+      }
     }
   }
 
 
-   LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+  LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
-      this->set_view_at(
-          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate, configuration.get_size().get_v_and_u(), max_value, type)),
-          coordinate);
+    bool using_pgx = true;
+    if (using_pgx) {
+      for (const auto& coordinate :
+          configuration.get_raster_view_coordinates()) {
+        this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
+                              configuration.get_path(), coordinate)),
+            coordinate);
+      }
+    } else {  //using PPM
+      for (const auto& coordinate :
+          configuration.get_raster_view_coordinates()) {
+        this->set_view_at(
+            std::move(std::make_unique<ViewFromPPMFile<T>>(
+                configuration.get_path(), coordinate,
+                configuration.get_size().get_v_and_u(), max_value, type)),
+            coordinate);
+      }
     }
-    this->lightfield_dimension = std::make_unique<LightfieldDimension<std::size_t>>(configuration.get_size());
+
+
+    this->lightfield_dimension =
+        std::make_unique<LightfieldDimension<std::size_t>>(
+            configuration.get_size());
   }
 
 
@@ -97,7 +126,6 @@ class LightfieldFromPPMFile : public Lightfield<T> {
    * \brief Destructor of the LightfieldFromPPMFile (default)
    */
   ~LightfieldFromPPMFile() = default;
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__ */
