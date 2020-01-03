@@ -50,6 +50,7 @@
 #include <tuple>  //std::tie
 #include <variant>
 #include <vector>
+#include <array>
 #include "Lib/Part2/Common/Boxes/CameraParameterType.h"
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"

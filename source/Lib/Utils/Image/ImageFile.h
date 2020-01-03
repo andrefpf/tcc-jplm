@@ -43,12 +43,12 @@
 
 #include <inttypes.h>
 #include <cmath>
-#include <experimental/tuple>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -76,7 +76,8 @@ class ImageFile {
 
 
   ImageFile(const ImageFileType& type, const std::filesystem::path& file_name)
-      : type(type), filename(file_name.c_str()){};
+      : type(type), filename(file_name.string()) {
+  };
 
 
   ImageFile(const ImageFile& other) = delete;

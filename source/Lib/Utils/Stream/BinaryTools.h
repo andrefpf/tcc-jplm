@@ -49,6 +49,8 @@
 #include <utility>
 #include <vector>
 
+
+
 /**
  * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
  */
@@ -68,9 +70,13 @@ struct uint24_t {
 };
 
 constexpr bool using_little_endian() {
+#ifdef _WIN32
+  return true;
+#else
   if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
     return true;
   return false;
+#endif
 }
 
 
