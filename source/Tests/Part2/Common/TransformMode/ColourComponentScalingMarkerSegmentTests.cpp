@@ -53,7 +53,33 @@
 
 std::string resources_path = "../resources";
 
-TEST(BasicTest, FileBeginsWithMarkerPrefix) {
+
+TEST(BasicTest, ColourComponentScalingMarkerSegmentConstructorDoesNotThrow) {
+  EXPECT_NO_THROW(auto colour_component_scaling_marker_segment =
+                      ColourComponentScalingMarkerSegment(3, 2, 63490));
+}
+
+
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectColourComponentIndex) {
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegment(3, 2, 63490);
+  auto colour_component_index =
+      colour_component_scaling_marker_segment.get_colour_component_index();
+  EXPECT_EQ(std::get<0>(colour_component_index), 2);
+}
+
+
+TEST(BasicTest,
+    ColourComponentScalingMarkerGivesCorrectNumberOfColourComponents) {
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegment(3, 2, 63490);
+  auto NC =
+      colour_component_scaling_marker_segment.get_number_of_color_components();
+  EXPECT_EQ(NC, 3);
+}
+
+
+TEST(FileTest, FileBeginsWithMarkerPrefix) {
   std::string filename(
       resources_path + "/markers/colour_component_scaling_marker.bin");
   std::ifstream if_stream(filename, std::ifstream::binary);
@@ -63,7 +89,7 @@ TEST(BasicTest, FileBeginsWithMarkerPrefix) {
 }
 
 
-TEST(BasicTest, FileBeginsWithColourComponentScalingMarkerPrefix) {
+TEST(FileTest, FileBeginsWithColourComponentScalingMarkerPrefix) {
   std::string filename(
       resources_path + "/markers/colour_component_scaling_marker.bin");
   std::ifstream if_stream(filename, std::ifstream::binary);
@@ -74,22 +100,29 @@ TEST(BasicTest, FileBeginsWithColourComponentScalingMarkerPrefix) {
 }
 
 
-TEST(BasicTest, ColourComponentScalingMarkerSegmentConstructorDoesNotThrow) {
-	EXPECT_NO_THROW(auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490));
+TEST(ContigousCodestreamAndParserTest, FileBeginsWithMarkerPrefix) {
+  std::string filename(
+      resources_path + "/markers/colour_component_scaling_marker.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+
+  auto managed_stream = ManagedStream(if_stream, 92);
+  auto contiguous_codestream =
+      ContiguousCodestreamCodeInMemory(managed_stream.get_n_bytes(92));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xFF));
 }
 
 
-TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectColourComponentIndex) {
-	auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490);
-	auto colour_component_index = colour_component_scaling_marker_segment.get_colour_component_index();
-	EXPECT_EQ(std::get<0>(colour_component_index), 2);
-}
+TEST(ContigousCodestreamAndParserTest,
+    FileBeginsWithColourComponentScalingMarkerPrefix) {
+  std::string filename(
+      resources_path + "/markers/colour_component_scaling_marker.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
 
-
-TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectNumberOfColourComponents) {
-	auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490);
-	auto NC = colour_component_scaling_marker_segment.get_number_of_color_components();
-	EXPECT_EQ(NC, 3);
+  auto managed_stream = ManagedStream(if_stream, 92);
+  auto contiguous_codestream =
+      ContiguousCodestreamCodeInMemory(managed_stream.get_n_bytes(92));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xFF));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xA2));
 }
 
 
