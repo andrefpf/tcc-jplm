@@ -45,7 +45,7 @@
 #include "Lib/Part2/Decoder/TransformMode/MarkerSegmentHelper.h"
 
 namespace ColourComponentScalingMarkerSegmentParser {
-ColourComponentScalingMarkerSegment get_codestream_pointer_set_marker_segment(
+ColourComponentScalingMarkerSegment get_colour_component_scaling_marker_segment(
     const ContiguousCodestreamCode& codestream_code) {
   auto SLscc_from_codestream_code =
       MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
