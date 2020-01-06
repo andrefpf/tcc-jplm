@@ -49,17 +49,53 @@
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
-class ColourComponentScalingMarkerSegment
-{
-protected:
-	static constexpr auto marker_code = Marker::SCC;
-	std::variant<uint8_t, uint16_t> colour_component;
-	uint8_t exponent;  // 0...   31
-	uint16_t mantissa; // 0... 2047
-public:
-	static constexpr uint8_t SLscc = 0;
-	ColourComponentScalingMarkerSegment(std::size_t NC);
-	~ColourComponentScalingMarkerSegment() = default;
+class ColourComponentScalingMarkerSegment {
+ protected:
+  static constexpr auto marker_code = Marker::SCC;
+  std::variant<uint8_t, uint16_t> colour_component;
+  uint8_t exponent;  // 0...   31
+  uint16_t mantissa;  // 0... 2047
+
+  uint8_t get_exponent_from_Spscc(uint16_t Spscc) {
+    uint8_t exp = (Spscc >> 11) & 0x1F;  // 0x1F == 0001 1111
+    return exp;
+  }
+
+
+  uint16_t get_mantissa_from_Spscc(uint16_t Spscc) {
+    return (Spscc & 0x7FF);
+  }
+
+ public:
+  static constexpr uint8_t SLscc = 0;
+
+  ColourComponentScalingMarkerSegment(
+      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
+      : colour_component(
+            NC > 256 ? std::variant<uint8_t, uint16_t>(
+                           static_cast<uint16_t>(colour_component_index))
+                     : std::variant<uint8_t, uint16_t>(
+                           static_cast<uint8_t>(colour_component_index))),
+        exponent(get_exponent_from_Spscc(Spscc)),
+        mantissa(get_mantissa_from_Spscc(Spscc)) {
+  }
+
+  ~ColourComponentScalingMarkerSegment() = default;
+
+
+  auto get_exponent() {
+  	return exponent;
+  }
+
+
+  auto get_mantissa() {
+  	return mantissa;
+  }
+
+
+  double get_scaling_factor() {
+  	return std::pow(2.0, exponent-16.0)*static_cast<double>(mantissa);
+  }
 
 };
 

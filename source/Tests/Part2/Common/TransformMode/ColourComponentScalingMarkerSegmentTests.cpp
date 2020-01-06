@@ -45,8 +45,8 @@
 #include <string>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
-#include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
-#include "Lib/Part2/Decoder/TransformMode/CodestreamPointerSetMarkerSegmentParser.h"
+#include "Lib/Part2/Common/TransformMode/ColourComponentScalingMarkerSegment.h"
+#include "Lib/Part2/Decoder/TransformMode/ColourComponentScalingMarkerSegmentParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 #include "gtest/gtest.h"
 
@@ -55,12 +55,31 @@ std::string resources_path = "../resources";
 
 TEST(BasicTest, FileBeginsWithMarkerPrefix) {
   std::string filename(
-      resources_path + "/markers/codestream_pointer_set_marker.bin");
+      resources_path + "/markers/colour_component_scaling_marker.bin");
   std::ifstream if_stream(filename, std::ifstream::binary);
 
   auto managed_stream = ManagedStream(if_stream, 92);
   EXPECT_EQ(managed_stream.get_byte(), std::byte(0xFF));
 }
+
+
+TEST(BasicTest, FileBeginsWithColourComponentScalingMarkerPrefix) {
+  std::string filename(
+      resources_path + "/markers/colour_component_scaling_marker.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+
+  auto managed_stream = ManagedStream(if_stream, 92);
+  EXPECT_EQ(managed_stream.get_byte(), std::byte(0xFF));
+  EXPECT_EQ(managed_stream.get_byte(), std::byte(0xA2));
+}
+
+
+TEST(BasicTest, ColourComponentScalingMarkerSegmentConstructorDoesNotThrow) {
+	EXPECT_NO_THROW(auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490));
+}
+
+
+
 
 
 int main(int argc, char* argv[]) {
