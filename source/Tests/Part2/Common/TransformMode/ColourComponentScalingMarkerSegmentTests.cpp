@@ -56,13 +56,13 @@ std::string resources_path = "../resources";
 
 TEST(BasicTest, ColourComponentScalingMarkerSegmentConstructorDoesNotThrow) {
   EXPECT_NO_THROW(auto colour_component_scaling_marker_segment =
-                      ColourComponentScalingMarkerSegment(3, 2, 63490));
+                      ColourComponentScalingMarkerSegment(false, 2, 63490));
 }
 
 
 TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectColourComponentIndex) {
   auto colour_component_scaling_marker_segment =
-      ColourComponentScalingMarkerSegment(3, 2, 63490);
+      ColourComponentScalingMarkerSegment(false, 2, 63490);
   auto colour_component_index =
       colour_component_scaling_marker_segment.get_colour_component_index();
   EXPECT_EQ(std::get<0>(colour_component_index), 2);
@@ -70,39 +70,32 @@ TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectColourComponentIndex) {
 
 
 TEST(BasicTest,
-    ColourComponentScalingMarkerGivesCorrectNumberOfColourComponents) {
+    ColourComponentScalingMarkerGivesCorrectAlternativeForTheNumberOfColourComponents) {
   auto colour_component_scaling_marker_segment =
-      ColourComponentScalingMarkerSegment(3, 2, 63490);
-  auto NC =
-      colour_component_scaling_marker_segment.get_number_of_color_components();
-  EXPECT_EQ(NC, 3);
+      ColourComponentScalingMarkerSegment(false, 2, 63490);
+  EXPECT_FALSE(colour_component_scaling_marker_segment.has_more_than_256_colour_components());
 }
 
 
-TEST(BasicTest,
-    ColourComponentScalingMarkerGivesCorrectExponent) {
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectExponent) {
   auto colour_component_scaling_marker_segment =
-      ColourComponentScalingMarkerSegment(3, 2, 63490);
-  auto exponent =
-      colour_component_scaling_marker_segment.get_exponent();
+      ColourComponentScalingMarkerSegment(false, 2, 63490);
+  auto exponent = colour_component_scaling_marker_segment.get_exponent();
   EXPECT_EQ(exponent, 0x1F);
 }
 
 
-TEST(BasicTest,
-    ColourComponentScalingMarkerGivesCorrectMantissa) {
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectMantissa) {
   auto colour_component_scaling_marker_segment =
-      ColourComponentScalingMarkerSegment(3, 2, 63490);
-  auto mantissa =
-      colour_component_scaling_marker_segment.get_mantissa();
+      ColourComponentScalingMarkerSegment(false, 2, 63490);
+  auto mantissa = colour_component_scaling_marker_segment.get_mantissa();
   EXPECT_EQ(mantissa, 2);
 }
 
 
-TEST(BasicTest,
-    ColourComponentScalingMarkerGivesCorrectScaling) {
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectScaling) {
   auto colour_component_scaling_marker_segment =
-      ColourComponentScalingMarkerSegment(3, 2, 63490);
+      ColourComponentScalingMarkerSegment(false, 2, 63490);
   auto scaling_factor =
       colour_component_scaling_marker_segment.get_scaling_factor();
   EXPECT_EQ(scaling_factor, 65536);

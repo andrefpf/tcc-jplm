@@ -52,7 +52,7 @@
 class ColourComponentScalingMarkerSegment {
  protected:
   static constexpr auto marker_code = Marker::SCC;
-  std::size_t number_of_color_components;
+  bool more_than_256_colour_components;
   std::variant<uint8_t, uint16_t> colour_component;
   uint8_t exponent;  // 0...   31
   uint16_t mantissa;  // 0... 2047
@@ -70,16 +70,25 @@ class ColourComponentScalingMarkerSegment {
  public:
   static constexpr uint8_t SLscc = 0;
 
-  ColourComponentScalingMarkerSegment(
-      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
-      : number_of_color_components(NC),
+  ColourComponentScalingMarkerSegment(bool has_more_than_256_colour_components,
+      std::size_t colour_component_index, uint16_t Spscc)
+      : more_than_256_colour_components(
+            has_more_than_256_colour_components),
         colour_component(
-            NC > 256 ? std::variant<uint8_t, uint16_t>(
-                           static_cast<uint16_t>(colour_component_index))
-                     : std::variant<uint8_t, uint16_t>(
-                           static_cast<uint8_t>(colour_component_index))),
+            has_more_than_256_colour_components
+                ? std::variant<uint8_t, uint16_t>(
+                      static_cast<uint16_t>(colour_component_index))
+                : std::variant<uint8_t, uint16_t>(
+                      static_cast<uint8_t>(colour_component_index))),
         exponent(get_exponent_from_Spscc(Spscc)),
         mantissa(get_mantissa_from_Spscc(Spscc)) {
+  }
+
+
+  ColourComponentScalingMarkerSegment(
+      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
+      : ColourComponentScalingMarkerSegment(
+            NC > 256 ? true : false, colour_component_index, Spscc) {
   }
 
   ~ColourComponentScalingMarkerSegment() = default;
@@ -100,8 +109,8 @@ class ColourComponentScalingMarkerSegment {
   }
 
 
-  auto get_number_of_color_components() {
-    return number_of_color_components;
+  bool has_more_than_256_colour_components() {
+  	return more_than_256_colour_components;
   }
 
 
