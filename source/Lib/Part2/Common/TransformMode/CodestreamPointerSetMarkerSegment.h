@@ -38,6 +38,11 @@
  *  \date     2020-01-03
  */
 
+#ifndef CODESTREAMPOINTERSETMARKERSEGMENT_H__
+#define CODESTREAMPOINTERSETMARKERSEGMENT_H__
+
+
+
 #include <cmath>
 #include <cstdint>
 #include <variant>
@@ -45,6 +50,8 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+
+
 
 class CodestreamPointerSetMarkerSegment {
  protected:
@@ -58,9 +65,27 @@ class CodestreamPointerSetMarkerSegment {
       const std::vector<std::variant<uint32_t, uint64_t>>& PPnt)
       : PPnt(PPnt) {
   }
+
+
   CodestreamPointerSetMarkerSegment(
       std::vector<std::variant<uint32_t, uint64_t>>&& PPnt)
       : PPnt(std::move(PPnt)) {
   }
+
+
   ~CodestreamPointerSetMarkerSegment() = default;
+
+
+  auto get_number_of_pointers() {
+  	return PPnt.size();
+  }
+
+
+  auto get_pointer_at(std::size_t i) {
+  	return PPnt.at(i);
+  }
+
 };
+
+
+#endif /* end of include guard: CODESTREAMPOINTERSETMARKERSEGMENT_H__ */
