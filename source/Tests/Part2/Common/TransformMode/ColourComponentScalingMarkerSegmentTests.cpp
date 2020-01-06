@@ -79,6 +79,36 @@ TEST(BasicTest,
 }
 
 
+TEST(BasicTest,
+    ColourComponentScalingMarkerGivesCorrectExponent) {
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegment(3, 2, 63490);
+  auto exponent =
+      colour_component_scaling_marker_segment.get_exponent();
+  EXPECT_EQ(exponent, 0x1F);
+}
+
+
+TEST(BasicTest,
+    ColourComponentScalingMarkerGivesCorrectMantissa) {
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegment(3, 2, 63490);
+  auto mantissa =
+      colour_component_scaling_marker_segment.get_mantissa();
+  EXPECT_EQ(mantissa, 2);
+}
+
+
+TEST(BasicTest,
+    ColourComponentScalingMarkerGivesCorrectScaling) {
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegment(3, 2, 63490);
+  auto scaling_factor =
+      colour_component_scaling_marker_segment.get_scaling_factor();
+  EXPECT_EQ(scaling_factor, 65536);
+}
+
+
 TEST(FileTest, FileBeginsWithMarkerPrefix) {
   std::string filename(
       resources_path + "/markers/colour_component_scaling_marker.bin");
