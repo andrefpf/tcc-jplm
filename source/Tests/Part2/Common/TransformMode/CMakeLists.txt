@@ -11,4 +11,4 @@ endfunction()
 
 
 add_jplm_part2_common_transform_mode_lib_test(Block4DTests block4d_tests Block4DTests.cpp)
-add_jplm_part2_common_transform_mode_lib_test(MarkersTests markers_tests MarkersTests.cpp)
+add_jplm_part2_common_transform_mode_lib_test(CodestreamPointerSetMarkerSegmentTests codestream_pointer_set_marker_segment_tests CodestreamPointerSetMarkerSegmentTests.cpp)
