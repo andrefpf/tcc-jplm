@@ -79,7 +79,18 @@ TEST(BasicTest, ColourComponentScalingMarkerSegmentConstructorDoesNotThrow) {
 }
 
 
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectColourComponentIndex) {
+	auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490);
+	auto colour_component_index = colour_component_scaling_marker_segment.get_colour_component_index();
+	EXPECT_EQ(std::get<0>(colour_component_index), 2);
+}
 
+
+TEST(BasicTest, ColourComponentScalingMarkerGivesCorrectNumberOfColourComponents) {
+	auto colour_component_scaling_marker_segment = ColourComponentScalingMarkerSegment(3,2,63490);
+	auto NC = colour_component_scaling_marker_segment.get_number_of_color_components();
+	EXPECT_EQ(NC, 3);
+}
 
 
 int main(int argc, char* argv[]) {

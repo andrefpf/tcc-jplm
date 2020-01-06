@@ -52,6 +52,7 @@
 class ColourComponentScalingMarkerSegment {
  protected:
   static constexpr auto marker_code = Marker::SCC;
+  std::size_t number_of_color_components;
   std::variant<uint8_t, uint16_t> colour_component;
   uint8_t exponent;  // 0...   31
   uint16_t mantissa;  // 0... 2047
@@ -71,7 +72,8 @@ class ColourComponentScalingMarkerSegment {
 
   ColourComponentScalingMarkerSegment(
       std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
-      : colour_component(
+      : number_of_color_components(NC),
+        colour_component(
             NC > 256 ? std::variant<uint8_t, uint16_t>(
                            static_cast<uint16_t>(colour_component_index))
                      : std::variant<uint8_t, uint16_t>(
@@ -84,19 +86,28 @@ class ColourComponentScalingMarkerSegment {
 
 
   auto get_exponent() {
-  	return exponent;
+    return exponent;
   }
 
 
   auto get_mantissa() {
-  	return mantissa;
+    return mantissa;
+  }
+
+
+  auto get_colour_component_index() {
+    return colour_component;
+  }
+
+
+  auto get_number_of_color_components() {
+    return number_of_color_components;
   }
 
 
   double get_scaling_factor() {
-  	return std::pow(2.0, exponent-16.0)*static_cast<double>(mantissa);
+    return std::pow(2.0, exponent - 16.0) * static_cast<double>(mantissa);
   }
-
 };
 
 #endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENT_H__ */
