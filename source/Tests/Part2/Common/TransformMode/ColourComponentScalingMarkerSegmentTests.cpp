@@ -190,6 +190,48 @@ TEST(ContigousCodestreamAndParserTest,
 }
 
 
+TEST(ContigousCodestreamAndParserTest,
+    ParserGivesCorrectExponent) {
+  std::string filename(
+      resources_path + "/markers/colour_component_scaling_marker.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+
+  auto managed_stream = ManagedStream(if_stream, 8);
+  auto contiguous_codestream =
+      ContiguousCodestreamCodeInMemory(managed_stream.get_n_bytes(8));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xFF));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xA2));
+
+
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegmentParser::
+          get_colour_component_scaling_marker_segment(contiguous_codestream);
+  auto exponent = colour_component_scaling_marker_segment.get_exponent();
+  EXPECT_EQ(exponent, 0x1F);
+}
+
+
+TEST(ContigousCodestreamAndParserTest,
+    ParserGivesCorrectMantissa) {
+  std::string filename(
+      resources_path + "/markers/colour_component_scaling_marker.bin");
+  std::ifstream if_stream(filename, std::ifstream::binary);
+
+  auto managed_stream = ManagedStream(if_stream, 8);
+  auto contiguous_codestream =
+      ContiguousCodestreamCodeInMemory(managed_stream.get_n_bytes(8));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xFF));
+  EXPECT_EQ(contiguous_codestream.get_next_byte(), std::byte(0xA2));
+
+
+  auto colour_component_scaling_marker_segment =
+      ColourComponentScalingMarkerSegmentParser::
+          get_colour_component_scaling_marker_segment(contiguous_codestream);
+  auto mantissa = colour_component_scaling_marker_segment.get_mantissa();
+  EXPECT_EQ(mantissa, 2);
+}
+
+
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
