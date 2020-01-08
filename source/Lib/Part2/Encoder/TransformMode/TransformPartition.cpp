@@ -95,6 +95,12 @@ std::cout << "Partition code: " << mPartitionCode << "\n";
   std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
 }
 
+
+void scale_block(Block4D& transformed_block, double scale_factor) {
+  
+}
+
+
 double TransformPartition::rd_optimize_transform(Block4D &input_block,
     Block4D &transformed_block, const std::tuple<int, int, int, int> &position,
     const std::tuple<int, int, int, int> &lengths,

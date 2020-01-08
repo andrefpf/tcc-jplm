@@ -47,6 +47,39 @@
 // 	EXPECT_NO_THROW(auto block4d = Block4D({1,2,3,4}));
 // }
 
+struct UnaryOperatorsTests : testing::Test {
+ protected:
+  Block4D block4d;
+  UnaryOperatorsTests() {
+    block4d.set_dimension(2, 2, 2, 2);
+    for(auto i=0;i<16;++i) {
+    	block4d.mPixelData[i]=i;
+    }
+  }
+};
+
+
+TEST_F(UnaryOperatorsTests, Block4DHasTheExpectedDimension) {
+	const auto dimension = LightfieldDimension<uint32_t>(block4d.get_dimension());
+	EXPECT_EQ(dimension, LightfieldDimension<uint32_t>(2,2,2,2));
+}
+
+
+TEST_F(UnaryOperatorsTests, MultiplicationByScalarDouble) {
+	block4d*=2.0;
+	for(auto i=0;i<16;++i) {
+    	EXPECT_EQ(block4d.mPixelData[i], std::round(i*2.0));
+    }
+}
+
+
+TEST_F(UnaryOperatorsTests, DivisionByScalarDouble) {
+	block4d/=2.0;
+	for(auto i=0;i<16;++i) {
+    	EXPECT_EQ(block4d.mPixelData[i], std::round(i/2.0));
+    }
+}
+
 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);

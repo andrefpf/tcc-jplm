@@ -164,9 +164,6 @@ class JPLM4DTransformModeLightFieldDecoder
       marker = get_next_marker_bytes();
     }
     std::cout << "No more optional markers" << std::endl;
-    //
-    //
-    // while()
   }
 
 
