@@ -44,6 +44,7 @@
 #include <math.h>
 #include <string.h>
 #include <memory>
+#include <vector>
 #include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
 #include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
 
@@ -55,6 +56,9 @@ class PartitionDecoder {
   void decode_partition(uint16_t channel, int *position, uint32_t *length,
       Hierarchical4DDecoder &entropyDecoder);
 
+ protected:
+  std::vector<double> scaling_factors;
+
  public:
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   PartitionDecoder() = default;
@@ -62,6 +66,18 @@ class PartitionDecoder {
   Block4D decode_partition(uint16_t channel,
       Hierarchical4DDecoder &entropyDecoder,
       const LightfieldDimension<uint32_t> &size);
+
+
+  void set_colour_component_scaling_factor(
+      const std::size_t colour_component_index, double scaling_factor) {
+    this->scaling_factors[colour_component_index] = scaling_factor;
+  }
+
+
+  void set_number_of_colour_components(uint16_t number_of_colour_components) {
+    this->scaling_factors =
+        std::vector<double>(number_of_colour_components, 1.0);
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */

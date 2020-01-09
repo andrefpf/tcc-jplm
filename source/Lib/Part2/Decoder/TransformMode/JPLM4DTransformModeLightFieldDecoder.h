@@ -169,7 +169,7 @@ class JPLM4DTransformModeLightFieldDecoder
 
       std::visit(
           [this, scaling_factor](auto& index) {
-            this->hierarchical_4d_decoder.set_colour_component_scaling_factor(
+            this->partition_decoder.set_colour_component_scaling_factor(
                 index, scaling_factor);
             std::cout << "Detected scaling factor " << scaling_factor
                       << " for colour channel " << index << std::endl;
@@ -192,7 +192,7 @@ class JPLM4DTransformModeLightFieldDecoder
             get_light_field_configuration_marker_segment(codestream_code);
 
     //setup the number of channels (NC) in the hierarchical 4d encoder
-    hierarchical_4d_decoder.set_number_of_colour_components(
+    partition_decoder.set_number_of_colour_components(
         lightfield_configuration_marker_segment
             .get_number_of_colour_components());
 
