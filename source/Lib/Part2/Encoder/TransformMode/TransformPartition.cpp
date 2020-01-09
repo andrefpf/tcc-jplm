@@ -47,18 +47,20 @@ TransformPartition::TransformPartition(
       mlength_v_min(length_v_min), mlength_u_min(length_u_min) {
 }
 
-TransformPartition::TransformPartition(const LightfieldDimension<uint32_t>& minimum_transform_dimensions) :
-        mlength_t_min(minimum_transform_dimensions.get_t()),
-        mlength_s_min(minimum_transform_dimensions.get_s()),
-        mlength_v_min(minimum_transform_dimensions.get_v()),
-        mlength_u_min(minimum_transform_dimensions.get_u()) {
+TransformPartition::TransformPartition(
+    const LightfieldDimension<uint32_t> &minimum_transform_dimensions)
+    : mlength_t_min(minimum_transform_dimensions.get_t()),
+      mlength_s_min(minimum_transform_dimensions.get_s()),
+      mlength_v_min(minimum_transform_dimensions.get_v()),
+      mlength_u_min(minimum_transform_dimensions.get_u()) {
 }
 
 /*! Evaluates the Lagrangian cost of the optimum multiscale transform for the input block as well as the transformed block */
 void TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
   // double scaled_lambda = lambda*input_block.get_number_of_elements();
-  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
+  double scaled_lambda =
+      lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   partition_code.clear();
   mEvaluateOptimumBitPlane = true;
@@ -80,24 +82,27 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
   for (const auto &flag : partition_code) {
     switch (flag) {
       case PartitionFlag::transform:
-          mPartitionCode+='T';
+        mPartitionCode += 'T';
         break;
       case PartitionFlag::spatialSplit:
-        mPartitionCode+='S';
+        mPartitionCode += 'S';
         break;
       case PartitionFlag::viewSplit:
-          mPartitionCode+='V';
+        mPartitionCode += 'V';
         break;
     }
   }
 
-std::cout << "Partition code: " << mPartitionCode << "\n";
-  std::cout << "Inferior bit plane value: " << static_cast<uint32_t>(hierarchical_4d_encoder.get_inferior_bit_plane()) << "\n";
+  std::cout << "Partition code: " << mPartitionCode << "\n";
+  std::cout << "Inferior bit plane value: "
+            << static_cast<uint32_t>(
+                   hierarchical_4d_encoder.get_inferior_bit_plane())
+            << "\n";
 }
 
 
-void scale_block(Block4D& transformed_block, double scale_factor) {
-  
+void scale_block(Block4D &transformed_block, double scaling_factor) {
+  transformed_block *= scaling_factor;
 }
 
 
@@ -123,13 +128,15 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
   //substituted the multiscale transform call for this new one
   DCT4DBlock dctblock(block_0);
   dctblock.swap_data_with_block(block_0);
+  scale_block(block_0, 1.0);  //should use the data from SCC marker segment
 
   //copy the transformed input block to hierarchical_4d_encoder.mSubbandLF
   hierarchical_4d_encoder.mSubbandLF =
       block_0;  //copy, its not possible to move...
 
   if (mEvaluateOptimumBitPlane) {
-      hierarchical_4d_encoder.set_inferior_bit_plane(hierarchical_4d_encoder.get_optimum_bit_plane(lambda));
+    hierarchical_4d_encoder.set_inferior_bit_plane(
+        hierarchical_4d_encoder.get_optimum_bit_plane(lambda));
     hierarchical_4d_encoder.load_optimizer_state();
     mEvaluateOptimumBitPlane = false;
   }
@@ -378,7 +385,8 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
 
 void TransformPartition::encode_partition(
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
-  double scaled_lambda = lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
+  double scaled_lambda =
+      lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
   mPartitionCodeIndex = 0;
 

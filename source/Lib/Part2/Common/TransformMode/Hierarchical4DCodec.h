@@ -71,6 +71,8 @@ class Hierarchical4DCodec {
   uint8_t superior_bit_plane;
   uint8_t inferior_bit_plane;
 
+  std::vector<double> scaling_factors;
+
   //! \todo check if the transform dimension must be kept in this class or only the number of elements in the transform.
   //LightfieldDimension<uint32_t> transform_dimension;
   uint32_t mTransformLength_t, mTransformLength_s, mTransformLength_v,
@@ -108,9 +110,24 @@ class Hierarchical4DCodec {
   }
 
 
+  void set_colour_component_scaling_factors(std::vector<double> scaling_factors) {
+    this->scaling_factors = scaling_factors;
+  }
+
+
+  void set_colour_component_scaling_factor(const std::size_t colour_component_index, double scaling_factor) {
+    this->scaling_factors[colour_component_index] = scaling_factor;
+  }
+
+
   void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
   void set_minimum_transform_dimension(
       const LightfieldDimension<uint32_t>& dimension);
+
+
+  void set_number_of_colour_components(uint16_t number_of_colour_components) {
+    this->scaling_factors = std::vector<double>(number_of_colour_components, 1.0);
+  }
 
   Block4D mSubbandLF;
 

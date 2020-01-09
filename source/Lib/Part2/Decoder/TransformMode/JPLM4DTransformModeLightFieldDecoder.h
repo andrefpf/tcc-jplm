@@ -157,11 +157,24 @@ class JPLM4DTransformModeLightFieldDecoder
     auto bytes_of_scc_marker = Markers::get_bytes(Marker::SCC);
     while (marker[1] == bytes_of_scc_marker[1]) {
       //detected a SCC optional marker
-      [[maybe_unused]] auto colour_component_scaling_marker_segment =
+      auto colour_component_scaling_marker_segment =
           ColourComponentScalingMarkerSegmentParser::
-              get_colour_component_scaling_marker_segment(
-                  codestream_code);
+              get_colour_component_scaling_marker_segment(codestream_code);
       marker = get_next_marker_bytes();
+
+      auto index_variant =
+          colour_component_scaling_marker_segment.get_colour_component_index();
+      auto scaling_factor =
+          colour_component_scaling_marker_segment.get_scaling_factor();
+
+      std::visit(
+          [this, scaling_factor](auto& index) {
+            this->hierarchical_4d_decoder.set_colour_component_scaling_factor(
+                index, scaling_factor);
+            std::cout << "Detected scaling factor " << scaling_factor
+                      << " for colour channel " << index << std::endl;
+          },
+          index_variant);
     }
     std::cout << "No more optional markers" << std::endl;
   }
@@ -177,6 +190,11 @@ class JPLM4DTransformModeLightFieldDecoder
     auto lightfield_configuration_marker_segment =
         LightFieldContigurationMarkerSegmentParser::
             get_light_field_configuration_marker_segment(codestream_code);
+
+    //setup the number of channels (NC) in the hierarchical 4d encoder
+    hierarchical_4d_decoder.set_number_of_colour_components(
+        lightfield_configuration_marker_segment
+            .get_number_of_colour_components());
 
 
     //gets the superior bit plane value from the LFC marker segment
@@ -227,7 +245,11 @@ class JPLM4DTransformModeLightFieldDecoder
               << "\n";
     std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
     std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
-    std::cout << "level_shift: " << level_shift << std::endl;
+    std::cout << "level_shift: " << level_shift << "\n";
+    std::cout << "number of colour components: "
+              << lightfield_configuration_marker_segment
+                     .get_number_of_colour_components()
+              << std::endl;
   }
 
 
