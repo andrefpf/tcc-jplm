@@ -110,12 +110,14 @@ class Hierarchical4DCodec {
   }
 
 
-  void set_colour_component_scaling_factors(std::vector<double> scaling_factors) {
+  void set_colour_component_scaling_factors(
+      std::vector<double> scaling_factors) {
     this->scaling_factors = scaling_factors;
   }
 
 
-  void set_colour_component_scaling_factor(const std::size_t colour_component_index, double scaling_factor) {
+  void set_colour_component_scaling_factor(
+      const std::size_t colour_component_index, double scaling_factor) {
     this->scaling_factors[colour_component_index] = scaling_factor;
   }
 
@@ -126,7 +128,8 @@ class Hierarchical4DCodec {
 
 
   void set_number_of_colour_components(uint16_t number_of_colour_components) {
-    this->scaling_factors = std::vector<double>(number_of_colour_components, 1.0);
+    this->scaling_factors =
+        std::vector<double>(number_of_colour_components, 1.0);
   }
 
   Block4D mSubbandLF;

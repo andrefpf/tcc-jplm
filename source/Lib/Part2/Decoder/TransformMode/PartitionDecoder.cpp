@@ -41,7 +41,7 @@
 #include "PartitionDecoder.h"
 
 
-Block4D PartitionDecoder::decode_partition(
+Block4D PartitionDecoder::decode_partition(uint16_t channel, 
     Hierarchical4DDecoder &hierarchical_decoder,
     const LightfieldDimension<uint32_t> &size) {
   int position[] = {0, 0, 0, 0};
@@ -55,17 +55,17 @@ Block4D PartitionDecoder::decode_partition(
   hierarchical_decoder.set_inferior_bit_plane(
       hierarchical_decoder.decode_integer(MINIMUM_BITPLANE_PRECISION));
 
-  decode_partition(position, length, hierarchical_decoder);
+  decode_partition(channel, position, length, hierarchical_decoder);
 
   return Block4D(std::move(mPartitionData));
 }
 
 
-void PartitionDecoder::decode_partition(int *position, uint32_t *length,
+void PartitionDecoder::decode_partition(uint16_t channel, int *position, uint32_t *length,
     Hierarchical4DDecoder &hierarchical_decoder) {
   switch (hierarchical_decoder.decode_partition_flag()) {
     case PartitionFlag::transform: {
-      return decode_transform_partition(position, length, hierarchical_decoder);
+      return decode_transform_partition(channel, position, length, hierarchical_decoder);
     }
     case PartitionFlag::spatialSplit: {
       int new_position[] = {position[0], position[1], position[2], position[3]};
@@ -73,22 +73,22 @@ void PartitionDecoder::decode_partition(int *position, uint32_t *length,
           length[0], length[1], length[2] / 2, length[3] / 2};
 
       //Decode four spatial subblocks
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[3] = position[3] + length[3] / 2;
       new_length[3] = length[3] - length[3] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[2] = position[2] + length[2] / 2;
       new_length[2] = length[2] - length[2] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[3] = position[3];
       new_length[3] = length[3] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
       return;
     }
     case PartitionFlag::viewSplit: {
@@ -97,22 +97,22 @@ void PartitionDecoder::decode_partition(int *position, uint32_t *length,
           length[0] / 2, length[1] / 2, length[2], length[3]};
 
       //Decode four view subblocks
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[1] = position[1] + length[1] / 2;
       new_length[1] = length[1] - length[1] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[0] = position[0] + length[0] / 2;
       new_length[0] = length[0] - length[0] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
 
       new_position[1] = position[1];
       new_length[1] = length[1] / 2;
 
-      decode_partition(new_position, new_length, hierarchical_decoder);
+      decode_partition(channel, new_position, new_length, hierarchical_decoder);
       return;
     }
   }
@@ -124,7 +124,7 @@ void inverse_scale_block(Block4D &transformed_block, double scaling_factor) {
 }
 
 
-void PartitionDecoder::decode_transform_partition(int *position,
+void PartitionDecoder::decode_transform_partition(uint16_t channel, int *position,
     uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
   hierarchical_decoder.mSubbandLF.set_dimension(
       length[0], length[1], length[2], length[3]);
@@ -132,7 +132,7 @@ void PartitionDecoder::decode_transform_partition(int *position,
   hierarchical_decoder.decode_block(0, 0, 0, 0, length[0], length[1], length[2],
       length[3], hierarchical_decoder.get_superior_bit_plane());
 
-  inverse_scale_block(hierarchical_decoder.mSubbandLF, 1.0);
+  inverse_scale_block(hierarchical_decoder.mSubbandLF, scaling_factors[channel]);
 
   DCT4DBlock dctblock(std::move(
       hierarchical_decoder

@@ -280,8 +280,8 @@ class JPLM4DTransformModeLightFieldDecoder
     hierarchical_4d_decoder.reset_probability_models();
 
 
-    auto decoded_block =
-        partition_decoder.decode_partition(hierarchical_4d_decoder, size);
+    auto decoded_block = partition_decoder.decode_partition(
+        channel, hierarchical_4d_decoder, size);
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
 
