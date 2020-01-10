@@ -149,6 +149,21 @@ Block4D& Block4D::operator-=(int const& value) {
     return *this;
 }
 
+
+Block4D& Block4D::operator*=(double const& value) {
+    std::transform(mPixelData, mPixelData+number_of_elements, mPixelData,
+                   [value](block4DElementType a) -> block4DElementType { return std::round(a*value); });
+    return *this;
+}
+
+
+Block4D& Block4D::operator/=(double const& value) {
+    std::transform(mPixelData, mPixelData+number_of_elements, mPixelData,
+                   [value](block4DElementType a) -> block4DElementType { return std::round(a/value); });
+    return *this;
+}
+
+
 void Block4D::operator=(const Block4D &other) {
     set_dimension(other.mlength_t,other.mlength_s,other.mlength_v,other.mlength_u);
     std::memcpy(mPixelData, other.mPixelData, number_of_elements*sizeof(block4DElementType));

@@ -88,6 +88,9 @@ class Hierarchical4DCodec {
   uint32_t mNumberOfViewLines, mNumberOfViewColumns;
 
  public:
+  Block4D mSubbandLF;
+
+  
   auto get_number_of_elements_in_transform() const {
     return mTransformLength_t * mTransformLength_s * mTransformLength_v *
            mTransformLength_u;
@@ -112,7 +115,7 @@ class Hierarchical4DCodec {
   void set_minimum_transform_dimension(
       const LightfieldDimension<uint32_t>& dimension);
 
-  Block4D mSubbandLF;
+
 
 
   Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0){};

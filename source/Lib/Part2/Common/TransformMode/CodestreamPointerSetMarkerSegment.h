@@ -31,53 +31,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     PartitionDecoder.h
+/** \file     CodestreamPointerSetMarkerSegment.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-01-03
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
+#ifndef CODESTREAMPOINTERSETMARKERSEGMENT_H__
+#define CODESTREAMPOINTERSETMARKERSEGMENT_H__
 
-#include <math.h>
-#include <string.h>
-#include <memory>
+
+
+#include <cmath>
+#include <cstdint>
+#include <variant>
 #include <vector>
-#include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
-#include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Part2/Common/TransformMode/Markers.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
-class PartitionDecoder {
- private:
-  static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
-  void decode_transform_partition(uint16_t channel, int *position,
-      uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder);
-  void decode_partition(uint16_t channel, int *position, uint32_t *length,
-      Hierarchical4DDecoder &entropyDecoder);
 
+
+class CodestreamPointerSetMarkerSegment {
  protected:
-  std::vector<double> scaling_factors;
+  static constexpr auto marker_code = Marker::PNT;
+  
+  std::vector<std::variant<uint32_t, uint64_t>> PPnt;
 
  public:
-  Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
-  PartitionDecoder() = default;
-  ~PartitionDecoder() = default;
-  Block4D decode_partition(uint16_t channel,
-      Hierarchical4DDecoder &entropyDecoder,
-      const LightfieldDimension<uint32_t> &size);
-
-
-  void set_colour_component_scaling_factor(
-      const std::size_t colour_component_index, double scaling_factor) {
-    this->scaling_factors[colour_component_index] = scaling_factor;
+  static constexpr uint8_t SLpnt = 2;
+  CodestreamPointerSetMarkerSegment(
+      const std::vector<std::variant<uint32_t, uint64_t>>& PPnt)
+      : PPnt(PPnt) {
   }
 
 
-  void set_number_of_colour_components(uint16_t number_of_colour_components) {
-    this->scaling_factors =
-        std::vector<double>(number_of_colour_components, 1.0);
+  CodestreamPointerSetMarkerSegment(
+      std::vector<std::variant<uint32_t, uint64_t>>&& PPnt)
+      : PPnt(std::move(PPnt)) {
   }
+
+
+  ~CodestreamPointerSetMarkerSegment() = default;
+
+
+  auto get_number_of_pointers() {
+  	return PPnt.size();
+  }
+
+
+  auto get_pointer_at(std::size_t i) {
+  	return PPnt.at(i);
+  }
+
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */
+
+#endif /* end of include guard: CODESTREAMPOINTERSETMARKERSEGMENT_H__ */

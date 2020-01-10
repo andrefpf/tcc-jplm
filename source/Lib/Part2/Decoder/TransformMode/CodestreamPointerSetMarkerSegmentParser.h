@@ -31,53 +31,64 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     PartitionDecoder.h
+/** \file     CodestreamPointerSetMarkerSegmentParser.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-01-03
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
+#ifndef CODESTREAMPOINTERSETMARKERSEGMENTPARSER_H__
+#define CODESTREAMPOINTERSETMARKERSEGMENTPARSER_H__
 
-#include <math.h>
-#include <string.h>
-#include <memory>
-#include <vector>
-#include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
-#include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
-
-class PartitionDecoder {
- private:
-  static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
-  void decode_transform_partition(uint16_t channel, int *position,
-      uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder);
-  void decode_partition(uint16_t channel, int *position, uint32_t *length,
-      Hierarchical4DDecoder &entropyDecoder);
-
- protected:
-  std::vector<double> scaling_factors;
-
- public:
-  Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
-  PartitionDecoder() = default;
-  ~PartitionDecoder() = default;
-  Block4D decode_partition(uint16_t channel,
-      Hierarchical4DDecoder &entropyDecoder,
-      const LightfieldDimension<uint32_t> &size);
+#include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
+#include "Lib/Part2/Decoder/TransformMode/MarkerSegmentHelper.h"
 
 
-  void set_colour_component_scaling_factor(
-      const std::size_t colour_component_index, double scaling_factor) {
-    this->scaling_factors[colour_component_index] = scaling_factor;
+namespace CodestreamPointerSetMarkerSegmentParser {
+
+CodestreamPointerSetMarkerSegment get_codestream_pointer_set_marker_segment(
+    const ContiguousCodestreamCode& codestream_code) {
+  auto SLpnt_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+  if (SLpnt_from_codestream_code != CodestreamPointerSetMarkerSegment::SLpnt) {
+    //throw error
+  }
+
+  auto Lpnt_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint64_t>(codestream_code);
+  //limits 9 to 8x(2^32-1);
+
+  auto Spnt = MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+
+  if ((Spnt != 0) && (Spnt != 1)) {
+    //throw error
+  }
+
+  auto bytes_per_pointer = (Spnt == 0) ? 4 : 8;
+
+  auto number_of_pointers_in_pnt_segment =
+      (Lpnt_from_codestream_code - 4) / bytes_per_pointer;
+
+  auto ppnts = std::vector<std::variant<uint32_t, uint64_t>>();
+
+
+  if (Spnt == 0) {
+    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
+         i < number_of_pointers_in_pnt_segment; ++i) {
+      ppnts.push_back(MarkerSegmentHelper::get_next<uint32_t>(codestream_code));
+    }
+  } else {
+    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
+         i < number_of_pointers_in_pnt_segment; ++i) {
+      ppnts.push_back(MarkerSegmentHelper::get_next<uint64_t>(codestream_code));
+    }
   }
 
 
-  void set_number_of_colour_components(uint16_t number_of_colour_components) {
-    this->scaling_factors =
-        std::vector<double>(number_of_colour_components, 1.0);
-  }
-};
+  return CodestreamPointerSetMarkerSegment(std::move(ppnts));
+}
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */
+}  // namespace CodestreamPointerSetMarkerSegmentParser
+
+#endif /* end of include guard: CODESTREAMPOINTERSETMARKERSEGMENTPARSER_H__ */

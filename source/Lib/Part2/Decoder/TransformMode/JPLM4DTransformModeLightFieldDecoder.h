@@ -48,6 +48,8 @@
 #include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+#include "Lib/Part2/Decoder/TransformMode/CodestreamPointerSetMarkerSegmentParser.h"
+#include "Lib/Part2/Decoder/TransformMode/ColourComponentScalingMarkerSegmentParser.h"
 #include "Lib/Part2/Decoder/TransformMode/CommonExceptions.h"
 #include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
 #include "Lib/Part2/Decoder/TransformMode/LightFieldContigurationMarkerSegmentParser.h"
@@ -59,7 +61,7 @@ template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
-private:
+ private:
   PartitionDecoder partition_decoder;
   const ContiguousCodestreamCode& codestream_code;
   Hierarchical4DDecoder hierarchical_4d_decoder;
@@ -70,22 +72,22 @@ private:
 
   // const JPLFile&
   //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
-public:
+ public:
   JPLM4DTransformModeLightFieldDecoder(
       std::shared_ptr<JPLFile>
-      jpl_file,  // ! \todo use this as the JPLCodec file
+          jpl_file,  // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
       const std::string& lightfield_path)
       : JPLMLightFieldCodec<PelType>(
-      jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
-          LightfieldIOConfiguration(lightfield_path,
-                                    light_field_box.get_ref_to_contents()
-                                        .get_ref_to_light_field_header_box()
-                                        .get_ref_to_contents()
-                                        .get_ref_to_light_field_header_box()
-                                        .get_ref_to_contents()
-                                        .get_light_field_dimension<std::size_t>()),
-          1023, PixelMapType::P6)),
+            jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
+                          LightfieldIOConfiguration(lightfield_path,
+                              light_field_box.get_ref_to_contents()
+                                  .get_ref_to_light_field_header_box()
+                                  .get_ref_to_contents()
+                                  .get_ref_to_light_field_header_box()
+                                  .get_ref_to_contents()
+                                  .get_light_field_dimension<std::size_t>()),
+                          1023, PixelMapType::P6)),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -100,11 +102,11 @@ public:
                             .get_ref_to_code()),
         hierarchical_4d_decoder(codestream_code),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
-                              *(this->light_field))) {
+            *(this->light_field))) {
     read_initial_data_from_compressed_file();
     this->setup_transform_coefficients(false,
-                                       hierarchical_4d_decoder.get_transform_dimensions(),
-                                       {1.0, 1.0, 1.0, 1.0});
+        hierarchical_4d_decoder.get_transform_dimensions(),
+        {1.0, 1.0, 1.0, 1.0});
 
     //initializes possible extension lenghs
     // initialize_extension_lengths();
@@ -119,23 +121,80 @@ public:
     auto bytes = Markers::get_bytes(marker);
     if (auto byte = codestream_code.get_next_byte(); byte != bytes[0]) {
       throw JPLM4DTransformModeLightFieldDecoderExceptions::
-      ExpectingAMarkerException(marker);
+          ExpectingAMarkerException(marker);
     }
     if (auto byte = codestream_code.get_next_byte(); byte != bytes[1]) {
       throw JPLM4DTransformModeLightFieldDecoderExceptions::
-      ExpectingAMarkerException(marker);
+          ExpectingAMarkerException(marker);
     }
   }
 
 
-  void read_initial_data_from_compressed_file() {
-    read_marker(Marker::SOC);
+  std::array<std::byte, 2> get_next_marker_bytes() {
+    auto marker = std::array<std::byte, 2>();
+    marker[0] = codestream_code.get_next_byte();
+    if (marker[0] != std::byte{0xFF}) {
+      //throw
+    }
+    marker[1] = codestream_code.get_next_byte();
+    return marker;
+  }
 
+
+  void read_optional_markers_and_marker_segments() {
+    auto marker = get_next_marker_bytes();
+    // std::cout << std::to_integer<int>(marker[0]) << std::endl;
+    auto bytes_of_pnt_marker = Markers::get_bytes(Marker::PNT);
+    if (marker[1] == bytes_of_pnt_marker[1]) {
+      [[maybe_unused]] auto codestream_pointer_set_marker_segment =
+          CodestreamPointerSetMarkerSegmentParser::
+              get_codestream_pointer_set_marker_segment(codestream_code);
+      marker = get_next_marker_bytes();
+    } else {
+      std::cout << "There is no PNT marker segment in the contiguous codestream"
+                << std::endl;
+    }
+    auto bytes_of_scc_marker = Markers::get_bytes(Marker::SCC);
+    while (marker[1] == bytes_of_scc_marker[1]) {
+      //detected a SCC optional marker
+      auto colour_component_scaling_marker_segment =
+          ColourComponentScalingMarkerSegmentParser::
+              get_colour_component_scaling_marker_segment(codestream_code);
+      marker = get_next_marker_bytes();
+
+      auto index_variant =
+          colour_component_scaling_marker_segment.get_colour_component_index();
+      auto scaling_factor =
+          colour_component_scaling_marker_segment.get_scaling_factor();
+
+      std::visit(
+          [this, scaling_factor](auto& index) {
+            this->partition_decoder.set_colour_component_scaling_factor(
+                index, scaling_factor);
+            std::cout << "Detected scaling factor " << scaling_factor
+                      << " for colour channel " << index << std::endl;
+          },
+          index_variant);
+    }
+    std::cout << "No more optional markers" << std::endl;
+  }
+
+
+  void read_mandatory_markers() {
+    read_marker(Marker::SOC);
     read_marker(Marker::LFC);
-    // LightFieldConfigurationMarkerSegment
+  }
+
+
+  void read_light_field_configuration_marker_segment() {
     auto lightfield_configuration_marker_segment =
         LightFieldContigurationMarkerSegmentParser::
-        get_light_field_configuration_marker_segment(codestream_code);
+            get_light_field_configuration_marker_segment(codestream_code);
+
+    //setup the number of channels (NC) in the hierarchical 4d encoder
+    partition_decoder.set_number_of_colour_components(
+        lightfield_configuration_marker_segment
+            .get_number_of_colour_components());
 
 
     //gets the superior bit plane value from the LFC marker segment
@@ -145,9 +204,9 @@ public:
 
     //gets the maximum transform sizes from the LFC marker segment
     const auto& [transform_length_t, transform_length_s, transform_length_v,
-    transform_length_u] =
-    lightfield_configuration_marker_segment.get_ref_to_block_dimension()
-        .as_tuple();
+                    transform_length_u] =
+        lightfield_configuration_marker_segment.get_ref_to_block_dimension()
+            .as_tuple();
     hierarchical_4d_decoder.set_transform_dimension(
         lightfield_configuration_marker_segment.get_ref_to_block_dimension());
 
@@ -156,9 +215,9 @@ public:
         lightfield_configuration_marker_segment.get_ref_to_block_dimension();
 
     const auto& [number_of_vertical_views, number_of_horizontal_views,
-    mNumberOfViewLines, mNumberOfViewColumns] =
-    lightfield_configuration_marker_segment
-        .get_ref_to_lightfield_dimension();
+                    mNumberOfViewLines, mNumberOfViewColumns] =
+        lightfield_configuration_marker_segment
+            .get_ref_to_lightfield_dimension();
     hierarchical_4d_decoder.set_lightfield_dimension(
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension());
@@ -186,7 +245,19 @@ public:
               << "\n";
     std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
     std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
-    std::cout << "level_shift: " << level_shift << std::endl;
+    std::cout << "level_shift: " << level_shift << "\n";
+    std::cout << "number of colour components: "
+              << lightfield_configuration_marker_segment
+                     .get_number_of_colour_components()
+              << std::endl;
+  }
+
+
+  void read_initial_data_from_compressed_file() {
+    read_mandatory_markers();
+    // LightFieldConfigurationMarkerSegment
+    read_light_field_configuration_marker_segment();
+    read_optional_markers_and_marker_segments();
   }
 
 
@@ -204,13 +275,13 @@ public:
 
 
   virtual void run_for_block_4d(const uint32_t channel,
-                                const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
-                                const LightfieldDimension<uint32_t>& size) override {
+      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
 
 
-    auto decoded_block =
-        partition_decoder.decode_partition(hierarchical_4d_decoder, size);
+    auto decoded_block = partition_decoder.decode_partition(
+        channel, hierarchical_4d_decoder, size);
 
     decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
 

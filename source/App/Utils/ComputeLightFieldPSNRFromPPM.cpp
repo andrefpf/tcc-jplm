@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ComputeLightFieldPSNR.cpp
+/** \file     ComputeLightFieldPSNRFromPPM.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -39,106 +39,108 @@
  */
 
 
-
+#include <algorithm>
 #include <filesystem>
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
-#include <sstream>
 #include <map>
-#include <algorithm>
-#include <string> 
+#include <sstream>
+#include <string>
+#include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
+#include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageMetrics.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
-#include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
-#include "Lib/Part2/Common/LightfieldDimension.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 
 
 std::map<std::string, ImageType> string_to_image_type_map;
 
 
 void fill_map() {
-  string_to_image_type_map["rgb"]=ImageType::RGB;
-  string_to_image_type_map["bt601"]=ImageType::BT601;
-  string_to_image_type_map["bt709"]=ImageType::BT709;
-  string_to_image_type_map["bt2020"]=ImageType::BT2020;
+  string_to_image_type_map["rgb"] = ImageType::RGB;
+  string_to_image_type_map["bt601"] = ImageType::BT601;
+  string_to_image_type_map["bt709"] = ImageType::BT709;
+  string_to_image_type_map["bt2020"] = ImageType::BT2020;
 }
 
 
-void show_psnr(
-  const std::string& filename_original, const std::string& filename_decoded, const ImageType type=ImageType::RGB,
-  std::size_t t_max=13, std::size_t s_max=13) {
-
+void show_psnr(const std::string& filename_original,
+    const std::string& filename_decoded, const ImageType type = ImageType::RGB,
+    std::size_t t_max = 13, std::size_t s_max = 13) {
   LightfieldDimension<std::size_t> size(t_max, s_max, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-  LightfieldIOConfiguration original_configuration(filename_original, initial, size);
-  LightfieldIOConfiguration decoded_configuration(filename_decoded, initial, size);
+  LightfieldIOConfiguration original_configuration(
+      filename_original, initial, size);
+  LightfieldIOConfiguration decoded_configuration(
+      filename_decoded, initial, size);
 
-  
   auto original_lightfield =
       std::make_unique<LightfieldFromPPMFile<uint16_t>>(original_configuration);
+
 
   auto decoded_lightfield =
       std::make_unique<LightfieldFromPPMFile<uint16_t>>(decoded_configuration);
 
-/*  auto original_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
+
+  /*  auto original_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
   original_lightfield->set_view_io_policy(std::move(original_policy));
   auto decoded_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
   decoded_lightfield->set_view_io_policy(std::move(decoded_policy));*/
 
   auto printer = ImageMetrics::visitors::PSNRPrinter();
-  for(auto t=0;t<t_max;++t) {
-  	for(auto s=0; s<s_max; ++s) {
-  		std::cout << "T: " << t << "   S: " << s << std::endl;
-  		auto original_image = std::make_unique<RGBImage<uint16_t>>(original_lightfield->get_image_at<RGBImage>({t, s}));
-  		auto decoded_image = std::make_unique<RGBImage<uint16_t>>(decoded_lightfield->get_image_at<RGBImage>({t, s}));
-  		switch (type) {
-	      case ImageType::RGB:
-	        printer(original_image, decoded_image);
-	        break;
-	      case ImageType::BT601:
-	        printer.operator()<BT601Image>(original_image, decoded_image);
-	        break;
-	      case ImageType::BT709:
-	        printer.operator()<BT709Image>(original_image, decoded_image);
-	        break;
-	      case ImageType::BT2020:
-	        printer.operator()<BT2020Image>(original_image, decoded_image);
-	        break;
-	      default:
-	        std::cerr << "Error default" << std::endl;
-	    }
-  	}
+  for (auto t = decltype(t_max){0}; t < t_max; ++t) {
+    for (auto s = decltype(s_max){0}; s < s_max; ++s) {
+      std::cout << "T: " << t << "   S: " << s << std::endl;
+      auto original_image = std::make_unique<RGBImage<uint16_t>>(
+          original_lightfield->get_image_at<RGBImage>({t, s}));
+      auto decoded_image = std::make_unique<RGBImage<uint16_t>>(
+          decoded_lightfield->get_image_at<RGBImage>({t, s}));
+      switch (type) {
+        case ImageType::RGB:
+          printer(original_image, decoded_image);
+          break;
+        case ImageType::BT601:
+          printer.operator()<BT601Image>(original_image, decoded_image);
+          break;
+        case ImageType::BT709:
+          printer.operator()<BT709Image>(original_image, decoded_image);
+          break;
+        case ImageType::BT2020:
+          printer.operator()<BT2020Image>(original_image, decoded_image);
+          break;
+        default:
+          std::cerr << "Error default" << std::endl;
+      }
+    }
   }
-
 }
 
 
 int main(int argc, char const* argv[]) {
   if (argc < 4) {
     std::cout << "Expecting 5 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " color_space"
+    std::cout << "\tUsage: " << argv[0] << " color_space"
               << " /path/to/input/directory/"
                  " /path/to/output/directory/"
-              << " t" << " s"
-              << std::endl;
+              << " t"
+              << " s" << std::endl;
     exit(1);
   }
   fill_map();
 
 
-
   std::string color_space(argv[1]);
-  std::transform(color_space.begin(), color_space.end(), color_space.begin(), ::tolower);
+  std::transform(
+      color_space.begin(), color_space.end(), color_space.begin(), ::tolower);
 
-  auto type = ImageType::RGB; //default
+  auto type = ImageType::RGB;  //default
   auto it = string_to_image_type_map.find(color_space);
   if (it == string_to_image_type_map.end()) {
-    std::cerr << "Unable to find color space " << color_space << ". The available ones are: \n";
-    for(const auto& map_iterator: string_to_image_type_map) {
+    std::cerr << "Unable to find color space " << color_space
+              << ". The available ones are: \n";
+    for (const auto& map_iterator : string_to_image_type_map) {
       std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
     }
     std::cerr << "Using RGB as default:\n";
@@ -146,19 +148,18 @@ int main(int argc, char const* argv[]) {
     type = it->second;
   }
 
-
-
   std::string filename_original(argv[2]);
   std::string filename_decoded(argv[3]);
+
 
   int t = 13;
   int s = 13;
 
-  if (argc >= 3) {
+  if (argc > 4) {
     t = s = atoi(argv[4]);
   }
 
-  if (argc == 4) {
+  if (argc > 5) {
     s = atoi(argv[5]);
   }
 

@@ -31,53 +31,61 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     PartitionDecoder.h
+/** \file     ColourComponentScalingMarkerSegmentParser.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-01-06
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__
+#ifndef COLOURCOMPONENTSCALINGMARKERSEGMENTPARSER_H__
+#define COLOURCOMPONENTSCALINGMARKERSEGMENTPARSER_H__
 
-#include <math.h>
-#include <string.h>
-#include <memory>
-#include <vector>
-#include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
-#include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
+#include "Lib/Part2/Common/TransformMode/ColourComponentScalingMarkerSegment.h"
+#include "Lib/Part2/Decoder/TransformMode/MarkerSegmentHelper.h"
 
-class PartitionDecoder {
- private:
-  static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
-  void decode_transform_partition(uint16_t channel, int *position,
-      uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder);
-  void decode_partition(uint16_t channel, int *position, uint32_t *length,
-      Hierarchical4DDecoder &entropyDecoder);
+namespace ColourComponentScalingMarkerSegmentParser {
+ColourComponentScalingMarkerSegment get_colour_component_scaling_marker_segment(
+    const ContiguousCodestreamCode& codestream_code) {
+  auto SLscc_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+  if (SLscc_from_codestream_code != ColourComponentScalingMarkerSegment::SLscc) {
+    //throw error
+  }
 
- protected:
-  std::vector<double> scaling_factors;
+  auto Lscc_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
+  
 
- public:
-  Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
-  PartitionDecoder() = default;
-  ~PartitionDecoder() = default;
-  Block4D decode_partition(uint16_t channel,
-      Hierarchical4DDecoder &entropyDecoder,
-      const LightfieldDimension<uint32_t> &size);
+  if ((Lscc_from_codestream_code != 6) && (Lscc_from_codestream_code != 8)) {
+    //throw error
+  }
 
+  auto more_than_256_colour_components = false;
 
-  void set_colour_component_scaling_factor(
-      const std::size_t colour_component_index, double scaling_factor) {
-    this->scaling_factors[colour_component_index] = scaling_factor;
+  if(Lscc_from_codestream_code == 8) {
+  	more_than_256_colour_components = true;
   }
 
 
-  void set_number_of_colour_components(uint16_t number_of_colour_components) {
-    this->scaling_factors =
-        std::vector<double>(number_of_colour_components, 1.0);
-  }
-};
+  std::size_t colour_component_index = 0; //temporary initialization
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */
+
+  if(more_than_256_colour_components) {
+  	colour_component_index = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
+  } else {
+	colour_component_index = MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+  }
+
+
+  auto Spscc = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
+
+
+  return ColourComponentScalingMarkerSegment(more_than_256_colour_components, colour_component_index, Spscc);
+
+}
+
+}
+
+
+#endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENTPARSER_H__ */

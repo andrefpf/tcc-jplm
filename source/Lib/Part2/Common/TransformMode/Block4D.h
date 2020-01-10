@@ -145,6 +145,8 @@ class Block4D {
   void shift_data_from_uv_plane_at(int shift, int position_t, int position_s);
   Block4D& operator+=(int const& value);
   Block4D& operator-=(int const& value);
+  Block4D& operator*=(double const& value);
+  Block4D& operator/=(double const& value);
   void operator=(const Block4D& other);  //copy
   Block4D& operator=(Block4D&& other);  //move assignment
   bool has_equal_size(const Block4D& other) const;
