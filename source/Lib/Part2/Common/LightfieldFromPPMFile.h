@@ -77,7 +77,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
         this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                              configuration.get_path(), coordinate)),
+                              configuration.get_path(), coordinate, 3)),
             coordinate);
       }
     } else {  //using PPM
@@ -101,7 +101,7 @@ class LightfieldFromPPMFile : public Lightfield<T> {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
         this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                              configuration.get_path(), coordinate)),
+                              configuration.get_path(), coordinate, 3)),
             coordinate);
       }
     } else {  //using PPM

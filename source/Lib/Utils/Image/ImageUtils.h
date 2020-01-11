@@ -110,17 +110,44 @@ std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
       std::make_unique<ImageOut<Tout>>(width, height, images[0]->get_bpp());
 
   auto number_of_channels = output_image->get_number_of_channels();
+  std::cout << "Number of channels in conversion is: " << number_of_channels
+            << std::endl;
   if (number_of_channels != images.size()) {
     //! \todo throw exception if the number of channels in the returned image is different from the number of input images
     //throw expression
   }
-
-  for (auto i=decltype(number_of_channels){0};i<number_of_channels;++i) {
+  for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+          ++i) {
     (*output_image)[i] = (*(images[i]))[0];
   }
 
-    return output_image;
+  return output_image;
 }
+
+
+template<typename Tout>
+std::unique_ptr<UndefinedImage<Tout>> get_undefined_images_as_undefined_image(
+    const std::vector<std::unique_ptr<UndefinedImage<Tout>>>& images) {
+  auto width = images[0]->get_width();
+  auto height = images[0]->get_height();
+  auto output_image =
+      std::make_unique<UndefinedImage<Tout>>(width, height, images[0]->get_bpp(), 3);
+
+  auto number_of_channels = output_image->get_number_of_channels();
+  std::cout << "Number of channels in conversion is: " << number_of_channels
+            << std::endl;
+  if (number_of_channels != images.size()) {
+    //! \todo throw exception if the number of channels in the returned image is different from the number of input images
+    //throw expression
+  }
+  for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+          ++i) {
+    (*output_image)[i] = (*(images[i]))[0];
+  }
+
+  return output_image;
+}
+
 
 //! \todo make this (get_undefined_images_as) variadic
 template<template<typename> class ImageOut, typename Tout>
