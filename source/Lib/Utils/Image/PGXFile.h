@@ -135,17 +135,17 @@ class PGXFile : public ImageFile {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
         //should read
       }
-      std::cout << "for some reason the file was not open..." << std::endl;
-      std::cout << "Filename is " << filename << std::endl;
+      // std::cout << "for some reason the file was not open..." << std::endl;
+      // std::cout << "Filename is " << filename << std::endl;
     }
 
     auto bytes_per_pixel = std::ceil(image.get_bpp() / (double) 8.0);
 
     if (sizeof(T) != bytes_per_pixel) {
       //what to do?
-      std::cout << "Bytes per pixel " << bytes_per_pixel << std::endl;
-      std::cout << "sizeof(T) " << sizeof(T) << std::endl;
-      std::cout << "I should do something here..." << std::endl;
+      // std::cout << "Bytes per pixel " << bytes_per_pixel << std::endl;
+      // std::cout << "sizeof(T) " << sizeof(T) << std::endl;
+      // std::cout << "I should do something here..." << std::endl;
     }
 
     file.seekp(this->raster_begin);
@@ -158,12 +158,12 @@ class PGXFile : public ImageFile {
           values.push_back(change_endianess(value));
         }
         // auto size_of_vector = image.get_number_of_pixels();
-        std::cout << "considered endianess" << std::endl;
-        std::cout << "values " << values.size() << std::endl;
+        // std::cout << "considered endianess" << std::endl;
+        // std::cout << "values " << values.size() << std::endl;
         file.write(reinterpret_cast<const char*>(values.data()),
             image.get_number_of_pixels_per_channel() * sizeof(T));
-        file.flush();
-        file.close();
+        // file.flush();
+        // file.close();
         return;
       }
     }

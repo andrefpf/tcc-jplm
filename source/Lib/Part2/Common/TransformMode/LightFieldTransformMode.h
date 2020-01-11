@@ -97,12 +97,9 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
     auto c = 0;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-        std::cout << "b " << t << ", " << s << std::endl;
         const auto& image_channel =
             this->get_image_at({t, s}).get_channel(//this->template get_image_at<BT601Image>({t, s}).get_channel(
                 channel);
-        std::cout << "a " << t << ", " << s << std::endl;
-        std::cout << "channel " << channel << std::endl;
         for (auto v = v_initial; v < v_max; ++v) {
           for (auto u = u_initial; u < u_max; ++u) {
             // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
@@ -116,7 +113,6 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
         }
       }
     }
-    std::cout << "returned block" << std::endl;
     return block;
   }
 
