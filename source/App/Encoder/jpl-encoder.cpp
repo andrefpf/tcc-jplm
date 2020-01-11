@@ -38,19 +38,23 @@
  *  \date     2019-09-26
  */
 
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include "Lib/Common/JPLMCodecFactory.h"
 #include "Lib/Common/JPLMConfigurationFactory.h"
-
+#ifdef __unix__
+  #include <sys/resource.h>
+#endif
 
 int main(int argc, char const* argv[]) {
+  auto start = std::chrono::steady_clock::now();
   auto configuration =
       JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
-  std::ofstream of_stream(
-      configuration->get_output_filename(), std::ofstream::binary | std::ofstream::out | std::ofstream::trunc );
+  std::ofstream of_stream(configuration->get_output_filename(),
+      std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
   if (!of_stream.is_open()) {
     std::cerr << "Error opening output file" << std::endl;
     exit(EXIT_FAILURE);
@@ -62,8 +66,35 @@ int main(int argc, char const* argv[]) {
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
   encoder->run();
   const auto& jpl_file = encoder->get_ref_to_jpl_file();
+
+
+  auto initial_of_stream_position = of_stream.tellp();
   of_stream << jpl_file;
+  auto final_of_stream_position = of_stream.tellp();
+
   of_stream.close();
+
+
+  auto end = chrono::steady_clock::now();
+
+
+  std::cout << "Elapsed time in seconds (wall time): "
+            << chrono::duration_cast<chrono::seconds>(end - start).count()
+            << " s" << std::endl;
+
+#ifdef __unix__
+  int who = RUSAGE_SELF;
+  struct rusage usage;
+  [[maybe_unused]] auto ret = getrusage(who, &usage);
+  std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
+            << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
+            << "Max memory usage: " << usage.ru_maxrss << " kbytes."
+            << std::endl;
+#endif
+
+  std::cout << "Bytes written to file: "
+            << final_of_stream_position - initial_of_stream_position
+            << " bytes " << std::endl;
 
   exit(EXIT_SUCCESS);
 }
