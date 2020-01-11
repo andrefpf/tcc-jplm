@@ -121,6 +121,13 @@ class PGXFile : public ImageFile {
     }
 
     if (!file.is_open()) {
+      //first check if directory exists
+      auto filename_path = std::filesystem::path(filename);
+      if(!std::filesystem::exists(filename_path.parent_path())) {
+        // std::cout << "filename_path.parent_path " << filename_path.parent_path() << " does not exist" << std::endl;
+        std::filesystem::create_directory(filename_path.parent_path());
+      }
+
       if (!std::filesystem::exists(filename)) {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
         //should write
@@ -129,12 +136,15 @@ class PGXFile : public ImageFile {
         //should read
       }
       std::cout << "for some reason the file was not open..." << std::endl;
+      std::cout << "Filename is " << filename << std::endl;
     }
 
     auto bytes_per_pixel = std::ceil(image.get_bpp() / (double) 8.0);
 
     if (sizeof(T) != bytes_per_pixel) {
       //what to do?
+      std::cout << "Bytes per pixel " << bytes_per_pixel << std::endl;
+      std::cout << "sizeof(T) " << sizeof(T) << std::endl;
       std::cout << "I should do something here..." << std::endl;
     }
 
@@ -147,8 +157,13 @@ class PGXFile : public ImageFile {
         for (const auto& value : image.get_channel(0)) {
           values.push_back(change_endianess(value));
         }
+        // auto size_of_vector = image.get_number_of_pixels();
+        std::cout << "considered endianess" << std::endl;
+        std::cout << "values " << values.size() << std::endl;
         file.write(reinterpret_cast<const char*>(values.data()),
             image.get_number_of_pixels_per_channel() * sizeof(T));
+        file.flush();
+        file.close();
         return;
       }
     }

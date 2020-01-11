@@ -73,6 +73,8 @@ class LightfieldFromPPMFile : public Lightfield<T> {
             std::move(view_io_policy), true) {
     bool using_pgx = true;
 
+    std::cout << "LightfieldFromPPMFile 1" << std::endl;
+
     if (using_pgx) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
@@ -97,11 +99,15 @@ class LightfieldFromPPMFile : public Lightfield<T> {
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
     bool using_pgx = true;
+
+    std::cout << "LightfieldFromPPMFile 2" << std::endl;
+
     if (using_pgx) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
         this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                              configuration.get_path(), coordinate, 3)),
+                              configuration.get_path(), coordinate,
+                              configuration.get_size().get_v_and_u(), 10, 3)),
             coordinate);
       }
     } else {  //using PPM
