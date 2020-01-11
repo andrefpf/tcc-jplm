@@ -126,15 +126,19 @@ class ViewFromPGXFile : public View<T> {
   void load_image(const std::pair<std::size_t, std::size_t>& size,
       const std::pair<std::size_t, std::size_t>& initial = {
           0, 0}) const override {
+
     const auto& [i, j] = initial;
+    std::cout << i << " " << j << std::endl;
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //needs to read all channels... std::vector<std::unique_ptr<PGXFile>> pgx_files;
   // std::unique_ptr<PGXFile> pgx_file;
       std::vector<std::unique_ptr<UndefinedImage<T>>> images_from_file;
       for(auto& pgx_file: pgx_files) {
         images_from_file.push_back(ImageIO::read<UndefinedImage, uint16_t>(*pgx_file));
+        std::cout << "Readed pgx_file" << std::endl;
       }
-      this->image_ = ImageUtils::get_undefined_images_as<UndefinedImage>(images_from_file);
+      this->image_ = ImageUtils::get_undefined_images_as_undefined_image(images_from_file);
+      std::cout << "Image channels: " << this->image_->get_number_of_channels() << std::endl;
     } else {
       //loads image patch
     }
@@ -142,9 +146,13 @@ class ViewFromPGXFile : public View<T> {
 
 
   virtual void write_image(const bool overwrite_file = false) override {
+    std::cout << "write image" << std::endl;
     if (this->image_) {
-      ImageIO::imwrite(
-          *this->image_, this->pgx_file->get_filename(), overwrite_file);
+      // for(auto& pgx_file: pgx_files) {
+      //   // images_from_file.push_back(ImageIO::read<UndefinedImage, uint16_t>(*pgx_file));
+      //   ImageIO::imwrite(
+      //       *this->image_, pgx_file->get_filename(), overwrite_file);
+      // }
     }
   }
 
