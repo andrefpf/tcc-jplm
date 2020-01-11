@@ -102,7 +102,6 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
     bool has_invalid_coordinates = false;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-<<<<<<< HEAD
         //! \todo Check this for errors
         if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
           const auto& image_channel =
@@ -117,7 +116,7 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
               } else {
                 has_invalid_coordinates = true;
                 // ++c;
-                block.mPixelData[c++]=0;
+                block.mPixelData[c++] = 0;
               }
             }
           }
@@ -126,65 +125,49 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
             for (auto u = u_initial; u < u_max; ++u) {
               has_invalid_coordinates = true;
               // ++c;
-              block.mPixelData[c++]=0;
-=======
-        std::cout << "b " << t << ", " << s << std::endl;
-        const auto& image_channel =
-            this->get_image_at({t, s}).get_channel(//this->template get_image_at<BT601Image>({t, s}).get_channel(
-                channel);
-        std::cout << "a " << t << ", " << s << std::endl;
-        std::cout << "channel " << channel << std::endl;
-        for (auto v = v_initial; v < v_max; ++v) {
-          for (auto u = u_initial; u < u_max; ++u) {
-            // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
-            if (this->is_coordinate_valid({t, s, v, u})) {
-              block.mPixelData[c++] = image_channel[v][u];
-            } else {
-              c++;
-              std::cout << "invalid" << std::endl;
->>>>>>> pgx encoder seems to be working. need to rename Ligthfield from PPM to PGX and work this also out
+              block.mPixelData[c++] = 0;
             }
           }
         }
       }
     }
-<<<<<<< HEAD
 
-     if (has_invalid_coordinates) {
-      
+
+    if (has_invalid_coordinates) {
       auto last_valid_t = 0;
       auto t = t_initial;
-      while(this->is_coordinate_valid({t, s_initial, v_initial, u_initial}) && t < t_max) {
+      while (this->is_coordinate_valid({t, s_initial, v_initial, u_initial}) &&
+             t < t_max) {
         ++t;
         ++last_valid_t;
       }
 
       auto last_valid_s = 0;
       auto s = s_initial;
-      while(this->is_coordinate_valid({t_initial, s, v_initial, u_initial}) && s < s_max) {
+      while (this->is_coordinate_valid({t_initial, s, v_initial, u_initial}) &&
+             s < s_max) {
         ++s;
         ++last_valid_s;
       }
 
       auto last_valid_v = 0;
       auto v = v_initial;
-      while(this->is_coordinate_valid({t_initial, s_initial, v, u_initial}) && v < v_max) {
+      while (this->is_coordinate_valid({t_initial, s_initial, v, u_initial}) &&
+             v < v_max) {
         ++v;
         ++last_valid_v;
       }
 
       auto last_valid_u = 0;
       auto u = u_initial;
-      while(this->is_coordinate_valid({t_initial, s_initial, v_initial, u}) && u < u_max) {
+      while (this->is_coordinate_valid({t_initial, s_initial, v_initial, u}) &&
+             u < u_max) {
         ++u;
         ++last_valid_u;
       }
       block.extend({last_valid_t, last_valid_s, last_valid_v, last_valid_u});
-     }
+    }
 
-=======
-    std::cout << "returned block" << std::endl;
->>>>>>> pgx encoder seems to be working. need to rename Ligthfield from PPM to PGX and work this also out
     return block;
   }
 
@@ -197,7 +180,6 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
     auto c = 0;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-<<<<<<< HEAD
         if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
           auto& image_channel =
               this->template get_image_at<BT601Image>({t, s}).get_channel(
@@ -215,17 +197,6 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
           for (auto v = v_initial; v < v_max; ++v) {
             for (auto u = u_initial; u < u_max; ++u) {
               ++c;
-=======
-        auto& image_channel =
-            this->get_image_at({t, s}).get_channel(//this->template get_image_at<BT601Image>({t, s}).get_channel(
-                channel);
-        for (auto v = v_initial; v < v_max; ++v) {
-          for (auto u = u_initial; u < u_max; ++u) {
-            if (this->is_coordinate_valid({t, s, v, u})) {
-              image_channel[v][u] = block_4d.mPixelData[c++];
-            } else {
-              c++;
->>>>>>> pgx encoder seems to be working. need to rename Ligthfield from PPM to PGX and work this also out
             }
           }
         }

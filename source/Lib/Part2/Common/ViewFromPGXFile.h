@@ -95,7 +95,6 @@ class ViewFromPGXFile : public View<T> {
     // ,
     //     pgx_file(PGXFileIO::open(
     //         {path + name_translator->view_position_to_filename(position)}))
-    std::cout << "bbbbbbb" << std::endl;
     open_pgx_files();
 
     this->view_size = {pgx_files[0]->get_width(), pgx_files[0]->get_height()};
@@ -111,7 +110,6 @@ class ViewFromPGXFile : public View<T> {
         number_of_channels(number_of_channels),
         name_translator(std::make_unique<PGX3CharViewToFilename>()),
         overwrite_pgx_file_in_destructor(true) {
-    std::cout << "aaaaa" << std::endl;
     // pgx_file(PGXFileIO::open(
     //    {path + name_translator->view_position_to_filename(position)}, type,
     //    std::get<1>(dimension_v_u), std::get<0>(dimension_v_u),
@@ -147,7 +145,6 @@ class ViewFromPGXFile : public View<T> {
       const std::pair<std::size_t, std::size_t>& initial = {
           0, 0}) const override {
     const auto& [i, j] = initial;
-    std::cout << i << " " << j << std::endl;
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //needs to read all channels... std::vector<std::unique_ptr<PGXFile>> pgx_files;
       // std::unique_ptr<PGXFile> pgx_file;
@@ -155,12 +152,9 @@ class ViewFromPGXFile : public View<T> {
       for (auto& pgx_file : pgx_files) {
         images_from_file.push_back(
             ImageIO::read<UndefinedImage, uint16_t>(*pgx_file));
-        std::cout << "Readed pgx_file" << std::endl;
       }
       this->image_ =
           ImageUtils::get_undefined_images_as_undefined_image(images_from_file);
-      std::cout << "Image channels: " << this->image_->get_number_of_channels()
-                << std::endl;
     } else {
       //loads image patch
     }
@@ -168,7 +162,6 @@ class ViewFromPGXFile : public View<T> {
 
 
   virtual void write_image(const bool overwrite_file = false) override {
-    std::cout << "write image" << std::endl;
     if (this->image_) {
       auto images = ImageUtils::get_splitting_of(*(this->image_));
       auto number_of_channels = images.size();
