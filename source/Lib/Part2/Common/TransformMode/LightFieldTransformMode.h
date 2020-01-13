@@ -50,42 +50,14 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromFile<T>(configuration, std::move(view_io_policy)) {
-    // std::cout << "LightFieldTransformMode A" << std::endl;
-    // {
-    //   const auto& [t, s, v, u] = configuration.get_size();
-    //   std::cout << "t: " << t << std::endl;
-    //   std::cout << "s: " << s << std::endl;
-    //   std::cout << "v: " << v << std::endl;
-    //   std::cout << "u: " << u << std::endl;
-    // }
-
-    // std::cout << "This size: " << std::endl;
-    // const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-    // std::cout << "t: " << t << std::endl;
-    // std::cout << "s: " << s << std::endl;
-    // std::cout << "v: " << v << std::endl;
-    // std::cout << "u: " << u << std::endl;
   }
+
 
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromFile<T>(
             configuration, max_value, type, std::move(view_io_policy)) {
-    // std::cout << "LightFieldTransformMode B" << std::endl;
-    // {
-    //   const auto& [t, s, v, u] = configuration.get_size();
-    //   std::cout << "t: " << t << std::endl;
-    //   std::cout << "s: " << s << std::endl;
-    //   std::cout << "v: " << v << std::endl;
-    //   std::cout << "u: " << u << std::endl;
-    // }
-    // std::cout << "This size: " << std::endl;
-    // const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-    // std::cout << "t: " << t << std::endl;
-    // std::cout << "s: " << s << std::endl;
-    // std::cout << "v: " << v << std::endl;
-    // std::cout << "u: " << u << std::endl;
   }
 
 
@@ -105,31 +77,29 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
           const auto& image_channel =
               this->template get_image_at<BT601Image>({t, s}).get_channel(
                   channel);
-              for (auto v = v_initial; v < v_max; ++v) {
-                for (auto u = u_initial; u < u_max; ++u) {
-                  // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
-                  if (this->is_coordinate_valid({t, s, v, u})) {
-                    block.mPixelData[c++] = image_channel[v][u];
-                  } else {
-                    c++;
-                    std::cout << "invalid" << std::endl;
-                  }
-                }
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                block.mPixelData[c++] = image_channel[v][u];
+              } else {
+                c++;
+                std::cout << "invalid" << std::endl;
               }
+            }
+          }
         } else {
           const auto& image_channel =
               this->get_image_at({t, s}).get_channel(channel);
-              for (auto v = v_initial; v < v_max; ++v) {
-                for (auto u = u_initial; u < u_max; ++u) {
-                  // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
-                  if (this->is_coordinate_valid({t, s, v, u})) {
-                    block.mPixelData[c++] = image_channel[v][u];
-                  } else {
-                    c++;
-                    std::cout << "invalid" << std::endl;
-                  }
-                }
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                block.mPixelData[c++] = image_channel[v][u];
+              } else {
+                c++;
+                std::cout << "invalid" << std::endl;
               }
+            }
+          }
         }
       }
     }
@@ -140,8 +110,9 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
   Block4D get_block_4D_from(const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d,
       const LightfieldDimension<uint32_t>& size) {
-    if(this->image_file_type == ImageFileType::PixelMap) {
-      return get_block_4D_from<ImageFileType::PixelMap>(channel, coordinate_4d, size);
+    if (this->image_file_type == ImageFileType::PixelMap) {
+      return get_block_4D_from<ImageFileType::PixelMap>(
+          channel, coordinate_4d, size);
     }
     return get_block_4D_from<ImageFileType::PGX>(channel, coordinate_4d, size);
   }
@@ -156,7 +127,6 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
         auto& image_channel =
-            // this->get_image_at({t, s}).get_channel(//this->template get_image_at<BT601Image>({t, s}).get_channel(
             this->template get_image_at<BT601Image>({t, s}).get_channel(
                 channel);
         for (auto v = v_initial; v < v_max; ++v) {
