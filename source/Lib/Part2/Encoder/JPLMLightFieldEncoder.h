@@ -47,7 +47,7 @@
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderBox.h"
 #include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
