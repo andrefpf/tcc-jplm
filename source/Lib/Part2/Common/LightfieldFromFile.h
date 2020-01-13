@@ -75,6 +75,7 @@ class LightfieldFromFile : public Lightfield<T> {
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
 
+    image_file_type = configuration.get_image_file_type();
     if (image_file_type == ImageFileType::PGX) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
@@ -99,6 +100,7 @@ class LightfieldFromFile : public Lightfield<T> {
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
 
+    image_file_type = configuration.get_image_file_type();
     if (image_file_type == ImageFileType::PGX) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {

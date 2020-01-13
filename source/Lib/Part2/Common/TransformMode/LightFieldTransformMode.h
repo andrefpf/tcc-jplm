@@ -49,62 +49,15 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
  public:
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
-<<<<<<< HEAD
-      : LightfieldFromPPMFile<T>(configuration, std::move(view_io_policy)) {
-    std::cout << "LightFieldTransformMode A" << std::endl;
-    {
-      const auto& [t, s, v, u] = configuration.get_size();
-      std::cout << "t: " << t << std::endl;
-      std::cout << "s: " << s << std::endl;
-      std::cout << "v: " << v << std::endl;
-      std::cout << "u: " << u << std::endl;
-    }
-
-    std::cout << "This size: " << std::endl;
-    const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-    std::cout << "t: " << t << std::endl;
-    std::cout << "s: " << s << std::endl;
-    std::cout << "v: " << v << std::endl;
-    std::cout << "u: " << u << std::endl;
-=======
       : LightfieldFromFile<T>(configuration, std::move(view_io_policy)) {
-    // std::cout << "LightFieldTransformMode A" << std::endl;
-    // {
-    //   const auto& [t, s, v, u] = configuration.get_size();
-    //   std::cout << "t: " << t << std::endl;
-    //   std::cout << "s: " << s << std::endl;
-    //   std::cout << "v: " << v << std::endl;
-    //   std::cout << "u: " << u << std::endl;
-    // }
-
-    // std::cout << "This size: " << std::endl;
-    // const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-    // std::cout << "t: " << t << std::endl;
-    // std::cout << "s: " << s << std::endl;
-    // std::cout << "v: " << v << std::endl;
-    // std::cout << "u: " << u << std::endl;
->>>>>>> renamed LightfieldFromPPMFile to LightfieldFromFile. included configurable support for getting data from either pgx of ppm
   }
+
 
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromFile<T>(
             configuration, max_value, type, std::move(view_io_policy)) {
-    // std::cout << "LightFieldTransformMode B" << std::endl;
-    // {
-    //   const auto& [t, s, v, u] = configuration.get_size();
-    //   std::cout << "t: " << t << std::endl;
-    //   std::cout << "s: " << s << std::endl;
-    //   std::cout << "v: " << v << std::endl;
-    //   std::cout << "u: " << u << std::endl;
-    // }
-    // std::cout << "This size: " << std::endl;
-    // const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-    // std::cout << "t: " << t << std::endl;
-    // std::cout << "s: " << s << std::endl;
-    // std::cout << "v: " << v << std::endl;
-    // std::cout << "u: " << u << std::endl;
   }
 
 
@@ -126,7 +79,6 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
           const auto& image_channel =
               this->template get_image_at<BT601Image>({t, s}).get_channel(
                   channel);
-
           for (auto v = v_initial; v < v_max; ++v) {
             for (auto u = u_initial; u < u_max; ++u) {
               // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
