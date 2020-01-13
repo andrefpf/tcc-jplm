@@ -118,6 +118,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
   }
 
 
+  template<ImageFileType type>
   void set_block_4D_at(const Block4D& block_4d, const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d) {
     const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
@@ -126,20 +127,43 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
     auto c = 0;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-        auto& image_channel =
-            this->template get_image_at<BT601Image>({t, s}).get_channel(
-                channel);
-        for (auto v = v_initial; v < v_max; ++v) {
-          for (auto u = u_initial; u < u_max; ++u) {
-            if (this->is_coordinate_valid({t, s, v, u})) {
-              image_channel[v][u] = block_4d.mPixelData[c++];
-            } else {
-              c++;
+        if constexpr (type == ImageFileType::PixelMap) {
+          auto& image_channel =
+              this->template get_image_at<BT601Image>({t, s}).get_channel(
+                  channel);
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                image_channel[v][u] = block_4d.mPixelData[c++];
+              } else {
+                c++;
+              }
+            }
+          }
+        } else {
+          auto& image_channel = this->get_image_at({t, s}).get_channel(channel);
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                image_channel[v][u] = block_4d.mPixelData[c++];
+              } else {
+                c++;
+              }
             }
           }
         }
       }
     }
+  }
+
+
+  void set_block_4D_at(const Block4D& block_4d, const int channel,
+      const LightfieldCoordinate<uint32_t>& coordinate_4d) {
+    if (this->image_file_type == ImageFileType::PixelMap) {
+      return set_block_4D_at<ImageFileType::PixelMap>(
+          block_4d, channel, coordinate_4d);
+    }
+    return set_block_4D_at<ImageFileType::PGX>(block_4d, channel, coordinate_4d);
   }
 };
 
