@@ -154,6 +154,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
   }
 
 
+  template<ImageFileType type>
   void set_block_4D_at(const Block4D& block_4d, const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d) {
     const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
@@ -184,6 +185,17 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
         }
       }
     }
+  }
+
+
+  void set_block_4D_at(const Block4D& block_4d, const int channel,
+      const LightfieldCoordinate<uint32_t>& coordinate_4d) {
+    if (this->image_file_type == ImageFileType::PixelMap) {
+      return set_block_4D_at<ImageFileType::PixelMap>(
+          block_4d, channel, coordinate_4d);
+    }
+    return set_block_4D_at<ImageFileType::PGX>(
+        block_4d, channel, coordinate_4d);
   }
 };
 
