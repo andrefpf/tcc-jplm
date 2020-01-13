@@ -53,7 +53,7 @@
 #include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 
 
 std::map<std::string, ImageType> string_to_image_type_map;
@@ -78,10 +78,10 @@ void show_psnr(
 
   
   auto original_lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(original_configuration);
+      std::make_unique<LightfieldFromFile<uint16_t>>(original_configuration);
 
   auto decoded_lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(decoded_configuration);
+      std::make_unique<LightfieldFromFile<uint16_t>>(decoded_configuration);
 
 /*  auto original_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();
   original_lightfield->set_view_io_policy(std::move(original_policy));

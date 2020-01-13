@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
 #include "Lib/Part2/Common/ViewIOPolicyLimitedMemory.h"
 //X11:
@@ -263,16 +263,16 @@ int main(int argc, char const *argv[]) {
     s = atoi(argv[3]);
   }
 
-  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
+  //! [Full LightfieldFromFile instantiation using a LightfieldIOConfiguration]
   LightfieldDimension<std::size_t> size(t, s, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
   LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
 
-  //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
+  //! [Instantiating a LightfieldFromFile using a LightfieldIOConfiguration]
   auto lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
-  //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
-  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
+      std::make_unique<LightfieldFromFile<uint16_t>>(configuration);
+  //! [Instantiating a LightfieldFromFile using a LightfieldIOConfiguration]
+  //! [Full LightfieldFromFile instantiation using a LightfieldIOConfiguration]
 
 
   //! [Setting a view_io_policy into a Lightfield]

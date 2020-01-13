@@ -31,15 +31,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldFromPPMFile.h
+/** \file     LightfieldFromFile.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-06-07
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
-#define JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__
 
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
@@ -54,7 +54,10 @@
  * \tparam T Its the type of each pixel in the Lightfield.
  */
 template<typename T>
-class LightfieldFromPPMFile : public Lightfield<T> {
+class LightfieldFromFile : public Lightfield<T> {
+ protected:
+  ImageFileType image_file_type = ImageFileType::PGX;
+
  public:
   /**
    * \brief      Constructs the object.
@@ -65,17 +68,14 @@ class LightfieldFromPPMFile : public Lightfield<T> {
    * \details This kind of lightfield can be build using only the configuration and a default view io policy. 
    * 
    * For instance:
-   * \snippet App/Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   * \snippet App/Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromFile using a LightfieldIOConfiguration
    */
-  LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+  LightfieldFromFile(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    bool using_pgx = true;
 
-    std::cout << "LightfieldFromPPMFile 1" << std::endl;
-
-    if (using_pgx) {
+    if (image_file_type == ImageFileType::PGX) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
         this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
@@ -93,16 +93,13 @@ class LightfieldFromPPMFile : public Lightfield<T> {
   }
 
 
-  LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+  LightfieldFromFile(const LightfieldIOConfiguration& configuration,
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    bool using_pgx = true;
 
-    std::cout << "LightfieldFromPPMFile 2" << std::endl;
-
-    if (using_pgx) {
+    if (image_file_type == ImageFileType::PGX) {
       for (const auto& coordinate :
           configuration.get_raster_view_coordinates()) {
         this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
@@ -129,9 +126,9 @@ class LightfieldFromPPMFile : public Lightfield<T> {
 
 
   /**
-   * \brief Destructor of the LightfieldFromPPMFile (default)
+   * \brief Destructor of the LightfieldFromFile (default)
    */
-  ~LightfieldFromPPMFile() = default;
+  ~LightfieldFromFile() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__ */

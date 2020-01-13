@@ -31,8 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldFromPPMFileTests.cpp
- *  \brief    Test of LightfieldFromPPMFile.
+/** \file     LightfieldFromFileTests.cpp
+ *  \brief    Test of LightfieldFromFile.
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-06-06
@@ -40,7 +40,7 @@
 
 
 #include <iostream>
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "gtest/gtest.h"
 
 
@@ -51,7 +51,7 @@ struct LFFromPPMSmallGreek : public testing::Test {
  protected:
   LightfieldDimension<std::size_t> size;
   LightfieldCoordinate<std::size_t> initial;
-  LightfieldFromPPMFile<uint16_t> lightfield;
+  LightfieldFromFile<uint16_t> lightfield;
 
  public:
   LFFromPPMSmallGreek()
