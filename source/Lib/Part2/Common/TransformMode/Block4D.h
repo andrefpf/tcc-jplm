@@ -106,21 +106,23 @@ class Block4D {
   Block4D() = default;
   Block4D(Block4D&& other);  //move constructor
   Block4D(const LightfieldDimension<uint32_t>& block_dimension) {
-    set_dimension(block_dimension.get_t(), block_dimension.get_s(), block_dimension.get_v(), block_dimension.get_u());
+    set_dimension(block_dimension.get_t(), block_dimension.get_s(),
+        block_dimension.get_v(), block_dimension.get_u());
   }
   ~Block4D();
   void set_dimension(int length_t, int length_s, int length_v, int length_u);
   void set_dimension(const std::tuple<int, int, int, int>& lengths);
   void set_dimension(const LightfieldDimension<uint32_t>& new_dimension) {
-      const auto& [t, s, v, u] = new_dimension;
-      this->set_dimension(t, s, v, u);
+    const auto& [t, s, v, u] = new_dimension;
+    this->set_dimension(t, s, v, u);
   }
 
   std::tuple<int, int, int, int> get_dimension() {
     return std::make_tuple(mlength_t, mlength_s, mlength_v, mlength_u);
   }
   LightfieldDimension<uint32_t> get_dimension() const {
-    return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s), static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
+    return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s),
+        static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
   }
   std::size_t get_linear_position(
       int position_t, int position_s, int position_v, int position_u) const;
@@ -141,6 +143,20 @@ class Block4D {
       const std::tuple<int, int, int, int>& target_offsets = {0, 0, 0, 0});
   void extend(ExtensionMethod extensionMethod, int extensionLength,
       LightFieldDimension direction);
+  void extend(const LightfieldCoordinate<uint32_t>& last_valid) {
+    if(last_valid.get_t() < mlength_t) {
+      extend_t(last_valid.get_t());
+    }
+    if(last_valid.get_s() < mlength_s) {
+      extend_s(last_valid.get_s());
+    }
+    if(last_valid.get_v() < mlength_v) {
+      extend_v(last_valid.get_v());
+    }
+    if(last_valid.get_u() < mlength_u) {
+      extend_u(last_valid.get_u());
+    }
+  }
   void clip(block4DElementType minValue, block4DElementType maxValue);
   void shift_data_from_uv_plane_at(int shift, int position_t, int position_s);
   Block4D& operator+=(int const& value);
@@ -151,11 +167,8 @@ class Block4D {
   Block4D& operator=(Block4D&& other);  //move assignment
   bool has_equal_size(const Block4D& other) const;
   void fill_with_zeros();
-  
+
   friend std::ostream& operator<<(std::ostream& stream, const Block4D& Box);
-
-  
-
 };
 
 std::ostream& operator<<(std::ostream& o_stream, const Block4D& block);

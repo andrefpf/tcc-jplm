@@ -50,19 +50,21 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromPPMFile<T>(configuration, std::move(view_io_policy)) {
-        std::cout << "LightFieldTransformMode A" << std::endl;
-        {const auto& [t, s, v, u] = configuration.get_size();
-                std::cout << "t: " << t << std::endl;
-                std::cout << "s: " << s << std::endl;
-                std::cout << "v: " << v << std::endl;
-                std::cout << "u: " << u << std::endl;}
+    std::cout << "LightFieldTransformMode A" << std::endl;
+    {
+      const auto& [t, s, v, u] = configuration.get_size();
+      std::cout << "t: " << t << std::endl;
+      std::cout << "s: " << s << std::endl;
+      std::cout << "v: " << v << std::endl;
+      std::cout << "u: " << u << std::endl;
+    }
 
-        std::cout << "This size: " << std::endl;
-        const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-        std::cout << "t: " << t << std::endl;
-        std::cout << "s: " << s << std::endl;
-        std::cout << "v: " << v << std::endl;
-        std::cout << "u: " << u << std::endl;
+    std::cout << "This size: " << std::endl;
+    const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
+    std::cout << "t: " << t << std::endl;
+    std::cout << "s: " << s << std::endl;
+    std::cout << "v: " << v << std::endl;
+    std::cout << "u: " << u << std::endl;
   }
 
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
@@ -70,18 +72,20 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromPPMFile<T>(
             configuration, max_value, type, std::move(view_io_policy)) {
-        std::cout << "LightFieldTransformMode B" << std::endl;
-        {const auto& [t, s, v, u] = configuration.get_size();
-                std::cout << "t: " << t << std::endl;
-                std::cout << "s: " << s << std::endl;
-                std::cout << "v: " << v << std::endl;
-                std::cout << "u: " << u << std::endl;}
-                std::cout << "This size: " << std::endl;
-        const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
-        std::cout << "t: " << t << std::endl;
-        std::cout << "s: " << s << std::endl;
-        std::cout << "v: " << v << std::endl;
-        std::cout << "u: " << u << std::endl;
+    std::cout << "LightFieldTransformMode B" << std::endl;
+    {
+      const auto& [t, s, v, u] = configuration.get_size();
+      std::cout << "t: " << t << std::endl;
+      std::cout << "s: " << s << std::endl;
+      std::cout << "v: " << v << std::endl;
+      std::cout << "u: " << u << std::endl;
+    }
+    std::cout << "This size: " << std::endl;
+    const auto& [t, s, v, u] = this->template get_dimensions<uint32_t>();
+    std::cout << "t: " << t << std::endl;
+    std::cout << "s: " << s << std::endl;
+    std::cout << "v: " << v << std::endl;
+    std::cout << "u: " << u << std::endl;
   }
 
 
@@ -95,25 +99,71 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
     const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
     const auto [t_max, s_max, v_max, u_max] = coordinate_4d + size;
     auto c = 0;
+    bool has_invalid_coordinates = false;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-        const auto& image_channel =
-            this->template get_image_at<BT601Image>({t, s}).get_channel(
-                channel);
-              
-        for (auto v = v_initial; v < v_max; ++v) {
-          for (auto u = u_initial; u < u_max; ++u) {
-            // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
-            if (this->is_coordinate_valid({t, s, v, u})) {
-              block.mPixelData[c++] = image_channel[v][u];
-            } else {
-              c++;
-              // std::cout << "invalid" << std::endl;
+        //! \todo Check this for errors
+        if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
+          const auto& image_channel =
+              this->template get_image_at<BT601Image>({t, s}).get_channel(
+                  channel);
+
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                block.mPixelData[c++] = image_channel[v][u];
+              } else {
+                has_invalid_coordinates = true;
+                // ++c;
+                block.mPixelData[c++]=0;
+              }
+            }
+          }
+        } else {
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              has_invalid_coordinates = true;
+              // ++c;
+              block.mPixelData[c++]=0;
             }
           }
         }
       }
     }
+
+     if (has_invalid_coordinates) {
+      
+      auto last_valid_t = 0;
+      auto t = t_initial;
+      while(this->is_coordinate_valid({t, s_initial, v_initial, u_initial}) && t < t_max) {
+        ++t;
+        ++last_valid_t;
+      }
+
+      auto last_valid_s = 0;
+      auto s = s_initial;
+      while(this->is_coordinate_valid({t_initial, s, v_initial, u_initial}) && s < s_max) {
+        ++s;
+        ++last_valid_s;
+      }
+
+      auto last_valid_v = 0;
+      auto v = v_initial;
+      while(this->is_coordinate_valid({t_initial, s_initial, v, u_initial}) && v < v_max) {
+        ++v;
+        ++last_valid_v;
+      }
+
+      auto last_valid_u = 0;
+      auto u = u_initial;
+      while(this->is_coordinate_valid({t_initial, s_initial, v_initial, u}) && u < u_max) {
+        ++u;
+        ++last_valid_u;
+      }
+      block.extend({last_valid_t, last_valid_s, last_valid_v, last_valid_u});
+     }
+
     return block;
   }
 
@@ -126,15 +176,23 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
     auto c = 0;
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
-        auto& image_channel =
-            this->template get_image_at<BT601Image>({t, s}).get_channel(
-                channel);
-        for (auto v = v_initial; v < v_max; ++v) {
-          for (auto u = u_initial; u < u_max; ++u) {
-            if (this->is_coordinate_valid({t, s, v, u})) {
-              image_channel[v][u] = block_4d.mPixelData[c++];
-            } else {
-              c++;
+        if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
+          auto& image_channel =
+              this->template get_image_at<BT601Image>({t, s}).get_channel(
+                  channel);
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              if (this->is_coordinate_valid({t, s, v, u})) {
+                image_channel[v][u] = block_4d.mPixelData[c++];
+              } else {
+                ++c;
+              }
+            }
+          }
+        } else {
+          for (auto v = v_initial; v < v_max; ++v) {
+            for (auto u = u_initial; u < u_max; ++u) {
+              ++c;
             }
           }
         }
