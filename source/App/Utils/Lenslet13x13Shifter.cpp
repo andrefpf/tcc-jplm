@@ -49,12 +49,12 @@
 
 
 void shift_view(
-    const std::string& filename_input, const std::string& filename_output) {
+    const std::string& filename_input, const std::string& filename_output, int8_t value) {
   auto view_file = PixelMapFileIO::open(filename_input);
   auto view_variant = view_file->read_full_image();
   std::visit(
-      [filename_output](auto& view) {
-        view->shift_pixels_by(2);
+      [filename_output, value](auto& view) {
+        view->shift_pixels_by(value);
         ImageIO::imwrite(*(view.get()), filename_output);
       },
       view_variant);
@@ -105,22 +105,7 @@ bool are_input_and_output_paths_valid(
 }
 
 
-int main(int argc, char const* argv[]) {
-  if (argc < 3) {
-    std::cout << "Expecting 2 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " /path/to/input/directory/ /path/to/output/directory"
-              << std::endl;
-    exit(1);
-  }
-
-  std::string input_path(argv[1]);
-  std::string output_path(argv[2]);
-
-  if (!are_input_and_output_paths_valid(input_path, output_path)) {
-    exit(1);
-  }
-
+void shift_for_encoding(const std::string& input_path, const std::string& output_path) {
   auto initial_t = 1;
   auto initial_s = 1;
   auto final_t = initial_t + 13;
@@ -133,13 +118,63 @@ int main(int argc, char const* argv[]) {
       if ((t == initial_t) || (t == final_t - 1)) {
         if ((s == initial_s) || (s == final_s - 1)) {
           std::cout << "Shifting view " << input_view_name << '\n';
-          shift_view({input_path + input_view_name}, {output_path + output_view_name});
+          shift_view({input_path + input_view_name}, {output_path + output_view_name}, 2);
           continue;
         }
       }
       std::cout << "Copying view " << input_view_name << '\n';
       copy_view({input_path + input_view_name}, {output_path + output_view_name});
     }
+  }
+}
+
+
+void shift_for_decoding(const std::string& input_path, const std::string& output_path) {
+  auto initial_t = 0;
+  auto initial_s = 0;
+  auto final_t = initial_t + 13;
+  auto final_s = initial_s + 13;
+
+  for (auto t = initial_t; t < final_t; ++t) {
+    for (auto s = initial_s; s < final_s; ++s) {
+      auto input_view_name = get_view_name({t, s});
+      auto output_view_name = get_view_name({t+1, s+1});
+      if ((t == initial_t) || (t == final_t - 1)) {
+        if ((s == initial_s) || (s == final_s - 1)) {
+          std::cout << "Shifting view " << input_view_name << '\n';
+          shift_view({input_path + input_view_name}, {output_path + output_view_name}, -2);
+          continue;
+        }
+      }
+      std::cout << "Copying view " << input_view_name << '\n';
+      copy_view({input_path + input_view_name}, {output_path + output_view_name});
+    }
+  }
+}
+
+
+
+int main(int argc, char const* argv[]) {
+  if (argc < 3) {
+    std::cout << "Expecting 2 params\n";
+    std::cout << "\tUsage: " << argv[0]
+              << " /path/to/input/directory/ /path/to/output/directory"
+              << " direction"
+              << std::endl;
+    exit(1);
+  }
+
+  std::string input_path(argv[1]);
+  std::string output_path(argv[2]);
+
+  if (!are_input_and_output_paths_valid(input_path, output_path)) {
+    exit(1);
+  }
+
+  if(std::string(argv[3]) == "decoding") {
+    shift_for_decoding(input_path, output_path);
+  } else {
+    shift_for_encoding(input_path, output_path);
   }
 
   return 0;
