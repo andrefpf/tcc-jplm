@@ -47,12 +47,12 @@ After building this project, you can use the provided software to encode and dec
 #### Encoding
 Example:
   ```bash
-  ~/jplm/build/$ ../bin/TAppEncoder --cfg ../cfg/config.json --input ~/RAW/Greek/ --output ~/output.lf
+  ~/jplm/build/$ ../bin/TAppEncoder --cfg ../cfg/config.json --input ~/RAW/Greek/ --output ~/output.jpl
   ```  
 #### Decoding
 Example:
   ```bash
-  ~/jplm/build/$ ../bin/TAppDecoder --input ~/output.lf --output ~/decoded/greek/
+  ~/jplm/build/$ ../bin/TAppDecoder --input ~/output.jpl --output ~/decoded/greek/
   ```  
 
 
@@ -70,7 +70,7 @@ Example:
   JPLM_BINS="/home/jpeg-pleno/jplm/bin"
 
   ${JPLM_BINS}/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH}
-  ${JPLM_BINS}/jpl-encoder-bin --part 2 --type 0 --input ${ORIGINAL_TEMPORARY_PATH} --output ./test_bikes.lf --transform_size_maximum_inter_view_vertical 13 --transform_size_maximum_inter_view_horizontal 13 --transform_size_maximum_intra_view_vertical 31 --transform_size_maximum_intra_view_horizontal 31 --transform_size_minimum_inter_view_vertical 13 --transform_size_minimum_inter_view_horizontal 13 --transform_size_minimum_intra_view_vertical 4 --transform_size_minimum_intra_view_horizontal 4 --lambda 10000 -t 13 -s 13 -v 434 -u 626
+  ${JPLM_BINS}/jpl-encoder-bin --part 2 --type 0 --input ${ORIGINAL_TEMPORARY_PATH} --output ./test_bikes.jpl --transform_size_maximum_inter_view_vertical 13 --transform_size_maximum_inter_view_horizontal 13 --transform_size_maximum_intra_view_vertical 31 --transform_size_maximum_intra_view_horizontal 31 --transform_size_minimum_inter_view_vertical 13 --transform_size_minimum_inter_view_horizontal 13 --transform_size_minimum_intra_view_vertical 4 --transform_size_minimum_intra_view_horizontal 4 --lambda 10000 -t 13 -s 13 -v 434 -u 626
   ```  
 
 We still need to create a inverse lenslet_13x13_shifter to be executed after decoding. 
