@@ -51,16 +51,6 @@
 #include "Lib/Part2/Common/ViewToFilenameTranslator.h"
 
 
-std::string get_view_name(
-        const std::pair<std::size_t, std::size_t>& coordinate) {
-    std::ostringstream string_stream;
-    string_stream << std::setw(3) << std::setfill('0') << std::get<0>(coordinate)
-                  << '_' << std::setw(3) << std::setfill('0')
-                  << std::get<1>(coordinate) << ".ppm";
-    return string_stream.str();
-}
-
-
 void copy_view(
         const std::string& filename_input, const std::string& filename_output) {
     namespace fs = std::filesystem;
@@ -84,18 +74,14 @@ std::pair<std::size_t, std::size_t> find_final_coordinates(const std::string& in
     //find max_t
     auto t=initial_t;
     while(std::filesystem::is_regular_file(input_path+name_translator.view_position_to_filename({t, initial_s}))) {
-//        std::cout << name_translator.view_position_to_filename({t, initial_s}) << std::endl;
         t+=step_t;
     }
-    t-=step_t;
 
     //find max_s
     auto s=initial_s;
     while(std::filesystem::is_regular_file(input_path+name_translator.view_position_to_filename({initial_t, s}))) {
-//        std::cout << name_translator.view_position_to_filename({initial_t, s}) << std::endl;
         s+=step_s;
     }
-    s-=step_s;
 
 
     return {t,s};
@@ -141,16 +127,19 @@ void shift_coordinate_in_filenames(const std::string& input_path,
     auto output_t = initial_output_t;
     auto output_s = initial_output_s;
 
+    auto name_translator = PPM3CharViewToFilename();
+
     for (auto t = initial_input_t; t < final_t; t+=step_input_t) {
         for (auto s = initial_input_s; s < final_s; s+=step_input_s) {
-            auto input_view_name = get_view_name({t, s});
-            auto output_view_name = get_view_name({output_t, output_s});
+            auto input_view_name = name_translator.view_position_to_filename({t, s});
+            auto output_view_name = name_translator.view_position_to_filename({output_t, output_s});
             std::cout << "Copying view " << input_view_name << '\n';
             std::cout << "To view " << output_view_name << '\n';
-            //copy_view({input_path + input_view_name}, {output_path + output_view_name});
+            copy_view({input_path + input_view_name}, {output_path + output_view_name});
             output_s+=step_output_s;
         }
         output_t+=step_output_t;
+        output_s=initial_output_s;
     }
 }
 
@@ -247,21 +236,10 @@ int main(int argc, char** argv) {
     std::string output_path;
     auto initial_input_coordinate = std::pair<std::size_t, std::size_t>(0,0);
     auto final_input_coordinate = std::pair<std::size_t, std::size_t>(0,0);
+    auto need_to_compute_final_coordinate = true;
     auto initial_output_coordinate = std::pair<std::size_t, std::size_t>(0,0);
     auto step_input = std::pair<std::size_t, std::size_t>(1,1);
     auto step_output = std::pair<std::size_t, std::size_t>(1,1);
-
-
-//    initial_input_t
-//    initial_input_s
-//    initial_output_t
-//    initial_output_s
-//    step_input_t
-//    step_input_s
-//    step_output_t
-//    step_output_s
-//    final_input_t
-//    final_input_s
 
     const struct option stopcoes[] = {
             {"input"            , required_argument , 0               , 'i'},
@@ -294,20 +272,27 @@ int main(int argc, char** argv) {
             case 6: step_input = std::pair<std::size_t, std::size_t>(step_input.first, atoi(optarg)); break;
             case 7: step_output = std::pair<std::size_t, std::size_t>(atoi(optarg), step_output.second); break;
             case 8: step_output = std::pair<std::size_t, std::size_t>(step_output.first, atoi(optarg)); break;
-            case 9: final_input_coordinate = std::pair<std::size_t, std::size_t>(atoi(optarg), final_input_coordinate.second); break;
-            case 10: final_input_coordinate = std::pair<std::size_t, std::size_t>(final_input_coordinate.first, atoi(optarg)); break;
+            case 9: final_input_coordinate = std::pair<std::size_t, std::size_t>(atoi(optarg), final_input_coordinate.second); need_to_compute_final_coordinate=false; break;
+            case 10: final_input_coordinate = std::pair<std::size_t, std::size_t>(final_input_coordinate.first, atoi(optarg)); need_to_compute_final_coordinate=false; break;
             default: std::cout << "Invalid option or argument missing" << std::endl;
         }
     }
 
-
+    //parameter checking
     if (!are_input_and_output_paths_valid(input_path, output_path)) {
         exit(1);
     }
 
-    auto final_coordinate = find_final_coordinates(input_path, {0,2}, step_input);
+    if(need_to_compute_final_coordinate) {
+        final_input_coordinate = find_final_coordinates(input_path, initial_input_coordinate, step_input);
+    }
 
-//    shift_coordinate_in_filenames(input_path, output_path, {0,0})
+    if(initial_input_coordinate == final_input_coordinate) {
+        std::cerr << "Initial and final input coordinates are the same" << std::endl;
+        exit(1);
+    }
+
+    shift_coordinate_in_filenames(input_path, output_path, initial_input_coordinate, final_input_coordinate, initial_output_coordinate, step_input, step_output);
 
     return 0;
 }
