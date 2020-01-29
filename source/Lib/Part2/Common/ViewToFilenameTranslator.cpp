@@ -54,6 +54,6 @@ std::string PPM3CharViewToFilename::view_position_to_filename(
   std::ostringstream string_stream;
   string_stream << std::setw(3) << std::setfill('0') << s
                 << '_' << std::setw(3) << std::setfill('0')
-                << t << ".ppm";
+                << t << file_extension;
   return string_stream.str();
 }
