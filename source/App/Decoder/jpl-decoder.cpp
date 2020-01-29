@@ -56,6 +56,17 @@ int main(int argc, char const* argv[]) {
       JPLMConfigurationFactory::get_decoder_configuration(argc, argv);
 
   std::cout << configuration->get_input_filename() << std::endl;
+    //checking the file extension for showing a warning message
+
+  std::string input_filename_extension(std::filesystem::path(configuration->get_input_filename()).extension());
+  std::transform(input_filename_extension.begin(), input_filename_extension.end(), input_filename_extension.begin(), ::tolower);
+  if(std::filesystem::path(configuration->get_input_filename()).extension() != std::filesystem::path(".jpl")) {
+      std::cerr << "Warning: the recommended extension is .jpl: " << std::endl;
+      std::cerr << "\tWhen stored in traditional computer file systems, JPL files should be given the file extension \".jpl\" (readers should allow mixed case for the alphabetic characters)." << std::endl;
+      std::cerr << "\tThe used extension was: " << input_filename_extension << std::endl;
+      std::cerr << "\tThe file may still contain a valid JPEG Pleno stream and thus it will be parsed anyway." << std::endl;
+  }
+
   std::cout << configuration->get_output_filename() << std::endl;
 
   auto jpl_file =
