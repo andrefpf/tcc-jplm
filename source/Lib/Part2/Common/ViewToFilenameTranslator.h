@@ -48,8 +48,10 @@
 #include "Lib/Part2/Common/CommonExceptions.h"
 
 class ViewToFilenameTranslator {
+protected:
+    std::string file_extension;
  public:
-  ViewToFilenameTranslator() = default;
+  ViewToFilenameTranslator(const std::string& file_extension): file_extension(file_extension) {}
   virtual ~ViewToFilenameTranslator() = default;
   virtual std::string view_position_to_filename(
       const std::pair<std::size_t, std::size_t>& position) const = 0;
@@ -58,7 +60,7 @@ class ViewToFilenameTranslator {
 
 class PPM3CharViewToFilename : public ViewToFilenameTranslator {
  public:
-  PPM3CharViewToFilename() : ViewToFilenameTranslator(){};
+  PPM3CharViewToFilename(const std::string& file_extension = std::string(".ppm")) : ViewToFilenameTranslator(file_extension){};
   ~PPM3CharViewToFilename() = default;
 
   virtual std::string view_position_to_filename(

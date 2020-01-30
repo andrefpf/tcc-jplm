@@ -1,6 +1,13 @@
 add_executable(lenslet_13x13_shifter Lenslet13x13Shifter.cpp)
 target_link_libraries(lenslet_13x13_shifter image)
 
+
+add_executable(lightfield_coordinate_shift LightFieldViewCoordinateChange.cpp)
+target_link_libraries(lightfield_coordinate_shift image)
+target_link_libraries(lightfield_coordinate_shift jplm_part2_common)
+
+
+
 add_executable(compute_psnr ComputePSNR.cpp)
 target_link_libraries(compute_psnr image)
 
