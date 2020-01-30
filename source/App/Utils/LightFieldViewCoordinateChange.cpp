@@ -40,15 +40,10 @@
 
 #include <getopt.h>
 #include <filesystem>
-#include <iomanip>  //std::setw and std::setfill
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include "Lib/Part2/Common/ViewToFilenameTranslator.h"
-#include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
-#include "Lib/Utils/Image/ImageIO.h"
-#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 
 void copy_view(
