@@ -33,7 +33,18 @@
 
 /** \file     LightFieldViewCoordinateChange.cpp
  *  \brief    This util is intended to change the filenames of light-field views given an offset
- *  \details
+ *  \details  The reference software only reads lightfields starting at position 0,0 (t, s) and 
+ *  expects the displacements between views to be one. 
+ *  
+ *  For instance, the <a href="https://jpeg.org/plenodb/lf/pleno_lf/set2.zip">Set2 2K sub</a> dataset must be updated
+ *  before being used as input in the reference software. To update it to the correct coordinates, 
+ *  it is possible to use the following command:
+ *  
+ *  
+ *  ```bash 
+ *  ./bin/lightfield_coordinate_shift --input ~/RAW/set2/ --output ~/RAW/set2_corrected_coordinates/ --initial_input_t 0 --initial_input_s 2 --initial_output_t 0 --initial_output_s 0 --step_input_t 2 --step_input_s 3 
+ *  ```
+ *  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-01-29
  */
@@ -88,6 +99,15 @@ std::pair<std::size_t, std::size_t> find_final_coordinates(
 }
 
 
+/**
+ * @brief      Verifies if the input and output paths are valid.
+ * 
+ *
+ * @param[in]  input_path   The input path
+ * @param[in]  output_path  The output path
+ *
+ * @return     True if input and output paths are valid, false otherwise.
+ */
 bool are_input_and_output_paths_valid(
     const std::string& input_path, const std::string& output_path) {
   auto valid = true;
