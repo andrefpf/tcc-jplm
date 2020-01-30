@@ -240,8 +240,8 @@ void print_help() {
           "the input path")});
 
 
-  auto max_number_of_spaces_short_needed = 0;
-  auto max_number_of_spaces_long_needed = 0;
+  std::size_t max_number_of_spaces_short_needed = 0;
+  std::size_t max_number_of_spaces_long_needed = 0;
 
   for (const auto& help_item : help_items) {
     if (help_item.get_size_short() > max_number_of_spaces_short_needed) {
