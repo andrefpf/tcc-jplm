@@ -38,8 +38,8 @@
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#ifndef JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#define JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
 #include "Lib/Common/CommonExceptions.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
@@ -66,10 +66,10 @@ class JPLM4DPredictionModeLightFieldEncoder
   virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
 
   virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
     throw CommonExceptions::NotImplementedException(
         "JPLM4DPredictionModeLightFieldEncoder::run()");
+    //! \todo implement run method for jpl lightfield encoder
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
