@@ -48,21 +48,17 @@
 #include "Lib/Part2/Common/CommonExceptions.h"
 
 class ViewToFilenameTranslator {
+ protected:
+  void check_for_overflow(
+      const std::pair<std::size_t, std::size_t>& position) const;
+  std::ostringstream get_name_from_position(
+      const std::pair<std::size_t, std::size_t>& position) const;
+
  public:
   ViewToFilenameTranslator() = default;
   virtual ~ViewToFilenameTranslator() = default;
   virtual std::string view_position_to_filename(
       const std::pair<std::size_t, std::size_t>& position) const = 0;
-};
-
-
-class PPM3CharViewToFilename : public ViewToFilenameTranslator {
- public:
-  PPM3CharViewToFilename() : ViewToFilenameTranslator(){};
-  ~PPM3CharViewToFilename() = default;
-
-  virtual std::string view_position_to_filename(
-      const std::pair<std::size_t, std::size_t>& position) const override;
 };
 
 
