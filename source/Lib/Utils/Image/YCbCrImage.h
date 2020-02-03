@@ -57,6 +57,11 @@ class YCbCrImage : public ThreeChannelImage<T> {
   }
 
 
+  YCbCrImage(Image<T>&& other) noexcept
+      : ThreeChannelImage<T>(std::move(other)) {
+  }
+
+
   YCbCrImage(const YCbCrImage<T>& other) : ThreeChannelImage<T>(other){};
 
 
@@ -90,6 +95,10 @@ class BT601Image : public YCbCrImage<T> {
 
 
   BT601Image(BT601Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
+  }
+
+
+  BT601Image(Image<T>&& other) noexcept : YCbCrImage<T>(std::move(other)) {
   }
 
 
@@ -154,7 +163,7 @@ template<typename T>
 class BT2020Image : public YCbCrImage<T> {
  public:
   static constexpr auto image_type = ImageType::BT2020;
-  
+
   BT2020Image(std::size_t width, std::size_t height, std::size_t bpp)
       : YCbCrImage<T>(width, height, bpp, image_type){};
 

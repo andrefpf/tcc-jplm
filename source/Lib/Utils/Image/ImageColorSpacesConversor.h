@@ -246,6 +246,10 @@ ImageOut<T> to(const ImageIn<T>& source) {
   }
 
   switch (source.get_type()) {
+    case ImageType::Undefined: {
+      std::cout << "Working on it...";
+      break;
+    }
     case ImageType::RGB: {
       if constexpr (std::is_base_of_v<YCbCrImage<T>, ImageOut<T>> &&
                     !std::is_same_v<YCbCrImage<T>, ImageOut<T>>) {
