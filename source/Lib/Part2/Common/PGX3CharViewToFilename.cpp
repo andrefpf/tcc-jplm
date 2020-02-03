@@ -31,45 +31,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslator.cpp
+/** \file     PGX3CharViewToFilename.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-06-04
+ *  \date     2020-02-03
  */
 
-#include "ViewToFilenameTranslator.h"
+#include "PGX3CharViewToFilename.h"
 
 
-/**
- * @brief      Checks if a position is within the valid interval defined by the file name (0 to 999)
- *
- * @param[in]  position  The position (t, s)
- */
-void ViewToFilenameTranslator::check_for_overflow(
+std::string PGX3CharViewToFilename::view_position_to_filename(
     const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  if (t > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-  if (s > 999) {
-    throw ViewToFilenameTranslatorExceptions::Char3OverflowException();
-  }
-}
+  check_for_overflow(position);
 
+  auto string_stream = get_name_from_position(position);
+  string_stream << ".pgx";
 
-/**
- * @brief      Gets the name from position in the format S_T with three characteres for each coordinate.
- *
- * @param[in]  position  The position, a pair (T, S)
- *
- * @return     The name from position, "S_T".
- */
-std::ostringstream ViewToFilenameTranslator::get_name_from_position(
-    const std::pair<std::size_t, std::size_t>& position) const {
-  const auto& [t, s] = position;
-  std::ostringstream string_stream;
-  string_stream << std::setw(3) << std::setfill('0') << s << '_' << std::setw(3)
-                << std::setfill('0') << t;
-  return string_stream;
+  return string_stream.str();
 }

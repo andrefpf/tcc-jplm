@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_PART2_COMMON_VIEWFROMPGXFILE_H__
 #define JPLM_LIB_PART2_COMMON_VIEWFROMPGXFILE_H__
 
+#include "Lib/Part2/Common/PGX3CharViewToFilename.h"
 #include "Lib/Part2/Common/View.h"
-#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
 #include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/ImageUtils.h"
 #include "Lib/Utils/Image/PGXFile.h"
