@@ -48,7 +48,7 @@
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part1/Common/JPLMCodec.h"
 #include "Lib/Part2/Decoder/TransformMode/JPLM4DTransformModeLightFieldDecoder.h"
-#include "Lib/Part2/Encoder/JPLM4DPredictionModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/PredictionMode/JPLM4DPredictionModeLightFieldEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.h"
 
 
