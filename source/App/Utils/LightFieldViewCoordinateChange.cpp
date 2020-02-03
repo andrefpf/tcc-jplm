@@ -49,7 +49,12 @@
  *  \date     2020-01-29
  */
 
+#ifdef _WIN32
+#include "getopt.h"
+#else
 #include <getopt.h>
+#endif
+
 #include <filesystem>
 #include <iostream>
 #include <vector>
