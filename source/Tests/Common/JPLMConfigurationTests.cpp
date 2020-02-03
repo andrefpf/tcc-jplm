@@ -35,10 +35,12 @@
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-27
  */
 
 #include <exception>
+#include <filesystem>
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
@@ -48,12 +50,14 @@
 using namespace std;
 std::string root_path = "../";
 
+std::string resources_path = "../resources/";
 
 TEST(JPLMConfiguration, SimpleTest) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/I01Bikes.cfg"};
   int argc = 3;
   JPLMConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("../cfg/part2/mule/I01Bikes.cfg", config.get_input_filename().c_str());
+  EXPECT_STREQ(
+      "../cfg/part2/mule/I01Bikes.cfg", config.get_input_filename().c_str());
 }
 
 
@@ -71,7 +75,8 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("../resources/small_greek/", config.get_input_filename().c_str());
+  EXPECT_STREQ(
+      "../resources/small_greek/", config.get_input_filename().c_str());
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
   EXPECT_EQ(13, config.get_number_of_rows_t());
   EXPECT_EQ(13, config.get_number_of_columns_s());
@@ -129,17 +134,17 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode,
-     TransformParametersFromCLI_BasicWithPropertiesBinding) {
+    TransformParametersFromCLI_BasicWithPropertiesBinding) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-                        "../resources/out_small_greek/", "-l", "0.5",
-                        "--transform_size_maximum_intra_view_vertical", "31",
-                        "--transform_size_minimum_intra_view_vertical", "4",
-                        "--transform_size_maximum_intra_view_horizontal", "31",
-                        "--transform_size_minimum_intra_view_horizontal", "4",
-                        "--transform_size_maximum_inter_view_vertical", "13",
-                        "--transform_size_minimum_inter_view_vertical", "13",
-                        "--transform_size_maximum_inter_view_horizontal", "13",
-                        "--transform_size_minimum_inter_view_horizontal", "13"};
+      "../resources/out_small_greek/", "-l", "0.5",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_maximum_intra_view_horizontal", "31",
+      "--transform_size_minimum_intra_view_horizontal", "4",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_vertical", "13",
+      "--transform_size_maximum_inter_view_horizontal", "13",
+      "--transform_size_minimum_inter_view_horizontal", "13"};
   int argc = 23;
   JPLMEncoderConfigurationLightField4DTransformMode config(
       argc, const_cast<char**>(argv));
@@ -156,17 +161,17 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 
 
 TEST(JPLMEncoderConfigurationLightField4DTransformMode,
-     TransformParametersFromCLI_DifferentWithPropertiesBinding) {
+    TransformParametersFromCLI_DifferentWithPropertiesBinding) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
-                        "../resources/out_small_greek/", "-l", "0.5",
-                        "--transform_size_maximum_intra_view_vertical", "31",
-                        "--transform_size_minimum_intra_view_vertical", "4",
-                        "--transform_size_maximum_intra_view_horizontal", "30",
-                        "--transform_size_minimum_intra_view_horizontal", "8",
-                        "--transform_size_maximum_inter_view_vertical", "13",
-                        "--transform_size_minimum_inter_view_vertical", "1",
-                        "--transform_size_maximum_inter_view_horizontal", "7",
-                        "--transform_size_minimum_inter_view_horizontal", "3"};
+      "../resources/out_small_greek/", "-l", "0.5",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_maximum_intra_view_horizontal", "30",
+      "--transform_size_minimum_intra_view_horizontal", "8",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_vertical", "1",
+      "--transform_size_maximum_inter_view_horizontal", "7",
+      "--transform_size_minimum_inter_view_horizontal", "3"};
   int argc = 23;
   JPLMEncoderConfigurationLightField4DTransformMode config(
       argc, const_cast<char**>(argv));
@@ -185,7 +190,9 @@ TEST(JPLMEncoderConfigurationLightField4DTransformMode,
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   if (argc > 1) {
-    root_path = std::string(argv[1]);
+    resources_path = std::string(argv[1]);
+    auto resources_fs_path = std::filesystem::path(resources_path.c_str());
+    root_path = resources_fs_path.parent_path();
   }
   return RUN_ALL_TESTS();
 }

@@ -142,6 +142,8 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/TransformMode)
 
 
 enable_testing()
+include(JPLMTests)
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
