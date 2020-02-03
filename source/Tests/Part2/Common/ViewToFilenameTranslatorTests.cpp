@@ -39,7 +39,7 @@
  */
 
 #include <iostream>
-#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+#include "Lib/Part2/Common/PPM3CharViewToFilename.h"
 #include "gtest/gtest.h"
 
 
