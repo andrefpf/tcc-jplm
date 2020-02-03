@@ -44,7 +44,6 @@
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/ViewFromPGXFile.h"
-#include "Lib/Part2/Common/ViewFromPPMFile.h"
 
 
 /**
@@ -74,22 +73,11 @@ class LightfieldFromFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-
     image_file_type = configuration.get_image_file_type();
-    if (image_file_type == ImageFileType::PGX) {
-      for (const auto& coordinate :
-          configuration.get_raster_view_coordinates()) {
-        this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                              configuration.get_path(), coordinate, 3)),
-            coordinate);
-      }
-    } else {  //using PPM
-      for (const auto& coordinate :
-          configuration.get_raster_view_coordinates()) {
-        this->set_view_at(std::move(std::make_unique<ViewFromPPMFile<T>>(
-                              configuration.get_path(), coordinate)),
-            coordinate);
-      }
+    for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
+      this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
+                            configuration.get_path(), coordinate, 3)),
+          coordinate);
     }
   }
 
@@ -99,25 +87,12 @@ class LightfieldFromFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-
     image_file_type = configuration.get_image_file_type();
-    if (image_file_type == ImageFileType::PGX) {
-      for (const auto& coordinate :
-          configuration.get_raster_view_coordinates()) {
-        this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                              configuration.get_path(), coordinate,
-                              configuration.get_size().get_v_and_u(), 10, 3)),
-            coordinate);
-      }
-    } else {  //using PPM
-      for (const auto& coordinate :
-          configuration.get_raster_view_coordinates()) {
-        this->set_view_at(
-            std::move(std::make_unique<ViewFromPPMFile<T>>(
-                configuration.get_path(), coordinate,
-                configuration.get_size().get_v_and_u(), max_value, type)),
-            coordinate);
-      }
+    for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
+      this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
+                            configuration.get_path(), coordinate,
+                            configuration.get_size().get_v_and_u(), 10, 3)),
+          coordinate);
     }
 
 

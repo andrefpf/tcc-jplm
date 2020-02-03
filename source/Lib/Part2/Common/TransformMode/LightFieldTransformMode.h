@@ -81,7 +81,6 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
               block.mPixelData[c++] = image_channel[v][u];
             } else {
               c++;
-              std::cout << "invalid" << std::endl;
             }
           }
         }
