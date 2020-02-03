@@ -38,14 +38,14 @@
  *  \date     2019-10-25
  */
 
-#ifndef BORDERBLOCKSPOLICY_H__
-#define BORDERBLOCKSPOLICY_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_BORDERBLOCKSPOLICY_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_BORDERBLOCKSPOLICY_H__
 
 #include <cinttypes>
 
 enum class BorderBlocksPolicy : uint8_t {
-	padding=0,
-	truncate=1,
+  padding = 0,
+  truncate = 1,
 };
 
-#endif /* end of include guard: BORDERBLOCKSPOLICY_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_BORDERBLOCKSPOLICY_H__ */
