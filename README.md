@@ -92,7 +92,13 @@ TODO
 
 The included lightfield visualization tool depends on the X11 libraries. 
 If they are not present the compilation will fail. 
-In this case, to avoid failing one needs to call cmake as follows: 
+To install X11 libraries (must run as sudo):
+  ```bash
+  ~$ apt install libx11-*
+  ```  
+
+On the other hand, it is possible to skip x11 library install and to avoid failing compilation by disabing the LF visualization tool.
+Fo that, one needs to call cmake as follows: 
   ```bash
   ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
   ```  
