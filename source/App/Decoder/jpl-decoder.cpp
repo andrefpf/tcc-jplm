@@ -43,6 +43,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <filesystem>
 #include "Lib/Common/JPLMCodecFactory.h"
 #include "Lib/Common/JPLMConfigurationFactory.h"
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
@@ -58,7 +59,7 @@ int main(int argc, char const* argv[]) {
   std::cout << configuration->get_input_filename() << std::endl;
     //checking the file extension for showing a warning message
 
-  std::string input_filename_extension(std::filesystem::path(configuration->get_input_filename()).extension());
+  std::string input_filename_extension(std::filesystem::path(configuration->get_input_filename()).extension().string());
   std::transform(input_filename_extension.begin(), input_filename_extension.end(), input_filename_extension.begin(), ::tolower);
   if(std::filesystem::path(configuration->get_input_filename()).extension() != std::filesystem::path(".jpl")) {
       std::cerr << "Warning: the recommended extension is .jpl: " << std::endl;
