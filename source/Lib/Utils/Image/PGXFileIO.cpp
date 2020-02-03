@@ -127,8 +127,6 @@ void advance_to_raster_begin(std::ifstream& ifstream) {
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   std::ifstream file(filename, std::ios::in);
 
-  std::cout << "Im on the fst one" << std::endl;
-
   check_header(file);
   const auto endianess = get_endianess(file);
   const auto is_signed = get_is_signed(file);
@@ -145,9 +143,6 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     std::size_t width, std::size_t height, std::size_t depth, bool is_signed) {
   std::ofstream file(filename, std::ios::out);
-
-
-  std::cout << "Im on this one" << std::endl;
 
   file << get_header_id_string() << " ";
 

@@ -60,7 +60,6 @@ class ViewFromPGXFile : public View<T> {
   bool overwrite_pgx_file_in_destructor = false;
 
   void open_pgx_files() {
-    std::cout << "Opening pgx files" << std::endl;
     auto base_path = std::filesystem::path(path);
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
@@ -73,7 +72,6 @@ class ViewFromPGXFile : public View<T> {
 
   void open_new_pgx_files(
       std::size_t width, std::size_t height, std::size_t depth) {
-    std::cout << "Opening pgx files new" << std::endl;
     auto base_path = std::filesystem::path(path);
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
