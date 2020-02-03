@@ -31,11 +31,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldDecoder.cpp
+/** \file     JPLM4DPredictionModeLightFieldDecoder.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-09
  */
 
-#include "JPLM4DPredictionModeLightFieldDecoder.h"
+#ifndef JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
+#define JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
+
+#include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+
+class JPLM4DPredictionModeLightFieldDecoder {
+ public:
+  JPLM4DPredictionModeLightFieldDecoder() = default;
+  virtual ~JPLM4DPredictionModeLightFieldDecoder() = default;
+
+  virtual void run() override {
+    throw CommonExceptions::NotImplementedException(
+        "JPLM4DPredictionModeLightFieldDecoder::run()");
+    //! \todo implement run method for jpl lightfield encoder
+  }
+};
+
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__ */
