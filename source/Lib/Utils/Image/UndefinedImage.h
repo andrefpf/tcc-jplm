@@ -44,11 +44,13 @@
 #include "Lib/Utils/Image/Image.h"
 
 template<typename T>
-class UndefinedImage : public Image<T>
-{
-public:
+class UndefinedImage : public Image<T> {
+ public:
   static constexpr auto image_type = ImageType::Undefined;
-  UndefinedImage(std::size_t width, std::size_t height, std::size_t bpp, std::size_t number_of_channels=1)
+
+
+  UndefinedImage(std::size_t width, std::size_t height, std::size_t bpp,
+      std::size_t number_of_channels = 1)
       : Image<T>(width, height, bpp, number_of_channels, image_type){};
 
 
@@ -82,7 +84,7 @@ public:
 
 
   virtual ~UndefinedImage() = default;
-  
+
 
   virtual std::vector<std::string> get_channel_names() const override {
     return std::vector<std::string>(this->get_number_of_channels(), "Unnamed");

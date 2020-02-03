@@ -56,7 +56,13 @@ class ThreeChannelImage : public Image<T> {
   }
 
 
-  ThreeChannelImage(const ThreeChannelImage<T>& other) : Image<T>(other){};
+  ThreeChannelImage(const ThreeChannelImage<T>& other) : Image<T>(other) {
+  }
+
+
+  ThreeChannelImage(Image<T>&& other) noexcept : Image<T>(std::move(other)) {
+    this->channels.erase(this->channels.begin() + 3, this->channels.end());
+  }
 
 
   ThreeChannelImage& operator=(ThreeChannelImage<T>&& other) {
