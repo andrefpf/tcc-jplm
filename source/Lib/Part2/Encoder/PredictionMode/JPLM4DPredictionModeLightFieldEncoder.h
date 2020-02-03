@@ -41,12 +41,13 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
+#include "Lib/Common/CommonExceptions.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 #include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 
-
 template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<PelType> {
+class JPLM4DPredictionModeLightFieldEncoder
+    : public JPLMLightFieldEncoder<PelType> {
  protected:
   std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
       prediction_mode_configuration;
@@ -55,8 +56,9 @@ class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<PelTy
   JPLM4DPredictionModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
           configuration)
-      : JPLMLightFieldCodec<PelType>(std::make_unique<LightfieldFromFile<PelType>>(
-            configuration->get_lightfield_io_configurations())),
+      : JPLMLightFieldCodec<PelType>(
+            std::make_unique<LightfieldFromFile<PelType>>(
+                configuration->get_lightfield_io_configurations())),
         JPLMLightFieldEncoder<PelType>(*configuration),
         prediction_mode_configuration(std::move(configuration)) {
   }
@@ -65,6 +67,8 @@ class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<PelTy
 
   virtual void run() override {
     //! \todo implement run method for jpl lightfield encoder
+    throw CommonExceptions::NotImplementedException(
+        "JPLM4DPredictionModeLightFieldEncoder::run()");
   }
 };
 

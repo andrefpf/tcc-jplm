@@ -31,11 +31,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.cpp
+/** \file     test.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-02-03
  */
-
-#include "JPLM4DPredictionModeLightFieldEncoder.h"
