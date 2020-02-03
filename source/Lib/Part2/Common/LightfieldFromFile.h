@@ -54,9 +54,6 @@
  */
 template<typename T>
 class LightfieldFromFile : public Lightfield<T> {
- protected:
-  ImageFileType image_file_type = ImageFileType::PGX;
-
  public:
   /**
    * \brief      Constructs the object.
@@ -73,10 +70,23 @@ class LightfieldFromFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    image_file_type = configuration.get_image_file_type();
+    //number of channels
+    std::size_t number_of_channels = 3;  //<! \todo check this out...
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      auto channel_path = std::filesystem::path(
+          configuration.get_path() + "/" + std::to_string(i));
+      if (!std::filesystem::exists(channel_path)) {
+        //<! \todo should throw error, as in the encoder the inputs should be present
+        //throw
+      }
+    }
+
+
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
-      this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
-                            configuration.get_path(), coordinate, 3)),
+      this->set_view_at(
+          std::move(std::make_unique<ViewFromPGXFile<T>>(
+              configuration.get_path(), coordinate, number_of_channels)),
           coordinate);
     }
   }
@@ -87,11 +97,25 @@ class LightfieldFromFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    image_file_type = configuration.get_image_file_type();
+    //<! \todo check the number of channels...
+
+    std::size_t number_of_channels = 3;  //<! \todo check this out...
+    std::size_t bits_per_sample = 10;
+
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      auto channel_path = std::filesystem::path(
+          configuration.get_path() + "/" + std::to_string(i));
+      if (!std::filesystem::exists(channel_path)) {
+        std::filesystem::create_directory(channel_path);
+      }
+    }
+
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
       this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
                             configuration.get_path(), coordinate,
-                            configuration.get_size().get_v_and_u(), 10, 3)),
+                            configuration.get_size().get_v_and_u(),
+                            bits_per_sample, number_of_channels)),
           coordinate);
     }
 
