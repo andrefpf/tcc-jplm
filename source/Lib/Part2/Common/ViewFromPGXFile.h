@@ -59,6 +59,7 @@ class ViewFromPGXFile : public View<T> {
   // std::unique_ptr<PGXFile> pgx_file;
   bool overwrite_pgx_file_in_destructor = false;
 
+
   void open_pgx_files() {
     auto base_path = std::filesystem::path(path);
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
@@ -83,6 +84,13 @@ class ViewFromPGXFile : public View<T> {
   }
 
  public:
+  /**
+   * @brief      Constructs a new instance. Probably it will be used in the encoder
+   *
+   * @param[in]  path                The path
+   * @param[in]  position            The position
+   * @param[in]  number_of_channels  The number of channels
+   */
   ViewFromPGXFile(const std::string& path,
       const std::pair<std::size_t, std::size_t>& position,
       std::size_t number_of_channels)

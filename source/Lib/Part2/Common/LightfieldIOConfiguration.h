@@ -52,22 +52,12 @@ class LightfieldIOConfiguration {
   const std::string lightfield_path;
   const LightfieldDimension<std::size_t> lightfield_size;
   const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
-  ImageFileType image_file_type = ImageFileType::PGX;
 
   void check_configurations() {
     namespace fs = std::filesystem;
     if (!fs::is_directory(lightfield_path)) {
       throw LightfieldIOConfigurationExceptions::InvalidLightfieldPath();
     }
-    for(auto& p: fs::directory_iterator(lightfield_path)) {
-      if(p.path().extension() == ".ppm") {
-        std::cout << "Input directory contains ppm" << std::endl;
-        image_file_type = ImageFileType::PixelMap;
-        return;
-      }
-    }
-
-
   }
 
 
@@ -125,11 +115,6 @@ class LightfieldIOConfiguration {
   std::size_t get_number_of_pixels_per_lightfield() const noexcept {
     return get_number_of_views_per_lightfield() *
            get_number_of_pixels_per_view();
-  }
-
-
-  ImageFileType get_image_file_type() const noexcept{
-    return image_file_type;
   }
 
 
