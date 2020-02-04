@@ -1,6 +1,11 @@
 
 set(IMAGE_SOURCES Metrics.cpp ImageIO.cpp ImageChannel.cpp Image.cpp ColorModelUtils.cpp ColorSpaces.cpp ImageColorSpacesConversor.h)
 
-set(PIXMAP_SOURCES ImageFile.cpp PixelMapFile.cpp PixelMapFileBinary.h PPMBinaryFile.cpp PixelMapFileIO.cpp)
+set(IMAGE_FILE_SOURCES ImageFile.cpp)
 
-add_library(image ${IMAGE_SOURCES} ${PIXMAP_SOURCES})
+set(PIXMAP_SOURCES PixelMapFile.cpp PixelMapFileBinary.h PPMBinaryFile.cpp PixelMapFileIO.cpp)
+
+set(PGX_SOURCES PGXFile.cpp PGXFileIO.cpp)
+
+add_library(image ${IMAGE_SOURCES} ${IMAGE_FILE_SOURCES} ${PIXMAP_SOURCES} ${PGX_SOURCES})
+target_link_libraries(image stream)

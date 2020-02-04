@@ -74,23 +74,30 @@ void show_psnr(
               uint16_t>(decoded_image_variant);
 
   auto printer = ImageMetrics::visitors::PSNRPrinter();
+  auto max_error_printer= ImageMetrics::visitors::MaximumErrorPrinter();
 
    switch (type) {
       case ImageType::RGB:
         printer(original_image, decoded_image);
+        max_error_printer(original_image, decoded_image);
         break;
       case ImageType::BT601:
         printer.operator()<BT601Image>(original_image, decoded_image);
+        max_error_printer.operator()<BT601Image>(original_image, decoded_image);
         break;
       case ImageType::BT709:
         printer.operator()<BT709Image>(original_image, decoded_image);
+        max_error_printer.operator()<BT709Image>(original_image, decoded_image);
         break;
       case ImageType::BT2020:
         printer.operator()<BT2020Image>(original_image, decoded_image);
+        max_error_printer.operator()<BT2020Image>(original_image, decoded_image);
         break;
       default:
         std::cerr << "Error default" << std::endl;
     }
+
+
 
 }
 

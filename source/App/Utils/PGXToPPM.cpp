@@ -31,11 +31,74 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldDecoder.cpp
+/** \file     PGXToPPM.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2019-12-16
  */
 
-#include "JPLM4DPredictionModeLightFieldDecoder.h"
+#include <filesystem>
+#include <iomanip>  //std::setw and std::setfill
+#include <iostream>
+#include <sstream>
+#include "Lib/Utils/Image/ImageIO.h"
+
+
+bool are_input_and_output_paths_valid(
+    const std::string& input_path, const std::string& output_path) {
+  auto valid = true;
+  if (input_path == output_path) {
+    std::cerr << "Input and output paths must be different" << std::endl;
+    valid = false;
+  }
+
+  if (!std::filesystem::is_directory(input_path)) {
+    std::cerr << "Input path must be a directory" << std::endl;
+    valid = false;
+  }
+
+  if (std::filesystem::is_directory(output_path)) {
+    std::cerr << "output must be a ppm file" << std::endl;
+    valid = false;
+  }
+  return valid;
+}
+
+
+int main(int argc, char const* argv[]) {
+  if (argc < 3) {
+    std::cout << "Expecting 2 params\n";
+    std::cout << "\tUsage: " << argv[0]
+              << " /path/to/input/file.ppm /path/to/output/directory"
+              << std::endl;
+    exit(1);
+  }
+
+
+  std::string input_path(argv[1]);
+  std::string output_path(argv[2]);
+
+  if (!are_input_and_output_paths_valid(input_path, output_path)) {
+    exit(1);
+  }
+
+  auto input = std::filesystem::path(input_path);
+
+  auto output = std::filesystem::path(output_path);
+
+  std::vector<std::unique_ptr<UndefinedImage<uint16_t>>> images;
+
+  for (auto i = 0; i < 3; ++i) {
+    auto file_name =
+        input / std::to_string(i) / output.filename().replace_extension(".pgx");
+    auto image_file = ImageIO::open(file_name);
+    images.push_back(ImageIO::read<UndefinedImage, uint16_t>(*image_file));
+  }
+
+  auto image_sum = ImageUtils::get_undefined_images_as<BT601Image>(
+      *(images[0]), *(images[1]), *(images[2]));
+  ImageIO::imwrite(*image_sum, output);
+
+  return 0;
+}

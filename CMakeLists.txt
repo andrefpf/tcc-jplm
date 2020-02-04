@@ -150,6 +150,8 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part2/Encoder/TransformMode)
 
 
 enable_testing()
+include(JPLMTests)
+
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Utils/Stream/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/ThirdParty/)
@@ -170,8 +172,10 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Encoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Tests/Part2/Common/TransformMode/)
 
 
-if (BUILD_DOC)
-  file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
+if(BUILD_DOC)
+  set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+  file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
   find_package(Doxygen)
   if (DOXYGEN_FOUND)
     set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/cmake/Doxyfile.in)

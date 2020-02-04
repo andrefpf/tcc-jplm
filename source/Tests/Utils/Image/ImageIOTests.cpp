@@ -179,6 +179,102 @@ TEST(CLikeSyntaxTest, ImReadAndOpenPlusReadMustResultInTheSameImage) {
 }
 
 
+struct CLikeSyntaxTestPGXFiles : public testing::Test {
+  std::string filename =
+      std::string(resources_path + "/pgx_tests/unsigned_big_endian_4x3x12.pgx");
+  std::size_t width = 4;
+  std::size_t height = 3;
+  std::size_t depth = 12;
+  bool is_signed = false;
+  PGXEndianess endianess = PGXEndianess::PGX_ML_BIG_ENDIAN;
+};
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFile) {
+  EXPECT_NO_THROW(auto pgx_file = ImageIO::open(filename));
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileReadsHeader) {
+  auto pgx_file = ImageIO::open(filename);
+  EXPECT_EQ(width, pgx_file->get_width());
+  EXPECT_EQ(height, pgx_file->get_height());
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReads) {
+  auto pgx_file = ImageIO::open(filename);
+  EXPECT_NO_THROW(auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file));
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndNotNull) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_TRUE(image_from_pgx_file);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndIsUndefinedImage) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_type(), ImageType::Undefined);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndOnlyOneChannel) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_number_of_channels(), 1);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndCorrectWidth) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_width(), width);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndCorrectHeight) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_height(), height);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsAndCorrectBpp) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_bpp(), depth);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndReadsNotSigned) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->is_signed(), is_signed);
+}
+
+
+TEST_F(CLikeSyntaxTestPGXFiles, OpensAPGXFileAndDataIsCorrect) {
+  auto pgx_file = ImageIO::open(filename);
+  auto image_from_pgx_file = ImageIO::read<uint16_t>(*pgx_file);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 0, 3),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 1, 3),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 0),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 1),  0x0000);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 2),  0x03FF);
+  EXPECT_EQ(image_from_pgx_file->get_value_at(0, 2, 3),  0x03FF);
+}
+
+ 
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources

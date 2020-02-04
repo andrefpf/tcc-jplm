@@ -31,41 +31,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-02-03
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
 
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+#ifndef JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H
 
+#include <exception>
+#include <string>
 
-template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder : public JPLMLightFieldEncoder<PelType> {
- protected:
-  std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-      prediction_mode_configuration;
+namespace CommonExceptions {
 
+class NotImplementedException : public std::logic_error {
  public:
-  JPLM4DPredictionModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
-          configuration)
-      : JPLMLightFieldCodec<PelType>(std::make_unique<LightfieldFromPPMFile<PelType>>(
-            configuration->get_lightfield_io_configurations())),
-        JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(std::move(configuration)) {
-  }
-
-  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
-
-  virtual void run() override {
-    //! \todo implement run method for jpl lightfield encoder
+  NotImplementedException(const std::string& what)
+      : std::logic_error("Not implemented yet: " + what) {
   }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+}  // namespace CommonExceptions
+
+#endif  // JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H

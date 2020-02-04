@@ -48,6 +48,20 @@
 #include <vector>
 
 namespace Metrics {
+
+template<typename T>
+double get_maximum_absolute_error(const std::vector<T>& errors) {
+  double max = 0.0;
+  for (auto v : errors) {
+    auto diff = std::abs(static_cast<double>(v));
+    if(diff > max) {
+      max = diff;
+    }
+  }
+  return max;
+}
+
+
 template<typename T>
 double get_sum_of_squared_errors(const std::vector<T>& errors) {
   auto sum = 0.0;

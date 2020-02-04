@@ -47,9 +47,9 @@
 #include "JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part1/Common/JPLMCodec.h"
-#include "Lib/Part2/Encoder/JPLM4DPredictionModeLightFieldEncoder.h"
-#include "Lib/Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.h"
 #include "Lib/Part2/Decoder/TransformMode/JPLM4DTransformModeLightFieldDecoder.h"
+#include "Lib/Part2/Encoder/PredictionMode/JPLM4DPredictionModeLightFieldEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.h"
 
 
 class JPLMCodecFactory {
@@ -93,31 +93,33 @@ class JPLMCodecFactory {
   }
 
 
-static std::unique_ptr<JPLMCodec> get_lightfield_decoder(std::shared_ptr<JPLFile> jpl_file, const std::unique_ptr<JpegPlenoCodestreamBox>& codestream, const std::string& output_filename) {
-const auto& codestream_as_part2 =
-              static_cast<JpegPlenoLightFieldBox&>(*codestream);
-          // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
-          const auto mode = codestream_as_part2.get_ref_to_contents()
-                                .get_ref_to_light_field_header_box()
-                                .get_ref_to_contents()
-                                .get_ref_to_light_field_header_box()
-                                .get_ref_to_contents()
-                                .get_compression_type();
-          switch (mode) {
-            case CompressionTypeLightField::transform_mode: {
-              std::cout << "Transform Mode codestream"
-                        << std::endl;
+  static std::unique_ptr<JPLMCodec> get_lightfield_decoder(
+      std::shared_ptr<JPLFile> jpl_file,
+      const std::unique_ptr<JpegPlenoCodestreamBox>& codestream,
+      const std::string& output_filename) {
+    const auto& codestream_as_part2 =
+        static_cast<JpegPlenoLightFieldBox&>(*codestream);
+    // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
+    const auto mode = codestream_as_part2.get_ref_to_contents()
+                          .get_ref_to_light_field_header_box()
+                          .get_ref_to_contents()
+                          .get_ref_to_light_field_header_box()
+                          .get_ref_to_contents()
+                          .get_compression_type();
+    switch (mode) {
+      case CompressionTypeLightField::transform_mode: {
+        std::cout << "Transform Mode codestream" << std::endl;
 
-              return std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(jpl_file,
-                      codestream_as_part2, output_filename);
-              break;
-            }
-            case CompressionTypeLightField::prediction_mode: {
-              std::cerr << "prediction_mode not supported yet" << std::endl;
-              break;
-            }
-          }
-}
+        return std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(
+            jpl_file, codestream_as_part2, output_filename);
+        break;
+      }
+      case CompressionTypeLightField::prediction_mode: {
+        std::cerr << "prediction_mode not supported yet" << std::endl;
+        break;
+      }
+    }
+  }
 
   static std::vector<std::unique_ptr<JPLMCodec>> get_decoders(
       std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename) {
@@ -131,7 +133,8 @@ const auto& codestream_as_part2 =
       switch (codestream->get_type()) {
         case JpegPlenoCodestreamBoxTypes::LightField: {
           std::cout << "There is a lightfield in this box" << std::endl;
-          decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(jpl_file, codestream, output_filename));
+          decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(
+              jpl_file, codestream, output_filename));
           break;
         }
         case JpegPlenoCodestreamBoxTypes::PointCloud: {

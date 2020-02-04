@@ -217,6 +217,17 @@ ImageOut<T> to(const ImageIn<T>& source) {
   static_assert(std::is_base_of<Image<T>, ImageOut<T>>::value,
       "The output for conversion must be an image...");
 
+  if constexpr (std::is_same_v<Image<T>, ImageIn<T>>) {
+    switch (source.get_type()) {
+      case ImageType::RGB: {
+        return to<ImageOut>(dynamic_cast<const RGBImage<T>&>(source));
+      }
+      case ImageType::BT601: {
+        return to<ImageOut>(dynamic_cast<const BT601Image<T>&>(source));
+      }
+    }
+  }
+
   //first check if both images are from the same type (in and out)
   if constexpr (std::is_same<ImageIn<T>, ImageOut<T>>::value) {
     return source;  //no need for conversion, returns a copy of source
@@ -235,6 +246,10 @@ ImageOut<T> to(const ImageIn<T>& source) {
   }
 
   switch (source.get_type()) {
+    case ImageType::Undefined: {
+      std::cout << "Working on it...";
+      break;
+    }
     case ImageType::RGB: {
       if constexpr (std::is_base_of_v<YCbCrImage<T>, ImageOut<T>> &&
                     !std::is_same_v<YCbCrImage<T>, ImageOut<T>>) {
@@ -256,8 +271,7 @@ ImageOut<T> to(const ImageIn<T>& source) {
 
     default:
       std::cerr << "Conversion from this type is not yet supported..."
-      			<< "Type is: " << source.get_type() 
-                << std::endl;
+                << "Type is: " << source.get_type() << std::endl;
       exit(2);
       //! \todo change this exit by an exception in ImageColorSpacesConversor
   }
@@ -272,7 +286,6 @@ std::unique_ptr<ImageOut<T>> to(const std::unique_ptr<ImageIn<T>>& source) {
   auto out_image = to<ImageOut>(*(source.get()));
   return std::make_unique<ImageOut<T>>(std::move(out_image));
 }
-
 
 
 template<template<typename> class ImageOut, template<typename> class ImageIn,

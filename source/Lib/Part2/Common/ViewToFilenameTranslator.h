@@ -48,24 +48,20 @@
 #include "Lib/Part2/Common/CommonExceptions.h"
 
 class ViewToFilenameTranslator {
-protected:
-    std::string file_extension;
+ protected:
+  std::string file_extension;
+  void check_for_overflow(
+      const std::pair<std::size_t, std::size_t>& position) const;
+
  public:
-  ViewToFilenameTranslator(const std::string& file_extension): file_extension(file_extension) {}
+  ViewToFilenameTranslator(const std::string& file_extension)
+      : file_extension(file_extension) {
+  }
+  std::string view_position_to_filename(
+      const std::pair<std::size_t, std::size_t>& position) const;
   virtual ~ViewToFilenameTranslator() = default;
-  virtual std::string view_position_to_filename(
-      const std::pair<std::size_t, std::size_t>& position) const = 0;
+  // virtual std::string view_position_to_filename(
+  //     const std::pair<std::size_t, std::size_t>& position) const = 0;
 };
-
-
-class PPM3CharViewToFilename : public ViewToFilenameTranslator {
- public:
-  PPM3CharViewToFilename(const std::string& file_extension = std::string(".ppm")) : ViewToFilenameTranslator(file_extension){};
-  ~PPM3CharViewToFilename() = default;
-
-  virtual std::string view_position_to_filename(
-      const std::pair<std::size_t, std::size_t>& position) const override;
-};
-
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWTOFILENAMETRANSLATOR_H__ */

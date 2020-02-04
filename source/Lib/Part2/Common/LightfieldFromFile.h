@@ -31,19 +31,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     LightfieldFromPPMFile.h
+/** \file     LightfieldFromFile.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-06-07
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
-#define JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__
+#ifndef JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__
+#define JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__
 
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Part2/Common/ViewFromPPMFile.h"
+#include "Lib/Part2/Common/ViewFromPGXFile.h"
 
 
 /**
@@ -53,9 +53,8 @@
  * \tparam T Its the type of each pixel in the Lightfield.
  */
 template<typename T>
-class LightfieldFromPPMFile : public Lightfield<T> {
+class LightfieldFromFile : public Lightfield<T> {
  public:
-
   /**
    * \brief      Constructs the object.
    *
@@ -65,39 +64,72 @@ class LightfieldFromPPMFile : public Lightfield<T> {
    * \details This kind of lightfield can be build using only the configuration and a default view io policy. 
    * 
    * For instance:
-   * \snippet App/Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration
+   * \snippet App/Utils/LightfieldVisualization.cpp Instantiating a LightfieldFromFile using a LightfieldIOConfiguration
    */
-  LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+  LightfieldFromFile(const LightfieldIOConfiguration& configuration,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
+    //number of channels
+    std::size_t number_of_channels = 3;  //<! \todo check this out...
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      auto channel_path = std::filesystem::path(
+          configuration.get_path() + "/" + std::to_string(i));
+      if (!std::filesystem::exists(channel_path)) {
+        //<! \todo should throw error, as in the encoder the inputs should be present
+        //throw
+      }
+    }
+
+
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
       this->set_view_at(
-          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate)),
+          std::move(std::make_unique<ViewFromPGXFile<T>>(
+              configuration.get_path(), coordinate, number_of_channels)),
           coordinate);
     }
   }
 
 
-   LightfieldFromPPMFile(const LightfieldIOConfiguration& configuration,
+  LightfieldFromFile(const LightfieldIOConfiguration& configuration,
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
+    //<! \todo check the number of channels...
+
+    std::size_t number_of_channels = 3;  //<! \todo check this out...
+    std::size_t bits_per_sample = 10;
+
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      auto channel_path = std::filesystem::path(
+          configuration.get_path() + "/" + std::to_string(i));
+      if (!std::filesystem::exists(channel_path)) {
+        std::filesystem::create_directory(channel_path);
+      }
+    }
+
     for (const auto& coordinate : configuration.get_raster_view_coordinates()) {
-      this->set_view_at(
-          std::move(std::make_unique<ViewFromPPMFile<T>>(configuration.get_path(), coordinate, configuration.get_size().get_v_and_u(), max_value, type)),
+      this->set_view_at(std::move(std::make_unique<ViewFromPGXFile<T>>(
+                            configuration.get_path(), coordinate,
+                            configuration.get_size().get_v_and_u(),
+                            bits_per_sample, number_of_channels)),
           coordinate);
     }
-    this->lightfield_dimension = std::make_unique<LightfieldDimension<std::size_t>>(configuration.get_size());
+
+
+    this->lightfield_dimension =
+        std::make_unique<LightfieldDimension<std::size_t>>(
+            configuration.get_size());
   }
 
 
   /**
-   * \brief Destructor of the LightfieldFromPPMFile (default)
+   * \brief Destructor of the LightfieldFromFile (default)
    */
-  ~LightfieldFromPPMFile() = default;
-
+  ~LightfieldFromFile() = default;
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMPPMFILE_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__ */

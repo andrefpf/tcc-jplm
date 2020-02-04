@@ -45,13 +45,13 @@
 #include <tuple>
 #include <vector>
 #include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Utils/Image/ImageFile.h"
 
 class LightfieldIOConfiguration {
  protected:
   const std::string lightfield_path;
   const LightfieldDimension<std::size_t> lightfield_size;
   const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
-
 
   void check_configurations() {
     namespace fs = std::filesystem;

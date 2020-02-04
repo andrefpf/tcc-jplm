@@ -48,7 +48,7 @@
 #include "Lib/Utils/Image/Metrics.h"
 
 namespace ImageMetrics {
-enum class Available { PSNR, MSE, SSE };
+enum class Available { PSNR, MSE, SSE, MAX_ABS_ERROR };
 
 template<typename T>
 void check_image_properties(
@@ -77,6 +77,26 @@ void check_image_properties(
     throw MetricsExceptions::DifferentBppImagesException();
   }
 }
+
+
+template<typename T>
+std::vector<std::size_t> get_maximum_absolute_error(const Image<T>& original_image, const Image<T>& encoded_image) {
+  check_image_properties(original_image, encoded_image);
+  auto number_of_channels = original_image.get_number_of_channels();
+  auto rect_vector = std::vector<std::size_t>();
+  rect_vector.reserve(number_of_channels);
+
+  for (decltype(number_of_channels) i = 0; i < number_of_channels; ++i) {
+    rect_vector.emplace_back(ImageChannelUtils::get_maximum_absolute_error(
+        original_image.get_channel(i), encoded_image.get_channel(i)));
+  }
+
+  return rect_vector;
+}
+
+
+
+
 
 
 template<typename T>
@@ -156,6 +176,15 @@ void print_psnrs(const Image<T>& original, const Image<T>& encoded) {
 
 
 template<typename T>
+void print_maximum_absolute_errors(const Image<T>& original, const Image<T>& encoded) {
+  auto maximum_absolute_errors = get_maximum_absolute_error(original, encoded);
+  for (const auto maximum_absolute_error : maximum_absolute_errors) {
+    std::cout << "Max Abs Error: " << maximum_absolute_error << std::endl;
+  }
+}
+
+
+template<typename T>
 void print_mses(const Image<T>& original, const Image<T>& encoded) {
   auto mses = get_mse(original, encoded);
   for (const auto mse : mses) {
@@ -183,6 +212,9 @@ static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
     static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
         "Encoded image must be an image!");
 }
+
+
+
 
 
 // struct ColorSpaceVisitor {
@@ -258,6 +290,33 @@ struct PSNRPrinter {
       operator()(convert::to<type_class>(encoded), convert::to<type_class>(original));
   }
 
+};
+
+
+struct MaximumErrorPrinter {
+  template<template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+  void operator()(const std::unique_ptr<ImageT0<T0>>& original,
+      const std::unique_ptr<ImageT1<T1>>& encoded) {
+    // image_parameter_check<ImageT0, ImageT1, T0, T1>();
+    if constexpr (std::is_same<T0, T1>::value) {
+      if (original->get_type() == encoded->get_type()) {
+        return print_maximum_absolute_errors(*(static_cast<Image<T0>*>(original.get())),
+            *(static_cast<Image<T1>*>(encoded.get())));
+      }
+      std::cerr << "Images are from different types..." << std::endl;
+    }
+    different_representations_message<T0, T1>();
+  }
+
+
+  template<template<typename> class type_class, template<typename> class ImageT0, template<typename> class ImageT1,
+      typename T0, typename T1>
+  void operator()(const std::unique_ptr<ImageT0<T0>>& original,
+      const std::unique_ptr<ImageT1<T1>>& encoded) {
+      using namespace ImageColorSpaceConversion;
+      operator()(convert::to<type_class>(encoded), convert::to<type_class>(original));
+  }
 };
 
 

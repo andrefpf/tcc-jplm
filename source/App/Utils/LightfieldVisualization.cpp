@@ -39,9 +39,9 @@
  */
 
 #include <iostream>
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
-#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/ViewIOPolicyLimitedMemory.h"
+#include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
 //X11:
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
@@ -166,14 +166,14 @@ class LightfieldAtX11Window : public X11WindowHandler {
   LightfieldAtX11Window(
       const std::string &window_name, Lightfield<T> *lightfield)
       : X11WindowHandler(window_name, lightfield->get_views_width_u(),
-                         lightfield->get_views_height_v()),
+            lightfield->get_views_height_v()),
         lightfield(lightfield),
         image32(std::make_unique<unsigned char[]>(
             lightfield->get_number_of_pixels_per_view_channel() * 4)) {
     auto &[view_relative_horizontal_size, view_relative_vertical_size] =
         view_size_wrt_lightfield;
-    view_relative_horizontal_size =
-        lightfield->get_views_width_u() / ((double) lightfield->get_width() - 1);
+    view_relative_horizontal_size = lightfield->get_views_width_u() /
+                                    ((double) lightfield->get_width() - 1);
     view_relative_vertical_size = lightfield->get_views_height_v() /
                                   ((double) lightfield->get_height() - 1);
     auto data_ptr = image32.get();
@@ -217,17 +217,22 @@ class LightfieldAtX11Window : public X11WindowHandler {
   template<int depth = 10>
   void load_view_into_image(
       const std::pair<std::size_t, std::size_t> &view_coordinate) {
+    using namespace ImageColorSpaceConversion;
     try {
       unsigned char *p = image32.get();
-      const auto &image = static_cast<const RGBImage<uint16_t> &>(
+      // const auto &imageee = lightfield->get_image_at(view_coordinate);
+      // std::cout << imageee.get_channel_names().at(0) << std::endl;
+      const auto &image = static_cast<const BT601Image<uint16_t> &>(
           lightfield->get_image_at(view_coordinate));
+
+      auto rgb_image = convert::to<RGBImage>(image);
 
       const auto width = lightfield->get_views_width_u();
       const auto height = lightfield->get_views_height_v();
 
       for (auto i = decltype(height){0}; i < height; ++i) {
         for (auto j = decltype(width){0}; j < width; ++j) {
-          const auto &[r, g, b] = image.get_pixel_at(i, j);
+          const auto &[r, g, b] = rgb_image.get_pixel_at(i, j);
           *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(b);
           *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(g);
           *p++ = convert_from_16_bit_to_8_bit_using_depth<depth>(r);
@@ -263,22 +268,22 @@ int main(int argc, char const *argv[]) {
     s = atoi(argv[3]);
   }
 
-  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
+  //! [Full LightfieldFromFile instantiation using a LightfieldIOConfiguration]
   LightfieldDimension<std::size_t> size(t, s, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
   LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
 
-  //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
+  //! [Instantiating a LightfieldFromFile using a LightfieldIOConfiguration]
   auto lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(configuration);
-  //! [Instantiating a LightfieldFromPPMFile using a LightfieldIOConfiguration]
-  //! [Full LightfieldFromPPMFile instantiation using a LightfieldIOConfiguration]
+      std::make_unique<LightfieldFromFile<uint16_t>>(configuration);
+  //! [Instantiating a LightfieldFromFile using a LightfieldIOConfiguration]
+  //! [Full LightfieldFromFile instantiation using a LightfieldIOConfiguration]
 
 
   //! [Setting a view_io_policy into a Lightfield]
   auto policy = std::make_unique<ViewIOPolicyLimitedMemory<uint16_t>>();
-  policy->set_max_bytes(
-      lightfield->get_views_width_u() * lightfield->get_views_height_v() * 2 * 100);
+  policy->set_max_bytes(lightfield->get_views_width_u() *
+                        lightfield->get_views_height_v() * 2 * 100);
   lightfield->set_view_io_policy(std::move(policy));
   //! [Setting a view_io_policy into a Lightfield]
 

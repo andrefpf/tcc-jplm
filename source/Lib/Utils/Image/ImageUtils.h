@@ -43,6 +43,7 @@
 
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
+#include "Lib/Utils/Image/UndefinedImage.h"
 
 namespace ImageUtils {
 
@@ -97,6 +98,100 @@ std::unique_ptr<ImageTout<Tout>> get_image_with_new_container_type(
   }
 
   return output_image;
+}
+
+
+template<template<typename> class ImageOut, typename Tout>
+std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
+    const std::vector<std::unique_ptr<UndefinedImage<Tout>>>& images) {
+  auto width = images[0]->get_width();
+  auto height = images[0]->get_height();
+  auto output_image =
+      std::make_unique<ImageOut<Tout>>(width, height, images[0]->get_bpp());
+
+  auto number_of_channels = output_image->get_number_of_channels();
+  // std::cout << "Number of channels in conversion is: " << number_of_channels
+            // << std::endl;
+  if (number_of_channels != images.size()) {
+    //! \todo throw exception if the number of channels in the returned image is different from the number of input images
+    //throw expression
+  }
+  for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+          ++i) {
+    (*output_image)[i] = (*(images[i]))[0];
+  }
+
+  return output_image;
+}
+
+
+template<typename Tout>
+std::unique_ptr<UndefinedImage<Tout>> get_undefined_images_as_undefined_image(
+    const std::vector<std::unique_ptr<UndefinedImage<Tout>>>& images) {
+  auto width = images[0]->get_width();
+  auto height = images[0]->get_height();
+  auto output_image =
+      std::make_unique<UndefinedImage<Tout>>(width, height, images[0]->get_bpp(), 3);
+
+  auto number_of_channels = output_image->get_number_of_channels();
+  // std::cout << "Number of channels in conversion is: " << number_of_channels
+            // << std::endl;
+  if (number_of_channels != images.size()) {
+    //! \todo throw exception if the number of channels in the returned image is different from the number of input images
+    //throw expression
+  }
+  for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+          ++i) {
+    (*output_image)[i] = (*(images[i]))[0];
+  }
+
+  return output_image;
+}
+
+
+//! \todo make this (get_undefined_images_as) variadic
+template<template<typename> class ImageOut, typename Tout>
+std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
+    const UndefinedImage<Tout>& channel_0,
+    const UndefinedImage<Tout>& channel_1,
+    const UndefinedImage<Tout>& channel_2) {
+  auto width = channel_0.get_width();
+  auto height = channel_0.get_height();
+  auto output_image =
+      std::make_unique<ImageOut<Tout>>(width, height, channel_0.get_bpp());
+  //std::size_t width, std::size_t height, std::size_t bpp//, std::size_t number_of_channels)
+
+  for (auto i = decltype(height){0}; i < height; ++i) {
+    for (auto j = decltype(width){0}; j < width; ++j) {
+      output_image->set_pixel_at(
+          {channel_0.get_value_at(0, i, j), channel_1.get_value_at(0, i, j),
+              channel_2.get_value_at(0, i, j)},
+          {i, j});
+    }
+  }
+
+  return output_image;
+}
+
+
+//! \todo implement a get_splitting_of from ImageIn<Tin>&& or std::unique_ptr<ImageIn<Tin>>&&
+template<template<typename> class ImageIn, typename Tin>
+std::vector<std::unique_ptr<UndefinedImage<Tin>>> get_splitting_of(
+    const ImageIn<Tin>& input_image) {
+  auto width = input_image.get_width();
+  auto height = input_image.get_height();
+  auto bpp = input_image.get_bpp();
+
+  auto output_images = std::vector<std::unique_ptr<UndefinedImage<Tin>>>();
+  output_images.reserve(input_image.get_number_of_channels());
+
+  for (const auto& channel : input_image) {
+    auto image = std::make_unique<UndefinedImage<Tin>>(width, height, bpp, 1);
+    (*image)[0] = channel;
+    output_images.push_back(std::move(image));
+  }
+
+  return output_images;
 }
 
 

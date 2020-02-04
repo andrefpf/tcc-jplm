@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ViewToFilenameTranslatorTests.cpp
+/** \file     PGX3CharViewToFilenameTranslatorTests.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -39,104 +39,107 @@
  */
 
 #include <iostream>
-#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+#include "Lib/Part2/Common/PGX3CharViewToFilename.h"
 #include "gtest/gtest.h"
 
 
-TEST(ViewToFilenameTranslatorBasicTests, ZeroZeroView) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, ZeroZeroView) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "000_000.ppm", filename_translator.view_position_to_filename({0, 0}));
+      "000_000.pgx", filename_translator.view_position_to_filename({0, 0}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, ZeroOneView) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, ZeroOneView) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "000_001.ppm", filename_translator.view_position_to_filename({1, 0}));
+      "000_001.pgx", filename_translator.view_position_to_filename({1, 0}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, OneZeroView) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, OneZeroView) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "001_000.ppm", filename_translator.view_position_to_filename({0, 1}));
+      "001_000.pgx", filename_translator.view_position_to_filename({0, 1}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, OneOneView) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, OneOneView) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "001_001.ppm", filename_translator.view_position_to_filename({1, 1}));
+      "001_001.pgx", filename_translator.view_position_to_filename({1, 1}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, One42View) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, One42View) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "001_042.ppm", filename_translator.view_position_to_filename({42, 1}));
+      "001_042.pgx", filename_translator.view_position_to_filename({42, 1}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, Fourty42View) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, Fourty42View) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "042_042.ppm", filename_translator.view_position_to_filename({42, 42}));
+      "042_042.pgx", filename_translator.view_position_to_filename({42, 42}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, MaxView) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, MaxView) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_EQ(
-      "999_999.ppm", filename_translator.view_position_to_filename({999, 999}));
+      "999_999.pgx", filename_translator.view_position_to_filename({999, 999}));
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, NegativeTValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, NegativeTValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({-1, 1}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, NegativeSValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, NegativeSValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({1, -1}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, NegativeTandSValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests,
+    NegativeTandSValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({-1, -1}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, LargerThan999TValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests,
+    LargerThan999TValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({1000, 1}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, LargerThan999SValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests,
+    LargerThan999SValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({1, 1000}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(
-    ViewToFilenameTranslatorBasicTests, LargerThan999TandSValueThrowsOverflow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests,
+    LargerThan999TandSValueThrowsOverflow) {
+  PGX3CharViewToFilename filename_translator;
   EXPECT_THROW(filename_translator.view_position_to_filename({1000, 1000}),
       ViewToFilenameTranslatorExceptions::Char3OverflowException);
 }
 
 
-TEST(ViewToFilenameTranslatorBasicTests, ValidPositionsDoNotThrow) {
-  PPM3CharViewToFilename filename_translator;
+TEST(PGX3CharViewToFilenameTranslatorBasicTests, ValidPositionsDoNotThrow) {
+  PGX3CharViewToFilename filename_translator;
   for (auto t = 0; t < 1000; ++t) {
     for (auto s = 0; s < 1000; ++s) {
       EXPECT_NO_THROW(filename_translator.view_position_to_filename({t, s}));

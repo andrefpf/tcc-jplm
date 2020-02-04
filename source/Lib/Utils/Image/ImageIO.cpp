@@ -46,5 +46,8 @@ std::unique_ptr<ImageFile> ImageIO::open(const std::string& filename) {
   if (name.extension() == fpath(".ppm")) {
     return PixelMapFileIO::open(filename);
   }
+  if (name.extension() == fpath(".pgx")) {
+  	return PGXFileIO::open(filename);
+  }
   throw std::logic_error("Not fully implemented: ImageIO::open");
 }

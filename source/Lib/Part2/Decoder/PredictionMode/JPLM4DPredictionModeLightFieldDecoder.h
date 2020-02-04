@@ -38,16 +38,21 @@
  *  \date     2019-09-09
  */
 
-#ifndef JPLM_LIB_PART2_DECODER_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
-#define JPLM_LIB_PART2_DECODER_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
+#ifndef JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
+#define JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
 
 #include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
 
-class JPLM4DPredictionModeLightFieldDecoder
-{
-public:
-	JPLM4DPredictionModeLightFieldDecoder() = default;
-	virtual ~JPLM4DPredictionModeLightFieldDecoder() = default;	
+class JPLM4DPredictionModeLightFieldDecoder {
+ public:
+  JPLM4DPredictionModeLightFieldDecoder() = default;
+  virtual ~JPLM4DPredictionModeLightFieldDecoder() = default;
+
+  virtual void run() override {
+    throw CommonExceptions::NotImplementedException(
+        "JPLM4DPredictionModeLightFieldDecoder::run()");
+    //! \todo implement run method for jpl lightfield encoder
+  }
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__ */

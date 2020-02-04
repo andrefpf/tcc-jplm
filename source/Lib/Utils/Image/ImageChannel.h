@@ -265,6 +265,7 @@ class ImageChannel : public Generic2DStructure<T> {
       ++diff_ptr;
       ++this_ptr;
       ++other_ptr;
+      
     }
 
     return difference_image;

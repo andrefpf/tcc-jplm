@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ComputeLightFieldPSNRFromPPM.cpp
+/** \file     ComputeLightFieldPSNR.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -47,7 +47,7 @@
 #include <sstream>
 #include <string>
 #include "Lib/Part2/Common/LightfieldDimension.h"
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
+#include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
 #include "Lib/Utils/Image/Image.h"
@@ -77,11 +77,10 @@ void show_psnr(const std::string& filename_original,
       filename_decoded, initial, size);
 
   auto original_lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(original_configuration);
-
+      std::make_unique<LightfieldFromFile<uint16_t>>(original_configuration);
 
   auto decoded_lightfield =
-      std::make_unique<LightfieldFromPPMFile<uint16_t>>(decoded_configuration);
+      std::make_unique<LightfieldFromFile<uint16_t>>(decoded_configuration);
 
 
   /*  auto original_policy = std::make_unique<ViewIOPolicyOneAtATime<uint16_t>>();

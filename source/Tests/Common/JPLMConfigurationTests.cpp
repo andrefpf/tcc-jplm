@@ -35,10 +35,12 @@
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-27
  */
 
 #include <exception>
+#include <filesystem>
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
@@ -48,6 +50,7 @@
 
 using namespace std;
 
+std::string resources_path = "../resources/";
 
 std::string root_path = ".";
 
@@ -118,8 +121,7 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
@@ -130,14 +132,14 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 
 TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_STREQ(
       "../resources/small_greek/", config.get_input_filename().c_str());
+
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
   EXPECT_EQ(13, config.get_number_of_rows_t());
   EXPECT_EQ(13, config.get_number_of_columns_s());
@@ -308,8 +310,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesBinding) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", a.c_str()};
   int argc = 7;
@@ -329,8 +330,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesGet) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", a.c_str()};
   int argc = 7;
@@ -351,7 +351,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     WholeConfigurationValidFile) {
   string conf(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+      root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", conf.c_str()};
   int argc = 7;
@@ -378,30 +378,23 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
 TEST(
     JPLMEncoderConfigurationLightField4DTransformModeTest, EncodeBikesDataset) {
-  const char* argv[] = {"", "--part", "2",
-                        "--type", "0",
-                        "--input", "~/DATASETS/I01_Bikes/",
-                        "--output", "./test_bikes.lf",
-                        "--transform_size_maximum_inter_view_vertical", "13",
-                        "--transform_size_maximum_inter_view_horizontal", "13",
-                        "--transform_size_maximum_intra_view_vertical", "31",
-                        "--transform_size_maximum_intra_view_horizontal", "31",
-                        "--transform_size_minimum_inter_view_vertical", "13",
-                        "--transform_size_minimum_inter_view_horizontal", "13",
-                        "--transform_size_minimum_intra_view_vertical", "4",
-                        "--transform_size_minimum_intra_view_horizontal", "4",
-                        "--lambda", "10000",
-                        "-t", "13",
-                        "-s", "9",
-                        "-v", "434",
-                        "-u", "626"
-                        };
+  const char* argv[] = {"", "--part", "2", "--type", "0", "--input",
+      "~/DATASETS/I01_Bikes/", "--output", "./test_bikes.lf",
+      "--transform_size_maximum_inter_view_vertical", "13",
+      "--transform_size_maximum_inter_view_horizontal", "13",
+      "--transform_size_maximum_intra_view_vertical", "31",
+      "--transform_size_maximum_intra_view_horizontal", "31",
+      "--transform_size_minimum_inter_view_vertical", "13",
+      "--transform_size_minimum_inter_view_horizontal", "13",
+      "--transform_size_minimum_intra_view_vertical", "4",
+      "--transform_size_minimum_intra_view_horizontal", "4", "--lambda",
+      "10000", "-t", "13", "-s", "9", "-v", "434", "-u", "626"};
   int argc = 35;
   JPLMEncoderConfigurationLightField4DTransformMode config(
       argc, const_cast<char**>(argv));
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
-  EXPECT_EQ( "~/DATASETS/I01_Bikes/", config.get_input_filename());
-  EXPECT_EQ( "./test_bikes.lf", config.get_output_filename());
+  EXPECT_EQ("~/DATASETS/I01_Bikes/", config.get_input_filename());
+  EXPECT_EQ("./test_bikes.lf", config.get_output_filename());
   EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
   EXPECT_EQ(13, config.transform_size.maximum.inter_view.horizontal);
 
@@ -425,7 +418,9 @@ TEST(
 int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   if (argc > 1) {
-    root_path = std::string(argv[1]);
+    resources_path = std::string(argv[1]);
+    auto resources_fs_path = std::filesystem::path(resources_path.c_str());
+    root_path = resources_fs_path.parent_path();
   }
   return RUN_ALL_TESTS();
 }

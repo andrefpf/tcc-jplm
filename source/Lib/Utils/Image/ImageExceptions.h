@@ -291,4 +291,71 @@ class OverflowException : public std::exception {
 
 }  // namespace ImageUtilsExceptions
 
+
+namespace PGXFileExceptions {
+class InvalidIdException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidIdException(const std::string obtained_id) {
+    message_ = "Obtained an invalid ID: " + obtained_id + ". Expecting PG";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class InvalidEndianessException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidEndianessException(const std::string obtained_endianess) {
+    message_ = "Obtained an invalid Endianess: " + obtained_endianess +
+               ". Expecting ML (Big endian) or LM (Little endian)";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class InvalidSignFieldException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidSignFieldException(const std::string obtained_sign) {
+    message_ = "Obtained an invalid sign field: " + obtained_sign +
+               ". Expecting '+'' (unsigned) or '-' (signed)";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class InvalidNewLine : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidNewLine(const std::string obtained_char) {
+    message_ = "Obtained an invalid sign field: " + obtained_char +
+               ". 0x0a";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+}  // namespace PGXFileExceptions
+
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

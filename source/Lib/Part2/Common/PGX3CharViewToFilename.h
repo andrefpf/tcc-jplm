@@ -31,11 +31,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.cpp
+/** \file     PGX3CharViewToFilename.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-02-03
  */
 
-#include "JPLM4DPredictionModeLightFieldEncoder.h"
+#ifndef PGX3CHAR_VIEW_TO_FILENAME_H
+#define PGX3CHAR_VIEW_TO_FILENAME_H
+
+#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+
+class PGX3CharViewToFilename : public ViewToFilenameTranslator {
+ public:
+  PGX3CharViewToFilename() : ViewToFilenameTranslator(".pgx") {
+  }
+
+
+  ~PGX3CharViewToFilename() = default;
+
+  // virtual std::string view_position_to_filename(
+  //     const std::pair<std::size_t, std::size_t>& position) const override;
+};
+
+#endif  // PGX3CHAR_VIEW_TO_FILENAME_H

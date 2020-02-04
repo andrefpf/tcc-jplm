@@ -58,7 +58,7 @@
 #include <filesystem>
 #include <iostream>
 #include <vector>
-#include "Lib/Part2/Common/ViewToFilenameTranslator.h"
+#include "Lib/Part2/Common/PPM3CharViewToFilename.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
 
 
