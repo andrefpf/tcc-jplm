@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ComputeLightFieldPSNRFromPPM.cpp
+/** \file     ComputeLightFieldPSNR.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -48,7 +48,6 @@
 #include <string>
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/LightfieldFromFile.h"
-#include "Lib/Part2/Common/LightfieldFromPPMFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
 #include "Lib/Utils/Image/Image.h"

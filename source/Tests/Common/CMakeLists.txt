@@ -1,4 +1,7 @@
 add_jplm_test(JPLFileIOTests jpl_file_io_tests JPLFileIOTests.cpp "gtest_main;jplm_part2_boxes_decoder;jplm_common_boxes_parsers;stream")
 add_jplm_test(JPLMCodecFactoryTests jplm_codec_factory_tests JPLMCodecFactoryTests.cpp "gtest_main;jplm_part2_boxes_decoder;jplm_common_boxes_parsers;stream")
+target_sources(jplm_codec_factory_tests PRIVATE "${CMAKE_SOURCE_DIR}/source/Lib/Common/JPLMConfiguration.cpp")
 add_jplm_test(JPLMConfigurationFactoryTests jplm_configuration_factory_tests JPLMConfigurationFactoryTests.cpp "gtest_main;jplm_part2_boxes_decoder;jplm_common_boxes_parsers;stream")
+target_sources(jplm_configuration_factory_tests PRIVATE "${CMAKE_SOURCE_DIR}/source/Lib/Common/JPLMConfiguration.cpp")
 add_jplm_test(JPLMConfigurationTests jplm_configuration_tests JPLMConfigurationTests.cpp "gtest_main;jplm_part2_boxes_decoder;jplm_common_boxes_parsers;stream")
+target_sources(jplm_configuration_tests PRIVATE "${CMAKE_SOURCE_DIR}/source/Lib/Common/JPLMConfiguration.cpp")

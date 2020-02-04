@@ -121,8 +121,7 @@ TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
 
 
 TEST(JPLMEncoderConfiguration, SimpleCLITest) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
@@ -133,8 +132,7 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 
 TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
   int argc = 15;
@@ -311,8 +309,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesBinding) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", a.c_str()};
   int argc = 7;
@@ -332,8 +329,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     TransformParametersFromJSON_DifferentWithPropertiesGet) {
-  string a(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+  string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", a.c_str()};
   int argc = 7;
@@ -354,7 +350,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     WholeConfigurationValidFile) {
   string conf(
-      root_path + "/../cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
+      root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-c", conf.c_str()};
   int argc = 7;
@@ -424,6 +420,8 @@ int main(int argc, char* argv[]) {
     resources_path = std::string(argv[1]);
     auto resources_fs_path = std::filesystem::path(resources_path.c_str());
     root_path = resources_fs_path.parent_path();
+    std::cout << "resources_path: " << resources_path << std::endl;
+    std::cout << "root_path: " << root_path << std::endl;
   }
   return RUN_ALL_TESTS();
 }
