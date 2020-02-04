@@ -25,5 +25,4 @@ add_jplm_util(compute_lightfield_psnr ComputeLightFieldPSNR.cpp "image;stream;jp
 
 add_jplm_util(convert_ppm_to_pgx PPMToPGX.cpp "image;stream")
 
-
 add_jplm_util(convert_pgx_to_ppm PGXToPPM.cpp "image;stream")

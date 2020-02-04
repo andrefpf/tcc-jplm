@@ -139,6 +139,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_STREQ(
       "../resources/small_greek/", config.get_input_filename().c_str());
+
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
   EXPECT_EQ(13, config.get_number_of_rows_t());
   EXPECT_EQ(13, config.get_number_of_columns_s());
@@ -420,8 +421,6 @@ int main(int argc, char* argv[]) {
     resources_path = std::string(argv[1]);
     auto resources_fs_path = std::filesystem::path(resources_path.c_str());
     root_path = resources_fs_path.parent_path();
-    std::cout << "resources_path: " << resources_path << std::endl;
-    std::cout << "root_path: " << root_path << std::endl;
   }
   return RUN_ALL_TESTS();
 }

@@ -79,7 +79,6 @@ void show_psnr(const std::string& filename_original,
   auto original_lightfield =
       std::make_unique<LightfieldFromFile<uint16_t>>(original_configuration);
 
-
   auto decoded_lightfield =
       std::make_unique<LightfieldFromFile<uint16_t>>(decoded_configuration);
 
