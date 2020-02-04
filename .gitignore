@@ -37,6 +37,7 @@
 .cproject
 .project
 .autotools
+CMakeSettings.json
 source/.codelite/
 source/.settings/
 source/JPEG Pleno VM.workspace

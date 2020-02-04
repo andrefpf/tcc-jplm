@@ -161,7 +161,13 @@ class LightFieldTransformMode : public LightfieldFromPPMFile<T> {
         ++u;
         ++last_valid_u;
       }
+#ifdef _WIN32
+      LightfieldCoordinate<int> c(
+          last_valid_t, last_valid_s, last_valid_v, last_valid_u);
+      block.extend(c);
+#else
       block.extend({last_valid_t, last_valid_s, last_valid_v, last_valid_u});
+#endif
      }
 
     return block;
