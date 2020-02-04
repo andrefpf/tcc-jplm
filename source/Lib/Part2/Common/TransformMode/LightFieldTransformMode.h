@@ -77,8 +77,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
         //! \todo Check this for errors
         if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
           const auto& image_channel =
-              this->template get_image_at<BT601Image>({t, s}).get_channel(
-                  channel);
+              this->get_image_at({t, s}).get_channel(channel);
           for (auto v = v_initial; v < v_max; ++v) {
             for (auto u = u_initial; u < u_max; ++u) {
               // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
@@ -152,9 +151,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
     for (auto t = t_initial; t < t_max; ++t) {
       for (auto s = s_initial; s < s_max; ++s) {
         if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
-          auto& image_channel =
-              this->template get_image_at<BT601Image>({t, s}).get_channel(
-                  channel);
+          auto& image_channel = this->get_image_at({t, s}).get_channel(channel);
           for (auto v = v_initial; v < v_max; ++v) {
             for (auto u = u_initial; u < u_max; ++u) {
               if (this->is_coordinate_valid({t, s, v, u})) {
