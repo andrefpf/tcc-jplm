@@ -391,11 +391,11 @@ TEST_F(SimpleCameraParameterContentsTestFloat, WritingToFileTheCorrectNumberOfBy
   auto contents = get_contents();
   auto box = CameraParameterBox(std::move(contents));
   auto filename = std::filesystem::path(resources_path+"/temp_camera_parameters.bin");
-  std::ofstream ofs(filename.string(), std::ofstream::out);
+  std::ofstream ofs(filename.string(), std::ofstream::out | std::ofstream::binary);
   ofs << box;
   ofs.close();
   EXPECT_EQ(std::filesystem::file_size(filename), box.size());
-  //std::filesystem::remove(filename);
+  std::filesystem::remove(filename);
 }
 
 
