@@ -1,0 +1,78 @@
+%!TEX jobname = encoder_diagram
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-05
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\usepackage{amsmath}
+%\usepackage{rtl}
+\usepackage{color}
+% \usepackage[left=1cm,right=1cm]{geometry}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+\tikzstyle{myArrow} = [->, >=latex', thick]
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (args) {./jpl-encoder args};
+
+	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
+	\node[draw, below=of config, fill=white] (encoder) {encoder=factory(configuration)};
+	\node[draw, below=of encoder, fill=white] (run) {encoder.run()};
+	\node[draw, below=of run, fill=white] (stream) {stream $\ll$ encoder.get\_jpl\_file()};
+
+	\node[below=of stream] (jplFile) {file.jpl};
+
+
+
+
+
+	\begin{scope}[on background layer]
+		\node[fill=blue!40, rounded corners, thick, inner sep=2mm,fit=(config) (encoder) (run) (stream)] (co) {};
+		% \node[fill=darkpurple01, rounded corners, thick, inner sep=2mm,fit=(searchDatapathBorder) (searchControl)] (fillSearch) {};
+
+		% \node[draw, rounded corners, thick, inner xsep=9mm, inner ysep=1mm,fit=(fillInterpolation) (fillSearch)] (fmeBorder) {};
+		%\node[] at (-.25,-2.75) {\huge Filter};
+	\end{scope}	
+
+
+	\draw[myArrow] (args) -- (config);
+	\draw[myArrow] (config) -- (encoder);
+	\draw[myArrow] (encoder) -- (run);
+	\draw[myArrow] (run) -- (stream);
+	\draw[myArrow] (stream) -- (jplFile);
+\end{tikzpicture}
+
+\end{document}
