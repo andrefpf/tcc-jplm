@@ -75,23 +75,36 @@ JPLMConfigurationFactory::get_encoder_configuration(
   auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
 
   if (basic_config.is_help_mode()) {
-    std::vector<JPLMEncoderConfiguration> s {
-      JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
-      JPLMEncoderConfigurationLightField4DTransformMode(argc, const_cast<char**>(argv))
-    };
+    std::vector<JPLMEncoderConfiguration> s{
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
+        JPLMEncoderConfigurationLightField4DTransformMode(
+            argc, const_cast<char**>(argv))};
     exit(0);
   }
 
-  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
-    auto light_field_config =
-        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
-    auto type = light_field_config.get_type();
-    if (type == Type::transform_mode)
-      return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
-          argc, const_cast<char**>(argv));
+  switch (basic_config.get_jpeg_pleno_part()) {
+    case JpegPlenoPart::LightField: {
+      auto light_field_config =
+          JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+      auto type = light_field_config.get_type();
+      if (type == Type::transform_mode) {
+        return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+            argc, const_cast<char**>(argv));
+      } else {
+        throw UnsuportedPredictionMode();
+      }
+    }
+    // case JpegPlenoPart::PointCloud: {
+    // ...
+    // break;
+    // }
+    // case JpegPlenoPart::Hologram: {
+    // ...
+    // break;
+    // }
+    default:
+      throw NotImplementedYetPartException();
   }
-
-  throw NotImplementedYetPartException();
 }
 
 
