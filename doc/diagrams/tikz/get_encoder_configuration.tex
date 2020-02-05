@@ -1,0 +1,94 @@
+%!TEX jobname = get_encoder_configuration
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-05
+
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\tikzset{
+  treenode/.style = {shape=rectangle, rounded corners,
+                     draw, anchor=center,
+                     text width=5em, align=center,
+                     top color=white, bottom color=blue!10,
+                     inner sep=1ex},
+  decision/.style = {treenode, diamond, inner sep=0pt, outer sep=-1pt},
+  root/.style     = {treenode, font=\Large, bottom color=red!30},
+  env/.style      = {treenode, font=\ttfamily\normalsize},
+  finish/.style   = {root, bottom color=green!40},
+  dummy/.style    = {circle,draw}
+}
+
+\usepackage{amsmath}
+%\usepackage{rtl}
+\usepackage{color}
+% \usepackage[left=1cm,right=1cm]{geometry}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+\tikzstyle{myArrow} = [->, >=latex', thick]
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (name) {get\_configuration(args)};
+	\node[circle, radius=1cm, fill=black, below=-2mm of name] (init) {};
+
+	\node[below=of init, draw] (JPLMEncoderConfiguration) {JPLMEncoderConfiguration(args)};
+	\node[below=2cm of JPLMEncoderConfiguration, decision] (isHelp) {is help?};
+
+	\node[below=1cm of isHelp, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ get\_jpeg\_pleno\_part()};
+
+	\node[below=2cm of getPart, decision] (isPart2) {is Part 2?};
+
+	\node[below=1cm of isPart2, text width=4.5cm, align=center, draw] {\textbf{default}: throw \\ Not Implemented Exception};
+
+	\node[right=1cm of JPLMEncoderConfiguration, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField) {JPLMEncoderConfiguration\\LightField(args)};
+
+	\node[below=1cm of JPLMEncoderConfigurationLightField] (getType) {get\_type()};
+
+
+
+	\node[below=2cm of getType, decision] (isTransform) {is transform mode?};
+
+	\node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DTransformMode) {JPLMEncoderConfiguration\\LightField\\4DTransformMode(args)};
+
+	
+
+	% \node[right=1cm of isPart2, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ get\_type()};
+
+	\draw[myArrow] (JPLMEncoderConfiguration) -- (isHelp);
+	\draw[myArrow] (isHelp) -- node[pos=0.1, right]{no} (getPart);
+
+\end{tikzpicture}
+
+\end{document}
