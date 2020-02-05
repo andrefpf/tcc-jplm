@@ -64,8 +64,6 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   void parse_jpeg_pleno_part(const json &conf);
   void parse_colorspace(const json &conf);
 
-
-
   std::string config;
   // Belongs to JPLMEncoderConfiguration
   // app.add_option("-c,--config", config, "Path to config file");
@@ -84,92 +82,5 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
   JPLMEncoderConfiguration(int argc, char **argv);
 };
-
-
-JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
-    : JPLMConfiguration(argc, argv) {
-  arguments.push_back(
-      {"--config", "-c", "Path to config file", [this](std::any v) {
-         this->config = std::any_cast<std::string>(v);
-         if (!this->config.empty()) {
-           if (fs::exists(this->config)) {
-             parse_json(this->config);
-           } else {
-             throw ConfigFileDoesNotExistException(this->config);
-           }
-         }
-       }});
-
-  arguments.push_back({"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
-      [this](std::any value) {
-        int part = std::stoi(std::any_cast<string>(value));
-        if (part == 2)
-          this->part = JpegPlenoPart::LightField;
-        else
-          throw NotImplementedYetInputTypeParseException(
-              "Part " + std::to_string(part));
-      }});
-
-  this->parse_cli(argc, argv);
-  run_help();
-}
-
-
-void JPLMEncoderConfiguration::parse_json(string config_file_path) {
-  ifstream ifs(config_file_path);
-  json conf = json::parse(ifs);
-  parse_jpeg_pleno_part(conf);
-  parse_colorspace(conf);
-}
-
-
-void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
-  if (conf.contains("part")) {
-    string p = conf["part"].get<string>();
-    std::transform(p.begin(), p.end(), p.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (p == "part 2" || p == "part2" || p == "part_2" || p == "light_fields")
-      part = JpegPlenoPart::LightField;
-    else
-      throw NotImplementedYetInputTypeParseException(p);
-  }
-}
-
-
-void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
-  if (conf.contains("colorspace")) {
-    string c = conf["colorspace"].get<string>();
-    std::transform(c.begin(), c.end(), c.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (c == "ycbcr" || c == "bt601")
-      colorspace = ColorSpaces::ColorSpace::BT601;
-    else if (c == "rgb")
-      colorspace = ColorSpaces::ColorSpace::RGB;
-    else if (c == "bt709")
-      colorspace = ColorSpaces::ColorSpace::BT709;
-    else if (c == "bt2020")
-      colorspace = ColorSpaces::ColorSpace::BT2020;
-    else if (c == "ycocg")
-      colorspace = ColorSpaces::ColorSpace::YCoCg;
-    else
-      throw NotImplementedYetInputTypeParseException(c);
-  }
-}
-
-
-JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
-  return part;
-}
-
-
-const string &JPLMEncoderConfiguration::get_config() const {
-  return config;
-}
-
-
-ColorSpaces::ColorSpace JPLMEncoderConfiguration::get_colorspace() const {
-  return colorspace;
-}
-
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */

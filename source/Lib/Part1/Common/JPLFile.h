@@ -67,120 +67,60 @@ class JPLFile {
   std::optional<std::vector<std::unique_ptr<UUIDInfoBox>>> uuid_info_boxes;
 
  public:
-  JPLFile(const FileTypeBox& file_type_box)
-      : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>()),
-        file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
-  }
+  JPLFile(const FileTypeBox& file_type_box);
 
 
   JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box =
               JpegPlenoSignatureBox(),
       const FileTypeBox& file_type_box = FileTypeBox(
-          JpegPlenoFileTypeContents()))
-      : jpeg_pleno_signature_box(
-            std::make_unique<JpegPlenoSignatureBox>(jpeg_pleno_signature_box)),
-        file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
-  }
+          JpegPlenoFileTypeContents()));
 
 
   JPLFile(JpegPlenoSignatureBox&& jpeg_pleno_signature_box,
-      FileTypeBox&& file_type_box)
-      : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>(
-            std::move(jpeg_pleno_signature_box))),
-        file_type_box(std::make_unique<FileTypeBox>(std::move(file_type_box))) {
-  }
+      FileTypeBox&& file_type_box);
 
 
   JPLFile(std::unique_ptr<JpegPlenoSignatureBox>&& jpeg_pleno_signature_box,
-      std::unique_ptr<FileTypeBox>&& file_type_box)
-      : jpeg_pleno_signature_box(std::move(jpeg_pleno_signature_box)),
-        file_type_box(std::move(file_type_box)) {
-  }
+      std::unique_ptr<FileTypeBox>&& file_type_box);
 
 
   virtual ~JPLFile() = default;
 
 
   JPLFile& add_codestream_box(
-      std::unique_ptr<JpegPlenoCodestreamBox>&& codestream_box) {
-    jpeg_pleno_codestreams.emplace_back(std::move(codestream_box));
-    return *this;
-  }
+      std::unique_ptr<JpegPlenoCodestreamBox>&& codestream_box);
 
 
-  JPLFile& add_thumbnail_box(
-      const JpegPlenoThumbnailBox& thumbnail_box) {  //thumbnail_box
-    jpeg_pleno_thumbnail_box =
-        std::make_unique<JpegPlenoThumbnailBox>(thumbnail_box);
-    return *this;
-  }
+  JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& thumbnail_box);
 
 
-  bool has_thumbnail() const noexcept {
-    return jpeg_pleno_thumbnail_box ? true : false;
-  }
+  bool has_thumbnail() const noexcept;
 
 
-  bool has_codestream() const noexcept {
-    return jpeg_pleno_codestreams.size() > 0;
-  }
+  bool has_codestream() const noexcept;
 
 
-  auto number_of_codestreams() const noexcept {
-    return jpeg_pleno_codestreams.size();
-  }
-
-
-  const auto& get_reference_to_codestreams() const noexcept {
-    return jpeg_pleno_codestreams;
-  }
+  auto number_of_codestreams() const noexcept;
 
 
   auto& get_reference_to_codestreams() noexcept {
     return jpeg_pleno_codestreams;
   }
 
-
-  JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept {
-    return *jpeg_pleno_signature_box;
+  const auto& get_reference_to_codestreams() const noexcept {
+    return jpeg_pleno_codestreams;
   }
 
 
-  FileTypeBox get_file_type_box() const noexcept {
-    return *file_type_box;
-  }
+  JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept;
+
+
+  FileTypeBox get_file_type_box() const noexcept;
 
   friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
 };
 
 
-std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
-  os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
-  // if(xml_box_with_catalog) {
-  //   os << xml_box_with_catalog;
-  // }
-  if (jpl_file.jpeg_pleno_thumbnail_box) {
-    os << (*jpl_file.jpeg_pleno_thumbnail_box);
-  }
-  for (const auto& codestream : jpl_file.jpeg_pleno_codestreams) {
-    os << *codestream;
-  }
-  if (jpl_file.ipr_box) {
-    os << (*jpl_file.ipr_box);
-  }
-  if (jpl_file.uuid_boxes) {
-    const auto& uuid_boxes = *(jpl_file.uuid_boxes);
-    for (const auto& uuid_box : uuid_boxes) {
-      os << *uuid_box;
-    }
-  }
-  if (jpl_file.uuid_info_boxes) {
-    const auto& uuid_info_boxes = *(jpl_file.uuid_info_boxes);
-    for (const auto& uuid_info_boxe : uuid_info_boxes) {
-      os << *uuid_info_boxe;
-    }
-  }
-  return os;
-}
+
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLFILE_H__ */

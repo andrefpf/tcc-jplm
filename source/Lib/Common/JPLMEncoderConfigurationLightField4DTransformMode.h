@@ -42,10 +42,9 @@
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 
 #include <string>
-#include "JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
-
 
 // \todo: Refactor and improve the redundancies in this class
 class JPLMEncoderConfigurationLightField4DTransformMode
@@ -89,7 +88,6 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
-
  protected:
   void parse_json(string path);
   void parse_minimal_transform_size_intra_view_vertical(const json &conf);
@@ -103,7 +101,6 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   void parse_lambda(const json &conf);
   void parse_border_policy(const json &conf);
 
-
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
   double get_lambda() const;
@@ -116,349 +113,26 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_maximal_transform_size_inter_view_vertical();
   uint32_t get_minimal_transform_size_inter_view_horizontal();
   uint32_t get_maximal_transform_size_inter_view_horizontal();
+
   BorderBlocksPolicy get_border_blocks_policy();
 
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+
+  get_maximal_transform_sizes() const;
+
+  LightfieldDimension<uint32_t> get_maximal_transform_dimension() const;
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
-  get_maximal_transform_sizes() const {
-    return {maximal_transform_size_inter_view_vertical_t,
-        maximal_transform_size_inter_view_horizontal_s,
-        maximal_transform_size_intra_view_vertical_v,
-        maximal_transform_size_intra_view_horizontal_u};
-  }
-
-  LightfieldDimension<uint32_t> get_maximal_transform_dimension() const {
-    return {get_maximal_transform_sizes()};
-  }
+  get_minimal_transform_sizes() const;
 
 
-  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
-  get_minimal_transform_sizes() const {
-    return {minimal_transform_size_inter_view_vertical_t,
-        minimal_transform_size_inter_view_horizontal_s,
-        minimal_transform_size_intra_view_vertical_v,
-        minimal_transform_size_intra_view_horizontal_u};
-  }
+  LightfieldDimension<uint32_t> get_minimal_transform_dimension() const;
 
 
-  LightfieldDimension<uint32_t> get_minimal_transform_dimension() const {
-    return {get_minimal_transform_sizes()};
-  }
-
-
-  std::tuple<double, double, double, double> get_transform_scalings() const {
-    return {transform_scale_t, transform_scale_s, transform_scale_v,
-        transform_scale_u};
-  }
-
+  std::tuple<double, double, double, double> get_transform_scalings() const;
 
   TransformSize transform_size;
 };
 
-
-JPLMEncoderConfigurationLightField4DTransformMode::
-    JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
-    : JPLMEncoderConfigurationLightField(argc, argv) {
-  arguments.push_back({"--border_policy", "-B",
-      "Policy to treat border 4D limits.", [this](std::any v) {
-        std::string s = std::any_cast<std::string>(v);
-        std::transform(s.begin(), s.end(), s.begin(),
-            [](unsigned char c) { return std::tolower(c); });
-        if (s == "0" || s == "padding") {
-          this->border_policy = BorderBlocksPolicy::padding;
-        } else {
-          this->border_policy = BorderBlocksPolicy::truncate;
-        }
-      }});
-
-  arguments.push_back({"--lambda", "-l",
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        std::string::size_type sz;
-        this->lambda = std::stod(typed_string, &sz);
-      }});
-
-  arguments.push_back({"--transform_size_maximum_inter_view_vertical", "-TNIv",
-      "Maximum 4D transform size in inter-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->maximal_transform_size_inter_view_vertical_t =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
-      "-TMIh", "Maximum 4D transform size in inter-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->maximal_transform_size_inter_view_horizontal_s =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_maximum_intra_view_vertical", "-TMiv",
-      "Maximum 4D transform size in intra-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->maximal_transform_size_intra_view_vertical_v =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
-      "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->maximal_transform_size_intra_view_horizontal_u =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-
-  arguments.push_back({"--transform_size_minimum_inter_view_vertical", "-TmIv",
-      "Minimum 4D transform size in inter-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->minimal_transform_size_inter_view_vertical_t =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
-      "-TmIh", "Minimum 4D transform size in inter-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->minimal_transform_size_inter_view_horizontal_s =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_minimum_intra_view_vertical", "-Tmiv",
-      "Minimum 4D transform size in intra-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->minimal_transform_size_intra_view_vertical_v =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
-      "-Tmih", "Minimum 4D transform size in intra-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        this->minimal_transform_size_intra_view_horizontal_u =
-            static_cast<uint32_t>(std::stoul(typed_string));
-      }});
-
-  this->parse_cli(argc, argv);
-  run_help();
-
-  if (!config.empty())
-    parse_json(config);
-  init_transform_size();
-}
-
-Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
-    const {
-  return Type::transform_mode;
-}
-
-double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
-  return lambda;
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(string p) {
-  JPLMEncoderConfigurationLightField::parse_json(p);
-  ifstream ifs(p);
-  json conf = json::parse(ifs);
-  parse_minimal_transform_size_intra_view_vertical(conf);
-  parse_maximal_transform_size_intra_view_vertical(conf);
-  parse_minimal_transform_size_intra_view_horizontal(conf);
-  parse_maximal_transform_size_intra_view_horizontal(conf);
-  parse_minimal_transform_size_inter_view_vertical(conf);
-  parse_maximal_transform_size_inter_view_vertical(conf);
-  parse_minimal_transform_size_inter_view_horizontal(conf);
-  parse_maximal_transform_size_inter_view_horizontal(conf);
-  parse_lambda(conf);
-}
-
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_minimal_transform_size_intra_view_vertical() {
-  return minimal_transform_size_intra_view_vertical_v;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_maximal_transform_size_intra_view_vertical() {
-  return maximal_transform_size_intra_view_vertical_v;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_minimal_transform_size_intra_view_horizontal() {
-  return minimal_transform_size_intra_view_horizontal_u;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_maximal_transform_size_intra_view_horizontal() {
-  return maximal_transform_size_intra_view_horizontal_u;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_minimal_transform_size_inter_view_vertical() {
-  return minimal_transform_size_inter_view_vertical_t;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_maximal_transform_size_inter_view_vertical() {
-  return maximal_transform_size_inter_view_vertical_t;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_minimal_transform_size_inter_view_horizontal() {
-  return minimal_transform_size_inter_view_horizontal_s;
-}
-
-uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
-    get_maximal_transform_size_inter_view_horizontal() {
-  return maximal_transform_size_inter_view_horizontal_s;
-}
-
-
-BorderBlocksPolicy
-JPLMEncoderConfigurationLightField4DTransformMode::get_border_blocks_policy() {
-  return border_policy;
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::init_transform_size() {
-  IntraView transform_size_maximum_intra_view{
-      get_maximal_transform_size_intra_view_vertical(),
-      get_maximal_transform_size_intra_view_horizontal()};
-  InterView transform_size_maximum_inter_view{
-      get_maximal_transform_size_inter_view_vertical(),
-      get_maximal_transform_size_inter_view_horizontal()};
-  IntraView transform_size_minimum_intra_view{
-      get_minimal_transform_size_intra_view_vertical(),
-      get_minimal_transform_size_intra_view_horizontal()};
-  InterView transform_size_minimum_inter_view{
-      get_minimal_transform_size_inter_view_vertical(),
-      get_minimal_transform_size_inter_view_horizontal()};
-  Maximum maximum{
-      transform_size_maximum_intra_view, transform_size_maximum_inter_view};
-  Minimum minimum{
-      transform_size_minimum_intra_view, transform_size_minimum_inter_view};
-  TransformSize t{maximum, minimum};
-  this->transform_size = t;
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_intra_view_vertical(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("minimum"))
-      if (conf["transform_size"]["minimum"].contains("intra-view"))
-        if (conf["transform_size"]["minimum"]["intra-view"].contains(
-                "vertical"))
-          minimal_transform_size_intra_view_vertical_v =
-              conf["transform_size"]["minimum"]["intra-view"]["vertical"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_intra_view_vertical(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("maximum"))
-      if (conf["transform_size"]["maximum"].contains("intra-view"))
-        if (conf["transform_size"]["maximum"]["intra-view"].contains(
-                "vertical"))
-          maximal_transform_size_intra_view_vertical_v =
-              conf["transform_size"]["maximum"]["intra-view"]["vertical"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_intra_view_horizontal(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("minimum"))
-      if (conf["transform_size"]["minimum"].contains("intra-view"))
-        if (conf["transform_size"]["minimum"]["intra-view"].contains(
-                "horizontal"))
-          minimal_transform_size_intra_view_horizontal_u =
-              conf["transform_size"]["minimum"]["intra-view"]["horizontal"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_intra_view_horizontal(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("maximum"))
-      if (conf["transform_size"]["maximum"].contains("intra-view"))
-        if (conf["transform_size"]["maximum"]["intra-view"].contains(
-                "horizontal"))
-          maximal_transform_size_intra_view_horizontal_u =
-              conf["transform_size"]["maximum"]["intra-view"]["horizontal"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_inter_view_vertical(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("minimum"))
-      if (conf["transform_size"]["minimum"].contains("inter-view"))
-        if (conf["transform_size"]["minimum"]["inter-view"].contains(
-                "vertical"))
-          minimal_transform_size_inter_view_vertical_t =
-              conf["transform_size"]["minimum"]["inter-view"]["vertical"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_inter_view_vertical(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("maximum"))
-      if (conf["transform_size"]["maximum"].contains("inter-view"))
-        if (conf["transform_size"]["maximum"]["inter-view"].contains(
-                "vertical"))
-          maximal_transform_size_inter_view_vertical_t =
-              conf["transform_size"]["maximum"]["inter-view"]["vertical"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_inter_view_horizontal(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("minimum"))
-      if (conf["transform_size"]["minimum"].contains("inter-view"))
-        if (conf["transform_size"]["minimum"]["inter-view"].contains(
-                "horizontal"))
-          minimal_transform_size_inter_view_horizontal_s =
-              conf["transform_size"]["minimum"]["inter-view"]["horizontal"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_inter_view_horizontal(const json &conf) {
-  if (conf.contains("transform_size"))
-    if (conf["transform_size"].contains("maximum"))
-      if (conf["transform_size"]["maximum"].contains("inter-view"))
-        if (conf["transform_size"]["maximum"]["inter-view"].contains(
-                "horizontal"))
-          maximal_transform_size_inter_view_horizontal_s =
-              conf["transform_size"]["maximum"]["inter-view"]["horizontal"]
-                  .get<uint32_t>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
-    const json &conf) {
-  if (conf.contains("lambda"))
-    this->lambda = conf["lambda"].get<double>();
-}
-
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_border_policy(
-    const json &conf) {
-  if (conf.contains("border_policy")) {
-    std::string s = conf["lambda"].get<string>();
-    std::transform(s.begin(), s.end(), s.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (s == "0" || s == "padding") {
-      this->border_policy = BorderBlocksPolicy::padding;
-    } else {
-      this->border_policy = BorderBlocksPolicy::truncate;
-    }
-  }
-}
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__ */

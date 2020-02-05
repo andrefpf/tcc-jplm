@@ -1,1 +1,1 @@
-add_jplm_test(JPLFileTests jpl_file_encoder_tests JPLFileTests.cpp "gtest_main;jplm_part1_common")
+add_jplm_test(JPLFileTests jpl_file_encoder_tests JPLFileTests.cpp "gtest_main;jplm_part1_common;jplm_common")
