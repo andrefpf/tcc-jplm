@@ -80,6 +80,13 @@ class NotImplementedYetModeException : public exception {
   }
 };
 
+class UnsuportedPredictionMode : public exception {
+  const char* what() const throw() {
+    return "Prediction mode is currently not supported in this reference "
+           "software.";
+  }
+};
+
 class ConfigFileDoesNotExistException : public std::exception {
  private:
   string msg;
