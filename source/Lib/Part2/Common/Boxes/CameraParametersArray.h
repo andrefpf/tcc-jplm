@@ -377,17 +377,7 @@ class CameraParametersArray {
     for (const auto& param_variant : camera_parameters) {
       std::visit(
           [&bytes](const auto& param) {
-            using Ty = std::decay_t<decltype(param)>;
-            if constexpr (std::is_same_v<Ty, std::vector<float>>) {
-              std::cout << "elements in vector=" << param.size() << std::endl;
-            } else {
-              std::cout << "sizeof(float)=" << sizeof(param) << std::endl;
-            }
-            std::cout << "[ANTES] bytes_size=" << bytes.size()
-                      << ", param_size=" << sizeof(param) << std::endl;
             BinaryTools::append_big_endian_bytes(bytes, param);
-            std::cout << "[DEPOIS] bytes_size=" << bytes.size()
-                      << ", param_size=" << sizeof(param) << std::endl;
           },
           param_variant);
     }

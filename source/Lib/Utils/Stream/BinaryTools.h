@@ -194,24 +194,9 @@ std::vector<std::byte> get_big_endian_bytes_vector_from_vector(
 
 
 
-/*
-template<template<typename> class Vector, typename T>
-std::enable_if_t<std::is_same<std::vector<T>, Vector<T>>::value,
-    std::vector<std::byte>>& append_big_endian_bytes(
-    std::vector<std::byte>& byte_list, const Vector<T>& vector) {
-  
-    std::cout << "CALL append_big_endian_bytes <VECTOR>" << std::endl;
-
-  return byte_vector_cat(
-      byte_list, get_big_endian_bytes_vector_from_vector(vector));
-}
-*/
-
 template<typename T>
 std::vector<std::byte>& append_big_endian_bytes(
     std::vector<std::byte>& byte_list, const std::vector<T>& vector) {
-  std::cout << "CALL append_big_endian_bytes <VECTOR>" << std::endl;
-
   return byte_vector_cat(
       byte_list, get_big_endian_bytes_vector_from_vector(vector));
 }
@@ -220,8 +205,6 @@ std::vector<std::byte>& append_big_endian_bytes(
 template<typename T>
 std::vector<std::byte>& append_big_endian_bytes(
     std::vector<std::byte>& byte_list, const T& value) {
-  std::cout << "CALL append_big_endian_bytes <T>" << std::endl;
-
   auto value_bytes = split_in_big_endian_bytes(value);
   byte_list.insert(byte_list.end(), value_bytes.begin(), value_bytes.end());
   return byte_list;
