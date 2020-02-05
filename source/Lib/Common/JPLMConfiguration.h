@@ -109,6 +109,7 @@ class JPLMConfiguration {
     std::string description;
     bool parsed;
     std::function<void(std::any)> action;
+    std::size_t level;
   };
 
  protected:
@@ -119,10 +120,16 @@ class JPLMConfiguration {
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
+  JPLMConfiguration(int argc, char **argv, std::size_t level)
+      : JPLMConfiguration(argc, argv) {
+    this->hierarchy_level = level;
+  }
 
-private:
+ private:
   bool help_mode_flag = false;
   std::string executable_name;
+  std::size_t hierarchy_level =
+      0;  //<! the hierarchy level used for printing help
 };
 
 
