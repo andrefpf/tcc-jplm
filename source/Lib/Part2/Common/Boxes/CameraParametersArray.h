@@ -377,9 +377,11 @@ class CameraParametersArray {
     for (const auto& param_variant : camera_parameters) {
       std::visit(
           [&bytes](const auto& param) {
+            std::cout << "[ANTES] bytes_size=" << bytes.size()
+                      << ", param_size=" << sizeof(param) << std::endl;
             BinaryTools::append_big_endian_bytes(bytes, param);
-            std::cout << "bytes_size=" << bytes.size()
-                      << "param_size=" << sizeof(param) << std::endl;
+            std::cout << "[DEPOIS] bytes_size=" << bytes.size()
+                      << ", param_size=" << sizeof(param) << std::endl;
           },
           param_variant);
     }
