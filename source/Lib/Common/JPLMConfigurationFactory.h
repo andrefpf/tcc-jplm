@@ -51,8 +51,6 @@
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 
 
-using Type = CompressionTypeLightField;
-
 class JPLMConfigurationFactory {
  public:
   static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
@@ -72,6 +70,8 @@ class JPLMConfigurationFactory {
 std::unique_ptr<JPLMConfiguration>
 JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
+  using Type = CompressionTypeLightField;
+
   auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
 
   if (basic_config.is_help_mode()) {
