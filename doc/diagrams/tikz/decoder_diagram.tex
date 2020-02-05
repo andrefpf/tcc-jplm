@@ -1,0 +1,83 @@
+%!TEX jobname = decoder_diagram
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-05
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\usepackage{amsmath}
+%\usepackage{rtl}
+\usepackage{color}
+% \usepackage[left=1cm,right=1cm]{geometry}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+\tikzstyle{myArrow} = [->, >=latex', thick]
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (args) {./jpl-decoder --input file.jpl --output output/};
+
+	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
+	\node[draw, below=of config, fill=white] (stream) {jpl\_file=new JPLFileFromStream(configuration)};
+
+
+
+	\node[draw, below=of stream, fill=white] (decoder) {decoders=factory(jpl\_file)};
+
+	\node[draw, below=of decoder, fill=white, text width=5cm, align=center] (run) {for each decoder in decoders\\decoder.run()};
+	% \node[draw, below=of encoder, fill=white] (run) {encoder.run()};
+
+	\node[below=of run] (outputs) {multiple outputs};
+
+
+
+
+
+	\begin{scope}[on background layer]
+		\node[fill=blue!40, rounded corners, thick, inner sep=2mm,fit=(config) (decoder) (run) (stream)] (co) {};
+	\end{scope}	
+
+
+	\draw[myArrow] (args) -- (config);
+	\draw[myArrow] (config) -- (stream);
+	\draw[myArrow] (stream) -- (decoder);
+	\draw[myArrow] (decoder) -- (run);
+	\draw[myArrow] (run) -- (outputs);
+
+	\draw[myArrow] ($(run)!.5!(outputs)$) -| ($(run.west)+(-.5,0)$) |- ($(decoder)!.4!(run)$);
+
+	% \draw[myArrow] (stream) -- (jplFile);
+\end{tikzpicture}
+
+\end{document}
