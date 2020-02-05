@@ -75,18 +75,20 @@ JPLMConfigurationFactory::get_encoder_configuration(
   auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
 
   if (basic_config.is_help_mode()) {
-    std::vector<JPLMEncoderConfiguration> s{
-        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
+    //the configurations are instantiated only for printing their help (which is checked in the constructor)
+    [[maybe_unused]] auto light_field_configuration =
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+    [[maybe_unused]] auto light_field_transform_mode_configuration =
         JPLMEncoderConfigurationLightField4DTransformMode(
-            argc, const_cast<char**>(argv))};
+            argc, const_cast<char**>(argv));
     exit(0);
   }
 
   switch (basic_config.get_jpeg_pleno_part()) {
     case JpegPlenoPart::LightField: {
-      auto light_field_config =
+      auto light_field_configuration =
           JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
-      auto type = light_field_config.get_type();
+      auto type = light_field_configuration.get_type();
       if (type == Type::transform_mode) {
         return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
             argc, const_cast<char**>(argv));
