@@ -180,6 +180,27 @@ std::tuple<Args...> get_tuple_from_big_endian_byte_vector(
 std::vector<std::byte>& byte_vector_cat(
     std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b);
 
+template<typename T>
+std::vector<std::byte> get_big_endian_bytes_vector_from_vector(
+    const std::vector<T>& vec) {
+  auto bytes_vector = std::vector<std::byte>();
+  auto n_bytes = vec.size() * sizeof(T);
+  bytes_vector.reserve(n_bytes);
+  for (const auto& value : vec) {
+    byte_vector_cat(bytes_vector, split_in_big_endian_bytes(value));
+  }
+  return bytes_vector;
+}
+
+
+
+template<typename T>
+std::vector<std::byte>& append_big_endian_bytes(
+    std::vector<std::byte>& byte_list, const std::vector<T>& vector) {
+  return byte_vector_cat(
+      byte_list, get_big_endian_bytes_vector_from_vector(vector));
+}
+
 
 template<typename T>
 std::vector<std::byte>& append_big_endian_bytes(
@@ -201,26 +222,6 @@ std::vector<std::byte>& append_big_endian_bytes(
   return byte_list;
 }
 
-template<typename T>
-std::vector<std::byte> get_big_endian_bytes_vector_from_vector(
-    const std::vector<T>& vec) {
-  auto bytes_vector = std::vector<std::byte>();
-  auto n_bytes = vec.size() * sizeof(T);
-  bytes_vector.reserve(n_bytes);
-  for (const auto& value : vec) {
-    byte_vector_cat(bytes_vector, split_in_big_endian_bytes(value));
-  }
-  return bytes_vector;
-}
-
-template<template<typename> class Vector, typename T>
-std::enable_if_t<std::is_same<std::vector<T>, Vector<T>>::value,
-    std::vector<std::byte>>&
-append_big_endian_bytes(
-    std::vector<std::byte>& byte_list, const Vector<T>& vector) {
-  return byte_vector_cat(
-      byte_list, get_big_endian_bytes_vector_from_vector(vector));
-}
 
 
 }  // namespace BinaryTools
