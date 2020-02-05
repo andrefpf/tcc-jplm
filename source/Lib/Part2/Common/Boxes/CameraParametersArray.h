@@ -42,6 +42,7 @@
 #define JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERSARRAY_H__
 
 #include <assert.h>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <iostream>
@@ -50,7 +51,6 @@
 #include <tuple>  //std::tie
 #include <variant>
 #include <vector>
-#include <array>
 #include "Lib/Part2/Common/Boxes/CameraParameterType.h"
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
@@ -378,6 +378,8 @@ class CameraParametersArray {
       std::visit(
           [&bytes](const auto& param) {
             BinaryTools::append_big_endian_bytes(bytes, param);
+            std::cout << "bytes_size=" << bytes.size()
+                      << "param_size=" << sizeof(param) << std::endl;
           },
           param_variant);
     }

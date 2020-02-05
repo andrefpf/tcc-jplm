@@ -92,13 +92,13 @@ int main(int argc, char const* argv[]) {
   for (auto i = 0; i < 3; ++i) {
     auto file_name =
         input / std::to_string(i) / output.filename().replace_extension(".pgx");
-    auto image_file = ImageIO::open(file_name);
+    auto image_file = ImageIO::open(file_name.string());
     images.push_back(ImageIO::read<UndefinedImage, uint16_t>(*image_file));
   }
 
   auto image_sum = ImageUtils::get_undefined_images_as<BT601Image>(
       *(images[0]), *(images[1]), *(images[2]));
-  ImageIO::imwrite(*image_sum, output);
+  ImageIO::imwrite(*image_sum, output.string());
 
   return 0;
 }

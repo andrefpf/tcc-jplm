@@ -104,7 +104,7 @@ int main(int argc, char const* argv[]) {
     if (!std::filesystem::exists(path_for_output.parent_path())) {
       std::filesystem::create_directory(path_for_output.parent_path());
     }
-    ImageIO::imwrite(*split_images[i], path_for_output);
+    ImageIO::imwrite(*split_images[i], path_for_output.string());
   }
 
   return 0;

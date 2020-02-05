@@ -66,7 +66,7 @@ class ViewFromPGXFile : public View<T> {
          ++i) {
       auto current_path = base_path / std::to_string(i) /
                           name_translator->view_position_to_filename(position);
-      pgx_files.push_back(PGXFileIO::open(current_path));
+      pgx_files.push_back(PGXFileIO::open(current_path.string()));
     }
   }
 
@@ -79,7 +79,7 @@ class ViewFromPGXFile : public View<T> {
       auto current_path = base_path / std::to_string(i) /
                           name_translator->view_position_to_filename(position);
       pgx_files.push_back(
-          PGXFileIO::open(current_path, width, height, depth, false));
+          PGXFileIO::open(current_path.string(), width, height, depth, false));
     }
   }
 
