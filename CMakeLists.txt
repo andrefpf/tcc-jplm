@@ -108,6 +108,7 @@ add_executable(jpl-decoder-bin
     CMakeLists.txt)
 
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_common)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
@@ -136,6 +137,7 @@ add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Parsers)
 
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Common/Boxes)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Part1/Decoder/Boxes)
 
 # target_link_libraries(jplm_common_boxes_parsers jplm_part1_boxes_decoder)

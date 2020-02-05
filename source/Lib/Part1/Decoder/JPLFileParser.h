@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,51 +31,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFileFromStream.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     JPLFileParser.h
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-05
  */
+#ifndef JPLM_LIB_PART1_JPLFILEPARSER_H
+#define JPLM_LIB_PART1_JPLFILEPARSER_H
 
-#ifndef JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
-#define JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string>
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Part1/Common/JPLFile.h"
-#include "Lib/Part1/Decoder/JPLFileParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
-class JPLFileFromStream : public JPLFileParser, public JPLFile {
+
+class JPLFileParser {
  protected:
-  uint64_t decoded_boxes =
-      2;  //it has at least decoded the signature and file type...
+  const BoxParserRegistry& parser = BoxParserRegistry::get_instance();
+  const std::string filename;
+  const uint64_t file_size;
+  std::ifstream if_stream;
+  ManagedStream managed_stream;
+  std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
+  std::unique_ptr<FileTypeBox> temp_file_type;
+  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
 
-  void check_boxes_constraints();
+  uint64_t decode_boxes();
 
-  void populate_light_field_codestreams();
+  std::unique_ptr<JpegPlenoSignatureBox> get_signature_box();
 
-  //! \todo Implement for Point Cloud Boxes...
-  void populate_point_cloud_codestreams();
-
-  void populate_hologram_codestreams();
-
-  void populate_codestreams_list();
-
-  void populate_jpl_fields();
+  std::unique_ptr<FileTypeBox> get_file_type_box();
 
  public:
-  JPLFileFromStream(const std::string& filename);
+  JPLFileParser(const std::string& filename);
 
-
-  uint64_t get_number_of_decoded_boxes();
-
-
-  virtual ~JPLFileFromStream() = default;
+  virtual ~JPLFileParser();
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__ */
+
+#endif  //JPLM_LIB_PART1_JPLFILEPARSER_H
