@@ -41,9 +41,7 @@
 
 #include "CameraParameterBoxTests.h"
 
-
-std::string resources_path = "../resources";
-
+std::string resources_path = "../../resources";
 
 // TEST(BasicTests, HasCorrectId) {
 // 	EXPECT_EQ(CameraParameterBox::id, 0x6c666370);
@@ -389,8 +387,6 @@ TEST_F(SimpleCameraParameterContentsTestFloat,
 }
 
 //! \todo if possible it would be nice to implement more tests. Also possible to use a double
-
-
 TEST_F(SimpleCameraParameterContentsTestFloat, WritingToFileTheCorrectNumberOfBytes) {
   auto contents = get_contents();
   auto box = CameraParameterBox(std::move(contents));
@@ -399,7 +395,7 @@ TEST_F(SimpleCameraParameterContentsTestFloat, WritingToFileTheCorrectNumberOfBy
   ofs << box;
   ofs.close();
   EXPECT_EQ(std::filesystem::file_size(filename), box.size());
-  std::filesystem::remove(filename);
+  //std::filesystem::remove(filename);
 }
 
 
