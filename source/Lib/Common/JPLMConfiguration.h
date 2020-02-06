@@ -50,7 +50,7 @@
 #include <string>
 #include "CLI/CLI.hpp"
 #include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Common/CLIArgument.h"
+#include "Lib/Common/CLIOption.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
@@ -75,7 +75,7 @@ class JPLMConfiguration {
   const bool &is_help_mode() const;
 
  protected:
-  std::vector<CLIArgument> arguments;
+  std::vector<CLIOption> cli_options;
   std::string input;
   std::string output;
   std::size_t hierarchy_level =

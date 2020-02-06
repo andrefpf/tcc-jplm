@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CLIArgument.h
+/** \file     CLIOption.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
@@ -39,10 +39,10 @@
  *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_CLIARGUMENT_H
-#define JPLM_LIB_PART2_COMMON_CLIARGUMENT_H
+#ifndef JPLM_LIB_PART2_COMMON_CLIOPTION_H
+#define JPLM_LIB_PART2_COMMON_CLIOPTION_H
 
-class CLIArgument {
+class CLIOption {
  private:
   std::string long_option;
   std::string short_option;
@@ -52,7 +52,7 @@ class CLIArgument {
   std::size_t level;
 
  public:
-  CLIArgument(const std::string &longOption, const std::string &short_option,
+  CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
       const std::function<void(std::any)> &action, std::size_t level)
       : long_option(longOption), short_option(short_option),
@@ -89,4 +89,4 @@ class CLIArgument {
   }
 };
 
-#endif  // JPLM_LIB_PART2_COMMON_CLIARGUMENT_H
+#endif  // JPLM_LIB_PART2_COMMON_CLIOPTION_H

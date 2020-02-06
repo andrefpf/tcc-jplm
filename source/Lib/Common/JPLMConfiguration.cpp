@@ -47,7 +47,7 @@ using json = nlohmann::json;
 
 
 void JPLMConfiguration::add_options_to_cli(char **argv) {
-  arguments.push_back({"--help", "-h", "Print this help message and exit",
+  cli_options.push_back({"--help", "-h", "Print this help message and exit",
       [this, argv]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(argv[0]);
@@ -80,11 +80,11 @@ void JPLMConfiguration::run_help() const {
     chars.downSeparation = '\0';
     table.setTableChars(chars);
     unsigned int count = 0;
-    for (const auto &argument : this->arguments) {
-      if (argument.get_level() == this->hierarchy_level) {
+    for (const auto &cli_option : this->cli_options) {
+      if (cli_option.get_level() == this->hierarchy_level) {
         table[count][1](sAlign::right) =
-            argument.get_short_option() + "," + argument.get_long_option();
-        table[count][2](sAlign::left) = argument.get_description();
+            cli_option.get_short_option() + "," + cli_option.get_long_option();
+        table[count][2](sAlign::left) = cli_option.get_description();
         ++count;
       }
     }
@@ -128,12 +128,12 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
     if (validate_param(key)) {
       if (validate_value(argc, n, argv)) {
         std::string value(reinterpret_cast<char *>(argv[n + 1]));
-        std::for_each(arguments.begin(), arguments.end(),
-            [key, value](CLIArgument &s) { s.parse(key, value); });
+        std::for_each(cli_options.begin(), cli_options.end(),
+            [key, value](auto &s) { s.parse(key, value); });
       } else {
         std::string value("");
-        std::for_each(arguments.begin(), arguments.end(),
-            [key, value](CLIArgument &s) { s.parse(key, value); });
+        std::for_each(cli_options.begin(), cli_options.end(),
+            [key, value](auto &s) { s.parse(key, value); });
       }
     }
   }

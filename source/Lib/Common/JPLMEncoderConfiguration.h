@@ -62,7 +62,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
   void add_options_to_cli() {
-    arguments.push_back({"--input", "-i",
+    cli_options.push_back({"--input", "-i",
         "Input directory containing the plenoptic data to be compressed "
         "(according to the JPEG Pleno Part). "
         "\n\tFor Part 2, light field, the input is a directory containing a "
@@ -72,14 +72,14 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
           this->input = std::any_cast<std::string>(v);
         },
         this->current_hierarchy_level});
-    arguments.push_back({"--output", "-o",
+    cli_options.push_back({"--output", "-o",
         "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
         [this]([[maybe_unused]] std::any v) {
           this->output = std::any_cast<std::string>(v);
         },
         this->current_hierarchy_level});
 
-    arguments.push_back({"--config", "-c", "Path to config file",
+    cli_options.push_back({"--config", "-c", "Path to config file",
         [this](std::any v) {
           this->config = std::any_cast<std::string>(v);
           if (!this->config.empty()) {
@@ -92,7 +92,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
         },
         this->current_hierarchy_level});
 
-    arguments.push_back(
+    cli_options.push_back(
         {"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
             [this](std::any value) {
               int part = std::stoi(std::any_cast<string>(value));
