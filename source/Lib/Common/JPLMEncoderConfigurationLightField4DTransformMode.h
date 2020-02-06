@@ -90,6 +90,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
+  void add_options_to_cli();
 
  protected:
   JPLMEncoderConfigurationLightField4DTransformMode(
@@ -158,10 +159,8 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   TransformSize transform_size;
 };
 
-JPLMEncoderConfigurationLightField4DTransformMode::
-    JPLMEncoderConfigurationLightField4DTransformMode(
-        int argc, char **argv, std::size_t level)
-    : JPLMEncoderConfigurationLightField(argc, argv, level) {
+
+void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
   arguments.push_back(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
           [this](std::any v) {
@@ -257,6 +256,13 @@ JPLMEncoderConfigurationLightField4DTransformMode::
             static_cast<uint32_t>(std::stoul(typed_string));
       },
       this->current_hierarchy_level});
+}
+
+JPLMEncoderConfigurationLightField4DTransformMode::
+    JPLMEncoderConfigurationLightField4DTransformMode(
+        int argc, char **argv, std::size_t level)
+    : JPLMEncoderConfigurationLightField(argc, argv, level) {
+  add_options_to_cli();
 
   this->parse_cli(argc, argv);
 
