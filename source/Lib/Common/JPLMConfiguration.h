@@ -103,6 +103,10 @@ class JPLMConfiguration {
       return description;
     }
 
+    std::size_t get_level() const {
+      return level;
+    }
+
    private:
     std::string long_option;
     std::string short_option;

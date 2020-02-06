@@ -75,13 +75,17 @@ void JPLMConfiguration::run_help() {
     chars.downSeparation = '\0';
     table.setTableChars(chars);
     unsigned int count = 0;
-    for (auto o : this->arguments) {
-      table[count][1](sAlign::right) =
-          o.getShortOption() + "," + o.getLongOption();
-      table[count][2](sAlign::left) = o.getDescription();
-      count++;
+    for (const auto &argument : this->arguments) {
+      if (argument.get_level() == this->hierarchy_level) {
+        table[count][1](sAlign::right) =
+            argument.getShortOption() + "," + argument.getLongOption();
+        table[count][2](sAlign::left) = argument.getDescription();
+        count++;
+      }
     }
-    std::cout << table << std::endl;
+    if (count != 0) {
+      std::cout << table << std::endl;
+    }
   }
 }
 
