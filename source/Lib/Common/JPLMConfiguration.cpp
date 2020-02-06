@@ -101,7 +101,8 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
 
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
-    : JPLMConfiguration(argc, argv, 0) {
+    : JPLMConfiguration(
+          argc, argv, JPLMConfiguration::current_hierarchy_level) {
   run_help();
 }
 

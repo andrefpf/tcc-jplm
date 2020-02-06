@@ -133,7 +133,8 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
 
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
-    : JPLMEncoderConfigurationLightField(argc, argv, 1) {
+    : JPLMEncoderConfigurationLightField(argc, argv,
+          JPLMEncoderConfigurationLightField::current_hierarchy_level) {
   run_help();
 }
 

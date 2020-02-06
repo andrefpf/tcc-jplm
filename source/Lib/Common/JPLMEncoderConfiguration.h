@@ -131,7 +131,8 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
-    : JPLMEncoderConfiguration(argc, argv, 0) {
+    : JPLMEncoderConfiguration(
+          argc, argv, JPLMEncoderConfiguration::current_hierarchy_level) {
   run_help();
 }
 

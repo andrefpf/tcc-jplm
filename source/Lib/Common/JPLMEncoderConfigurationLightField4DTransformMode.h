@@ -270,7 +270,9 @@ JPLMEncoderConfigurationLightField4DTransformMode::
 
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
-    : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv, 2) {
+    : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv,
+          JPLMEncoderConfigurationLightField4DTransformMode::
+              current_hierarchy_level) {
   run_help();
 }
 
