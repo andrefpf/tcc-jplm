@@ -91,13 +91,7 @@ class ChannelDefinitionContents : public InMemoryDBox {
    *
    * \return     True if equal, false otherwise.
    */
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const ChannelDefinitionContents&>(other);
-    return *this == cast_other;
-  }
+  bool is_equal(const DBox& other) const override;
 
 
   /**
@@ -105,9 +99,7 @@ class ChannelDefinitionContents : public InMemoryDBox {
    *
    * \return     Copy of this object.
    */
-  virtual ChannelDefinitionContents* clone() const override {
-    return new ChannelDefinitionContents(*this);
-  }
+  virtual ChannelDefinitionContents* clone() const override;
 
 
   /**
@@ -116,11 +108,7 @@ class ChannelDefinitionContents : public InMemoryDBox {
    * \return     Size in bytes
    * \details    There are 2 bytes to represent N (number of channel descriptions) and 3 uint16_t for each channel descriptor.
    */
-  uint64_t size() const noexcept override {
-    //2 is from N (number of channel descriptions)
-    //3 is from the 3 fields in ChannelDescription
-    return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
-  }
+  uint64_t size() const noexcept override;
 
 
   /**
@@ -130,9 +118,7 @@ class ChannelDefinitionContents : public InMemoryDBox {
    *
    * \return     True if equal, false otherwise.
    */
-  bool operator==(const ChannelDefinitionContents& other) const {
-    return this->channel_descriptions == other.channel_descriptions;
-  }
+  bool operator==(const ChannelDefinitionContents& other) const;
 
 
   /**
@@ -142,9 +128,7 @@ class ChannelDefinitionContents : public InMemoryDBox {
    *
    * \return     False if equal, true otherwise.
    */
-  bool operator!=(const ChannelDefinitionContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const ChannelDefinitionContents& other) const;
 };
 
 
