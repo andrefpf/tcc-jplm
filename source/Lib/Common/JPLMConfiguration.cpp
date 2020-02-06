@@ -96,27 +96,13 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
       },
       this->current_hierarchy_level});
 
-  arguments.push_back({"--input", "-i",
-      "Input directory containing a set of uncompressed light-field images "
-      "(xxx_yyy.ppm).",
-      [this]([[maybe_unused]] std::any v) {
-        this->input = std::any_cast<std::string>(v);
-      },
-      this->current_hierarchy_level});
-  arguments.push_back({"--output", "-o",
-      "Output directory containing temporary light-field data and the "
-      "compressed bitstream.",
-      [this]([[maybe_unused]] std::any v) {
-        this->output = std::any_cast<std::string>(v);
-      },
-      this->current_hierarchy_level});
   this->parse_cli(argc, argv);
-  //run_help();
 }
 
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv, 0) {
+  run_help();
 }
 
 

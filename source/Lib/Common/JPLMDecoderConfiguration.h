@@ -46,6 +46,21 @@
 class JPLMDecoderConfiguration : public JPLMConfiguration {
  private:
   std::size_t current_hierarchy_level = 0;
+  void add_interface() {
+    arguments.push_back({"--input", "-i",
+        "Input, i.e., a JPEG Pleno bitstream file (filename.jpl) to be "
+        "decoded.",
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+    arguments.push_back({"--output", "-o",
+        "Output directory containing the decoded plenoptic data",
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+  }
 
  protected:
   JPLMDecoderConfiguration(int argc, char **argv, std::size_t level)
@@ -53,6 +68,7 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
     this->message =
         "JPLM Decoder\nUsage: jpl-decoder-bin"
         " [OPTIONS]\nOptions: ";
+    add_interface();
   }
 
  public:

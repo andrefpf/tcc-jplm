@@ -65,6 +65,23 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
       : JPLMConfiguration(argc, argv, level) {
+    arguments.push_back({"--input", "-i",
+        "Input directory containing the plenoptic data to be compressed "
+        "(according to the JPEG Pleno Part). "
+        "\n\tFor Part 2, light field, the input is a directory containing a "
+        "set of directories (one for each color channel). Each one of those "
+        "directories contains a set of views in PGX format.",
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+    arguments.push_back({"--output", "-o",
+        "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
     arguments.push_back({"--config", "-c", "Path to config file",
         [this](std::any v) {
           this->config = std::any_cast<std::string>(v);
