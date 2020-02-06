@@ -52,25 +52,31 @@ ImageHeaderContents::ImageHeaderContents(uint32_t height, uint32_t width,
   }
 }
 
+
 uint32_t ImageHeaderContents::get_height() const noexcept {
   return height;
 }
+
 
 uint32_t ImageHeaderContents::get_width() const noexcept {
   return width;
 }
 
+
 uint16_t ImageHeaderContents::get_nc() const noexcept {
   return nc;
 }
+
 
 uint16_t ImageHeaderContents::get_number_of_channels() const noexcept {
   return get_nc();
 }
 
+
 uint8_t ImageHeaderContents::get_bpc() const noexcept {
   return bpc;
 }
+
 
 uint8_t ImageHeaderContents::get_bits_per_component() const noexcept {
   return get_bpc();
@@ -80,9 +86,11 @@ CompressionTypeImage ImageHeaderContents::get_c() const noexcept {
   return c;
 }
 
+
 CompressionTypeImage ImageHeaderContents::get_coder_type() const noexcept {
   return get_c();
 }
+
 
 bool ImageHeaderContents::has_known_color_space() const noexcept {
   if (UnkC == 0) {  // 0, if the colourspace of the image is known
@@ -93,6 +101,7 @@ bool ImageHeaderContents::has_known_color_space() const noexcept {
   return false;
 }
 
+
 bool ImageHeaderContents::has_intellectual_property() const noexcept {
   if (UnkC == 0) {
     return false;
@@ -102,14 +111,17 @@ bool ImageHeaderContents::has_intellectual_property() const noexcept {
   // Other values are reserved for ISO use
 }
 
+
 ImageHeaderContents *ImageHeaderContents::clone() const {
   return new ImageHeaderContents(*this);
 }
+
 
 uint64_t ImageHeaderContents::size() const noexcept {
   return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +
          sizeof(compression_type_data);
 }
+
 
 bool ImageHeaderContents::is_equal(const DBox &other) const {
   if (typeid(*this) != typeid(other))
@@ -118,12 +130,14 @@ bool ImageHeaderContents::is_equal(const DBox &other) const {
   return *this == cast_other;
 }
 
+
 bool ImageHeaderContents::operator==(const ImageHeaderContents &other) const {
   return std::tie(this->height, this->width, this->nc, this->bpc, this->c,
              this->UnkC, this->IPR) == std::tie(other.height, other.width,
                                            other.nc, other.bpc, other.c,
                                            other.UnkC, other.IPR);
 }
+
 
 bool ImageHeaderContents::operator!=(const ImageHeaderContents &other) const {
   return !this->operator==(other);
