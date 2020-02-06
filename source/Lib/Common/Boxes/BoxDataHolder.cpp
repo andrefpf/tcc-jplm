@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,76 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BoxDataHolder.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-23
+/** \file     BoxDataHolder.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__
-#define JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__
-
-#include <ostream>
-#include <vector>
-#include "Lib/Utils/Stream/BinaryTools.h"
-
-
-template<typename T>
-class BoxDataHolder {
- protected:
-  T value;
-
- public:
-  BoxDataHolder() : value(0){};
-
-  BoxDataHolder(const T& value) : value(value){};
-
-  virtual ~BoxDataHolder(){};
-
-  T get_value() const;
-
-  void set_value(T value);
-
-  bool is_equal(const BoxDataHolder& other) const noexcept;
-
-  std::vector<std::byte> get_bytes() const noexcept;
-};
-
-
-template<typename T>
-std::vector<std::byte> BoxDataHolder<T>::get_bytes() const noexcept {
-  return BinaryTools::split_in_big_endian_bytes(value);
-}
-
-
-template<typename T>
-void BoxDataHolder<T>::set_value(T value) {
-  this->value = value;
-}
-
-
-template<typename T>
-T BoxDataHolder<T>::get_value() const {
-  return value;
-}
-
-
-template<typename T>
-bool BoxDataHolder<T>::is_equal(const BoxDataHolder& other) const noexcept {
-  if (this->value == other.value) {
-    return true;
-  }
-  return false;
-}
-
-
-template<typename T>
-std::ostream& operator<<(
-    std::ostream& stream, const BoxDataHolder<T>& box_data_holder) {
-  auto bytes = box_data_holder.get_bytes();
-  stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-  return stream;
-}
-
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_BOXDATAHOLDER_H__ */
+#include "Lib/Common/Boxes/BoxDataHolder.h"
