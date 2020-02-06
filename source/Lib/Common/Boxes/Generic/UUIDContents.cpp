@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,49 +31,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     UUIDContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__
+#include "Lib/Common/Boxes/Generic/UUIDContents.h"
 
-#include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "UniversalUniqueIdentifier.h"
-
-class UUIDContents : public InMemoryDBox {
- protected:
-  UniversalUniqueIdentifier id;
-  std::vector<uint8_t> data;
-
- public:
-  UUIDContents() = default;
+UUIDContents *UUIDContents::clone() const {
+  return new UUIDContents(*this);
+}
 
 
-  virtual UUIDContents* clone() const override;
+uint64_t UUIDContents::size() const noexcept {
+  return id.size() + data.size() * sizeof(uint8_t);
+}
 
 
-  virtual ~UUIDContents() = default;
+bool UUIDContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other = dynamic_cast<const UUIDContents &>(other);
+  return *this == cast_other;
+}
 
 
-  virtual uint64_t size() const noexcept override;
+bool UUIDContents::operator==(const UUIDContents &other) const {
+  return (this->id == other.id) && (this->data == other.data);
+}
 
 
-  virtual bool is_equal(const DBox& other) const override;
+bool UUIDContents::operator!=(const UUIDContents &other) const {
+  return !this->operator==(other);
+}
 
 
-  bool operator==(const UUIDContents& other) const;
-
-
-  bool operator!=(const UUIDContents& other) const;
-
-
-  void add_data(const std::vector<uint8_t>& data_to_add);
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDCONTENTS_H__ */
+void UUIDContents::add_data(const std::vector<uint8_t> &data_to_add) {
+  data.reserve(data_to_add.size());
+  data.insert(data.end(), data_to_add.begin(), data_to_add.end());
+}
