@@ -31,7 +31,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ConfigurationParserTests.cpp
+/** \file     JPLMEncoderConfigurationTests.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
@@ -41,7 +41,6 @@
 
 #include <exception>
 #include <filesystem>
-#include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
@@ -55,27 +54,27 @@ std::string resources_path = "../resources/";
 std::string root_path = ".";
 
 
-TEST(JPLMConfiguration, SimpleTestWithInput) {
+TEST(JPLMEncoderConfiguration, SimpleTestWithInput) {
   const char* argv[] = {"", "-i", "../cfg/part2/mule/"};
   int argc = 3;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("../cfg/part2/mule/", config.get_input_filename().c_str());
 }
 
 
-TEST(JPLMConfiguration, SimpleTestWithOutput) {
+TEST(JPLMEncoderConfiguration, SimpleTestWithOutput) {
   const char* argv[] = {"", "-o", "./output.jpl"};
   int argc = 3;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("./output.jpl", config.get_output_filename().c_str());
 }
 
 
-TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
+TEST(JPLMEncoderConfiguration, SimpleTestWIthInputAndOutput) {
   const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       "-o", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
   int argc = 5;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
@@ -83,23 +82,24 @@ TEST(JPLMConfiguration, SimpleTestWIthInputAndOutput) {
 }
 
 
-TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles) {
+TEST(JPLMEncoderConfiguration, SimpleTestWIthInputAndOutputMixedStyles) {
   const char* argv[] = {"", "--input",
       "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/", "-o",
       "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
   int argc = 5;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());
 }
 
-TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
+
+TEST(JPLMEncoderConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
   const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       "--output", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl"};
   int argc = 5;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
@@ -107,12 +107,12 @@ TEST(JPLMConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
 }
 
 
-TEST(JPLMConfiguration, TestRepeatedOptionWithSameParam) {
+TEST(JPLMEncoderConfiguration, TestRepeatedOptionWithSameParam) {
   const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       "--output", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl", "-i",
       "/home/PLENO/DATASETS/LENSLETS/OUTRO"};
   int argc = 7;
-  JPLMConfiguration config(argc, const_cast<char**>(argv));
+  JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
   EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
