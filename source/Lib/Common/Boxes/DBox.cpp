@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,37 +31,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     EmptyDBox.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     DBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
+#include "Lib/Common/Boxes/DBox.h"
 
-#ifndef JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
-#define JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
-
-#include "InMemoryDBox.h"
-
-class EmptyDBox : public InMemoryDBox {
- public:
-  EmptyDBox() = default;
-
-
-  ~EmptyDBox() = default;
-
-
-  [[nodiscard]] std::vector<std::byte> get_bytes() const noexcept override;
-
-
-  [[nodiscard]] uint64_t size() const noexcept override;
-
-
-  [[nodiscard]] bool is_equal(const DBox& other) const override;
-
-
-  [[nodiscard]] EmptyDBox* clone() const override;
-};
-
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__ */

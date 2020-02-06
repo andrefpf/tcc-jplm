@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,37 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     EmptyDBox.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     EmptyDBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-
-#ifndef JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
-#define JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__
-
-#include "InMemoryDBox.h"
-
-class EmptyDBox : public InMemoryDBox {
- public:
-  EmptyDBox() = default;
+#include "Lib/Common/Boxes/EmptyDBox.h"
+#include <vector>
 
 
-  ~EmptyDBox() = default;
+std::vector<std::byte> EmptyDBox::get_bytes() const noexcept {
+  return std::vector<std::byte>();
+}
 
 
-  [[nodiscard]] std::vector<std::byte> get_bytes() const noexcept override;
+uint64_t EmptyDBox::size() const noexcept {
+  return 0;
+}
 
 
-  [[nodiscard]] uint64_t size() const noexcept override;
+bool EmptyDBox::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  return true;
+}
 
 
-  [[nodiscard]] bool is_equal(const DBox& other) const override;
-
-
-  [[nodiscard]] EmptyDBox* clone() const override;
-};
-
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__ */
+EmptyDBox *EmptyDBox::clone() const {
+  return new EmptyDBox(*this);
+}
