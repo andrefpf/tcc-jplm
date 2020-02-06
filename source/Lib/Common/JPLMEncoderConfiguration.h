@@ -65,7 +65,6 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   void parse_colorspace(const json &conf);
 
 
-
   std::string config;
   // Belongs to JPLMEncoderConfiguration
   // app.add_option("-c,--config", config, "Path to config file");
@@ -88,17 +87,18 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMConfiguration(argc, argv) {
-  arguments.push_back(
-      {"--config", "-c", "Path to config file", [this](std::any v) {
-         this->config = std::any_cast<std::string>(v);
-         if (!this->config.empty()) {
-           if (fs::exists(this->config)) {
-             parse_json(this->config);
-           } else {
-             throw ConfigFileDoesNotExistException(this->config);
-           }
-         }
-       }});
+  arguments.push_back({"--config", "-c", "Path to config file",
+      [this](std::any v) {
+        this->config = std::any_cast<std::string>(v);
+        if (!this->config.empty()) {
+          if (fs::exists(this->config)) {
+            parse_json(this->config);
+          } else {
+            throw ConfigFileDoesNotExistException(this->config);
+          }
+        }
+      },
+      this->hierarchy_level});
 
   arguments.push_back({"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
       [this](std::any value) {
@@ -108,7 +108,8 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
         else
           throw NotImplementedYetInputTypeParseException(
               "Part " + std::to_string(part));
-      }});
+      },
+      this->hierarchy_level});
 
   this->parse_cli(argc, argv);
   run_help();
@@ -137,6 +138,7 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
 
 
 void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
+  //<! \todo include options to input the EnumCS for the ColourDefinitionBox
   if (conf.contains("colorspace")) {
     string c = conf["colorspace"].get<string>();
     std::transform(c.begin(), c.end(), c.begin(),

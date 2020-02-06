@@ -77,9 +77,9 @@ class JPLMConfiguration {
    public:
     CLIArgument(const std::string &longOption, const std::string &short_option,
         const std::string &description,
-        const std::function<void(std::any)> &action)
+        const std::function<void(std::any)> &action, std::size_t level)
         : long_option(longOption), short_option(short_option),
-          description(description), action(action) {
+          description(description), action(action), level(level) {
       this->parsed = false;
     }
 
@@ -116,6 +116,8 @@ class JPLMConfiguration {
   std::vector<CLIArgument> arguments;
   std::string input;
   std::string output;
+  std::size_t hierarchy_level =
+      0;  //<! the hierarchy level used for printing help
   void run_help();
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
@@ -128,8 +130,6 @@ class JPLMConfiguration {
  private:
   bool help_mode_flag = false;
   std::string executable_name;
-  std::size_t hierarchy_level =
-      0;  //<! the hierarchy level used for printing help
 };
 
 

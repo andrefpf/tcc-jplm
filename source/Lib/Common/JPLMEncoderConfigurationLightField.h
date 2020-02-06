@@ -96,27 +96,34 @@ JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
         std::string typed_string = std::any_cast<std::string>(v);
         int type = std::stoi(typed_string);
         this->type = static_cast<Type>(type);
-      }});
+      },
+      this->hierarchy_level});
 
   arguments.push_back({"--view_height", "-v", "Single-view height dimension",
       [this](std::any value) {
         this->view_height_v = std::stoi(std::any_cast<string>(value));
-      }});
+      },
+      this->hierarchy_level});
 
   arguments.push_back({"--view_width", "-u", "Single-view width dimension",
       [this](std::any value) {
         this->view_width_u = std::stoi(std::any_cast<string>(value));
-      }});
+      },
+      this->hierarchy_level});
 
-  arguments.push_back({"--number_of_rows", "-t",
-      "Number of light-field views rows", [this](std::any value) {
-        this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
-      }});
+  arguments.push_back(
+      {"--number_of_rows", "-t", "Number of light-field views rows",
+          [this](std::any value) {
+            this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
+          },
+          this->hierarchy_level});
 
-  arguments.push_back({"--number_of_columns", "-s",
-      "Number of light-field views columns", [this](std::any value) {
-        this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
-      }});
+  arguments.push_back(
+      {"--number_of_columns", "-s", "Number of light-field views columns",
+          [this](std::any value) {
+            this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
+          },
+          this->hierarchy_level});
 
   this->parse_cli(argc, argv);
   run_help();

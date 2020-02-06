@@ -82,7 +82,6 @@ void JPLMConfiguration::run_help() {
       count++;
     }
     std::cout << table << std::endl;
-    //exit(0);
   }
 }
 
@@ -91,20 +90,23 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
       [this, argv]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(argv[0]);
-      }});
+      },
+      this->hierarchy_level});
 
   arguments.push_back({"--input", "-i",
       "Input directory containing a set of uncompressed light-field images "
       "(xxx_yyy.ppm).",
       [this]([[maybe_unused]] std::any v) {
         this->input = std::any_cast<std::string>(v);
-      }});
+      },
+      this->hierarchy_level});
   arguments.push_back({"--output", "-o",
       "Output directory containing temporary light-field data and the "
       "compressed bitstream.",
       [this]([[maybe_unused]] std::any v) {
         this->output = std::any_cast<std::string>(v);
-      }});
+      },
+      this->hierarchy_level});
   this->parse_cli(argc, argv);
   run_help();
 }
