@@ -5,5 +5,6 @@ set(COMMON_BOXES_GENERIC_SOURCES
     ContiguousCodestreamContents.cpp
     ImageHeaderContents.cpp
     UniversalUniqueIdentifier.cpp
-    UUIDContents.cpp)
+    UUIDContents.cpp
+    UUIDInfoContents.cpp)
 add_library(jplm_common_boxes_generic ${COMMON_BOXES_GENERIC_SOURCES})

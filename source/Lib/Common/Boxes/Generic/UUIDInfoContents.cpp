@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,60 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UUIDInfoContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     UUIDInfoContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
+#include "Lib/Common/Boxes/Generic/UUIDInfoContents.h"
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__
-
-
-// #include "DataEntryURLBox.h"
-#include "Lib/Common/Boxes/Generic/UUIDListBox.h"
-#include "Lib/Common/Boxes/Generic/DataEntryURLBox.h"
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "UniversalUniqueIdentifier.h"
+UUIDInfoContents *UUIDInfoContents::clone() const {
+  return new UUIDInfoContents(*this);
+}
 
 
-class UUIDInfoContents : public InMemoryDBox {
- protected:
-  UUIDListBox u_list;
-  DataEntryURLBox de;
-
- public:
-  UUIDInfoContents() = default;
-
-  // implemented copy constructors in UUIDListBox, DataEntryURLBox
-  UUIDInfoContents(const UUIDInfoContents& other)
-      : u_list(other.u_list), de(other.de) {
-  }
+uint64_t UUIDInfoContents::size() const noexcept {
+  return u_list.size() + de.size();
+}
 
 
-  UUIDInfoContents(UUIDInfoContents&& other)
-      : u_list(std::move(other.u_list)), de(std::move(other.de)) {
-  }
+bool UUIDInfoContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other = dynamic_cast<const UUIDInfoContents &>(other);
+  return *this == cast_other;
+}
 
 
-  virtual UUIDInfoContents* clone() const override;
+bool UUIDInfoContents::operator==(const UUIDInfoContents &other) const {
+  return (this->u_list == other.u_list) && (this->de == other.de);
+}
 
 
-  ~UUIDInfoContents() = default;
-
-
-  virtual uint64_t size() const noexcept override;
-
-
-  virtual bool is_equal(const DBox& other) const override;
-
-
-  bool operator==(const UUIDInfoContents& other) const;
-
-
-  bool operator!=(const UUIDInfoContents& other) const;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UUIDINFOCONTENTS_H__ */
+bool UUIDInfoContents::operator!=(const UUIDInfoContents &other) const {
+  return !this->operator==(other);
+}
