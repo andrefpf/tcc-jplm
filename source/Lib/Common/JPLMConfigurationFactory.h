@@ -45,6 +45,7 @@
 #include <memory>
 #include <unordered_map>
 #include "Lib/Common/JPLMConfiguration.h"
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
@@ -58,7 +59,12 @@ class JPLMConfigurationFactory {
 
   static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
       [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
-    return make_unique<JPLMConfiguration>(argc, const_cast<char**>(argv));
+    auto basic_config =
+        make_unique<JPLMDecoderConfiguration>(argc, const_cast<char**>(argv));
+    if (basic_config->is_help_mode()) {
+      exit(0);
+    }
+    return basic_config;
   }
 
  protected:

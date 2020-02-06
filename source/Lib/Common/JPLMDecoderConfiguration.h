@@ -44,8 +44,22 @@
 #include "Lib/Common/JPLMConfiguration.h"
 
 class JPLMDecoderConfiguration : public JPLMConfiguration {
+ private:
+  std::size_t current_hierarchy_level = 0;
+
+ protected:
+  JPLMDecoderConfiguration(int argc, char **argv, std::size_t level)
+      : JPLMConfiguration(argc, argv, level) {
+    this->message =
+        "JPLM Decoder\nUsage: jpl-decoder-bin"
+        " [OPTIONS]\nOptions: ";
+  }
+
  public:
-  JPLMDecoderConfiguration() = default;
+  JPLMDecoderConfiguration(int argc, char **argv)
+      : JPLMDecoderConfiguration(argc, argv, 0) {
+    run_help();
+  }
   virtual ~JPLMDecoderConfiguration() = default;
 };
 
