@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,56 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DataEntryURLContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     DataEntryURLBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
-
-#include <tuple>  //std::tie
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
-
-class DataEntryURLContents : public InMemoryDBox {
- protected:
-  uint8_t vers;  //version number
-  BinaryTools::uint24_t flag;  //flags
-  std::string loc;  //location (the url)
-
- public:
-  DataEntryURLContents() = default;
-
-
-  DataEntryURLContents* clone() const override;
-
-
-  ~DataEntryURLContents() = default;
-
-
-  uint64_t size() const noexcept override;
-
-
-  bool is_equal(const DBox& other) const override;
-
-
-  bool operator==(const DataEntryURLContents& other) const;
-
-
-  bool operator!=(const DataEntryURLContents& other) const;
-
-
-  uint8_t get_version_number() const noexcept;
-
-
-  BinaryTools::uint24_t get_flag() const noexcept;
-
-
-  const char* get_location() const noexcept;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */
+#include "Lib/Common/Boxes/Generic/DataEntryURLBox.h"

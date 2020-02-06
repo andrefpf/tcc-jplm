@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,56 +31,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     DataEntryURLContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     DataEntryURLContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__
-
-#include <tuple>  //std::tie
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
-
-class DataEntryURLContents : public InMemoryDBox {
- protected:
-  uint8_t vers;  //version number
-  BinaryTools::uint24_t flag;  //flags
-  std::string loc;  //location (the url)
-
- public:
-  DataEntryURLContents() = default;
+#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h
 
 
-  DataEntryURLContents* clone() const override;
+DataEntryURLContents *DataEntryURLContents::clone() const {
+  return new DataEntryURLContents(*this);
+}
 
 
-  ~DataEntryURLContents() = default;
+uint64_t DataEntryURLContents::size() const noexcept {
+  return 4 + loc.size() + 1;
+  //4 for ver and location + the size of the string + the null termination char
+}
 
 
-  uint64_t size() const noexcept override;
+bool DataEntryURLContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other = dynamic_cast<const DataEntryURLContents &>(other);
+  return *this == cast_other;
+}
 
 
-  bool is_equal(const DBox& other) const override;
+bool DataEntryURLContents::operator==(const DataEntryURLContents &other) const {
+  return std::tie(this->vers, this->flag, this->loc) ==
+         std::tie(other.vers, other.flag, other.loc);
+}
 
 
-  bool operator==(const DataEntryURLContents& other) const;
+bool DataEntryURLContents::operator!=(const DataEntryURLContents &other) const {
+  return !this->operator==(other);
+}
 
 
-  bool operator!=(const DataEntryURLContents& other) const;
+uint8_t DataEntryURLContents::get_version_number() const noexcept {
+  return vers;
+}
 
 
-  uint8_t get_version_number() const noexcept;
+BinaryTools::uint24_t DataEntryURLContents::get_flag() const noexcept {
+  return flag;
+}
 
 
-  BinaryTools::uint24_t get_flag() const noexcept;
-
-
-  const char* get_location() const noexcept;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_DATAENTRYURLCONTENTS_H__ */
+const char* DataEntryURLContents::get_location() const noexcept {
+  return loc.c_str();
+}
