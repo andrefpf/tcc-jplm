@@ -48,6 +48,7 @@ class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
  private:
   static constexpr std::size_t current_hierarchy_level = 2;
+  void add_options_to_cli();
 
  protected:
   JPLMEncoderConfigurationLightField4DPredictionMode(
@@ -74,6 +75,10 @@ JPLMEncoderConfigurationLightField4DPredictionMode::
 Type JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
     const {
   return Type::prediction_mode;
+}
+
+void JPLMEncoderConfigurationLightField4DPredictionMode::add_options_to_cli() {
+  //<! \todo add the needed options for transform mode configuration cli
 }
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__ */
