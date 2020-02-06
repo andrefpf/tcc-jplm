@@ -52,12 +52,12 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
   std::unique_ptr<ContiguousCodestreamCode> code;
 
  public:
-  ContiguousCodestreamContents(const ContiguousCodestreamCode& code)
+  explicit ContiguousCodestreamContents(const ContiguousCodestreamCode& code)
       : code(std::unique_ptr<ContiguousCodestreamCode>(code.clone())) {
   }
 
 
-  ContiguousCodestreamContents(std::unique_ptr<ContiguousCodestreamCode>&& code)
+  explicit ContiguousCodestreamContents(std::unique_ptr<ContiguousCodestreamCode>&& code)
       : code(std::move(code)) {
   }
 
@@ -68,12 +68,12 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
 
 
   //! \todo remove this method (it is not necessary to be defined as const in its name)
-  const ContiguousCodestreamCode& get_const_ref_to_code() const {
+  [[nodiscard]] const ContiguousCodestreamCode& get_const_ref_to_code() const {
     return *code;
   }
   
 
-  const ContiguousCodestreamCode& get_ref_to_code() const {
+  [[nodiscard]] const ContiguousCodestreamCode& get_ref_to_code() const {
     return *code;
   }
 
@@ -94,7 +94,7 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
   }
 
 
-  virtual bool is_equal(const DBox& other) const override {
+  bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other =
