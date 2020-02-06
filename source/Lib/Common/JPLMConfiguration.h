@@ -39,6 +39,7 @@
  *            command line interface. All configuration objects are derived
  *            from JPLMConfiguration.
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-26
  */
 #ifndef JPLM_JPLMConfiguration_H
@@ -80,6 +81,7 @@ class JPLMConfiguration {
   std::string output;
   std::size_t hierarchy_level =
       0;  //<! the hierarchy level used for printing help
+  std::string executable_name = "undefined";
   void run_help() const;
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
@@ -90,7 +92,6 @@ class JPLMConfiguration {
  private:
   bool help_mode_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
-  std::string executable_name;
   void add_options_to_cli(char **argv);
 };
 

@@ -62,14 +62,16 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
         this->current_hierarchy_level});
   }
 
+
  protected:
   JPLMDecoderConfiguration(int argc, char **argv, std::size_t level)
       : JPLMConfiguration(argc, argv, level) {
-    this->message =
-        "JPLM Decoder\nUsage: jpl-decoder-bin"
-        " [OPTIONS]\nOptions: ";
     add_options_to_cli();
+    this->message = "JPLM Decoder\nUsage: " + this->executable_name +
+                    " [OPTIONS]\nOptions: ";
+    this->parse_cli(argc, argv);
   }
+
 
  public:
   JPLMDecoderConfiguration(int argc, char **argv)
@@ -77,6 +79,8 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
             argc, argv, JPLMDecoderConfiguration::current_hierarchy_level) {
     run_help();
   }
+
+
   virtual ~JPLMDecoderConfiguration() = default;
 };
 

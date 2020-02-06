@@ -109,12 +109,11 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
       : JPLMConfiguration(argc, argv, level) {
     add_options_to_cli();
+    this->message = "JPLM Encoder\nUsage: " + this->executable_name +
+                    " [OPTIONS]\nOptions: ";
 
 
     this->parse_cli(argc, argv);
-    this->message =
-        "JPLM Encoder\nUsage: jpl-encoder-bin"
-        " [OPTIONS]\nOptions: ";
   }
   void parse_json(string path);
   void parse_jpeg_pleno_part(const json &conf);
