@@ -3,5 +3,6 @@ set(COMMON_BOXES_GENERIC_SOURCES
     ContiguousCodestreamCodeInMemory.cpp
     ContiguousCodestreamBox.cpp
     ContiguousCodestreamContents.cpp
-    ImageHeaderContents.cpp)
+    ImageHeaderContents.cpp
+    UniversalUniqueIdentifier)
 add_library(jplm_common_boxes_generic ${COMMON_BOXES_GENERIC_SOURCES})
