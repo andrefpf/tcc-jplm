@@ -132,10 +132,7 @@ bool Box::has_same_length(const Box &other) const noexcept {
 }
 
 bool Box::holds_same_data(const Box &other) const noexcept {
-  if (*(other.d_box) != *(this->d_box)) {
-    return false;
-  }
-  return true;
+  return *(other.d_box) == *(this->d_box);
 }
 
 bool Box::is_equal(const Box &other) const noexcept {
