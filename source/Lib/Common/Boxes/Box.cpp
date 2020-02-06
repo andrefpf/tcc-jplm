@@ -93,12 +93,12 @@ std::unique_ptr<DBox> Box::get_dbox() const noexcept {
 }
 
 
-const DBox& Box::get_ref_to_dbox() const noexcept {
+const DBox &Box::get_ref_to_dbox() const noexcept {
   return *(this->d_box);
 }
 
 
-DBox& Box::get_ref_to_dbox() noexcept {
+DBox &Box::get_ref_to_dbox() noexcept {
   return *(this->d_box);
 }
 
@@ -106,12 +106,56 @@ DBox& Box::get_ref_to_dbox() noexcept {
 std::uint64_t Box::size() const noexcept {
   auto length = this->get_length();
   return std::visit(
-      [](auto& value_holder) { return (uint64_t) value_holder.get_value(); },
+      [](auto &value_holder) { return (uint64_t) value_holder.get_value(); },
       length);
 }
 
+Box::Box(TBox t_box, const DBox &d_box)
+    : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
+}
 
-std::ostream& operator<<(std::ostream& stream, const Box& box) {
+Box::Box(TBox t_box, std::unique_ptr<DBox> &&d_box)
+    : t_box(t_box), d_box(std::move(d_box)) {
+}
+
+bool Box::has_same_type(const Box &other) const noexcept {
+  if (other.t_box == this->t_box)
+    return true;
+  return false;
+}
+
+bool Box::has_same_length(const Box &other) const noexcept {
+  if (other.size() != this->size()) {
+    return false;
+  }
+  return true;
+}
+
+bool Box::holds_same_data(const Box &other) const noexcept {
+  if (*(other.d_box) != *(this->d_box)) {
+    return false;
+  }
+  return true;
+}
+
+bool Box::is_equal(const Box &other) const noexcept {
+  if (this->holds_same_data(other) && this->has_same_type(other) &&
+      this->has_same_length(other))
+    return true;
+  return false;
+}
+
+/* Friends and operators */
+
+bool Box::operator==(const Box &other) const {
+  return this->is_equal(other);
+}
+
+bool Box::operator!=(const Box &other) const {
+  return !this->operator==(other);
+}
+
+std::ostream &operator<<(std::ostream &stream, const Box &box) {
   stream << box.get_lbox() << box.get_tbox();
   auto xlbox = box.get_xlbox();
   if (xlbox) {
