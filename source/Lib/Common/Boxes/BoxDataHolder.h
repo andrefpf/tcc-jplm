@@ -88,10 +88,7 @@ T BoxDataHolder<T>::get_value() const {
 
 template<typename T>
 bool BoxDataHolder<T>::is_equal(const BoxDataHolder& other) const noexcept {
-  if (this->value == other.value) {
-    return true;
-  }
-  return false;
+  return this->value == other.value;
 }
 
 
