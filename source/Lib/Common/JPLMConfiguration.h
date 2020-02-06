@@ -62,7 +62,11 @@ using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {
+  Undefined = 0,
+  Framework = 1,
   LightField = 2,
+  ConformanceTest = 3,
+  ReferenceSoftware = 4,
 };
 
 

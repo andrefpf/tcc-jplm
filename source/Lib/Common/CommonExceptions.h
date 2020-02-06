@@ -54,6 +54,35 @@ class NotImplementedException : public std::logic_error {
   }
 };
 
+
+class UndefinedPartException : public std::exception {
+ private:
+  std::string msg =
+      "Part was not specified. The encoder has no way to know which part of "
+      "the standard is to be used.";
+
+ public:
+  UndefinedPartException() = default;
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+
+class InvalidPartException : public std::exception {
+ private:
+  std::string msg = "The informed part is not a valid part for running JPLM.";
+
+ public:
+  InvalidPartException() = default;
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+
 }  // namespace CommonExceptions
 
 #endif  // JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H

@@ -44,6 +44,7 @@
 #include <any>
 #include <memory>
 #include <unordered_map>
+#include "Lib/Common/CommonExceptions.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
@@ -53,9 +54,27 @@
 
 
 class JPLMConfigurationFactory {
+ private:
+  static void show_invalid_part_common_message() {
+    std::cerr
+        << "the encoder must be called passing a valid part that is "
+           "expected to define a format to encode a given plenoptic image "
+           "modality (such as Light Fields, Point Clouds and Holograms). To "
+           "obtain help, run the encoder again with --help option. "
+        << std::endl;
+    throw CommonExceptions::InvalidPartException();
+  }
+
+
+ protected:
+  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
+      int argc, char const* argv[], CompressionTypeLightField type);
+
+
  public:
   static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
       int argc, char const* argv[]);
+
 
   static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
       [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]) {
@@ -66,10 +85,6 @@ class JPLMConfigurationFactory {
     }
     return basic_config;
   }
-
- protected:
-  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
-      int argc, char const* argv[], CompressionTypeLightField type);
 };
 
 // \todo: refactor this function and split it into specialized functions
@@ -91,6 +106,9 @@ JPLMConfigurationFactory::get_encoder_configuration(
   }
 
   switch (basic_config.get_jpeg_pleno_part()) {
+    case JpegPlenoPart::Undefined: {
+      throw CommonExceptions::UndefinedPartException();
+    }
     case JpegPlenoPart::LightField: {
       auto light_field_configuration =
           JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
@@ -99,6 +117,7 @@ JPLMConfigurationFactory::get_encoder_configuration(
         return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
             argc, const_cast<char**>(argv));
       } else {
+        //<! \todo after implementing the prediction mode in JPLM, needs to return Prediction mode configuration
         throw UnsuportedPredictionMode();
       }
     }
@@ -110,8 +129,31 @@ JPLMConfigurationFactory::get_encoder_configuration(
     // ...
     // break;
     // }
-    default:
-      throw NotImplementedYetPartException();
+    case JpegPlenoPart::Framework: {
+      std::cerr
+          << "The reference software needs a more specialized part to operate. "
+             "Although Part 1 defines the Framework that is also used in other "
+             "parts, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    case JpegPlenoPart::ReferenceSoftware: {
+      std::cerr
+          << "Part 4 defines the Reference Software of JPEG Pleno. This is the "
+             "reference software, so there is no need to inform this part. "
+             "Thus, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    case JpegPlenoPart::ConformanceTest: {
+      //<! \todo This case may trigger a help that shows how to run a conformance test
+      std::cerr
+          << "Part 3 defines the Conformace Tests. Although the reference "
+             "software may be used for conformance testing, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    default: { throw NotImplementedYetPartException(); }
   }
 }
 
