@@ -77,31 +77,16 @@ class JPLMConfiguration {
    public:
     CLIArgument(const std::string &longOption, const std::string &short_option,
         const std::string &description,
-        const std::function<void(std::any)> &action)
-        : long_option(longOption), short_option(short_option),
-          description(description), action(action) {
-      this->parsed = false;
-    }
+        const std::function<void(std::any)> &action);
 
-    void parse(std::string key, std::any value) {
-      if (!this->parsed && (key == long_option || key == short_option)) {
-        action(value);
-        this->parsed = true;
-      }
-    }
+    void parse(std::string key, std::any value);
 
    public:
-    const std::string &getLongOption() const {
-      return long_option;
-    }
+    const std::string &getLongOption() const;
 
-    const std::string &getShortOption() const {
-      return short_option;
-    }
+    const std::string &getShortOption() const;
 
-    const std::string &getDescription() const {
-      return description;
-    }
+    const std::string &getDescription() const;
 
    private:
     std::string long_option;
@@ -120,7 +105,7 @@ class JPLMConfiguration {
   bool validate_param(std::string param);
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
 
-private:
+ private:
   bool help_mode_flag = false;
   std::string executable_name;
 };

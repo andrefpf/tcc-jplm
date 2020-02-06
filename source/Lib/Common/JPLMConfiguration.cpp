@@ -179,3 +179,30 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
 const bool &JPLMConfiguration::is_help_mode() const {
   return help_mode_flag;
 }
+
+JPLMConfiguration::CLIArgument::CLIArgument(const std::string &longOption,
+    const std::string &short_option, const std::string &description,
+    const std::function<void(std::any)> &action)
+    : long_option(longOption), short_option(short_option),
+      description(description), action(action) {
+  this->parsed = false;
+}
+
+void JPLMConfiguration::CLIArgument::parse(std::string key, std::any value) {
+  if (!this->parsed && (key == long_option || key == short_option)) {
+    action(value);
+    this->parsed = true;
+  }
+}
+
+const std::string &JPLMConfiguration::CLIArgument::getLongOption() const {
+  return long_option;
+}
+
+const std::string &JPLMConfiguration::CLIArgument::getShortOption() const {
+  return short_option;
+}
+
+const std::string &JPLMConfiguration::CLIArgument::getDescription() const {
+  return description;
+}
