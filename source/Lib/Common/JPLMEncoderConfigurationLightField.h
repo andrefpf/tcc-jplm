@@ -75,16 +75,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
 
   JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level)
       : JPLMEncoderConfiguration(argc, argv, level) {
-    arguments.push_back({"--type", "-T",
-        "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
-        "prediction_mode=1}",
-        [this](std::any v) {
-          std::string typed_string = std::any_cast<std::string>(v);
-          int type = std::stoi(typed_string);
-          this->type = static_cast<Type>(type);
-        },
-        this->current_hierarchy_level});
-
     arguments.push_back({"--view_height", "-v", "Single-view height dimension",
         [this](std::any value) {
           this->view_height_v = std::stoi(std::any_cast<string>(value));
@@ -111,9 +101,21 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
         },
         this->current_hierarchy_level});
 
+    arguments.push_back({"--type", "-T",
+        "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
+        "prediction_mode=1}",
+        [this](std::any v) {
+          std::string typed_string = std::any_cast<std::string>(v);
+          int type = std::stoi(typed_string);
+          this->type = static_cast<Type>(type);
+        },
+        this->current_hierarchy_level});
+
     this->parse_cli(argc, argv);
-    run_help();
+
+    this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
   }
+
   void parse_json(string path);
   void parse_number_of_rows_t(const json &conf);
   void parse_number_of_columns_s(const json &conf);
@@ -125,13 +127,14 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   void parse_mode_type(const json &conf);
   void check_inconsistencies();
   CompressionTypeLightField type;
-  std::size_t current_hierarchy_level = 2;
+  std::size_t current_hierarchy_level = 1;
 };
 
 
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
-    : JPLMEncoderConfigurationLightField(argc, argv, 2) {
+    : JPLMEncoderConfigurationLightField(argc, argv, 1) {
+  run_help();
 }
 
 

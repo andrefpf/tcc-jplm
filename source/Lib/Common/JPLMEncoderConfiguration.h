@@ -91,7 +91,9 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
             this->current_hierarchy_level});
 
     this->parse_cli(argc, argv);
-    run_help();
+    this->message =
+        "JPLM Encoder\nUsage: jpl-encoder-bin"
+        " [OPTIONS]\nOptions: ";
   }
   void parse_json(string path);
   void parse_jpeg_pleno_part(const json &conf);
@@ -99,14 +101,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 
   std::string config;
-  // Belongs to JPLMEncoderConfiguration
-  // app.add_option("-c,--config", config, "Path to config file");
-
   JpegPlenoPart part;
-  //  app.add_set(
-  //  "-p,--part", part, {JpegPlenoPart::LightField}, "Part of JPEG Pleno")
-  //  ->type_name("enum/JpegPlenoPart in { LightField=2 }");
-
   ColorSpaces::ColorSpace colorspace;
 
  public:
@@ -120,6 +115,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMEncoderConfiguration(argc, argv, 0) {
+  run_help();
 }
 
 

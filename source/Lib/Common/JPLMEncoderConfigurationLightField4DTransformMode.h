@@ -51,7 +51,7 @@
 class JPLMEncoderConfigurationLightField4DTransformMode
     : public JPLMEncoderConfigurationLightField {
  private:
-  std::size_t current_hierarchy_level = 3;
+  std::size_t current_hierarchy_level = 2;
   struct IntraView {
     uint32_t vertical, horizontal;
   };
@@ -259,7 +259,8 @@ JPLMEncoderConfigurationLightField4DTransformMode::
       this->current_hierarchy_level});
 
   this->parse_cli(argc, argv);
-  run_help();
+
+  this->message = "Options for Transform mode ( -T,--type=0 ):";
 
   if (!config.empty())
     parse_json(config);
@@ -269,7 +270,8 @@ JPLMEncoderConfigurationLightField4DTransformMode::
 
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
-    : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv, 3) {
+    : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv, 2) {
+  run_help();
 }
 
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
