@@ -122,17 +122,16 @@ class JPLMConfiguration {
   std::string output;
   std::size_t hierarchy_level =
       0;  //<! the hierarchy level used for printing help
-  void run_help();
+  void run_help() const;
   void parse_cli(int argc, char **argv);
   bool validate_param(std::string param);
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
-  JPLMConfiguration(int argc, char **argv, std::size_t level)
-      : JPLMConfiguration(argc, argv) {
-    this->hierarchy_level = level;
-  }
+  JPLMConfiguration(int argc, char **argv, std::size_t level);
+  std::string message = std::string("");
 
  private:
   bool help_mode_flag = false;
+  std::size_t current_hierarchy_level = 0;
   std::string executable_name;
 };
 

@@ -59,6 +59,9 @@ namespace fs = std::filesystem;
 
 // TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
 class JPLMEncoderConfiguration : public JPLMConfiguration {
+ private:
+  std::size_t current_hierarchy_level = 0;
+
  protected:
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
       : JPLMConfiguration(argc, argv, level) {
@@ -73,7 +76,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
             }
           }
         },
-        this->hierarchy_level});
+        this->current_hierarchy_level});
 
     arguments.push_back(
         {"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
@@ -85,7 +88,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
                 throw NotImplementedYetInputTypeParseException(
                     "Part " + std::to_string(part));
             },
-            this->hierarchy_level});
+            this->current_hierarchy_level});
 
     this->parse_cli(argc, argv);
     run_help();
@@ -116,7 +119,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
-    : JPLMEncoderConfiguration(argc, argv, 1) {
+    : JPLMEncoderConfiguration(argc, argv, 0) {
 }
 
 

@@ -51,6 +51,7 @@
 class JPLMEncoderConfigurationLightField4DTransformMode
     : public JPLMEncoderConfigurationLightField {
  private:
+  std::size_t current_hierarchy_level = 3;
   struct IntraView {
     uint32_t vertical, horizontal;
   };
@@ -91,6 +92,8 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 
 
  protected:
+  JPLMEncoderConfigurationLightField4DTransformMode(
+      int argc, char **argv, std::size_t level);
   void parse_json(string path);
   void parse_minimal_transform_size_intra_view_vertical(const json &conf);
   void parse_maximal_transform_size_intra_view_vertical(const json &conf);
@@ -155,10 +158,10 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   TransformSize transform_size;
 };
 
-
 JPLMEncoderConfigurationLightField4DTransformMode::
-    JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
-    : JPLMEncoderConfigurationLightField(argc, argv) {
+    JPLMEncoderConfigurationLightField4DTransformMode(
+        int argc, char **argv, std::size_t level)
+    : JPLMEncoderConfigurationLightField(argc, argv, level) {
   arguments.push_back(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
           [this](std::any v) {
@@ -171,7 +174,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
               this->border_policy = BorderBlocksPolicy::truncate;
             }
           },
-          this->hierarchy_level});
+          this->current_hierarchy_level});
 
   arguments.push_back({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
@@ -180,7 +183,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         std::string::size_type sz;
         this->lambda = std::stod(typed_string, &sz);
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_maximum_inter_view_vertical", "-TNIv",
       "Maximum 4D transform size in inter-view vertical direction.",
@@ -189,7 +192,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->maximal_transform_size_inter_view_vertical_t =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_maximum_inter_view_horizontal",
       "-TMIh", "Maximum 4D transform size in inter-view horizontal direction.",
@@ -198,7 +201,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->maximal_transform_size_inter_view_horizontal_s =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_maximum_intra_view_vertical", "-TMiv",
       "Maximum 4D transform size in intra-view vertical direction.",
@@ -207,7 +210,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->maximal_transform_size_intra_view_vertical_v =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
@@ -216,7 +219,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->maximal_transform_size_intra_view_horizontal_u =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
 
   arguments.push_back({"--transform_size_minimum_inter_view_vertical", "-TmIv",
@@ -226,7 +229,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->minimal_transform_size_inter_view_vertical_t =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_minimum_inter_view_horizontal",
       "-TmIh", "Minimum 4D transform size in inter-view horizontal direction.",
@@ -235,7 +238,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->minimal_transform_size_inter_view_horizontal_s =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_minimum_intra_view_vertical", "-Tmiv",
       "Minimum 4D transform size in intra-view vertical direction.",
@@ -244,7 +247,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->minimal_transform_size_intra_view_vertical_v =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--transform_size_minimum_intra_view_horizontal",
       "-Tmih", "Minimum 4D transform size in intra-view horizontal direction.",
@@ -253,7 +256,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
         this->minimal_transform_size_intra_view_horizontal_u =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   this->parse_cli(argc, argv);
   run_help();
@@ -261,6 +264,12 @@ JPLMEncoderConfigurationLightField4DTransformMode::
   if (!config.empty())
     parse_json(config);
   init_transform_size();
+}
+
+
+JPLMEncoderConfigurationLightField4DTransformMode::
+    JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv)
+    : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv, 3) {
 }
 
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()

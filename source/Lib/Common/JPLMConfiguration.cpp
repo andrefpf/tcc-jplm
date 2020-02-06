@@ -55,11 +55,8 @@ const std::string &JPLMConfiguration::get_output_filename() const {
   return output;
 }
 
-void JPLMConfiguration::run_help() {
+void JPLMConfiguration::run_help() const {
   if (this->help_mode_flag) {
-    std::cout << "JPLM Codec" << std::endl;
-    std::cout << "Usage:" << this->executable_name << " [OPTIONS]" << std::endl;
-    std::cout << "Options:" << std::endl;
     ConsoleTable table(1, 1, samilton::Alignment::centre);
     ConsoleTable::TableChars chars;
     chars.topDownSimple = '\0';
@@ -80,22 +77,26 @@ void JPLMConfiguration::run_help() {
         table[count][1](sAlign::right) =
             argument.getShortOption() + "," + argument.getLongOption();
         table[count][2](sAlign::left) = argument.getDescription();
+        // + std::to_string(this->hierarchy_level);
         count++;
       }
     }
     if (count != 0) {
+      std::cout << message << std::endl;
       std::cout << table << std::endl;
     }
   }
 }
 
-JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
+
+JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
+    : hierarchy_level(level) {
   arguments.push_back({"--help", "-h", "Print this help message and exit",
       [this, argv]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(argv[0]);
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
 
   arguments.push_back({"--input", "-i",
       "Input directory containing a set of uncompressed light-field images "
@@ -103,22 +104,29 @@ JPLMConfiguration::JPLMConfiguration(int argc, char **argv) {
       [this]([[maybe_unused]] std::any v) {
         this->input = std::any_cast<std::string>(v);
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
   arguments.push_back({"--output", "-o",
       "Output directory containing temporary light-field data and the "
       "compressed bitstream.",
       [this]([[maybe_unused]] std::any v) {
         this->output = std::any_cast<std::string>(v);
       },
-      this->hierarchy_level});
+      this->current_hierarchy_level});
   this->parse_cli(argc, argv);
-  run_help();
+  //run_help();
 }
+
+
+JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
+    : JPLMConfiguration(argc, argv, 0) {
+}
+
 
 bool JPLMConfiguration::validate_param(std::string param) {
   const std::string prefix = "-";
   return !param.compare(0, prefix.size(), prefix);
 }
+
 
 bool JPLMConfiguration::validate_value(
     unsigned int size, unsigned int pos, [[maybe_unused]] char **argv) {
