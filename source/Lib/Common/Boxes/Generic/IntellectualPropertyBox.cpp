@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,77 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UndefinedContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+/** \file     IntellectualPropertyBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
-
-
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
-
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-
-
-class UndefinedContents : public InMemoryDBox {
- protected:
-  std::vector<std::byte> byte_array;
-
- public:
-  UndefinedContents(const std::vector<std::byte>& byte_array)
-      : byte_array(byte_array) {
-  }
-
-
-  UndefinedContents(std::vector<std::byte>&& byte_array)
-      : byte_array(std::move(byte_array)) {
-  }
-
-
-  UndefinedContents(const UndefinedContents& other)
-      : byte_array(other.byte_array) {
-  }
-
-
-  UndefinedContents(UndefinedContents&& other)
-      : byte_array(std::move(other.byte_array)) {
-  }
-
-
-  UndefinedContents() = default;
-
-
-  virtual UndefinedContents* clone() const override;
-
-
-  virtual bool is_equal(const DBox& other) const override;
-
-
-  ~UndefinedContents() = default;
-
-
-  uint64_t size() const noexcept override;
-
-
-  bool operator==(const UndefinedContents& other) const;
-
-
-  bool operator!=(const UndefinedContents& other) const;
-
-
-  void set_bytes(const std::vector<std::byte>&& bytes);
-
-
-  void set_bytes(const std::vector<std::byte>& bytes);
-
-
-  void add_bytes(const std::vector<std::byte>& bytes);
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__ */
+#include "Lib/Common/Boxes/Generic/IntellectualPropertyBox.h"

@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,77 +31,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     UndefinedContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-25
+/** \file     UndefinedContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
+#include "Lib/Common/Boxes/Generic/UndefinedContents.h
 
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__
-
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-
-
-class UndefinedContents : public InMemoryDBox {
- protected:
-  std::vector<std::byte> byte_array;
-
- public:
-  UndefinedContents(const std::vector<std::byte>& byte_array)
-      : byte_array(byte_array) {
-  }
+UndefinedContents *UndefinedContents::clone() const {
+  return new UndefinedContents(*this);
+}
 
 
-  UndefinedContents(std::vector<std::byte>&& byte_array)
-      : byte_array(std::move(byte_array)) {
-  }
+bool UndefinedContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
+  return *this == cast_other;
+}
 
 
-  UndefinedContents(const UndefinedContents& other)
-      : byte_array(other.byte_array) {
-  }
+uint64_t UndefinedContents::size() const noexcept {
+  return byte_array.size();
+}
 
 
-  UndefinedContents(UndefinedContents&& other)
-      : byte_array(std::move(other.byte_array)) {
-  }
+bool UndefinedContents::operator==(const UndefinedContents &other) const {
+  return this->byte_array == other.byte_array;
+}
 
 
-  UndefinedContents() = default;
+bool UndefinedContents::operator!=(const UndefinedContents &other) const {
+  return !this->operator==(other);
+}
 
 
-  virtual UndefinedContents* clone() const override;
+void UndefinedContents::set_bytes(const std::vector<std::byte> &&bytes) {
+  byte_array = std::move(bytes);
+}
 
 
-  virtual bool is_equal(const DBox& other) const override;
+void UndefinedContents::set_bytes(const std::vector<std::byte> &bytes) {
+  byte_array = bytes;
+}
 
 
-  ~UndefinedContents() = default;
+void UndefinedContents::add_bytes(const std::vector<std::byte> &bytes) {
+  byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
+}
 
 
-  uint64_t size() const noexcept override;
-
-
-  bool operator==(const UndefinedContents& other) const;
-
-
-  bool operator!=(const UndefinedContents& other) const;
-
-
-  void set_bytes(const std::vector<std::byte>&& bytes);
-
-
-  void set_bytes(const std::vector<std::byte>& bytes);
-
-
-  void add_bytes(const std::vector<std::byte>& bytes);
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNDEFINEDCONTENTS_H__ */
+std::vector<std::byte> UndefinedContents::get_bytes() const noexcept {
+  return byte_array;
+}
