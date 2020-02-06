@@ -67,13 +67,10 @@ enum class JpegPlenoPart {
 
 
 class JPLMConfiguration {
- public:
-  JPLMConfiguration();
-  JPLMConfiguration(int argc, char **argv);
-
-  const std::string &get_input_filename() const;
-  const std::string &get_output_filename() const;
-  const bool &is_help_mode() const;
+ private:
+  bool help_mode_flag = false;
+  static constexpr std::size_t current_hierarchy_level = 0;
+  void add_options_to_cli(char **argv);
 
  protected:
   std::vector<CLIOption> cli_options;
@@ -89,10 +86,15 @@ class JPLMConfiguration {
   JPLMConfiguration(int argc, char **argv, std::size_t level);
   std::string message = std::string("");
 
- private:
-  bool help_mode_flag = false;
-  static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli(char **argv);
+
+ public:
+  JPLMConfiguration(int argc, char **argv);
+
+  virtual ~JPLMConfiguration() = default;
+
+  const std::string &get_input_filename() const;
+  const std::string &get_output_filename() const;
+  const bool &is_help_mode() const;
 };
 
 

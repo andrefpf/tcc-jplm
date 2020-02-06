@@ -35,6 +35,7 @@
  *  \brief    Implements JPLMCOnfiguration
  *  \details
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-11-26
  */
 
@@ -55,13 +56,16 @@ void JPLMConfiguration::add_options_to_cli(char **argv) {
       this->current_hierarchy_level});
 }
 
+
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
 }
 
+
 const std::string &JPLMConfiguration::get_output_filename() const {
   return output;
 }
+
 
 void JPLMConfiguration::run_help() const {
   if (this->help_mode_flag) {
@@ -138,6 +142,7 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
     }
   }
 }
+
 
 const bool &JPLMConfiguration::is_help_mode() const {
   return help_mode_flag;
