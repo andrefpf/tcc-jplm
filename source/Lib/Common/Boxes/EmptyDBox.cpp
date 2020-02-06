@@ -53,9 +53,7 @@ uint64_t EmptyDBox::size() const noexcept {
 
 
 bool EmptyDBox::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other))
-    return false;
-  return true;
+  return typeid(*this) == typeid(other);
 }
 
 
