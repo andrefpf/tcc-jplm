@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,43 +31,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     XLBox.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-29
+/** \file     GenericBox.cpp
+ *  \brief    Generic box definition
+ *  \details  This templated class adopts 3 template parameters: box_id,
+ *            ContentsClass, and BaseBox, that are used to specify a box.
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_GENERIC_XLBOX_H__
-#define JPLM_LIB_COMMON_GENERIC_XLBOX_H__
-
-#include "Lib/Common/Boxes/BoxDataHolder.h"
-#include "Lib/Part1/Common/CommonExceptions.h"
-
-
-class XLBox : public BoxDataHolder<uint64_t> {
- public:
-  XLBox() = default;
-
-
-  XLBox(const uint64_t& value) : BoxDataHolder<uint64_t>(value) {
-    if (value < 16) {
-      throw BoxExceptions::ValueNotAllowedException();
-    }
-  }
-
-
-  ~XLBox() = default;
-
-
-  bool operator==(const XLBox& other) const {
-    return this->is_equal(other);
-  }
-
-
-  bool operator!=(const XLBox& other) const {
-    return !operator==(other);
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_XLBOX_H__ */
+#include "Lib/Common/Boxes/GenericBox.cpp"

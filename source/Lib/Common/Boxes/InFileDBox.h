@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
 #define JPLM_LIB_COMMON_GENERIC_INFILEDBOX_H__
 
+#include <fstream>
 #include <iostream>
-#include <fstream> 
 #include "Lib/Common/Boxes/DBox.h"
 
 class InFileDBox : public DBox {
@@ -55,7 +55,7 @@ class InFileDBox : public DBox {
       : DBox(), filename(filename),
         file(filename.c_str(), std::ios::in | std::ios::out) {
   }
-  
+
 
   InFileDBox(const InFileDBox& other)
       : DBox(), filename(other.filename),
