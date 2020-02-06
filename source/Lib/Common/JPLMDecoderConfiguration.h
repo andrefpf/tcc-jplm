@@ -46,7 +46,7 @@
 class JPLMDecoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
-  void add_arguments() {
+  void add_options_to_cli() {
     arguments.push_back({"--input", "-i",
         "Input, i.e., a JPEG Pleno bitstream file (filename.jpl) to be "
         "decoded.",
@@ -68,7 +68,7 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
     this->message =
         "JPLM Decoder\nUsage: jpl-decoder-bin"
         " [OPTIONS]\nOptions: ";
-    add_arguments();
+    add_options_to_cli();
   }
 
  public:
