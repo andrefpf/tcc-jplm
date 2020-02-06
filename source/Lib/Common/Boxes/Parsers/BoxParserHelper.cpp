@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,43 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BoxParserHelper.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-15
+/** \file     BoxParserHelper.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H
-#define JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H
-
-#include "Lib/Utils/Stream/BinaryTools.h"
-#include "Lib/Utils/Stream/ManagedStream.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserHelperBase.h"
-#include "Lib/Common/Boxes/Parsers/CommonExceptions.h"
-
-
-template<class ParsingBox, bool required=true>
-class BoxParserHelper : public BoxParserHelperBase {
- protected:
-  void check_t_box_value() {
-    if(!this->is_a_box_with_id(ParsingBox::id)) {
-      throw BoxParserExceptions::WrongTBoxValueException(
-          this->t_box_value_in_stream, ParsingBox::id);
-    }
-  }
-
-
- public:
-  BoxParserHelper(ManagedStream& stream) : BoxParserHelperBase(stream) {
-    if constexpr (required) {
-      check_t_box_value();
-    }
-  }
-
-
-  virtual ~BoxParserHelper() = default;
-};
-
-
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSERHELPER_H__ */
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
