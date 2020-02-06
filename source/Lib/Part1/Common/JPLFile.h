@@ -100,7 +100,7 @@ class JPLFile {
   bool has_codestream() const noexcept;
 
 
-  auto number_of_codestreams() const noexcept;
+  std::size_t number_of_codestreams() const noexcept;
 
 
   auto& get_reference_to_codestreams() noexcept {

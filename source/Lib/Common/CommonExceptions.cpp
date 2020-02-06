@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,51 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFileFromStream.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-21
+/** \file     CommonExceptions.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
-#define JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
-
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Part1/Common/JPLFile.h"
-#include "Lib/Part1/Decoder/JPLFileParser.h"
-#include "Lib/Utils/Stream/ManagedStream.h"
-
-class JPLFileFromStream : public JPLFileParser, public JPLFile {
- protected:
-  uint64_t decoded_boxes =
-      2;  //it has at least decoded the signature and file type...
-
-  void check_boxes_constraints();
-
-  void populate_light_field_codestreams();
-
-  //! \todo Implement for Point Cloud Boxes...
-  void populate_point_cloud_codestreams();
-
-  void populate_hologram_codestreams();
-
-  void populate_codestreams_list();
-
-  void populate_jpl_fields();
-
- public:
-  JPLFileFromStream(const std::string& filename);
-
-
-  uint64_t get_number_of_decoded_boxes();
-
-
-  virtual ~JPLFileFromStream() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__ */
+#include "Lib/Common/CommonExceptions.h"

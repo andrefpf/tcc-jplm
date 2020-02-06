@@ -39,6 +39,7 @@
  */
 
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
+#include "Lib/Part1/Common/JPLFile.h"
 
 void JPLFileFromStream::check_boxes_constraints() {
   if (auto it = temp_decoded_boxes.find(FileTypeBox::id);

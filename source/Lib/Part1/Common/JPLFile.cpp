@@ -89,7 +89,7 @@ JpegPlenoSignatureBox JPLFile::get_jpeg_pleno_signature_box() const noexcept {
   return *jpeg_pleno_signature_box;
 }
 
-auto JPLFile::number_of_codestreams() const noexcept {
+std::size_t  JPLFile::number_of_codestreams() const noexcept {
   return jpeg_pleno_codestreams.size();
 }
 
