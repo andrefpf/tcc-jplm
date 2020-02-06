@@ -49,11 +49,11 @@ class CharArrayContents : public InMemoryDBox {
   std::vector<uint8_t> chars;
 
  public:
-  CharArrayContents(const std::vector<uint8_t>& array) : chars(array) {
+  explicit CharArrayContents(const std::vector<uint8_t>& array) : chars(array) {
   }
 
 
-  CharArrayContents(std::vector<uint8_t>&& array) : chars(std::move(array)) {
+  explicit CharArrayContents(std::vector<uint8_t>&& array) : chars(std::move(array)) {
   }
 
 
