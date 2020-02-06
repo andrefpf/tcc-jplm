@@ -54,16 +54,16 @@ class UUIDContents : public InMemoryDBox {
   UUIDContents() = default;
 
 
-  virtual UUIDContents* clone() const override;
+  UUIDContents* clone() const override;
 
 
   virtual ~UUIDContents() = default;
 
 
-  virtual uint64_t size() const noexcept override;
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override;
+  bool is_equal(const DBox& other) const override;
 
 
   bool operator==(const UUIDContents& other) const;
