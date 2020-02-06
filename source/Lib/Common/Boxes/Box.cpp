@@ -119,9 +119,7 @@ Box::Box(TBox t_box, std::unique_ptr<DBox> &&d_box)
 }
 
 bool Box::has_same_type(const Box &other) const noexcept {
-  if (other.t_box == this->t_box)
-    return true;
-  return false;
+  return other.t_box == this->t_box;
 }
 
 bool Box::has_same_length(const Box &other) const noexcept {
