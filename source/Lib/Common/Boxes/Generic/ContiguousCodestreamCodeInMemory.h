@@ -52,18 +52,13 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   mutable std::size_t current_pos = 0;
 
  public:
-  uint64_t size() const noexcept override {
-    return bytes.size();
-  }
-
-  ContiguousCodestreamCodeInMemory() {
-    bytes.reserve(100000);
-  }
+  uint64_t size() const noexcept override;
 
 
-  explicit ContiguousCodestreamCodeInMemory(uint64_t size) {
-    bytes.reserve(size);
-  }
+  ContiguousCodestreamCodeInMemory();
+
+
+  explicit ContiguousCodestreamCodeInMemory(uint64_t size);
 
 
   explicit ContiguousCodestreamCodeInMemory(const std::vector<std::byte>& bytes)
@@ -90,78 +85,34 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   virtual ~ContiguousCodestreamCodeInMemory() = default;
 
 
-  void push_byte(const std::byte byte) override {
-    bytes.emplace_back(byte);
-    ++current_pos;
-  }
+  void push_byte(const std::byte byte) override;
 
 
-  std::byte get_byte_at(const uint64_t pos) const override {
-    return bytes.at(pos);
-  }
+  std::byte get_byte_at(const uint64_t pos) const override;
 
 
-  std::byte get_next_byte() const override {
-    auto byte = bytes.at(current_pos);
-    ++current_pos;
-    return byte;
-  }
+  std::byte get_next_byte() const override;
 
 
-  std::vector<std::byte> get_next_n_bytes(std::size_t n) const override {
-    auto bytes_vector = std::vector<std::byte>();
-    bytes_vector.reserve(n);
-    for(auto i=decltype(n){0};i<n;++i){
-      bytes_vector.push_back(this->get_next_byte());
-    }
-    // current_pos+=n;
-    return bytes_vector;
-  }
+  std::vector<std::byte> get_next_n_bytes(std::size_t n) const override;
 
 
-  std::byte peek_next_byte() const override {
-    return bytes.at(current_pos);
-  }
+  std::byte peek_next_byte() const override;
 
 
-  bool is_next_valid() const override {
-    return current_pos < bytes.size(); 
-  }
+  bool is_next_valid() const override;
 
 
-  void rewind(std::size_t n_bytes_to_rewind) const override {
-    int64_t new_pos = current_pos - n_bytes_to_rewind;
-    if(new_pos >= 0) {
-      current_pos = static_cast<std::size_t>(new_pos);
-    } else {
-      current_pos = 0;
-    }
-  }
+  void rewind(std::size_t n_bytes_to_rewind) const override;
 
 
-  virtual ContiguousCodestreamCodeInMemory* clone() const override {
-    return new ContiguousCodestreamCodeInMemory(*this);
-  }
+  ContiguousCodestreamCodeInMemory* clone() const override;
 
 
-  bool is_equal(const ContiguousCodestreamCode& other) const override {
-    if (this->size() != other.size()) {
-      return false;
-    }
-    uint64_t counter = 0;
-    for (const auto& byte : bytes) {
-      if (byte != other.get_byte_at(counter)) {
-        return false;
-      }
-    }
-    return true;
-  }
+  bool is_equal(const ContiguousCodestreamCode& other) const override;
 
 
-  std::ostream& write_to(std::ostream& stream) const override {
-    stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-    return stream;
-  }
+  std::ostream& write_to(std::ostream& stream) const override;
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__ */
