@@ -125,10 +125,7 @@ bool Box::has_same_type(const Box &other) const noexcept {
 }
 
 bool Box::has_same_length(const Box &other) const noexcept {
-  if (other.size() != this->size()) {
-    return false;
-  }
-  return true;
+  return other.size() == this->size();
 }
 
 bool Box::holds_same_data(const Box &other) const noexcept {
