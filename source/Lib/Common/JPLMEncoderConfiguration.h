@@ -61,10 +61,7 @@ namespace fs = std::filesystem;
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
-
- protected:
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
-      : JPLMConfiguration(argc, argv, level) {
+  void add_options_to_cli() {
     arguments.push_back({"--input", "-i",
         "Input directory containing the plenoptic data to be compressed "
         "(according to the JPEG Pleno Part). "
@@ -106,6 +103,13 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
                     "Part " + std::to_string(part));
             },
             this->current_hierarchy_level});
+  }
+
+ protected:
+  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
+      : JPLMConfiguration(argc, argv, level) {
+    add_options_to_cli();
+
 
     this->parse_cli(argc, argv);
     this->message =
