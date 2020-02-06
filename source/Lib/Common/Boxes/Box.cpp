@@ -139,10 +139,8 @@ bool Box::holds_same_data(const Box &other) const noexcept {
 }
 
 bool Box::is_equal(const Box &other) const noexcept {
-  if (this->holds_same_data(other) && this->has_same_type(other) &&
-      this->has_same_length(other))
-    return true;
-  return false;
+  return this->holds_same_data(other) && this->has_same_type(other) &&
+         this->has_same_length(other);
 }
 
 /* Friends and operators */
