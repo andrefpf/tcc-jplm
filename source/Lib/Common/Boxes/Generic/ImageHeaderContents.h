@@ -93,16 +93,16 @@ class ImageHeaderContents : public InMemoryDBox {
   bool has_intellectual_property() const noexcept;
 
 
-  virtual ImageHeaderContents* clone() const override;
+  ImageHeaderContents* clone() const override;
 
 
   virtual ~ImageHeaderContents() = default;
 
 
-  virtual uint64_t size() const noexcept override;
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override;
+  bool is_equal(const DBox& other) const override;
 
 
   bool operator==(const ImageHeaderContents& other) const;
