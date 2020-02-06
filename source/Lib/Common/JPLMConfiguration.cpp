@@ -74,10 +74,9 @@ void JPLMConfiguration::run_help() const {
     for (const auto &argument : this->arguments) {
       if (argument.get_level() == this->hierarchy_level) {
         table[count][1](sAlign::right) =
-            argument.getShortOption() + "," + argument.getLongOption();
-        table[count][2](sAlign::left) = argument.getDescription();
-        // + std::to_string(this->hierarchy_level);
-        count++;
+            argument.get_short_option() + "," + argument.get_long_option();
+        table[count][2](sAlign::left) = argument.get_description();
+        ++count;
       }
     }
     if (count != 0) {

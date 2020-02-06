@@ -69,17 +69,17 @@ class CLIArgument {
   }
 
 
-  const std::string &getLongOption() const {
+  const std::string &get_long_option() const {
     return long_option;
   }
 
 
-  const std::string &getShortOption() const {
+  const std::string &get_short_option() const {
     return short_option;
   }
 
 
-  const std::string &getDescription() const {
+  const std::string &get_description() const {
     return description;
   }
 
