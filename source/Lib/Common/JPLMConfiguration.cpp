@@ -46,6 +46,15 @@ using sAlign = samilton::Alignment;
 using json = nlohmann::json;
 
 
+void JPLMConfiguration::add_options_to_cli(char **argv) {
+  arguments.push_back({"--help", "-h", "Print this help message and exit",
+      [this, argv]([[maybe_unused]] std::any v) {
+        this->help_mode_flag = true;
+        this->executable_name = std::string(argv[0]);
+      },
+      this->current_hierarchy_level});
+}
+
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
 }
@@ -89,13 +98,7 @@ void JPLMConfiguration::run_help() const {
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
     : hierarchy_level(level) {
-  arguments.push_back({"--help", "-h", "Print this help message and exit",
-      [this, argv]([[maybe_unused]] std::any v) {
-        this->help_mode_flag = true;
-        this->executable_name = std::string(argv[0]);
-      },
-      this->current_hierarchy_level});
-
+  add_options_to_cli(argv);
   this->parse_cli(argc, argv);
 }
 

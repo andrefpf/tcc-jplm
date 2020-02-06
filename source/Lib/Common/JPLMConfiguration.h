@@ -91,6 +91,7 @@ class JPLMConfiguration {
   bool help_mode_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
   std::string executable_name;
+  void add_options_to_cli(char **argv);
 };
 
 
