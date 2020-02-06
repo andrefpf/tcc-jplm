@@ -69,12 +69,12 @@ class CharArrayContents : public InMemoryDBox {
   ~CharArrayContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
+  uint64_t size() const noexcept override {
     return chars.size();
   }
 
 
-  virtual CharArrayContents* clone() const override {
+  CharArrayContents* clone() const override {
     return new CharArrayContents(*this);
   }
 
@@ -84,7 +84,7 @@ class CharArrayContents : public InMemoryDBox {
   }
 
 
-  virtual bool is_equal(const DBox& other) const override {
+  bool is_equal(const DBox& other) const override {
     if (typeid(*this) != typeid(other))
       return false;
     const auto& cast_other = dynamic_cast<const CharArrayContents&>(other);
@@ -102,7 +102,7 @@ class CharArrayContents : public InMemoryDBox {
   }
 
 
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
+  std::vector<std::byte> get_bytes() const noexcept override {
     auto bytes = std::vector<std::byte>();
     bytes.reserve(this->size());
     for (const auto& value : chars) {
