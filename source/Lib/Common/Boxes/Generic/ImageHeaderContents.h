@@ -60,110 +60,55 @@ class ImageHeaderContents : public InMemoryDBox {
  public:
   ImageHeaderContents(uint32_t height, uint32_t width,
       uint16_t number_of_channels, uint8_t bits_per_component,
-      CompressionTypeImage coder_type, uint8_t UnkC, uint8_t IPR)
-      : height(height), width(width), nc(number_of_channels),
-        bpc(bits_per_component), c(coder_type), UnkC(UnkC), IPR(IPR) {
-    //should width, height and bpc be checked against 0?
-    if ((height == 0) || (width == 0) || (nc == 0) || (bpc == 0)) {
-      throw ImageHeaderBoxExceptions::InvalidSizeException(
-          height, width, nc, bpc);
-    }
-  }
+      CompressionTypeImage coder_type, uint8_t UnkC, uint8_t IPR);
 
 
-  uint32_t get_height() const noexcept {
-    return height;
-  }
+  uint32_t get_height() const noexcept;
 
 
-  uint32_t get_width() const noexcept {
-    return width;
-  }
+  uint32_t get_width() const noexcept;
 
 
-  uint16_t get_nc() const noexcept {
-    return nc;
-  }
+  uint16_t get_nc() const noexcept;
 
 
-  uint16_t get_number_of_channels() const noexcept {
-    return get_nc();
-  }
+  uint16_t get_number_of_channels() const noexcept;
 
 
-  uint8_t get_bpc() const noexcept {
-    return bpc;
-  }
+  uint8_t get_bpc() const noexcept;
 
 
-  uint8_t get_bits_per_component() const noexcept {
-    return get_bpc();
-  }
+  uint8_t get_bits_per_component() const noexcept;
 
 
-  CompressionTypeImage get_c() const noexcept {
-    return c;
-  }
+  CompressionTypeImage get_c() const noexcept;
 
 
-  CompressionTypeImage get_coder_type() const noexcept {
-    return get_c();
-  }
+  CompressionTypeImage get_coder_type() const noexcept;
 
 
-  bool has_known_color_space() const noexcept {
-    if (UnkC == 0) {  // 0, if the colourspace of the image is known
-      return true;
-    }
-    //! \todo Check if should throw exception when value is not 0 or 1
-    // Values other than 0 and 1 are reserved for ISO use
-    return false;
-  }
+  bool has_known_color_space() const noexcept;
 
 
-  bool has_intellectual_property() const noexcept {
-    if (UnkC == 0) {
-      return false;
-    }  //1
-    return true;
-    //! \todo Check if should throw exception when value is not 0 or 1
-    // Other values are reserved for ISO use
-  }
+  bool has_intellectual_property() const noexcept;
 
 
-  virtual ImageHeaderContents* clone() const override {
-    return new ImageHeaderContents(*this);
-  }
+  virtual ImageHeaderContents* clone() const override;
 
 
   virtual ~ImageHeaderContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return 2 * sizeof(uint32_t) + sizeof(uint16_t) + 3 * sizeof(uint8_t) +
-           sizeof(compression_type_data);
-  }
+  virtual uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const ImageHeaderContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const ImageHeaderContents& other) const {
-    return std::tie(this->height, this->width, this->nc, this->bpc, this->c,
-               this->UnkC, this->IPR) == std::tie(other.height, other.width,
-                                             other.nc, other.bpc, other.c,
-                                             other.UnkC, other.IPR);
-  }
+  bool operator==(const ImageHeaderContents& other) const;
 
 
-  bool operator!=(const ImageHeaderContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const ImageHeaderContents& other) const;
 };
 
 
