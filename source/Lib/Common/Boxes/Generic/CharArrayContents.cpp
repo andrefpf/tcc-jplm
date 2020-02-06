@@ -39,3 +39,46 @@
  */
 
 #include "Lib/Common/Boxes/Generic/CharArrayContents.h"
+
+
+uint64_t CharArrayContents::size() const noexcept {
+  return chars.size();
+}
+
+
+CharArrayContents *CharArrayContents::clone() const {
+  return new CharArrayContents(*this);
+}
+
+
+const std::vector<uint8_t> &CharArrayContents::get_const_ref_to_vector() const {
+  return chars;
+}
+
+
+bool CharArrayContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other = dynamic_cast<const CharArrayContents &>(other);
+  return *this == cast_other;
+}
+
+
+bool CharArrayContents::operator==(const CharArrayContents &other) const {
+  return this->chars == other.chars;
+}
+
+
+bool CharArrayContents::operator!=(const CharArrayContents &other) const {
+  return !this->operator==(other);
+}
+
+
+std::vector<std::byte> CharArrayContents::get_bytes() const noexcept {
+  auto bytes = std::vector<std::byte>();
+  bytes.reserve(this->size());
+  for (const auto &value : chars) {
+    bytes.emplace_back(std::byte{value});
+  }
+  return bytes;
+}
