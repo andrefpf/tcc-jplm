@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,40 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfigurationFactory.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     JPLMConfigurationExceptions.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLMCONFIGURATIONFACTORY_H__
-#define JPLMCONFIGURATIONFACTORY_H__
-
-#include <any>
-#include <memory>
-#include <unordered_map>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-
-
-using Type = CompressionTypeLightField;
-
-class JPLMConfigurationFactory {
- public:
-  static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
-      int argc, char const* argv[]);
-
-  static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
-      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
-
- protected:
-  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
-      int argc, char const* argv[], CompressionTypeLightField type);
-};
-
-
-#endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */
+#include "Lib/Common/JPLMConfigurationExceptions.h"

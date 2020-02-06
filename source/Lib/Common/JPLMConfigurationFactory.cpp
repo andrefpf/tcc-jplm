@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,40 +31,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfigurationFactory.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+/** \file     JPLMConfigurationFactory.cpp
+ *  \brief
+ *  \details
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLMCONFIGURATIONFACTORY_H__
-#define JPLMCONFIGURATIONFACTORY_H__
+#include "Lib/Common/JPLMConfigurationFactory.h"
 
-#include <any>
-#include <memory>
-#include <unordered_map>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+// \todo: refactor this function and split it into specialized functions
+std::unique_ptr<JPLMConfiguration>
+JPLMConfigurationFactory::get_encoder_configuration(
+    int argc, const char** argv) {
+  auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
 
+  if (basic_config.is_help_mode()) {
+    std::vector<JPLMEncoderConfiguration> s{
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
+        JPLMEncoderConfigurationLightField4DTransformMode(
+            argc, const_cast<char**>(argv))};
+    exit(0);
+  }
 
-using Type = CompressionTypeLightField;
+  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
+    auto light_field_config =
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+    auto type = light_field_config.get_type();
+    if (type == Type::transform_mode)
+      return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+          argc, const_cast<char**>(argv));
+  }
 
-class JPLMConfigurationFactory {
- public:
-  static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
-      int argc, char const* argv[]);
+  throw NotImplementedYetPartException();
+}
 
-  static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
-      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
+std::unique_ptr<JPLMConfiguration>
+JPLMConfigurationFactory::get_decoder_configuration(int argc, const char **argv) {
+  return make_unique<JPLMConfiguration>(argc, const_cast<char**>(argv));
+}
 
- protected:
-  static std::unique_ptr<JPLMConfiguration> get_part2_configuration(
-      int argc, char const* argv[], CompressionTypeLightField type);
-};
-
-
-#endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */
