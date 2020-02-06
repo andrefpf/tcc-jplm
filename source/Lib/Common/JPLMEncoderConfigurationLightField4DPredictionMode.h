@@ -46,6 +46,9 @@
 
 class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 2;
+
  public:
   virtual Type get_compression_type() const override;
 
@@ -61,7 +64,7 @@ JPLMEncoderConfigurationLightField4DPredictionMode::
 
 
 Type JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
-    const  {
+    const {
   return Type::prediction_mode;
 }
 

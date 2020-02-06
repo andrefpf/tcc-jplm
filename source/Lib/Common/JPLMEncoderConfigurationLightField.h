@@ -127,7 +127,7 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   void parse_mode_type(const json &conf);
   void check_inconsistencies();
   CompressionTypeLightField type;
-  std::size_t current_hierarchy_level = 1;
+  static constexpr std::size_t current_hierarchy_level = 1;
 };
 
 

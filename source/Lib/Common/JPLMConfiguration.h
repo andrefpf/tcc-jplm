@@ -89,7 +89,7 @@ class JPLMConfiguration {
 
  private:
   bool help_mode_flag = false;
-  std::size_t current_hierarchy_level = 0;
+  static constexpr std::size_t current_hierarchy_level = 0;
   std::string executable_name;
 };
 

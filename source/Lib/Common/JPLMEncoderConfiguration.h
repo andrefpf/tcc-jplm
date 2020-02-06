@@ -60,7 +60,7 @@ namespace fs = std::filesystem;
 // TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  private:
-  std::size_t current_hierarchy_level = 0;
+  static constexpr std::size_t current_hierarchy_level = 0;
 
  protected:
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)

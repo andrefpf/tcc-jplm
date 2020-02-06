@@ -51,7 +51,7 @@
 class JPLMEncoderConfigurationLightField4DTransformMode
     : public JPLMEncoderConfigurationLightField {
  private:
-  std::size_t current_hierarchy_level = 2;
+  static constexpr std::size_t current_hierarchy_level = 2;
   struct IntraView {
     uint32_t vertical, horizontal;
   };
