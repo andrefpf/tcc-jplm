@@ -58,29 +58,29 @@ using enum_cs_field_type = uint32_t;
 // };
 
 enum class EnumCS : enum_cs_field_type {
-	BiLevel = 0,
-	YCbCr_1 = 1,
-	YCbCr_2 = 3,
-	YCbCr_3 = 4,
-	PhotoYCC = 9,
-	CMY = 11,
-	CMYK = 12,
-	YCCK = 13, 
-	CIELab = 14,
-	BiLevel_2 = 15,
-	sRGB = 16,  //!< sRGB as defined by IEC 61966–2–1
-	greyscale =
+  BiLevel = 0,
+  YCbCr_1 = 1,
+  YCbCr_2 = 3,
+  YCbCr_3 = 4,
+  PhotoYCC = 9,
+  CMY = 11,
+  CMYK = 12,
+  YCCK = 13,
+  CIELab = 14,
+  BiLevel_2 = 15,
+  sRGB = 16,  //!< sRGB as defined by IEC 61966–2–1
+  greyscale =
       17,  //!< greyscale: A greyscale space where image luminance is related to code values
   // using the sRGB non-linearity given in Eqs. (2) through (4) of IEC 61966–2–1
   // (sRGB) specification
   //
-	sYCC = 18,
-	CIEJab = 19,
-	e_sRGB = 20,
-	ROMM_RGB = 21,
-	YPbPr_1125_60 = 22,
-	YPbPr_1250_50 = 23,
-	e_sYCC = 24,
+  sYCC = 18,
+  CIEJab = 19,
+  e_sRGB = 20,
+  ROMM_RGB = 21,
+  YPbPr_1125_60 = 22,
+  YPbPr_1250_50 = 23,
+  e_sYCC = 24,
 };
 
 
