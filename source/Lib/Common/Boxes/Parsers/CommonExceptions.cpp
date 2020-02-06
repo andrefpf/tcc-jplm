@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,34 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ContiguousCodestreamBoxParser.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-29
+/** \file     COmmonExceptions.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
-#define JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__
-
-#include <memory>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-
-namespace JPLMBoxParser {
-class ContiguousCodestreamBoxParser {
- public:
-  using ParsingBox = ContiguousCodestreamBox;
-  static uint64_t memory_limit;
-  static std::unique_ptr<Box> parse(
-      BoxParserHelperBase& box_parser_helper);  //box parser helper
-};
-}  // namespace JPLMBoxParser
-
-
-//
-// ContiguousCodestreamBoxParser::memory_limit = value_found_in_config;
-
-#endif /* JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__ */
+#include "Lib/Common/Boxes/ParsersCommonExceptions.h"
