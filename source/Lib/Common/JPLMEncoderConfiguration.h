@@ -60,6 +60,36 @@ namespace fs = std::filesystem;
 // TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
+  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level)
+      : JPLMConfiguration(argc, argv, level) {
+    arguments.push_back({"--config", "-c", "Path to config file",
+        [this](std::any v) {
+          this->config = std::any_cast<std::string>(v);
+          if (!this->config.empty()) {
+            if (fs::exists(this->config)) {
+              parse_json(this->config);
+            } else {
+              throw ConfigFileDoesNotExistException(this->config);
+            }
+          }
+        },
+        this->hierarchy_level});
+
+    arguments.push_back(
+        {"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
+            [this](std::any value) {
+              int part = std::stoi(std::any_cast<string>(value));
+              if (part == 2)
+                this->part = JpegPlenoPart::LightField;
+              else
+                throw NotImplementedYetInputTypeParseException(
+                    "Part " + std::to_string(part));
+            },
+            this->hierarchy_level});
+
+    this->parse_cli(argc, argv);
+    run_help();
+  }
   void parse_json(string path);
   void parse_jpeg_pleno_part(const json &conf);
   void parse_colorspace(const json &conf);
@@ -86,33 +116,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
-    : JPLMConfiguration(argc, argv) {
-  arguments.push_back({"--config", "-c", "Path to config file",
-      [this](std::any v) {
-        this->config = std::any_cast<std::string>(v);
-        if (!this->config.empty()) {
-          if (fs::exists(this->config)) {
-            parse_json(this->config);
-          } else {
-            throw ConfigFileDoesNotExistException(this->config);
-          }
-        }
-      },
-      this->hierarchy_level});
-
-  arguments.push_back({"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
-      [this](std::any value) {
-        int part = std::stoi(std::any_cast<string>(value));
-        if (part == 2)
-          this->part = JpegPlenoPart::LightField;
-        else
-          throw NotImplementedYetInputTypeParseException(
-              "Part " + std::to_string(part));
-      },
-      this->hierarchy_level});
-
-  this->parse_cli(argc, argv);
-  run_help();
+    : JPLMEncoderConfiguration(argc, argv, 1) {
 }
 
 
