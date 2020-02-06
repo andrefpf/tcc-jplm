@@ -31,67 +31,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
- *  \brief    General configuration data object
- *  \details  JPLMConfiguration is the most basic abstraction of configuration
- *            data object for being used by the JPLM Encoder and Decoders. It
- *            contains only the input and output paths extracted from the
- *            command line interface. All configuration objects are derived
- *            from JPLMConfiguration.
+/** \file     CLIArgument.h
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-06
  */
-#ifndef JPLM_JPLMConfiguration_H
-#define JPLM_JPLMConfiguration_H
 
-#include <algorithm>
-#include <any>
-#include <iostream>
-#include <string>
-#include "CLI/CLI.hpp"
-#include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Common/CLIArgument.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
+#ifndef JPLM_LIB_PART2_COMMON_CLIARGUMENT_H
+#define JPLM_LIB_PART2_COMMON_CLIARGUMENT_H
 
-using namespace std;
-using json = nlohmann::json;
-using Type = CompressionTypeLightField;
-
-enum class JpegPlenoPart {
-  LightField = 2,
-};
-
-
-class JPLMConfiguration {
- public:
-  JPLMConfiguration();
-  JPLMConfiguration(int argc, char **argv);
-
-  const std::string &get_input_filename() const;
-  const std::string &get_output_filename() const;
-  const bool &is_help_mode() const;
-
- protected:
-  std::vector<CLIArgument> arguments;
-  std::string input;
-  std::string output;
-  std::size_t hierarchy_level =
-      0;  //<! the hierarchy level used for printing help
-  void run_help() const;
-  void parse_cli(int argc, char **argv);
-  bool validate_param(std::string param);
-  bool validate_value(unsigned int size, unsigned int pos, char **argv);
-  JPLMConfiguration(int argc, char **argv, std::size_t level);
-  std::string message = std::string("");
-
+class CLIArgument {
  private:
-  bool help_mode_flag = false;
-  std::size_t current_hierarchy_level = 0;
-  std::string executable_name;
+  std::string long_option;
+  std::string short_option;
+  std::string description;
+  bool parsed;
+  std::function<void(std::any)> action;
+  std::size_t level;
+
+ public:
+  CLIArgument(const std::string &longOption, const std::string &short_option,
+      const std::string &description,
+      const std::function<void(std::any)> &action, std::size_t level)
+      : long_option(longOption), short_option(short_option),
+        description(description), action(action), level(level) {
+    this->parsed = false;
+  }
+
+
+  void parse(std::string key, std::any value) {
+    if (!this->parsed && (key == long_option || key == short_option)) {
+      action(value);
+      this->parsed = true;
+    }
+  }
+
+
+  const std::string &getLongOption() const {
+    return long_option;
+  }
+
+
+  const std::string &getShortOption() const {
+    return short_option;
+  }
+
+
+  const std::string &getDescription() const {
+    return description;
+  }
+
+
+  std::size_t get_level() const {
+    return level;
+  }
 };
 
-
-#endif  //JPLM_JPLMConfiguration_H
+#endif  // JPLM_LIB_PART2_COMMON_CLIARGUMENT_H

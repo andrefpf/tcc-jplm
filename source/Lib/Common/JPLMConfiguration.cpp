@@ -39,7 +39,6 @@
  */
 
 #include "Lib/Common/JPLMConfiguration.h"
-#include "CppConsoleTable/CppConsoleTable.hpp"
 
 
 using ConsoleTable = samilton::ConsoleTable;
