@@ -40,3 +40,58 @@
 
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
 
+
+const ContiguousCodestreamCode &
+ContiguousCodestreamContents::get_const_ref_to_code() const {
+  return *code;
+}
+
+
+const ContiguousCodestreamCode &ContiguousCodestreamContents::get_ref_to_code()
+    const {
+  return *code;
+}
+
+
+ContiguousCodestreamCode &ContiguousCodestreamContents::get_ref_to_code() {
+  return *code;
+}
+
+
+uint64_t ContiguousCodestreamContents::size() const noexcept {
+  return code->size();
+}
+
+
+ContiguousCodestreamContents *ContiguousCodestreamContents::clone() const {
+  std::cout << "ContiguousCodestreamContents clone" << std::endl;
+  return new ContiguousCodestreamContents(*this);
+}
+
+
+bool ContiguousCodestreamContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other =
+      dynamic_cast<const ContiguousCodestreamContents &>(other);
+  return *this == cast_other;
+}
+
+
+bool ContiguousCodestreamContents::operator==(
+    const ContiguousCodestreamContents &other) const {
+  return *(this->code) == *(other.code);
+}
+
+
+bool ContiguousCodestreamContents::operator!=(
+    const ContiguousCodestreamContents &other) const {
+  return !this->operator==(other);
+}
+
+
+std::ostream &ContiguousCodestreamContents::write_to(
+    std::ostream &stream) const {
+  stream << *code;
+  return stream;
+}
