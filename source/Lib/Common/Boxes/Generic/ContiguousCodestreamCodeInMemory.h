@@ -52,7 +52,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   mutable std::size_t current_pos = 0;
 
  public:
-  virtual uint64_t size() const noexcept override {
+  uint64_t size() const noexcept override {
     return bytes.size();
   }
 
@@ -61,17 +61,17 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
-  ContiguousCodestreamCodeInMemory(uint64_t size) {
+  explicit ContiguousCodestreamCodeInMemory(uint64_t size) {
     bytes.reserve(size);
   }
 
 
-  ContiguousCodestreamCodeInMemory(const std::vector<std::byte>& bytes)
+  explicit ContiguousCodestreamCodeInMemory(const std::vector<std::byte>& bytes)
       : bytes(bytes) {
   }
 
 
-  ContiguousCodestreamCodeInMemory(std::vector<std::byte>&& bytes)
+  explicit ContiguousCodestreamCodeInMemory(std::vector<std::byte>&& bytes)
       : bytes(std::move(bytes)) {
   }
 
@@ -90,25 +90,25 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   virtual ~ContiguousCodestreamCodeInMemory() = default;
 
 
-  virtual void push_byte(const std::byte byte) override {
+  void push_byte(const std::byte byte) override {
     bytes.emplace_back(byte);
     ++current_pos;
   }
 
 
-  virtual std::byte get_byte_at(const uint64_t pos) const override {
+  std::byte get_byte_at(const uint64_t pos) const override {
     return bytes.at(pos);
   }
 
 
-  virtual std::byte get_next_byte() const override {
+  std::byte get_next_byte() const override {
     auto byte = bytes.at(current_pos);
     ++current_pos;
     return byte;
   }
 
 
-  virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const override {
+  std::vector<std::byte> get_next_n_bytes(std::size_t n) const override {
     auto bytes_vector = std::vector<std::byte>();
     bytes_vector.reserve(n);
     for(auto i=decltype(n){0};i<n;++i){
@@ -119,17 +119,17 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
-  virtual std::byte peek_next_byte() const override {
+  std::byte peek_next_byte() const override {
     return bytes.at(current_pos);
   }
 
 
-  virtual bool is_next_valid() const override {
+  bool is_next_valid() const override {
     return current_pos < bytes.size(); 
   }
 
 
-  virtual void rewind(std::size_t n_bytes_to_rewind) const override {
+  void rewind(std::size_t n_bytes_to_rewind) const override {
     int64_t new_pos = current_pos - n_bytes_to_rewind;
     if(new_pos >= 0) {
       current_pos = static_cast<std::size_t>(new_pos);
@@ -144,7 +144,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
-  virtual bool is_equal(const ContiguousCodestreamCode& other) const override {
+  bool is_equal(const ContiguousCodestreamCode& other) const override {
     if (this->size() != other.size()) {
       return false;
     }
@@ -158,7 +158,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   }
 
 
-  virtual std::ostream& write_to(std::ostream& stream) const override {
+  std::ostream& write_to(std::ostream& stream) const override {
     stream.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
     return stream;
   }
