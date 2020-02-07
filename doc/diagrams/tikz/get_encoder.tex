@@ -29,25 +29,8 @@
 \usetikzlibrary{patterns}
 \usetikzlibrary{fpu}
 
-\tikzset{
-  treenode/.style = {shape=rectangle, rounded corners,
-                     draw, anchor=center,
-                     text width=5em, align=center,
-                     top color=white, bottom color=blue!10,
-                     inner sep=1ex},
-  decision/.style = {treenode, diamond, inner sep=0pt, outer sep=-1pt},
-  root/.style     = {treenode, font=\Large, bottom color=red!30},
-  env/.style      = {treenode, font=\ttfamily\normalsize},
-  finish/.style   = {root, bottom color=green!40},
-  dummy/.style    = {circle,draw}
-}
-
-
-
 \usepackage{amsmath}
-%\usepackage{rtl}
 \usepackage{color}
-% \usepackage[left=1cm,right=1cm]{geometry}
 \usepackage{ifthen}
 
 \usepackage{hyperref}
@@ -59,7 +42,7 @@
 }
 \begin{document}
 
-\tikzstyle{myArrow} = [->, >=latex', thick]
+\input{styles}
 
 \begin{tikzpicture}[node distance=5mm]
 	\node[] (name) {::get\_encoder(configuration)};
@@ -78,8 +61,6 @@
 
 
 	\node[below=2.5cm of getType, decision] (isTransform) {is\\ transform \\mode?};
-	
-	% \node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DPredictionMode) {JPLMEncoderConfiguration\\LightField\\4DPredictionMode(args)};
 
 	\node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLM4DTransformModeLightFieldEncoder) {JPLM4DTransformMode\\LightFieldEncoder(configuration)};
 
@@ -88,10 +69,6 @@
 	\node[text width=4.5cm, align=center, rounded corners, draw] (exception) at (isPart2 |- return) {\textbf{default}: throw \\ Not Implemented Exception};
 
 	\draw[myArrow] (init) -- (getPart);
-	% \draw[myArrow] (JPLMEncoderConfiguration) -- (isHelp);
-	% \draw[myArrow] (isHelp) -- node[pos=0.1, above]{yes} (JPLMEncoderConfigurationLightFieldHelp);
-	% \draw[myArrow] (JPLMEncoderConfigurationLightFieldHelp) -- (JPLMEncoderConfigurationLightField4DTransformModeHelp);
-	% \draw[myArrow] (isHelp) -- node[pos=0.1, right]{no} (getPart);
 	\draw[myArrow] (getPart) -- (isPart2);
 	\draw[myArrow] (isPart2) --node[pos=0.05, right]{no} (exception);
 	\draw[myArrow] (isPart2) -| node[pos=0.1, above]{yes} ($(getLFEncoder.north west)+(-.5,.5)$) -| (getLFEncoder);
@@ -99,9 +76,6 @@
 	\draw[myArrow] (getType) -- (isTransform);
 	\draw[myArrow] (isTransform) --node[pos=0.15, right]{yes} (JPLM4DTransformModeLightFieldEncoder);
 	\draw[myArrow] (isTransform) --node[pos=0.05, above]{no} (isTransform -| isPart2);
-	% \draw[myArrow] (isTransform) --node[pos=0.1, right]{no} (JPLMEncoderConfigurationLightField4DPredictionMode);
-	% \draw[myArrow] (JPLMEncoderConfigurationLightField4DPredictionMode) |- (exception);
-	% \draw[myArrow] (JPLMEncoderConfigurationLightField4DTransformModeHelp) -- (exit);
 	\draw[myArrow] (JPLM4DTransformModeLightFieldEncoder) -- (return);
 
 

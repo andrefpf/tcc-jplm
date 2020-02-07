@@ -29,9 +29,7 @@
 \usetikzlibrary{fpu}
 
 \usepackage{amsmath}
-%\usepackage{rtl}
 \usepackage{color}
-% \usepackage[left=1cm,right=1cm]{geometry}
 \usepackage{ifthen}
 
 \usepackage{hyperref}
@@ -57,7 +55,6 @@
 	\node[draw, below=of stream, fill=white] (decoder) {decoders=factory(jpl\_file)};
 
 	\node[draw, below=of decoder, fill=white, text width=5cm, align=center] (run) {for each decoder in decoders\\decoder.run()};
-	% \node[draw, below=of encoder, fill=white] (run) {encoder.run()};
 
 	\node[below=.75cm of run, multidocument] (outputs) {multiple outputs};
 
@@ -76,8 +73,6 @@
 	\draw[myArrow] ($(run)!.4!(outputs)$) -| ($(run.east)+(.5,0)$) |- ($(decoder)!.4!(run)$);
 
 	\draw[myArrow] (file) -- (stream);
-
-	% \draw[myArrow] (stream) -- (jplFile);
 \end{tikzpicture}
 
 \end{document}

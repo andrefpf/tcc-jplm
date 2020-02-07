@@ -29,9 +29,7 @@
 \usetikzlibrary{fpu}
 
 \usepackage{amsmath}
-%\usepackage{rtl}
 \usepackage{color}
-% \usepackage[left=1cm,right=1cm]{geometry}
 \usepackage{ifthen}
 
 \usepackage{hyperref}
@@ -49,27 +47,33 @@
 
 \begin{tikzpicture}[node distance=5mm]
 	\node[] (args) {\texttt{./jpl-encoder ...args...}};
+	\node[init, below=-1mm of args] (init) {};
 
-	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
-	\node[draw, below=of config, fill=white] (encoder) {encoder=factory(configuration)};
+	\node[draw, below=of init, fill=white, text width=3.5cm, align=center] (config) {configuration=\\get\_configuration(args)};
+	\node[left=.5cm of config, multidocument, text width=1cm, align=center] (cfg) {*.cfg};
+
+	\node[draw, below=of config, fill=white, text width=4.5cm, align=center] (encoder) {encoder=\\CodecFactory::\\get\_encoder(configuration)};
 	\node[draw, below=of encoder, fill=white] (run) {encoder.run()};
-	\node[left=1.5cm of run, multidocument, text width=1.5cm, align=center] (input) {plenoptic\\input};
-	\node[draw, below=of run, fill=white] (stream) {stream $\ll$ encoder.get\_jpl\_file()};
+	\node[left=1cm of run, multidocument, text width=1.5cm, align=center] (input) {plenoptic\\input};
+	\node[draw, below=of run, fill=white, text width=3.5cm, align=center] (stream) {stream $\ll$ \\ encoder.get\_jpl\_file()};
+	\node[draw, below=of stream, fill=white, rounded corners] (exit) {exit(0)};
 
-	\node[below=.75cm of stream, document] (jplFile) {file.jpl};
+	\node[right=.4cm of stream, document] (jplFile) {file.jpl};
 
 
 	\begin{scope}[on background layer]
-		\node[codec,fit=(config) (encoder) (run) (stream)] (co) {};
+		\node[codec,fit=(config) (encoder) (run) (stream) (exit)] (co) {};
 	\end{scope}	
 
 
-	\draw[myArrow] (args) -- (config);
+	\draw[myArrow] (init) -- (config);
+	\draw[myArrow] (cfg) -- (config);
 	\draw[myArrow] (config) -- (encoder);
 	\draw[myArrow] (encoder) -- (run);
 	\draw[myArrow] (input) -- (run);	
 	\draw[myArrow] (run) -- (stream);
 	\draw[myArrow] (stream) -- (jplFile);
+	\draw[myArrow] (stream) -- (exit);
 \end{tikzpicture}
 
 % The \gls{jplm} encoder execution can be divided in four main phases (Fig.~\ref{fig.encoder.phases}).
