@@ -49,7 +49,8 @@
 	\node[] (args) {\texttt{./jpl-decoder -\--input file.jpl -\--output output/}};
 
 	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
-	\node[draw, below=of config, fill=white] (stream) {jpl\_file=new JPLFileFromStream(configuration)};
+	\node[draw, below=of config, fill=white, text width=4cm, align=center] (stream) {jpl\_file=\\new JPLFileFromStream\\(configuration)};
+	\node[document, left=.75cm of stream] (file) {file.jpl};
 
 
 
@@ -58,7 +59,7 @@
 	\node[draw, below=of decoder, fill=white, text width=5cm, align=center] (run) {for each decoder in decoders\\decoder.run()};
 	% \node[draw, below=of encoder, fill=white] (run) {encoder.run()};
 
-	\node[below=of run] (outputs) {multiple outputs};
+	\node[below=.75cm of run, multidocument] (outputs) {multiple outputs};
 
 
 	\begin{scope}[on background layer]
@@ -72,7 +73,9 @@
 	\draw[myArrow] (decoder) -- (run);
 	\draw[myArrow] (run) -- (outputs);
 
-	\draw[myArrow] ($(run)!.5!(outputs)$) -| ($(run.west)+(-.5,0)$) |- ($(decoder)!.4!(run)$);
+	\draw[myArrow] ($(run)!.4!(outputs)$) -| ($(run.east)+(.5,0)$) |- ($(decoder)!.4!(run)$);
+
+	\draw[myArrow] (file) -- (stream);
 
 	% \draw[myArrow] (stream) -- (jplFile);
 \end{tikzpicture}
