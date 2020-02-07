@@ -55,10 +55,8 @@
 #include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
 
 using namespace std;
-using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {

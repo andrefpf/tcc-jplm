@@ -57,7 +57,7 @@ using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 namespace fs = std::filesystem;
 
-// TODO: Number of rows, columns, etc belongs to Part2/LF and should be specific
+
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
@@ -79,6 +79,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
         },
         this->current_hierarchy_level});
 
+    //<! \todo check if the config should be placed in the JPLMConfiguration (to allow its use in the decoder)
     cli_options.push_back({"--config", "-c", "Path to config file",
         [this](std::any v) {
           this->config = std::any_cast<std::string>(v);
@@ -155,6 +156,7 @@ void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
 }
 
 
+//<! \todo the colorspace is a part of the jpl encoder? Or it depends on the part?
 void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
   //<! \todo include options to input the EnumCS for the ColourDefinitionBox
   if (conf.contains("colorspace")) {

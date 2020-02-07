@@ -44,7 +44,6 @@
 
 using ConsoleTable = samilton::ConsoleTable;
 using sAlign = samilton::Alignment;
-using json = nlohmann::json;
 
 
 void JPLMConfiguration::add_options_to_cli(char **argv) {
