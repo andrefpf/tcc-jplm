@@ -31,11 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageHeaderBox.cpp
+/** \file     EnumCS.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-06
  */
 
-#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/EnumCS.h"

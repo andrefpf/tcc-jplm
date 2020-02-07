@@ -31,11 +31,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageHeaderBox.cpp
+/** \file     UUIDListContents.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-06
  */
 
-#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/UUIDListContents.h"
+
+
+UUIDListContents *UUIDListContents::clone() const {
+  return new UUIDListContents(*this);
+}
+
+
+uint64_t UUIDListContents::size() const noexcept {
+  return 2 + id.size() * 16;
+  //2 for NU (Number of UUID) + 16 for each uuid on the list
+}
+
+
+bool UUIDListContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other = dynamic_cast<const UUIDListContents &>(other);
+  return *this == cast_other;
+}
+
+
+bool UUIDListContents::operator==(const UUIDListContents &other) const {
+  return (this->id == other.id);
+}
+
+
+bool UUIDListContents::operator!=(const UUIDListContents &other) const {
+  return !this->operator==(other);
+}
+
+
+uint16_t UUIDListContents::get_nu() const noexcept {
+  return id.size();
+}

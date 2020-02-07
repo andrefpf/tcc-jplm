@@ -42,8 +42,8 @@
 #define JPLM_LIB_COMMON_BOXES_GENERIC_UUIDLISTCONTENTS_H__
 
 
-#include "UniversalUniqueIdentifier.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "UniversalUniqueIdentifier.h"
 
 
 class UUIDListContents : public InMemoryDBox {
@@ -54,41 +54,25 @@ class UUIDListContents : public InMemoryDBox {
   UUIDListContents() = default;
 
 
-  virtual UUIDListContents* clone() const override {
-    return new UUIDListContents(*this);
-  }
+  virtual UUIDListContents* clone() const override;
 
 
   ~UUIDListContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return 2 + id.size() * 16;
-    //2 for NU (Number of UUID) + 16 for each uuid on the list
-  }
+  virtual uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDListContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const UUIDListContents& other) const {
-    return (this->id == other.id);
-  }
+  bool operator==(const UUIDListContents& other) const;
 
 
-  bool operator!=(const UUIDListContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const UUIDListContents& other) const;
 
 
-  uint16_t get_nu() const noexcept {
-    return id.size();
-  }
+  uint16_t get_nu() const noexcept;
 };
 
 

@@ -38,7 +38,7 @@
  *  \date     2020-02-06
  */
 
-#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h
+#include "Lib/Common/Boxes/Generic/DataEntryURLContents.h"
 
 
 DataEntryURLContents *DataEntryURLContents::clone() const {
