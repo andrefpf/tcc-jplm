@@ -17,7 +17,7 @@
 
 \usepackage{pgf}
 \usepackage{tikz}
-\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings, shadows}
 % \usepgflibrary{shapes.callouts}
 \usetikzlibrary{shapes.callouts}
 \usetikzlibrary{decorations.text}
@@ -43,6 +43,8 @@
 }
 \begin{document}
 
+
+
 \input{styles}
 
 \begin{tikzpicture}[node distance=5mm]
@@ -51,9 +53,10 @@
 	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
 	\node[draw, below=of config, fill=white] (encoder) {encoder=factory(configuration)};
 	\node[draw, below=of encoder, fill=white] (run) {encoder.run()};
+	\node[left=1.5cm of run, multidocument, text width=1.5cm, align=center] (input) {plenoptic\\input};
 	\node[draw, below=of run, fill=white] (stream) {stream $\ll$ encoder.get\_jpl\_file()};
 
-	\node[below=of stream] (jplFile) {file.jpl};
+	\node[below=.75cm of stream, document] (jplFile) {file.jpl};
 
 
 	\begin{scope}[on background layer]
@@ -64,6 +67,7 @@
 	\draw[myArrow] (args) -- (config);
 	\draw[myArrow] (config) -- (encoder);
 	\draw[myArrow] (encoder) -- (run);
+	\draw[myArrow] (input) -- (run);	
 	\draw[myArrow] (run) -- (stream);
 	\draw[myArrow] (stream) -- (jplFile);
 \end{tikzpicture}
