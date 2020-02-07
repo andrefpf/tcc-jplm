@@ -49,7 +49,7 @@
 	\node[] (args) {\texttt{./jpl-encoder ...args...}};
 	\node[init, below=-1mm of args] (init) {};
 
-	\node[draw, below=of init, fill=white, text width=3.5cm, align=center] (config) {configuration=\\get\_configuration(args)};
+	\node[draw, below=of init, fill=white, text width=3.5cm, align=center] (config) {configuration=\\ConfigurationFactory::\\get\_configuration(args)};
 	\node[left=.5cm of config, multidocument, text width=1cm, align=center] (cfg) {*.cfg};
 
 	\node[draw, below=of config, fill=white, text width=4.5cm, align=center] (encoder) {encoder=\\CodecFactory::\\get\_encoder(configuration)};
