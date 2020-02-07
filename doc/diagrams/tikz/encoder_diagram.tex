@@ -4,7 +4,7 @@
 % @Author: Ismael Seidel
 % @Date:   2020-02-05
 % @Last Modified by:   Ismael Seidel
-% @Last Modified time: 2020-02-05
+% @Last Modified time: 2020-02-07
 
 \documentclass[a4paper,landscape]{article}
 \usepackage{pgf,tikz}
@@ -43,10 +43,10 @@
 }
 \begin{document}
 
-\tikzstyle{myArrow} = [->, >=latex', thick]
+\input{styles}
 
 \begin{tikzpicture}[node distance=5mm]
-	\node[] (args) {./jpl-encoder args};
+	\node[] (args) {\texttt{./jpl-encoder ...args...}};
 
 	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
 	\node[draw, below=of config, fill=white] (encoder) {encoder=factory(configuration)};
@@ -56,15 +56,8 @@
 	\node[below=of stream] (jplFile) {file.jpl};
 
 
-
-
-
 	\begin{scope}[on background layer]
-		\node[fill=blue!40, rounded corners, thick, inner sep=2mm,fit=(config) (encoder) (run) (stream)] (co) {};
-		% \node[fill=darkpurple01, rounded corners, thick, inner sep=2mm,fit=(searchDatapathBorder) (searchControl)] (fillSearch) {};
-
-		% \node[draw, rounded corners, thick, inner xsep=9mm, inner ysep=1mm,fit=(fillInterpolation) (fillSearch)] (fmeBorder) {};
-		%\node[] at (-.25,-2.75) {\huge Filter};
+		\node[codec,fit=(config) (encoder) (run) (stream)] (co) {};
 	\end{scope}	
 
 
@@ -74,5 +67,12 @@
 	\draw[myArrow] (run) -- (stream);
 	\draw[myArrow] (stream) -- (jplFile);
 \end{tikzpicture}
+
+% The \gls{jplm} encoder execution can be divided in four main phases (Fig.~\ref{fig.encoder.phases}).
+% The first one is the configuration parsing, that organizes the relevant information from the command line.
+% The second one instantiates one specific encoder from the encoder hierarchy, according to the parsed configurations.
+% The encoding itself occurs during the third phase, when the run method is called. 
+% Finally, the fourth phase redirects the jpl file from the encoder to a given output stream, such as the filesystem.
+% In this last step, all boxes are recursivelly redirected to the stream, according to JPEG Pleno box structure. 
 
 \end{document}
