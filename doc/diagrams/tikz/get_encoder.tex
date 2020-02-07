@@ -65,17 +65,11 @@
 	\node[] (name) {::get\_encoder(configuration)};
 	\node[circle, radius=1cm, fill=black, below=-2mm of name] (init) {};
 
-	% \node[below=of init, draw] (JPLMEncoderConfiguration) {JPLMEncoderConfiguration(args)};
-	% \node[below=2cm of JPLMEncoderConfiguration, decision] (isHelp) {is help?};
-
-	% \node[left=2cm of isHelp, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightFieldHelp) {JPLMEncoderConfiguration\\LightField(args)};
-	% \node[below=1cm of JPLMEncoderConfigurationLightFieldHelp, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DTransformModeHelp) {JPLMEncoderConfiguration\\LightField\\4DTransformMode(args)};
-
 	\node[below=1cm of init, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ configuration-$>$\\get\_jpeg\_pleno\_part()};
 
 	\node[below=2cm of getPart, decision] (isPart2) {is Part 2?};
 
-	\node[below=1cm of isPart2, text width=4.5cm, align=center, rounded corners, draw] (exception) {\textbf{default}: throw \\ Not Implemented Exception};
+	
 
 	\node[right=1cm of getPart, draw, text width=5cm, align=center] (getLFEncoder) {::get\_lightfield\_encoder\\(configuration)};
 
@@ -83,34 +77,32 @@
 
 
 
-	\node[below=2cm of getType, decision] (isTransform) {is\\ transform \\mode?};
+	\node[below=2.5cm of getType, decision] (isTransform) {is\\ transform \\mode?};
 	
-	\node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DPredictionMode) {JPLMEncoderConfiguration\\LightField\\4DPredictionMode(args)};
+	% \node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DPredictionMode) {JPLMEncoderConfiguration\\LightField\\4DPredictionMode(args)};
 
-	\node[right=1cm of JPLMEncoderConfigurationLightField4DPredictionMode, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DTransformMode) {JPLMEncoderConfiguration\\LightField\\4DTransformMode(args)};
+	\node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLM4DTransformModeLightFieldEncoder) {JPLM4DTransformMode\\LightFieldEncoder(configuration)};
 
-	
+	\node[rounded corners, draw, below=1cm of JPLM4DTransformModeLightFieldEncoder] (return) {\large \textbf{return encoder}};
 
-	% \node[rounded corners, draw] (return) at (exception -| JPLMEncoderConfigurationLightField4DTransformMode) {\large \textbf{return configuration}};
+	\node[text width=4.5cm, align=center, rounded corners, draw] (exception) at (isPart2 |- return) {\textbf{default}: throw \\ Not Implemented Exception};
 
-	% \node[rounded corners, draw] (exit) at (exception -| JPLMEncoderConfigurationLightField4DTransformModeHelp) {exit(0)};
-
-	% % \node[right=1cm of isPart2, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ get\_type()};
-	% \draw[myArrow] (init) -- (JPLMEncoderConfiguration);
+	\draw[myArrow] (init) -- (getPart);
 	% \draw[myArrow] (JPLMEncoderConfiguration) -- (isHelp);
 	% \draw[myArrow] (isHelp) -- node[pos=0.1, above]{yes} (JPLMEncoderConfigurationLightFieldHelp);
 	% \draw[myArrow] (JPLMEncoderConfigurationLightFieldHelp) -- (JPLMEncoderConfigurationLightField4DTransformModeHelp);
 	% \draw[myArrow] (isHelp) -- node[pos=0.1, right]{no} (getPart);
-	% \draw[myArrow] (getPart) -- (isPart2);
-	% \draw[myArrow] (isPart2) --node[pos=0.1, right]{no} (exception);
-	% \draw[myArrow] (isPart2) -| node[pos=0.1, above]{yes} ($(JPLMEncoderConfigurationLightField.north west)+(-.5,.5)$) -| (JPLMEncoderConfigurationLightField);
-	% \draw[myArrow] (JPLMEncoderConfigurationLightField) -- (getType);
-	% \draw[myArrow] (getType) -- (isTransform);
-	% \draw[myArrow] (isTransform) -|node[pos=0.05, above]{yes} (JPLMEncoderConfigurationLightField4DTransformMode);
+	\draw[myArrow] (getPart) -- (isPart2);
+	\draw[myArrow] (isPart2) --node[pos=0.05, right]{no} (exception);
+	\draw[myArrow] (isPart2) -| node[pos=0.1, above]{yes} ($(getLFEncoder.north west)+(-.5,.5)$) -| (getLFEncoder);
+	\draw[myArrow] (getLFEncoder) -- (getType);
+	\draw[myArrow] (getType) -- (isTransform);
+	\draw[myArrow] (isTransform) --node[pos=0.15, right]{yes} (JPLM4DTransformModeLightFieldEncoder);
+	\draw[myArrow] (isTransform) --node[pos=0.05, above]{no} (isTransform -| isPart2);
 	% \draw[myArrow] (isTransform) --node[pos=0.1, right]{no} (JPLMEncoderConfigurationLightField4DPredictionMode);
 	% \draw[myArrow] (JPLMEncoderConfigurationLightField4DPredictionMode) |- (exception);
 	% \draw[myArrow] (JPLMEncoderConfigurationLightField4DTransformModeHelp) -- (exit);
-	% \draw[myArrow] (JPLMEncoderConfigurationLightField4DTransformMode) -- (return);
+	\draw[myArrow] (JPLM4DTransformModeLightFieldEncoder) -- (return);
 
 
 \end{tikzpicture}
