@@ -4,7 +4,7 @@
 % @Author: Ismael Seidel
 % @Date:   2020-02-05
 % @Last Modified by:   Ismael Seidel
-% @Last Modified time: 2020-02-05
+% @Last Modified time: 2020-02-07
 
 \documentclass[a4paper,landscape]{article}
 \usepackage{pgf,tikz}
@@ -46,7 +46,7 @@
 \tikzstyle{myArrow} = [->, >=latex', thick]
 
 \begin{tikzpicture}[node distance=5mm]
-	\node[] (args) {./jpl-decoder --input file.jpl --output output/};
+	\node[] (args) {\texttt{./jpl-decoder -\--input file.jpl -\--output output/}};
 
 	\node[draw, below=of args, fill=white] (config) {configuration=get\_configuration(args)};
 	\node[draw, below=of config, fill=white] (stream) {jpl\_file=new JPLFileFromStream(configuration)};
@@ -61,11 +61,8 @@
 	\node[below=of run] (outputs) {multiple outputs};
 
 
-
-
-
 	\begin{scope}[on background layer]
-		\node[fill=blue!40, rounded corners, thick, inner sep=2mm,fit=(config) (decoder) (run) (stream)] (co) {};
+		\node[dashed, draw, rounded corners, thick, inner sep=3mm,fit=(config) (decoder) (run) (stream)] (co) {};
 	\end{scope}	
 
 
