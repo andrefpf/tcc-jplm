@@ -43,8 +43,8 @@
 #define JPLM_LIB_PART1_COMMON_COMMONEXCEPTIONS_H__
 
 #include <exception>
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace BoxExceptions {
 

@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,50 +31,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMCodec.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+/** \file     JPLMCodec.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-07
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
-#define JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
-
-#include <memory>  //std::shared_ptr
-#include "Lib/Part1/Common/JPLFile.h"
-
-/**
- * \brief      Class for jplm codec.
- */
-class JPLMCodec {
- protected:
-  std::shared_ptr<JPLFile> jpl_file;
-
- public:
-  JPLMCodec() : jpl_file(std::make_shared<JPLFile>()) {
-  }
+#include "Lib/Part1/Common/JPLMCodec.h"
 
 
-  JPLMCodec(std::shared_ptr<JPLFile>&& jpl_file)
-      : jpl_file(std::move(jpl_file)) {
-  }
+JPLFile &JPLMCodec::get_ref_to_jpl_file() {
+  return *jpl_file;
+}
 
 
-  JPLMCodec(std::shared_ptr<JPLFile> jpl_file) : jpl_file(jpl_file) {
-  }
-
-
-  virtual ~JPLMCodec() = default;
-
-
-  JPLFile& get_ref_to_jpl_file();
-
-
-  const JPLFile& get_ref_to_jpl_file() const;
-
-
-  virtual void run() = 0;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLMCODEC_H__ */
+const JPLFile &JPLMCodec::get_ref_to_jpl_file() const {
+  return *jpl_file;
+}
