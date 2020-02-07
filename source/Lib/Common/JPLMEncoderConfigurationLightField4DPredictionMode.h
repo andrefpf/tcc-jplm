@@ -42,7 +42,7 @@
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD4DPREDICTIONMODE_H__
 
 #include "JPLMEncoderConfigurationLightField.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
+#include "Lib/Common/CommonExceptions.h"
 
 class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
@@ -54,7 +54,7 @@ class JPLMEncoderConfigurationLightField4DPredictionMode
   JPLMEncoderConfigurationLightField4DPredictionMode(
       int argc, char **argv, std::size_t level)
       : JPLMEncoderConfigurationLightField(argc, argv, level) {
-    throw NotImplementedYetModeException();
+    throw JPLMConfigurationExceptions::NotImplementedYetModeException();
   }
 
  public:
@@ -76,6 +76,7 @@ Type JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
     const {
   return Type::prediction_mode;
 }
+
 
 void JPLMEncoderConfigurationLightField4DPredictionMode::add_options_to_cli() {
   //<! \todo add the needed options for transform mode configuration cli

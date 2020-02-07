@@ -45,7 +45,9 @@
 #include <exception>
 #include <string>
 
+//<! \todo After merging, change the name to JPLMCommonExceptions
 namespace CommonExceptions {
+
 
 class NotImplementedException : public std::logic_error {
  public:
@@ -53,6 +55,11 @@ class NotImplementedException : public std::logic_error {
       : std::logic_error("Not implemented yet: " + what) {
   }
 };
+
+}  // namespace CommonExceptions
+
+
+namespace JPLMConfigurationExceptions {
 
 
 class UndefinedPartException : public std::exception {
@@ -83,6 +90,79 @@ class InvalidPartException : public std::exception {
 };
 
 
-}  // namespace CommonExceptions
+class NotImplementedYetInputTypeParseException : public std::exception {
+ private:
+  std::string msg;
+
+ public:
+  NotImplementedYetInputTypeParseException(std::string m)
+      : msg("Option " + m + " is not implemented yet.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+
+class InconsistentOptionsException : public std::exception {
+  const char* what() const throw() {
+    return "Inconsistent Options.";
+  }
+};
+
+
+class NotImplementedYetPartException : public std::exception {
+  const char* what() const throw() {
+    return "Chosen part not implemented yet.";
+  }
+};
+
+
+class NotImplementedYetModeException : public std::exception {
+  const char* what() const throw() {
+    return "Mode not implemented yet.";
+  }
+};
+
+
+class UnsuportedPredictionMode : public std::exception {
+  const char* what() const throw() {
+    return "Prediction mode is currently not supported in this reference "
+           "software.";
+  }
+};
+
+
+class ConfigFileDoesNotExistException : public std::exception {
+ private:
+  std::string msg;
+
+ public:
+  ConfigFileDoesNotExistException(std::string m)
+      : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+
+class UnknownCLIParameterException : public std::exception {
+ private:
+  std::string msg;
+
+ public:
+  UnknownCLIParameterException(std::string m)
+      : msg("CLI parameter " + m + " is not known.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+}  // namespace JPLMConfigurationExceptions
 
 #endif  // JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H

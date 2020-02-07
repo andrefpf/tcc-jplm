@@ -131,6 +131,7 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
   EXPECT_EQ(JpegPlenoPart::LightField, config.get_jpeg_pleno_part());
 }
 
+
 TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
   string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
@@ -147,6 +148,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
   EXPECT_EQ(626, config.get_view_width_u());
 }
 
+
 //
 TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c",
@@ -155,8 +157,9 @@ TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
 
   EXPECT_THROW(
       { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
-      ConfigFileDoesNotExistException);
+      JPLMConfigurationExceptions::ConfigFileDoesNotExistException);
 }
+
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
@@ -166,6 +169,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam) {
   EXPECT_EQ(Type::transform_mode, config.get_type());
 }
 
+
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam2) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "-T", "1"};
@@ -173,6 +177,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam2) {
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_NE(Type::transform_mode, config.get_type());
 }
+
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam3) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
@@ -182,6 +187,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam3) {
   EXPECT_EQ(Type::prediction_mode, config.get_type());
 }
 
+
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "--type", "0"};
@@ -190,6 +196,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
   EXPECT_EQ(Type::transform_mode, config.get_type());
 }
 
+
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
       "../resources/out_small_greek/", "--type", "1"};
@@ -197,6 +204,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
   EXPECT_EQ(Type::prediction_mode, config.get_type());
 }
+
 
 TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-o",
@@ -215,6 +223,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest, LambdaFromCLI) {
       argc, const_cast<char**>(argv));
   EXPECT_DOUBLE_EQ(12, config.get_lambda());
 }
+
 
 TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
     BorderPolicyPadding) {

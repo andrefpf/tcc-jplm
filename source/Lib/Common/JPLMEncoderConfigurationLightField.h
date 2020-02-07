@@ -171,7 +171,8 @@ void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
       type = Type::prediction_mode;
     } else {
       //! \todo check if this is the right exception to be thown here...
-      throw NotImplementedYetInputTypeParseException(t);
+      throw JPLMConfigurationExceptions::
+          NotImplementedYetInputTypeParseException(t);
     }
   }
 }

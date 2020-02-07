@@ -84,6 +84,7 @@ class JPLMCodecFactory {
                     configuration.release()))));
       }
       default: {
+        //<! \todo throw exception
         std::cerr << "Unknown part" << std::endl;
         exit(EXIT_FAILURE);
       }

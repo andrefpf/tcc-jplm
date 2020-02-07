@@ -62,7 +62,7 @@ class JPLMConfigurationFactory {
            "modality (such as Light Fields, Point Clouds and Holograms). To "
            "obtain help, run the encoder again with --help option. "
         << std::endl;
-    throw CommonExceptions::InvalidPartException();
+    throw JPLMConfigurationExceptions::InvalidPartException();
   }
 
 
@@ -107,7 +107,7 @@ JPLMConfigurationFactory::get_encoder_configuration(
 
   switch (basic_config.get_jpeg_pleno_part()) {
     case JpegPlenoPart::Undefined: {
-      throw CommonExceptions::UndefinedPartException();
+      throw JPLMConfigurationExceptions::UndefinedPartException();
     }
     case JpegPlenoPart::LightField: {
       auto light_field_configuration =
@@ -118,7 +118,7 @@ JPLMConfigurationFactory::get_encoder_configuration(
             argc, const_cast<char**>(argv));
       } else {
         //<! \todo after implementing the prediction mode in JPLM, needs to return Prediction mode configuration
-        throw UnsuportedPredictionMode();
+        throw JPLMConfigurationExceptions::UnsuportedPredictionMode();
       }
     }
     // case JpegPlenoPart::PointCloud: {
@@ -153,7 +153,9 @@ JPLMConfigurationFactory::get_encoder_configuration(
       show_invalid_part_common_message();
       break;
     }
-    default: { throw NotImplementedYetPartException(); }
+    default: {
+      throw JPLMConfigurationExceptions::NotImplementedYetPartException();
+    }
   }
 }
 

@@ -258,6 +258,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
       this->current_hierarchy_level});
 }
 
+
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(
         int argc, char **argv, std::size_t level)
@@ -282,14 +283,17 @@ JPLMEncoderConfigurationLightField4DTransformMode::
   run_help();
 }
 
+
 Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
     const {
   return Type::transform_mode;
 }
 
+
 double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
   return lambda;
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(string p) {
   JPLMEncoderConfigurationLightField::parse_json(p);
@@ -312,35 +316,42 @@ uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
   return minimal_transform_size_intra_view_vertical_v;
 }
 
+
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_maximal_transform_size_intra_view_vertical() {
   return maximal_transform_size_intra_view_vertical_v;
 }
+
 
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_minimal_transform_size_intra_view_horizontal() {
   return minimal_transform_size_intra_view_horizontal_u;
 }
 
+
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_maximal_transform_size_intra_view_horizontal() {
   return maximal_transform_size_intra_view_horizontal_u;
 }
+
 
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_minimal_transform_size_inter_view_vertical() {
   return minimal_transform_size_inter_view_vertical_t;
 }
 
+
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_maximal_transform_size_inter_view_vertical() {
   return maximal_transform_size_inter_view_vertical_t;
 }
 
+
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_minimal_transform_size_inter_view_horizontal() {
   return minimal_transform_size_inter_view_horizontal_s;
 }
+
 
 uint32_t JPLMEncoderConfigurationLightField4DTransformMode::
     get_maximal_transform_size_inter_view_horizontal() {
@@ -375,6 +386,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::init_transform_size() {
   this->transform_size = t;
 }
 
+
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_intra_view_vertical(const json &conf) {
   if (conf.contains("transform_size"))
@@ -386,6 +398,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
               conf["transform_size"]["minimum"]["intra-view"]["vertical"]
                   .get<uint32_t>();
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_intra_view_vertical(const json &conf) {
@@ -399,6 +412,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
                   .get<uint32_t>();
 }
 
+
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_intra_view_horizontal(const json &conf) {
   if (conf.contains("transform_size"))
@@ -410,6 +424,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
               conf["transform_size"]["minimum"]["intra-view"]["horizontal"]
                   .get<uint32_t>();
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_intra_view_horizontal(const json &conf) {
@@ -423,6 +438,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
                   .get<uint32_t>();
 }
 
+
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_inter_view_vertical(const json &conf) {
   if (conf.contains("transform_size"))
@@ -434,6 +450,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
               conf["transform_size"]["minimum"]["inter-view"]["vertical"]
                   .get<uint32_t>();
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_inter_view_vertical(const json &conf) {
@@ -447,6 +464,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
                   .get<uint32_t>();
 }
 
+
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_inter_view_horizontal(const json &conf) {
   if (conf.contains("transform_size"))
@@ -458,6 +476,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
               conf["transform_size"]["minimum"]["inter-view"]["horizontal"]
                   .get<uint32_t>();
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_inter_view_horizontal(const json &conf) {
@@ -471,11 +490,13 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
                   .get<uint32_t>();
 }
 
+
 void JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
     const json &conf) {
   if (conf.contains("lambda"))
     this->lambda = conf["lambda"].get<double>();
 }
+
 
 void JPLMEncoderConfigurationLightField4DTransformMode::parse_border_policy(
     const json &conf) {

@@ -45,8 +45,8 @@
 #include <filesystem>
 #include <optional>
 #include "CLI/CLI.hpp"
+#include "Lib/Common/CommonExceptions.h"
 #include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
@@ -86,7 +86,8 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
             if (fs::exists(this->config)) {
               parse_json(this->config);
             } else {
-              throw ConfigFileDoesNotExistException(this->config);
+              throw JPLMConfigurationExceptions::
+                  ConfigFileDoesNotExistException(this->config);
             }
           }
         },
@@ -171,7 +172,8 @@ void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
     else if (c == "ycocg")
       colorspace = ColorSpaces::ColorSpace::YCoCg;
     else
-      throw NotImplementedYetInputTypeParseException(c);
+      throw JPLMConfigurationExceptions::
+          NotImplementedYetInputTypeParseException(c);
   }
 }
 

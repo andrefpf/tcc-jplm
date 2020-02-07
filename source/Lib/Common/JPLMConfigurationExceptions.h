@@ -40,79 +40,12 @@
 #ifndef JPLM_PARSEEXCEPTIONS_H
 #define JPLM_PARSEEXCEPTIONS_H
 
-#include <exception>
-#include <string>
-#include <type_traits>
-#include "magic_enum.hpp"
+// #include <exception>
+// #include <string>
+// #include <type_traits>
+// #include "magic_enum.hpp"
 
-using namespace std;
+// using namespace std;
 
-class NotImplementedYetInputTypeParseException : public std::exception {
- private:
-  string msg;
-
- public:
-  NotImplementedYetInputTypeParseException(string m)
-      : msg("Option " + m + " is not implemented yet.") {
-  }
-
-  const char* what() const throw() {
-    return msg.c_str();
-  }
-};
-
-class InconsistentOptionsException : public exception {
-  const char* what() const throw() {
-    return "Inconsistent Options.";
-  }
-};
-
-
-class NotImplementedYetPartException : public exception {
-  const char* what() const throw() {
-    return "Chosen part not implemented yet.";
-  }
-};
-
-class NotImplementedYetModeException : public exception {
-  const char* what() const throw() {
-    return "Mode not implemented yet.";
-  }
-};
-
-class UnsuportedPredictionMode : public exception {
-  const char* what() const throw() {
-    return "Prediction mode is currently not supported in this reference "
-           "software.";
-  }
-};
-
-class ConfigFileDoesNotExistException : public std::exception {
- private:
-  string msg;
-
- public:
-  ConfigFileDoesNotExistException(string m)
-      : msg("Config file " + m + " does not exists.") {
-  }
-
-  const char* what() const throw() {
-    return msg.c_str();
-  }
-};
-
-class UnknownCLIParameterException : public exception {
- private:
-  string msg;
-
- public:
-  UnknownCLIParameterException(string m)
-      : msg("CLI parameter " + m + " is not known.") {
-  }
-
-  const char* what() const throw() {
-    return msg.c_str();
-  }
-};
 
 #endif  //JPLM_PARSEEXCEPTIONS_H
