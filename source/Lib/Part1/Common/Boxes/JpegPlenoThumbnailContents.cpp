@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoFileTypeContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+/** \file     JpegPlenoThumbnailContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-07
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-
-#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-
-class JpegPlenoFileTypeContents : public FileTypeContents {
- public:
-  JpegPlenoFileTypeContents(uint32_t minor_version = 0,
-      const std::vector<uint32_t>& compatibility_list = {});
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailContents.h"
 
 
-  JpegPlenoFileTypeContents(
-      uint32_t minor_version, std::vector<uint32_t>&& compatibility_list);
+JpegPlenoThumbnailContents *JpegPlenoThumbnailContents::clone() const {
+  return new JpegPlenoThumbnailContents(*this);
+}
 
 
-  JpegPlenoFileTypeContents(const JpegPlenoFileTypeContents& other)
-      : FileTypeContents(other) {
-  }
+uint64_t JpegPlenoThumbnailContents::size() const noexcept {
+  auto sum_colr_sizes = [](uint64_t sum, const ColourSpecificationBox &val) {
+    return sum + val.size();
+  };
+
+  return ihdr.size() + bpcc.size() +
+         std::accumulate(colr.begin(), colr.end(), 0, sum_colr_sizes) +
+         cdef.size() + jpc2.size();
+}
 
 
-  JpegPlenoFileTypeContents(JpegPlenoFileTypeContents&& other)
-      : FileTypeContents(std::move(other)) {
-  }
-};
+bool JpegPlenoThumbnailContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other =
+      dynamic_cast<const JpegPlenoThumbnailContents &>(other);
+  return *this == cast_other;
+}
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__ */
+bool JpegPlenoThumbnailContents::operator==(
+    const JpegPlenoThumbnailContents &other) const {
+  return std::tie(this->ihdr, this->bpcc, this->colr, this->cdef, this->jpc2) ==
+         std::tie(other.ihdr, other.bpcc, other.colr, other.cdef, other.jpc2);
+}
+
+
+bool JpegPlenoThumbnailContents::operator!=(
+    const JpegPlenoThumbnailContents &other) const {
+  return !this->operator==(other);
+}

@@ -1,9 +1,10 @@
-set(COMMON_BOXES_PARSERS_SOURCES BoxParserRegistry.cpp
+set(COMMON_BOXES_PARSERS_SOURCES
     ColourSpecificationBoxParser.cpp
     ContiguousCodestreamBoxParser.cpp
     BoxParserRegistry.cpp
     BoxParserHelperBase.cpp
-    BoxParserHelper.cpp)
+    BoxParserHelper.cpp
+    ../../../Part2/Decoder/Boxes/ProfileAndLevelBoxParser.cpp)
 
 add_library(jplm_common_boxes_parsers ${COMMON_BOXES_PARSERS_SOURCES})
 

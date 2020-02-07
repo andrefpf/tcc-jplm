@@ -50,6 +50,7 @@
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Part1/Common/Boxes/CommonExceptions.h"
 
+
 enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
   LightField = 0x6a706c66,
   PointCloud = 0x6a707063,
@@ -59,35 +60,17 @@ enum class JpegPlenoCodestreamBoxTypes : t_box_id_type {
 
 class JpegPlenoCodestreamBox : public Box {
  private:
-  void check_type() const {
-    if (auto value = this->t_box.get_value();
-        (value != static_cast<t_box_id_type>(
-                      JpegPlenoCodestreamBoxTypes::LightField)) &&
-        (value != static_cast<t_box_id_type>(
-                      JpegPlenoCodestreamBoxTypes::PointCloud)) &&
-        (value != static_cast<t_box_id_type>(
-                      JpegPlenoCodestreamBoxTypes::Hologram))) {
-      throw JpegPlenoCodestreamBoxExceptions::InvalidJpegPlenoCodestreamTypeId(
-          value);
-    }
-  }
+  void check_type() const;
 
  public:
-  JpegPlenoCodestreamBox(TBox t_box, const DBox& d_box) : Box(t_box, d_box) {
-    this->check_type();
-  }
+  JpegPlenoCodestreamBox(TBox t_box, const DBox& d_box);
 
 
-  JpegPlenoCodestreamBox(TBox t_box, std::unique_ptr<DBox>&& d_box)
-      : Box(t_box, std::move(d_box)) {
-    this->check_type();
-  }
+  JpegPlenoCodestreamBox(TBox t_box, std::unique_ptr<DBox>&& d_box);
 
   virtual ~JpegPlenoCodestreamBox() = default;
 
-  JpegPlenoCodestreamBoxTypes get_type() const {
-    return static_cast<JpegPlenoCodestreamBoxTypes>(this->t_box.get_value());
-  }
+  JpegPlenoCodestreamBoxTypes get_type() const;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOCODESTREAMBOX_H__ */

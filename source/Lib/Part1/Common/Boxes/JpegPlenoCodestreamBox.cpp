@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoFileTypeContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+/** \file     JpegPlenoCodestreamBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-07
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-
-#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-
-class JpegPlenoFileTypeContents : public FileTypeContents {
- public:
-  JpegPlenoFileTypeContents(uint32_t minor_version = 0,
-      const std::vector<uint32_t>& compatibility_list = {});
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 
 
-  JpegPlenoFileTypeContents(
-      uint32_t minor_version, std::vector<uint32_t>&& compatibility_list);
-
-
-  JpegPlenoFileTypeContents(const JpegPlenoFileTypeContents& other)
-      : FileTypeContents(other) {
+void JpegPlenoCodestreamBox::check_type() const {
+  if (auto value = this->t_box.get_value();
+      (value != static_cast<t_box_id_type>(
+          JpegPlenoCodestreamBoxTypes::LightField)) &&
+      (value != static_cast<t_box_id_type>(
+          JpegPlenoCodestreamBoxTypes::PointCloud)) &&
+      (value != static_cast<t_box_id_type>(
+          JpegPlenoCodestreamBoxTypes::Hologram))) {
+    throw JpegPlenoCodestreamBoxExceptions::InvalidJpegPlenoCodestreamTypeId(
+        value);
   }
+}
 
 
-  JpegPlenoFileTypeContents(JpegPlenoFileTypeContents&& other)
-      : FileTypeContents(std::move(other)) {
-  }
-};
+JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(TBox t_box, const DBox &d_box) : Box(t_box, d_box) {
+  this->check_type();
+}
 
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__ */
+JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(TBox t_box,
+                                               std::unique_ptr<DBox> &&d_box)
+    : Box(t_box, std::move(d_box)) {
+  this->check_type();
+}
+
+
+JpegPlenoCodestreamBoxTypes JpegPlenoCodestreamBox::get_type() const {
+  return static_cast<JpegPlenoCodestreamBoxTypes>(this->t_box.get_value());
+}

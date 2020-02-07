@@ -41,11 +41,12 @@
 #ifndef JPLM_LIB_PART1_COMMON_BOXES_FILETYPECONTENTS_H__
 #define JPLM_LIB_PART1_COMMON_BOXES_FILETYPECONTENTS_H__
 
-#include <vector>
-#include <algorithm>  //std::find
-#include <tuple>  //std::tie
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
+#include <vector>
+#include <algorithm>
+#include <tuple>
+
 
 class FileTypeContents : public InMemoryDBox {
   uint32_t BR;  //!< brand
@@ -78,81 +79,40 @@ class FileTypeContents : public InMemoryDBox {
   virtual ~FileTypeContents() = default;
 
 
-  virtual FileTypeContents* clone() const override {
-    return new FileTypeContents(*this);
-  }
+  virtual FileTypeContents* clone() const override;
 
 
-  uint64_t size() const noexcept override {
-    constexpr auto brand_and_minor_version_size = 2 * sizeof(uint32_t);
-    return brand_and_minor_version_size + CL.size() * sizeof(uint32_t);
-  }
+  uint64_t size() const noexcept override;
 
 
-  uint32_t get_brand() const noexcept {
-    return BR;
-  }
+  uint32_t get_brand() const noexcept;
 
 
-  uint32_t get_minor_version() const noexcept {
-    return MinV;
-  }
+  uint32_t get_minor_version() const noexcept;
 
 
-  const std::vector<uint32_t>& get_reference_to_compatibility_list() const {
-    return CL;
-  }
+  const std::vector<uint32_t>& get_reference_to_compatibility_list() const;
 
 
-  void add_compatible_standard_to_list(uint32_t standard_code) {
-    CL.push_back(standard_code);
-  }
+  void add_compatible_standard_to_list(uint32_t standard_code);
 
 
-  bool is_the_file_compatible_with(uint32_t standard_code) const noexcept {
-    auto result = std::find(CL.begin(), CL.end(), standard_code);
-    if (result != CL.end())
-      return true;
-    return false;
-  }
+  bool is_the_file_compatible_with(uint32_t standard_code) const noexcept;
 
 
-  auto get_number_of_compatible_standards() const noexcept {
-    return CL.size();
-  }
+  std::size_t  get_number_of_compatible_standards() const noexcept;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const FileTypeContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const FileTypeContents& other) const noexcept {
-    return (std::tie(this->BR, this->MinV) == std::tie(other.BR, other.MinV)) &&
-           (this->CL == other.CL);
-  }
+  bool operator==(const FileTypeContents& other) const noexcept;
 
 
-  bool operator!=(const FileTypeContents& other) const noexcept {
-    return !this->operator==(other);
-  }
+  bool operator!=(const FileTypeContents& other) const noexcept;
 
 
-  virtual std::vector<std::byte> get_bytes() const override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    BinaryTools::append_big_endian_bytes(bytes, BR);
-    BinaryTools::append_big_endian_bytes(bytes, MinV);
-
-    for (const auto& compatible_code : CL) {
-      BinaryTools::append_big_endian_bytes(bytes, compatible_code);
-    }
-    return bytes;
-  }
+  virtual std::vector<std::byte> get_bytes() const override;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_FILETYPECONTENTS_H__ */

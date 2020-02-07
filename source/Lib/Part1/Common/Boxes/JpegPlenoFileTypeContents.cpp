@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoFileTypeContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+/** \file     JpegPlenoFileTypeContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-07
  */
 
-
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-
-#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
-
-class JpegPlenoFileTypeContents : public FileTypeContents {
- public:
-  JpegPlenoFileTypeContents(uint32_t minor_version = 0,
-      const std::vector<uint32_t>& compatibility_list = {});
+#include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
 
 
-  JpegPlenoFileTypeContents(
-      uint32_t minor_version, std::vector<uint32_t>&& compatibility_list);
-
-
-  JpegPlenoFileTypeContents(const JpegPlenoFileTypeContents& other)
-      : FileTypeContents(other) {
+JpegPlenoFileTypeContents::JpegPlenoFileTypeContents(
+    uint32_t minor_version, const std::vector<uint32_t> &compatibility_list)
+    : FileTypeContents(
+          JpegPlenoSignatureBox::id, minor_version, compatibility_list) {
+  //A file that conforms to this international standard shall have at least one CLi
+  //filed and shall contain the value 'jpl\040' in one of the CLiFields
+  if (!this->is_the_file_compatible_with(this->get_brand())) {
+    this->add_compatible_standard_to_list(this->get_brand());
   }
+}
 
 
-  JpegPlenoFileTypeContents(JpegPlenoFileTypeContents&& other)
-      : FileTypeContents(std::move(other)) {
+JpegPlenoFileTypeContents::JpegPlenoFileTypeContents(
+    uint32_t minor_version, std::vector<uint32_t> &&compatibility_list)
+    : FileTypeContents(JpegPlenoSignatureBox::id, minor_version,
+          std::move(compatibility_list)) {
+  //A file that conforms to this international standard shall have at least one CLi
+  //filed and shall contain the value 'jpl\040' in one of the CLiFields
+  if (!this->is_the_file_compatible_with(this->get_brand())) {
+    this->add_compatible_standard_to_list(this->get_brand());
   }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__ */
+}

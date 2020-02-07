@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,56 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoFileTypeContents.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-26
+/** \file     JpegPlenoSignatureContents.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-07
  */
 
+#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__
+JpegPlenoSignatureContents *JpegPlenoSignatureContents::clone() const {
+  return new JpegPlenoSignatureContents(*this);
+}
 
-#include "Lib/Part1/Common/Boxes/FileTypeContents.h"
-#include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
+uint64_t JpegPlenoSignatureContents::size() const noexcept {
+  return 4;
+}
 
-class JpegPlenoFileTypeContents : public FileTypeContents {
- public:
-  JpegPlenoFileTypeContents(uint32_t minor_version = 0,
-      const std::vector<uint32_t>& compatibility_list = {});
+bool JpegPlenoSignatureContents::is_equal(const DBox &other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto &cast_other =
+      dynamic_cast<const JpegPlenoSignatureContents &>(other);
+  return *this == cast_other;
+}
 
+bool JpegPlenoSignatureContents::operator==(
+    const JpegPlenoSignatureContents &other) const {
+  return (this->signature == other.signature);
+}
 
-  JpegPlenoFileTypeContents(
-      uint32_t minor_version, std::vector<uint32_t>&& compatibility_list);
+bool JpegPlenoSignatureContents::operator!=(
+    const JpegPlenoSignatureContents &other) const {
+  return !this->operator==(other);
+}
 
-
-  JpegPlenoFileTypeContents(const JpegPlenoFileTypeContents& other)
-      : FileTypeContents(other) {
+bool JpegPlenoSignatureContents::is_valid(const std::vector<std::byte> &bytes) {
+  if (bytes.size() == 4) {
+    if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
+        (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
+      return true;
+    }
   }
+  return false;
+}
 
+const std::array<std::byte, 4>
+    &JpegPlenoSignatureContents::get_ref_to_signature() const noexcept {
+  return signature;
+}
 
-  JpegPlenoFileTypeContents(JpegPlenoFileTypeContents&& other)
-      : FileTypeContents(std::move(other)) {
-  }
-};
-
-
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOFILETYPECONTENTS_H__ */
+std::vector<std::byte> JpegPlenoSignatureContents::get_bytes() const {
+  return std::vector<std::byte>(signature.begin(), signature.end());
+}
