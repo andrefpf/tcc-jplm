@@ -69,10 +69,12 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   return os;
 }
 
+
 JPLFile::JPLFile(const FileTypeBox& file_type_box)
     : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>()),
       file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
 }
+
 
 JPLFile::JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box,
     const FileTypeBox& file_type_box)
@@ -81,25 +83,31 @@ JPLFile::JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box,
       file_type_box(std::make_unique<FileTypeBox>(file_type_box)) {
 }
 
+
 FileTypeBox JPLFile::get_file_type_box() const noexcept {
   return *file_type_box;
 }
+
 
 JpegPlenoSignatureBox JPLFile::get_jpeg_pleno_signature_box() const noexcept {
   return *jpeg_pleno_signature_box;
 }
 
-std::size_t  JPLFile::number_of_codestreams() const noexcept {
+
+std::size_t JPLFile::number_of_codestreams() const noexcept {
   return jpeg_pleno_codestreams.size();
 }
+
 
 bool JPLFile::has_codestream() const noexcept {
   return jpeg_pleno_codestreams.size() > 0;
 }
 
+
 bool JPLFile::has_thumbnail() const noexcept {
   return jpeg_pleno_thumbnail_box ? true : false;
 }
+
 
 JPLFile& JPLFile::add_thumbnail_box(
     const JpegPlenoThumbnailBox& thumbnail_box) {  //thumbnail_box
@@ -108,11 +116,13 @@ JPLFile& JPLFile::add_thumbnail_box(
   return *this;
 }
 
+
 JPLFile& JPLFile::add_codestream_box(
     std::unique_ptr<JpegPlenoCodestreamBox>&& codestream_box) {
   jpeg_pleno_codestreams.emplace_back(std::move(codestream_box));
   return *this;
 }
+
 
 JPLFile::JPLFile(
     std::unique_ptr<JpegPlenoSignatureBox>&& jpeg_pleno_signature_box,
@@ -121,9 +131,22 @@ JPLFile::JPLFile(
       file_type_box(std::move(file_type_box)) {
 }
 
+
 JPLFile::JPLFile(JpegPlenoSignatureBox&& jpeg_pleno_signature_box,
     FileTypeBox&& file_type_box)
     : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>(
           std::move(jpeg_pleno_signature_box))),
       file_type_box(std::make_unique<FileTypeBox>(std::move(file_type_box))) {
+}
+
+
+std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+JPLFile::get_reference_to_codestreams() noexcept {
+  return jpeg_pleno_codestreams;
+}
+
+
+const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+JPLFile::get_reference_to_codestreams() const noexcept {
+  return jpeg_pleno_codestreams;
 }

@@ -103,13 +103,12 @@ class JPLFile {
   std::size_t number_of_codestreams() const noexcept;
 
 
-  auto& get_reference_to_codestreams() noexcept {
-    return jpeg_pleno_codestreams;
-  }
+  std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+  get_reference_to_codestreams() noexcept;
 
-  const auto& get_reference_to_codestreams() const noexcept {
-    return jpeg_pleno_codestreams;
-  }
+
+  const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+  get_reference_to_codestreams() const noexcept;
 
 
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept;
@@ -119,8 +118,6 @@ class JPLFile {
 
   friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
 };
-
-
 
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_JPLFILE_H__ */
