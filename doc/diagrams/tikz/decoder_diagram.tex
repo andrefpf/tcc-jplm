@@ -43,7 +43,7 @@
 }
 \begin{document}
 
-\tikzstyle{myArrow} = [->, >=latex', thick]
+\input{styles}
 
 \begin{tikzpicture}[node distance=5mm]
 	\node[] (args) {\texttt{./jpl-decoder -\--input file.jpl -\--output output/}};
@@ -62,7 +62,7 @@
 
 
 	\begin{scope}[on background layer]
-		\node[dashed, draw, rounded corners, thick, inner sep=3mm,fit=(config) (decoder) (run) (stream)] (co) {};
+		\node[codec, fit=(config) (decoder) (run) (stream)] (co) {};
 	\end{scope}	
 
 
