@@ -68,35 +68,22 @@ class UUIDInfoContents : public InMemoryDBox {
   }
 
 
-  virtual UUIDInfoContents* clone() const override {
-    return new UUIDInfoContents(*this);
-  }
+  virtual UUIDInfoContents* clone() const override;
 
 
   ~UUIDInfoContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return u_list.size() + de.size();
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDInfoContents&>(other);
-    return *this == cast_other;
-  }
+  bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const UUIDInfoContents& other) const {
-    return (this->u_list == other.u_list) && (this->de == other.de);
-  }
+  bool operator==(const UUIDInfoContents& other) const;
 
 
-  bool operator!=(const UUIDInfoContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const UUIDInfoContents& other) const;
 };
 
 

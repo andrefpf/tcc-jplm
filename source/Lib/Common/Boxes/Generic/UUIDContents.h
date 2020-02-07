@@ -54,41 +54,25 @@ class UUIDContents : public InMemoryDBox {
   UUIDContents() = default;
 
 
-  virtual UUIDContents* clone() const override {
-    return new UUIDContents(*this);
-  }
+  UUIDContents* clone() const override;
 
 
   virtual ~UUIDContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return id.size() + data.size() * sizeof(uint8_t);
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UUIDContents&>(other);
-    return *this == cast_other;
-  }
+  bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const UUIDContents& other) const {
-    return (this->id == other.id) && (this->data == other.data);
-  }
+  bool operator==(const UUIDContents& other) const;
 
 
-  bool operator!=(const UUIDContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const UUIDContents& other) const;
 
 
-  void add_data(const std::vector<uint8_t>& data_to_add) {
-    data.reserve(data_to_add.size());
-    data.insert(data.end(), data_to_add.begin(), data_to_add.end());
-  }
+  void add_data(const std::vector<uint8_t>& data_to_add);
 };
 
 

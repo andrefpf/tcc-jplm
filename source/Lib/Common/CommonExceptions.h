@@ -43,6 +43,7 @@
 #define JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H
 
 #include <exception>
+#include <stdexcept>
 #include <string>
 
 //<! \todo After merging, change the name to JPLMCommonExceptions

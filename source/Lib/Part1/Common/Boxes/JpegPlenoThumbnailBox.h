@@ -49,6 +49,7 @@
  * \brief Definition of the Jpeg Pleno Thumbnail Box
  * \tparam JpegPlenoThumbnailContents
  */
-using JpegPlenoThumbnailBox = GenericBox<0x6a707468, JpegPlenoThumbnailContents>;
+using JpegPlenoThumbnailBox =
+    GenericBox<0x6a707468, JpegPlenoThumbnailContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOTHUMBNAILBOX_H__ */

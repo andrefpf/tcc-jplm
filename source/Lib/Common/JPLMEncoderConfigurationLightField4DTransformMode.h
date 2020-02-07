@@ -42,10 +42,9 @@
 #define JPLMENCODERCONFIGURATIONLIGHTFIELD4DTRANSFORMMODE_H__
 
 #include <string>
-#include "JPLMEncoderConfigurationLightField.h"
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
-
 
 // \todo: Refactor and improve the redundancies in this class
 class JPLMEncoderConfigurationLightField4DTransformMode
@@ -107,7 +106,6 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   void parse_lambda(const json &conf);
   void parse_border_policy(const json &conf);
 
-
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
   double get_lambda() const;
@@ -120,41 +118,23 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_maximal_transform_size_inter_view_vertical();
   uint32_t get_minimal_transform_size_inter_view_horizontal();
   uint32_t get_maximal_transform_size_inter_view_horizontal();
+
   BorderBlocksPolicy get_border_blocks_policy();
 
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
+
+  get_maximal_transform_sizes() const;
+
+  LightfieldDimension<uint32_t> get_maximal_transform_dimension() const;
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
-  get_maximal_transform_sizes() const {
-    return {maximal_transform_size_inter_view_vertical_t,
-        maximal_transform_size_inter_view_horizontal_s,
-        maximal_transform_size_intra_view_vertical_v,
-        maximal_transform_size_intra_view_horizontal_u};
-  }
-
-  LightfieldDimension<uint32_t> get_maximal_transform_dimension() const {
-    return {get_maximal_transform_sizes()};
-  }
+  get_minimal_transform_sizes() const;
 
 
-  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
-  get_minimal_transform_sizes() const {
-    return {minimal_transform_size_inter_view_vertical_t,
-        minimal_transform_size_inter_view_horizontal_s,
-        minimal_transform_size_intra_view_vertical_v,
-        minimal_transform_size_intra_view_horizontal_u};
-  }
+  LightfieldDimension<uint32_t> get_minimal_transform_dimension() const;
 
 
-  LightfieldDimension<uint32_t> get_minimal_transform_dimension() const {
-    return {get_minimal_transform_sizes()};
-  }
-
-
-  std::tuple<double, double, double, double> get_transform_scalings() const {
-    return {transform_scale_t, transform_scale_s, transform_scale_v,
-        transform_scale_u};
-  }
-
+  std::tuple<double, double, double, double> get_transform_scalings() const;
 
   TransformSize transform_size;
 };

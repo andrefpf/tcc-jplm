@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_COMMON_GENERIC_TBOX_H__
 #define JPLM_LIB_COMMON_GENERIC_TBOX_H__
 
-#include "BoxDataHolder.h"
+#include "Lib/Common/Boxes/BoxDataHolder.h"
 
 using t_box_id_type = uint32_t;
 

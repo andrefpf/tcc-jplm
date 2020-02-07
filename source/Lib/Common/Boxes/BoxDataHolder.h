@@ -54,37 +54,42 @@ class BoxDataHolder {
  public:
   BoxDataHolder() : value(0){};
 
-
   BoxDataHolder(const T& value) : value(value){};
 
+  virtual ~BoxDataHolder(){};
 
-  virtual ~BoxDataHolder() {
-  }
+  T get_value() const;
 
+  void set_value(T value);
 
-  T get_value() const {
-    return value;
-  }
+  bool is_equal(const BoxDataHolder& other) const noexcept;
 
-
-  void set_value(T value) {
-    this->value = value;
-  }
-
-
-  bool is_equal(const BoxDataHolder& other) const noexcept {
-    if(this->value == other.value) {
-      return true;
-    }
-    return false;
-  }
-
-
-  std::vector<std::byte> get_bytes() const noexcept {
-    return BinaryTools::split_in_big_endian_bytes(value);
-  }
-  
+  std::vector<std::byte> get_bytes() const noexcept;
 };
+
+
+template<typename T>
+std::vector<std::byte> BoxDataHolder<T>::get_bytes() const noexcept {
+  return BinaryTools::split_in_big_endian_bytes(value);
+}
+
+
+template<typename T>
+void BoxDataHolder<T>::set_value(T value) {
+  this->value = value;
+}
+
+
+template<typename T>
+T BoxDataHolder<T>::get_value() const {
+  return value;
+}
+
+
+template<typename T>
+bool BoxDataHolder<T>::is_equal(const BoxDataHolder& other) const noexcept {
+  return this->value == other.value;
+}
 
 
 template<typename T>

@@ -41,7 +41,8 @@
 #include "ContiguousCodestreamBoxParser.h"
 
 
-uint64_t JPLMBoxParser::ContiguousCodestreamBoxParser::memory_limit = std::numeric_limits<uint64_t>::max();
+uint64_t JPLMBoxParser::ContiguousCodestreamBoxParser::memory_limit =
+    std::numeric_limits<uint64_t>::max();
 
 
 std::unique_ptr<Box> JPLMBoxParser::ContiguousCodestreamBoxParser::parse(
@@ -55,10 +56,12 @@ std::unique_ptr<Box> JPLMBoxParser::ContiguousCodestreamBoxParser::parse(
     auto contiguous_codestream_code =
         std::make_unique<ContiguousCodestreamCodeInMemory>(
             remaining_stream.get_n_bytes(data_length));
-    auto contiguous_codestream_contents = std::make_unique<ContiguousCodestreamContents>(
-        std::move(contiguous_codestream_code));
+    auto contiguous_codestream_contents =
+        std::make_unique<ContiguousCodestreamContents>(
+            std::move(contiguous_codestream_code));
 
-    return std::make_unique<ContiguousCodestreamBox>(std::move(contiguous_codestream_contents));
+    return std::make_unique<ContiguousCodestreamBox>(
+        std::move(contiguous_codestream_contents));
   }  //else
 
   // \todo read in a code as pointer to file, or copy to a temporary file...

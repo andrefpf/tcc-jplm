@@ -72,9 +72,9 @@
 class Box {
  protected:
   // LBox l_box; //kept here just for illustration
-  TBox t_box; //!< The TBox that keeps the id of this box
+  TBox t_box;  //!< The TBox that keeps the id of this box
   // std::optional<XLBox> xl_box; //kept here just for illustration
-  std::unique_ptr<DBox> d_box; //!< Unique ptr to the contents kept by the box
+  std::unique_ptr<DBox> d_box;  //!< Unique ptr to the contents kept by the box
 
   /**
    * \brief      There should be no default constructor for the box. 
@@ -91,9 +91,7 @@ class Box {
    * \param[in]  t_box  The TBox that indicates the ID of this Box.
    * \param[in]  d_box  A reference to contents (DBox) that will be copied and kept by this Box.
    */
-  Box(TBox t_box, const DBox& d_box = EmptyDBox())
-      : t_box(t_box), d_box(std::unique_ptr<DBox>(d_box.clone())) {
-  }
+  Box(TBox t_box, const DBox& d_box = EmptyDBox());
 
 
   /**
@@ -102,9 +100,7 @@ class Box {
    * \param[in]  t_box  The TBox that indicates the ID of this Box.
    * \param      d_box  A temporary unique_ptr the contents (DBox) that will be moved to be held by this Box.
    */
-  Box(TBox t_box, std::unique_ptr<DBox>&& d_box)
-      : t_box(t_box), d_box(std::move(d_box)) {
-  }
+  Box(TBox t_box, std::unique_ptr<DBox>&& d_box);
 
 
   /**
@@ -200,35 +196,16 @@ class Box {
   DBox& get_ref_to_dbox() noexcept;
 
 
-  bool has_same_type(const Box& other) const noexcept {
-    if (other.t_box == this->t_box)
-      return true;
-    return false;
-  }
+  bool has_same_type(const Box& other) const noexcept;
 
 
-  bool has_same_length(const Box& other) const noexcept {
-    if (other.size() != this->size()) {
-      return false;
-    }
-    return true;
-  }
+  bool has_same_length(const Box& other) const noexcept;
 
 
-  bool holds_same_data(const Box& other) const noexcept {
-    if (*(other.d_box) != *(this->d_box)) {
-      return false;
-    }
-    return true;
-  }
+  bool holds_same_data(const Box& other) const noexcept;
 
 
-  bool is_equal(const Box& other) const noexcept {
-    if (this->holds_same_data(other) && this->has_same_type(other) &&
-        this->has_same_length(other))
-      return true;
-    return false;
-  }
+  bool is_equal(const Box& other) const noexcept;
 
 
   virtual const DBox& get_ref_to_contents() const noexcept = 0;
@@ -243,14 +220,10 @@ class Box {
   virtual const DBox* data() const = 0;
 
 
-  bool operator==(const Box& other) const {
-    return this->is_equal(other);
-  }
+  bool operator==(const Box& other) const;
 
 
-  bool operator!=(const Box& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const Box& other) const;
 
 
   friend std::ostream& operator<<(std::ostream& stream, const Box& Box);

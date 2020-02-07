@@ -49,11 +49,12 @@ class CharArrayContents : public InMemoryDBox {
   std::vector<uint8_t> chars;
 
  public:
-  CharArrayContents(const std::vector<uint8_t>& array) : chars(array) {
+  explicit CharArrayContents(const std::vector<uint8_t>& array) : chars(array) {
   }
 
 
-  CharArrayContents(std::vector<uint8_t>&& array) : chars(std::move(array)) {
+  explicit CharArrayContents(std::vector<uint8_t>&& array)
+      : chars(std::move(array)) {
   }
 
 
@@ -69,47 +70,25 @@ class CharArrayContents : public InMemoryDBox {
   ~CharArrayContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return chars.size();
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual CharArrayContents* clone() const override {
-    return new CharArrayContents(*this);
-  }
+  CharArrayContents* clone() const override;
 
 
-  const std::vector<uint8_t>& get_const_ref_to_vector() const {
-    return chars;
-  }
+  const std::vector<uint8_t>& get_const_ref_to_vector() const;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const CharArrayContents&>(other);
-    return *this == cast_other;
-  }
+  bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const CharArrayContents& other) const {
-    return this->chars == other.chars;
-  }
+  bool operator==(const CharArrayContents& other) const;
 
 
-  bool operator!=(const CharArrayContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const CharArrayContents& other) const;
 
 
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-    for (const auto& value : chars) {
-      bytes.emplace_back(std::byte{value});
-    }
-    return bytes;
-  }
+  std::vector<std::byte> get_bytes() const noexcept override;
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CHARARRAYCONTENTS_H__ */

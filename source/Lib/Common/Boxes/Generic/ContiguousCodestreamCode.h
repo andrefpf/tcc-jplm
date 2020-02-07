@@ -84,19 +84,10 @@ class ContiguousCodestreamCode {
   virtual void rewind(std::size_t n_bytes_to_rewind) const = 0;
 
 
-  // virtual std::vector<std::byte> get_next_n_bytes(std::size_t n) const = 0;
-
-  
+  bool operator==(const ContiguousCodestreamCode& other) const;
 
 
-  bool operator==(const ContiguousCodestreamCode& other) const {
-    return this->is_equal(other);
-  }
-
-
-  bool operator!=(const ContiguousCodestreamCode& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const ContiguousCodestreamCode& other) const;
 
   //! \todo define a iterator interface for ContiguousCodestreamCode
 };

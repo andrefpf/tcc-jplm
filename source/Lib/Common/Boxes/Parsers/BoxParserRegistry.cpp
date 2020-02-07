@@ -73,7 +73,8 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     // std::cout << "Before parsing: " << box_parser_helper.
     // here i need to limit the access
-    auto box_parser_helper_with_protected_range = box_parser_helper.get_helper_with_protected_range();
+    auto box_parser_helper_with_protected_range =
+        box_parser_helper.get_helper_with_protected_range();
     return it->second(box_parser_helper_with_protected_range);
   }
   //not found a parser... should go to the end of the managed stream
@@ -100,5 +101,7 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<JpegPlenoLightFieldBoxParser>();
   register_parser<ContiguousCodestreamBoxParser>();
   register_parser<CameraParameterBoxParser>();
-  // register_parser<...>();  
+  // register_parser<...>();
 }
+
+

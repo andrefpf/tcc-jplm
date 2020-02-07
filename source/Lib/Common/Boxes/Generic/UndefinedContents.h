@@ -73,55 +73,34 @@ class UndefinedContents : public InMemoryDBox {
   UndefinedContents() = default;
 
 
-  virtual UndefinedContents* clone() const override {
-    return new UndefinedContents(*this);
-  }
+  virtual UndefinedContents* clone() const override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
   ~UndefinedContents() = default;
 
 
-  uint64_t size() const noexcept override {
-    return byte_array.size();
-  }
+  uint64_t size() const noexcept override;
 
 
-  bool operator==(const UndefinedContents& other) const {
-    return this->byte_array == other.byte_array;
-  }
+  bool operator==(const UndefinedContents& other) const;
 
 
-  bool operator!=(const UndefinedContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const UndefinedContents& other) const;
 
 
-  void set_bytes(const std::vector<std::byte>&& bytes) {
-    byte_array = std::move(bytes);
-  }
+  void set_bytes(const std::vector<std::byte>&& bytes);
 
 
-  void set_bytes(const std::vector<std::byte>& bytes) {
-    byte_array = bytes;
-  }
+  void set_bytes(const std::vector<std::byte>& bytes);
 
 
-  void add_bytes(const std::vector<std::byte>& bytes) {
-    byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
-  }
+  void add_bytes(const std::vector<std::byte>& bytes);
 
 
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return byte_array;
-  }
+  virtual std::vector<std::byte> get_bytes() const noexcept override;
 };
 
 

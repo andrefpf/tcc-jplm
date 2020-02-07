@@ -51,6 +51,7 @@
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
+
 class JpegPlenoThumbnailContents : public InMemoryDBox {
  protected:
   ImageHeaderBox ihdr;  //image header box
@@ -76,41 +77,19 @@ class JpegPlenoThumbnailContents : public InMemoryDBox {
   }
 
 
-  virtual JpegPlenoThumbnailContents* clone() const override {
-    return new JpegPlenoThumbnailContents(*this);
-  }
+  virtual JpegPlenoThumbnailContents* clone() const override;
 
 
-  virtual uint64_t size() const noexcept override {
-    auto sum_colr_sizes = [](uint64_t sum, const ColourSpecificationBox& val) {
-      return sum + val.size();
-    };
-
-    return ihdr.size() + bpcc.size() +
-           std::accumulate(colr.begin(), colr.end(), 0, sum_colr_sizes) +
-           cdef.size() + jpc2.size();
-  }
+  virtual uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const JpegPlenoThumbnailContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const JpegPlenoThumbnailContents& other) const {
-    return std::tie(
-               this->ihdr, this->bpcc, this->colr, this->cdef, this->jpc2) ==
-           std::tie(other.ihdr, other.bpcc, other.colr, other.cdef, other.jpc2);
-  }
+  bool operator==(const JpegPlenoThumbnailContents& other) const;
 
 
-  bool operator!=(const JpegPlenoThumbnailContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const JpegPlenoThumbnailContents& other) const;
 };
 
 
