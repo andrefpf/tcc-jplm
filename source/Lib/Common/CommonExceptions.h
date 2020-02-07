@@ -43,6 +43,7 @@
 #define JPLM_LIB_COMMON_COMMON_EXCEPTIONS_H
 
 #include <exception>
+#include <stdexcept>
 #include <string>
 
 namespace CommonExceptions {

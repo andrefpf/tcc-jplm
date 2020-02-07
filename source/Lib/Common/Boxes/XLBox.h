@@ -51,9 +51,9 @@ class XLBox : public BoxDataHolder<uint64_t> {
 
 
   XLBox(const uint64_t& value) : BoxDataHolder<uint64_t>(value) {
-  	if(value < 16) {
-  		throw BoxExceptions::ValueNotAllowedException();
-  	}
+    if (value < 16) {
+      throw BoxExceptions::ValueNotAllowedException();
+    }
   }
 
 
@@ -63,7 +63,7 @@ class XLBox : public BoxDataHolder<uint64_t> {
   bool operator==(const XLBox& other) const {
     return this->is_equal(other);
   }
-  
+
 
   bool operator!=(const XLBox& other) const {
     return !operator==(other);

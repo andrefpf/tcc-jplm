@@ -55,52 +55,31 @@ class DataEntryURLContents : public InMemoryDBox {
   DataEntryURLContents() = default;
 
 
-  virtual DataEntryURLContents* clone() const override {
-    return new DataEntryURLContents(*this);
-  }
+  DataEntryURLContents* clone() const override;
 
 
   ~DataEntryURLContents() = default;
 
 
-  virtual uint64_t size() const noexcept override {
-    return 4 + loc.size() + 1;
-    //4 for ver and location + the size of the string + the null termination char
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other = dynamic_cast<const DataEntryURLContents&>(other);
-    return *this == cast_other;
-  }
+  bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const DataEntryURLContents& other) const {
-    return std::tie(this->vers, this->flag, this->loc) ==
-           std::tie(other.vers, other.flag, other.loc);
-  }
+  bool operator==(const DataEntryURLContents& other) const;
 
 
-  bool operator!=(const DataEntryURLContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const DataEntryURLContents& other) const;
 
 
-  uint8_t get_version_number() const noexcept {
-    return vers;
-  }
+  uint8_t get_version_number() const noexcept;
 
 
-  BinaryTools::uint24_t get_flag() const noexcept {
-    return flag;
-  }
+  BinaryTools::uint24_t get_flag() const noexcept;
 
 
-  const char* get_location() const noexcept {
-    return loc.c_str();
-  }
+  const char* get_location() const noexcept;
 };
 
 

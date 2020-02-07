@@ -42,10 +42,10 @@
 #define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__
 
 #include <array>
-#include <vector>
 #include <cstddef>  //std::byte
-#include "Lib/Common/Boxes/InMemoryDBox.h"
+#include <vector>
 #include "Lib/Common/Boxes/GenericBox.h"
+#include "Lib/Common/Boxes/InMemoryDBox.h"
 
 class JpegPlenoSignatureContents : public InMemoryDBox {
  protected:
@@ -54,60 +54,33 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
 
  public:
   JpegPlenoSignatureContents() = default;
-  
+
 
   ~JpegPlenoSignatureContents() = default;
 
 
-  virtual JpegPlenoSignatureContents* clone() const override {
-    return new JpegPlenoSignatureContents(*this);
-  }
+  virtual JpegPlenoSignatureContents* clone() const override;
 
 
-  virtual uint64_t size() const noexcept override {
-    return 4;
-  }
+  virtual uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const JpegPlenoSignatureContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const JpegPlenoSignatureContents& other) const {
-    return (this->signature == other.signature);
-  }
+  bool operator==(const JpegPlenoSignatureContents& other) const;
 
 
-  bool operator!=(const JpegPlenoSignatureContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const JpegPlenoSignatureContents& other) const;
 
 
-  bool is_valid(const std::vector<std::byte>& bytes) {
-  	 if (bytes.size() == 4) {
-      if ((bytes[0] == std::byte{0x0d}) && (bytes[1] == std::byte{0x0a}) &&
-          (bytes[2] == std::byte{0x87}) && (bytes[3] == std::byte{0x0a})) {
-        return true;
-      }
-    }
-    return false;
-  }
+  bool is_valid(const std::vector<std::byte>& bytes);
 
 
-  const auto& get_ref_to_signature() const noexcept {
-    return signature;
-  }
+  const std::array<std::byte, 4>& get_ref_to_signature() const noexcept;
 
 
-  virtual std::vector<std::byte> get_bytes() const override {
-    return std::vector<std::byte>(signature.begin(), signature.end());
-  }
-
+  virtual std::vector<std::byte> get_bytes() const override;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__ */

@@ -43,7 +43,6 @@
 #include <exception>
 #include <string>
 #include <type_traits>
-#include "magic_enum.hpp"
 
 using namespace std;
 

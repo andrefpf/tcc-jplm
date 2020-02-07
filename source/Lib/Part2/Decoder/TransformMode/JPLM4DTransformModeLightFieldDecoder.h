@@ -279,7 +279,6 @@ class JPLM4DTransformModeLightFieldDecoder
       const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
 
-
     auto decoded_block = partition_decoder.decode_partition(
         channel, hierarchical_4d_decoder, size);
 

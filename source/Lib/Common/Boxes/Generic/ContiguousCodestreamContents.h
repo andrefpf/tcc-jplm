@@ -63,60 +63,36 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
 
 
   ContiguousCodestreamContents(const ContiguousCodestreamContents& other)
-      : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())) {
-  }
+      : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())){}
 
 
-  //! \todo remove this method (it is not necessary to be defined as const in its name)
-  const ContiguousCodestreamCode& get_const_ref_to_code() const {
-    return *code;
-  }
-  
-
-  const ContiguousCodestreamCode& get_ref_to_code() const {
-    return *code;
-  }
+            //! \todo remove this method (it is not necessary to be defined as const in its name)
+            [[nodiscard]] const ContiguousCodestreamCode
+        & get_const_ref_to_code() const;
 
 
-  ContiguousCodestreamCode& get_ref_to_code() {
-    return *code;
-  }
+  [[nodiscard]] const ContiguousCodestreamCode& get_ref_to_code() const;
 
 
-  virtual uint64_t size() const noexcept override {
-    return code->size();
-  }
+  ContiguousCodestreamCode& get_ref_to_code();
 
 
-  virtual ContiguousCodestreamContents* clone() const override {
-    std::cout << "ContiguousCodestreamContents clone" << std::endl;
-    return new ContiguousCodestreamContents(*this);
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const ContiguousCodestreamContents&>(other);
-    return *this == cast_other;
-  }
+  ContiguousCodestreamContents* clone() const override;
 
 
-  bool operator==(const ContiguousCodestreamContents& other) const {
-    return *(this->code) == *(other.code);
-  }
+  bool is_equal(const DBox& other) const override;
 
 
-  bool operator!=(const ContiguousCodestreamContents& other) const {
-    return !this->operator==(other);
-  }
+  bool operator==(const ContiguousCodestreamContents& other) const;
 
 
-  std::ostream& write_to(std::ostream& stream) const final {
-    stream << *code;
-    return stream;
-  }
+  bool operator!=(const ContiguousCodestreamContents& other) const;
+
+
+  std::ostream& write_to(std::ostream& stream) const final;
 };
 
 

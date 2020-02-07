@@ -54,18 +54,14 @@ class Hierarchical4DDecoder : public Hierarchical4DCodec {
  private:
   HexadecaTreeFlag decode_segmentation_flag(int bitplane);
 
-
   int decode_coefficient(int bitplane);
-
 
  public:
   ABACDecoder entropy_decoder;
 
-
   Hierarchical4DDecoder(const ContiguousCodestreamCode& codestream_code)
       : entropy_decoder(codestream_code) {
   }
-
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_transform_dimensions()
       const {
@@ -73,23 +69,17 @@ class Hierarchical4DDecoder : public Hierarchical4DCodec {
         mTransformLength_u};
   }
 
-
   virtual ~Hierarchical4DDecoder() = default;
-
 
   void decode_block(int position_t, int position_s, int position_v,
       int position_u, int length_t, int length_s, int length_v, int length_u,
       int bitplane);
 
-
   PartitionFlag decode_partition_flag();
-
 
   int decode_integer(int precision);
 
-
   void start();
-
 
   virtual void reset_probability_models() override {
     Hierarchical4DCodec::reset_probability_models();

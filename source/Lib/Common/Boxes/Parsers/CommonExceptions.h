@@ -48,6 +48,7 @@
 
 namespace BoxParserExceptions {
 
+
 class WrongTBoxValueException : public std::exception {
  protected:
   // const uint32_t readed_type;
@@ -102,6 +103,7 @@ class InvalidTooSmallFileException : public std::exception {
     return message.c_str();
   }
 };
+
 
 class JpegPlenoNotInCompatibilityListException : public std::exception {
  public:

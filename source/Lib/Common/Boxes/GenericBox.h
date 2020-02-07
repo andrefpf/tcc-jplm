@@ -32,8 +32,9 @@
  */
 
 /** \file     GenericBox.h
- *  \brief    
- *  \details  
+ *  \brief    Generic box definition
+ *  \details  This templated class adopts 3 template parameters: box_id,
+ *            ContentsClass, and BaseBox, that are used to specify a box.
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-02
  */
@@ -69,7 +70,6 @@ class GenericBox : public BaseBox {
    */
   GenericBox() : BaseBox(TBox(id), ContentsClass()) {
   }
-
 
 
   /**
@@ -158,7 +158,7 @@ class GenericBox : public BaseBox {
   }
 
 
-   /**
+  /**
    * \brief      Gets a constant raw pointer to the contents of this box.
    *
    * \return     The constant raw pointer to contents (of the class type ContentsClass)..
@@ -176,7 +176,8 @@ class GenericBox : public BaseBox {
    */
   friend void swap(GenericBox& box_a, GenericBox& box_b) {
     using std::swap;
-    swap(box_a.t_box, box_b.t_box);  //! \todo check if swaping the box types is necessary
+    swap(box_a.t_box,
+        box_b.t_box);  //! \todo check if swaping the box types is necessary
     swap(box_a.d_box, box_b.d_box);
   }
 

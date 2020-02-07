@@ -41,21 +41,26 @@
 #ifndef PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
 #define PLM_LIB_PART1_COMMON_BOXES_COMMONEXCEPTIONS_H__
 
+
+#include <cstdint>
 #include <exception>
 #include <string>
-#include <cstdint>
 #include "Lib/Common/Boxes/TBox.h"
+
 
 namespace JpegPlenoCodestreamBoxExceptions {
 class InvalidJpegPlenoCodestreamTypeId : public std::exception {
  protected:
   std::string message;
 
+
  public:
-  InvalidJpegPlenoCodestreamTypeId(const t_box_id_type type_value)
+  explicit InvalidJpegPlenoCodestreamTypeId(const t_box_id_type type_value)
       : message(std::string("Box with code") + std::to_string(type_value) +
                 std::string("is not a valid JpegPlenoCodestreamBox")) {
   }
+
+
   const char* what() const noexcept override {
     return message.c_str();
   }

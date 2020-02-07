@@ -61,4 +61,4 @@ class ContiguousCodestreamBoxParser {
 //
 // ContiguousCodestreamBoxParser::memory_limit = value_found_in_config;
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__ */
+#endif /* JPLM_LIB_COMMON_BOXES_PARSERS_CONTIGUOUSCODESTREAMBOXPARSER_H__ */

@@ -75,6 +75,7 @@ class UniversalUniqueIdentifier {
         time_hi_and_version(0), time_mid(0), time_low(0) {
   }
 
+
   UniversalUniqueIdentifier(my_uint48_t node, uint8_t clock_seq_low,
       uint8_t clock_seq_hi_and_reserved, uint16_t time_hi_and_version,
       uint16_t time_mid, uint32_t time_low)
@@ -85,47 +86,22 @@ class UniversalUniqueIdentifier {
   }
 
 
-  UniversalUniqueIdentifier(const std::string& hex_string) {
-    //! \todo implement
-    //static_assert(false, "Not implemented");
-    std::cerr << "Contructor not implemented yet << " << hex_string
-              << std::endl;
-  }
+  UniversalUniqueIdentifier(const std::string& hex_string);
 
 
   ~UniversalUniqueIdentifier() = default;
 
 
-  bool operator==(const UniversalUniqueIdentifier& other) const {
-    return std::tie(this->node, this->clock_seq_low,
-               this->clock_seq_hi_and_reserved, this->time_hi_and_version,
-               this->time_mid, this->time_low) ==
-           std::tie(other.node, other.clock_seq_low,
-               other.clock_seq_hi_and_reserved, other.time_hi_and_version,
-               other.time_mid, other.time_low);
-  }
+  bool operator==(const UniversalUniqueIdentifier& other) const;
 
 
-  bool operator!=(const UniversalUniqueIdentifier& other) const {
-    return !this->operator==(other);
-  }
+  bool operator!=(const UniversalUniqueIdentifier& other) const;
 
 
-  uint64_t size() const noexcept {
-    return 16;
-    //16 = 128 bits
-  }
+  uint64_t size() const noexcept;
 
 
-  std::string to_hex_string() {
-    std::stringstream string_stream;
-    string_stream << std::hex << std::setfill('0') << std::setw(8)
-                  << (int) time_low << "-" << std::setw(4) << (int) time_mid << "-"
-                  << std::setw(4) << (int) time_hi_and_version << "-"
-                  << std::setw(2) << (int) clock_seq_hi_and_reserved << std::setw(2) << (int) clock_seq_low
-                  << "-" << std::setw(2) << (int) node.hi << std::setw(10) << (int) node.lo;
-    return string_stream.str();
-  }
+  std::string to_hex_string();
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_UNIVERSALUNIQUEIDENTIFIER_H__ */

@@ -52,26 +52,16 @@ class EmptyDBox : public InMemoryDBox {
   ~EmptyDBox() = default;
 
 
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    return std::vector<std::byte>();
-  }
+  [[nodiscard]] std::vector<std::byte> get_bytes() const noexcept override;
 
 
-  virtual uint64_t size() const noexcept override {
-    return 0;
-  }
+  [[nodiscard]] uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    return true;
-  }
+  [[nodiscard]] bool is_equal(const DBox& other) const override;
 
 
-  virtual EmptyDBox* clone() const override {
-    return new EmptyDBox(*this);
-  }
+  [[nodiscard]] EmptyDBox* clone() const override;
 };
 
 #endif /* end of include guard: JPLM_LIB_COMMON_GENERIC_EmptyDBox_H__ */

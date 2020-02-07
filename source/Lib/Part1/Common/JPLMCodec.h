@@ -61,22 +61,17 @@ class JPLMCodec {
   }
 
 
-  JPLMCodec(std::shared_ptr<JPLFile> jpl_file) 
-      : jpl_file(jpl_file) {
+  JPLMCodec(std::shared_ptr<JPLFile> jpl_file) : jpl_file(jpl_file) {
   }
 
 
   virtual ~JPLMCodec() = default;
 
 
-  JPLFile& get_ref_to_jpl_file() {
-    return *jpl_file;
-  }
+  JPLFile& get_ref_to_jpl_file();
 
 
-  const JPLFile& get_ref_to_jpl_file() const {
-    return *jpl_file;
-  }
+  const JPLFile& get_ref_to_jpl_file() const;
 
 
   virtual void run() = 0;
