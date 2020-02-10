@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldHeaderBox.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-06
+/** \file     CommonCodestreamElementsBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-10
  */
-
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__
-
-#include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderContents.h"
-
-/**
- * \ingroup DefinedBoxes
- * \brief Definition of the Jpeg Pleno Light Field Header Box
- * \tparam JpegPlenoLightFieldHeaderContents
- */
-using JpegPlenoLightFieldHeaderBox =
-    GenericBox<0x6a706c68, JpegPlenoLightFieldHeaderContents>;
-
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDHEADERBOX_H__ */
+#include "Lib/Part2/Common/Boxes/CommonCodestreamElementsBox.h"

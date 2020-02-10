@@ -43,6 +43,7 @@
 
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
+
 class CommonCodestreamElementsContents : public InMemoryDBox {
  public:
   CommonCodestreamElementsContents();
