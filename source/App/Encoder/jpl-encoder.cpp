@@ -40,14 +40,14 @@
 
 #include <chrono>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include "Lib/Common/JPLMCodecFactory.h"
 #include "Lib/Common/JPLMConfigurationFactory.h"
-#include <filesystem>
 #ifdef __unix__
-  #include <sys/resource.h>
+#include <sys/resource.h>
 #endif
 
 int main(int argc, char const* argv[]) {
@@ -60,12 +60,6 @@ int main(int argc, char const* argv[]) {
     std::cerr << "Error opening output file" << std::endl;
     exit(EXIT_FAILURE);
   }
-    //checking the file extension for showing a warning message
-    if(std::filesystem::path(configuration->get_output_filename()).extension() != std::filesystem::path(".jpl")) {
-        std::cerr << "Warning: the recommended extension is .jpl: " << std::endl;
-        std::cerr << "\tWhen stored in traditional computer file systems, JPL files should be given the file extension \".jpl\"" << std::endl;
-        std::cerr << "\tThe used extension was: " << std::filesystem::path(configuration->get_output_filename()).extension() << std::endl;
-    }
 
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
