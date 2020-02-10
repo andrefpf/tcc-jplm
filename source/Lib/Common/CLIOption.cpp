@@ -37,3 +37,42 @@
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-10
  */
+#include <functional>
+#include "Lib/Common/CLIOption.h"
+
+
+CLIOption::CLIOption(const std::string &longOption,
+    const std::string &short_option, const std::string &description,
+    const std::function<void(std::any)> &action, std::size_t level)
+    : long_option(longOption), short_option(short_option),
+      description(description), action(action), level(level) {
+  this->parsed = false;
+}
+
+
+void CLIOption::parse(std::string key, std::any value) {
+  if (!this->parsed && (key == long_option || key == short_option)) {
+    action(value);
+    this->parsed = true;
+  }
+}
+
+
+const std::string &CLIOption::get_long_option() const {
+  return long_option;
+}
+
+
+const std::string &CLIOption::get_short_option() const {
+  return short_option;
+}
+
+
+const std::string &CLIOption::get_description() const {
+  return description;
+}
+
+
+std::size_t CLIOption::get_level() const {
+  return level;
+}

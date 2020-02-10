@@ -4,6 +4,7 @@ set(COMMON_SOURCES JPLMCodecFactory.cpp
     JPLMEncoderConfigurationLightField4DTransformMode.cpp
     JPLMEncoderConfiguration.cpp
     JPLMConfigurationFactory.cpp
+    CLIOption.cpp
     Boxes/Box.cpp)
 
 set(PART1_SOURCES

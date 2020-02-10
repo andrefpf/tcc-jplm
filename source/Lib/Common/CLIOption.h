@@ -42,6 +42,11 @@
 #ifndef JPLM_LIB_PART2_COMMON_CLIOPTION_H
 #define JPLM_LIB_PART2_COMMON_CLIOPTION_H
 
+#include <string>
+#include <any>
+#include <functional>
+
+
 class CLIOption {
  private:
   std::string long_option;
@@ -54,39 +59,22 @@ class CLIOption {
  public:
   CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level)
-      : long_option(longOption), short_option(short_option),
-        description(description), action(action), level(level) {
-    this->parsed = false;
-  }
+      const std::function<void(std::any)> &action, std::size_t level);
 
 
-  void parse(std::string key, std::any value) {
-    if (!this->parsed && (key == long_option || key == short_option)) {
-      action(value);
-      this->parsed = true;
-    }
-  }
+  void parse(std::string key, std::any value);
 
 
-  const std::string &get_long_option() const {
-    return long_option;
-  }
+  const std::string &get_long_option() const;
 
 
-  const std::string &get_short_option() const {
-    return short_option;
-  }
+  const std::string &get_short_option() const;
 
 
-  const std::string &get_description() const {
-    return description;
-  }
+  const std::string &get_description() const;
 
 
-  std::size_t get_level() const {
-    return level;
-  }
+  std::size_t get_level() const;
 };
 
 #endif  // JPLM_LIB_PART2_COMMON_CLIOPTION_H
