@@ -50,51 +50,77 @@
 #include <sys/resource.h>
 #endif
 
+
+class RunStatistics {
+ protected:
+  const std::chrono::time_point<std::chrono::steady_clock> start;
+  std::chrono::time_point<std::chrono::steady_clock> end;
+  std::ofstream& ref_to_stream;
+  const std::iostream::pos_type initial_of_stream_position;
+  bool finished_counting = false;
+  std::iostream::pos_type final_of_stream_position;
+
+ public:
+  RunStatistics(std::ofstream& stream)
+      : start(std::chrono::steady_clock::now()), ref_to_stream(stream),
+        initial_of_stream_position(stream.tellp()) {
+    if (!ref_to_stream.is_open()) {
+      std::cerr << "Error opening output file" << std::endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  virtual ~RunStatistics() = default;
+
+  void mark_end() {
+    if (!finished_counting) {
+      end = chrono::steady_clock::now();
+      final_of_stream_position = ref_to_stream.tellp();
+      finished_counting = true;
+    }
+  }
+
+  void show_statistics() {
+    mark_end();
+    std::cout << "Elapsed time in seconds (wall time): "
+              << chrono::duration_cast<chrono::seconds>(end - start).count()
+              << " s" << std::endl;
+
+#ifdef __unix__
+    int who = RUSAGE_SELF;
+    struct rusage usage;
+    [[maybe_unused]] auto ret = getrusage(who, &usage);
+    std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
+              << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
+              << "Max memory usage: " << usage.ru_maxrss << " kbytes."
+              << std::endl;
+#endif
+
+    std::cout << "Bytes written to file: "
+              << final_of_stream_position - initial_of_stream_position
+              << " bytes " << std::endl;
+  }
+};
+
+
 int main(int argc, char const* argv[]) {
-  auto start = std::chrono::steady_clock::now();
   auto configuration =
       JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
   std::ofstream of_stream(configuration->get_output_filename(),
       std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
-  if (!of_stream.is_open()) {
-    std::cerr << "Error opening output file" << std::endl;
-    exit(EXIT_FAILURE);
-  }
+
+  auto run_statistics = RunStatistics(of_stream);
 
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
+
   encoder->run();
-  const auto& jpl_file = encoder->get_ref_to_jpl_file();
 
+  of_stream << encoder->get_ref_to_jpl_file();
 
-  auto initial_of_stream_position = of_stream.tellp();
-  of_stream << jpl_file;
-  auto final_of_stream_position = of_stream.tellp();
+  run_statistics.show_statistics();
 
   of_stream.close();
-
-
-  auto end = chrono::steady_clock::now();
-
-
-  std::cout << "Elapsed time in seconds (wall time): "
-            << chrono::duration_cast<chrono::seconds>(end - start).count()
-            << " s" << std::endl;
-
-#ifdef __unix__
-  int who = RUSAGE_SELF;
-  struct rusage usage;
-  [[maybe_unused]] auto ret = getrusage(who, &usage);
-  std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
-            << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
-            << "Max memory usage: " << usage.ru_maxrss << " kbytes."
-            << std::endl;
-#endif
-
-  std::cout << "Bytes written to file: "
-            << final_of_stream_position - initial_of_stream_position
-            << " bytes " << std::endl;
 
   exit(EXIT_SUCCESS);
 }
