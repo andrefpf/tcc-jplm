@@ -13,6 +13,7 @@ set(PART2_SOURCES
     ../Part2/Encoder/TransformMode/Hierarchical4DEncoder.cpp
     ../Part2/Encoder/TransformMode/TransformPartition.cpp
     ../Part2/Encoder/TransformMode/ABACEncoder.cpp
+    ../Part2/Encoder/TransformMode/JPLM4DTransformModeLightFieldEncoder.cpp
     ../Part2/Decoder/TransformMode/PartitionDecoder.cpp
     ../Part2/Decoder/TransformMode/Hierarchical4DDecoder.cpp
     ../Part2/Decoder/TransformMode/JPLM4DTransformModeLightFieldDecoder.cpp

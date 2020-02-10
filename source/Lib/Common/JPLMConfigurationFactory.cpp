@@ -40,34 +40,96 @@
 
 #include "Lib/Common/JPLMConfigurationFactory.h"
 
+
 // \todo: refactor this function and split it into specialized functions
 std::unique_ptr<JPLMConfiguration>
 JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
+  using Type = CompressionTypeLightField;
+
   auto basic_config = JPLMEncoderConfiguration(argc, const_cast<char**>(argv));
 
   if (basic_config.is_help_mode()) {
-    std::vector<JPLMEncoderConfiguration> s{
-        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv)),
+    //the configurations are instantiated only for printing their help (which is checked in the constructor)
+    [[maybe_unused]] auto light_field_configuration =
+        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+    [[maybe_unused]] auto light_field_transform_mode_configuration =
         JPLMEncoderConfigurationLightField4DTransformMode(
-            argc, const_cast<char**>(argv))};
+            argc, const_cast<char**>(argv));
     exit(0);
   }
 
-  if (basic_config.get_jpeg_pleno_part() == JpegPlenoPart::LightField) {
-    auto light_field_config =
-        JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
-    auto type = light_field_config.get_type();
-    if (type == Type::transform_mode)
-      return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
-          argc, const_cast<char**>(argv));
+  switch (basic_config.get_jpeg_pleno_part()) {
+    case JpegPlenoPart::Undefined: {
+      throw JPLMConfigurationExceptions::UndefinedPartException();
+    }
+    case JpegPlenoPart::LightField: {
+      auto light_field_configuration =
+          JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
+      auto type = light_field_configuration.get_type();
+      if (type == Type::transform_mode) {
+        return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+            argc, const_cast<char**>(argv));
+      } else {
+        //<! \todo after implementing the prediction mode in JPLM, needs to return Prediction mode configuration
+        throw JPLMConfigurationExceptions::UnsuportedPredictionMode();
+      }
+    }
+      // case JpegPlenoPart::PointCloud: {
+      // ...
+      // break;
+      // }
+      // case JpegPlenoPart::Hologram: {
+      // ...
+      // break;
+      // }
+    case JpegPlenoPart::Framework: {
+      std::cerr
+          << "The reference software needs a more specialized part to operate. "
+             "Although Part 1 defines the Framework that is also used in other "
+             "parts, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    case JpegPlenoPart::ReferenceSoftware: {
+      std::cerr
+          << "Part 4 defines the Reference Software of JPEG Pleno. This is the "
+             "reference software, so there is no need to inform this part. "
+             "Thus, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    case JpegPlenoPart::ConformanceTest: {
+      //<! \todo This case may trigger a help that shows how to run a conformance test
+      std::cerr
+          << "Part 3 defines the Conformace Tests. Although the reference "
+             "software may be used for conformance testing, ";
+      show_invalid_part_common_message();
+      break;
+    }
+    default: {
+      throw JPLMConfigurationExceptions::NotImplementedYetPartException();
+    }
   }
-
-  throw NotImplementedYetPartException();
 }
 
 std::unique_ptr<JPLMConfiguration>
 JPLMConfigurationFactory::get_decoder_configuration(int argc, const char **argv) {
-  return make_unique<JPLMConfiguration>(argc, const_cast<char**>(argv));
+  auto basic_config =
+      make_unique<JPLMDecoderConfiguration>(argc, const_cast<char**>(argv));
+  if (basic_config->is_help_mode()) {
+    exit(0);
+  }
+  return basic_config;
+}
+
+void JPLMConfigurationFactory::show_invalid_part_common_message() {
+  std::cerr
+      << "the encoder must be called passing a valid part that is "
+         "expected to define a format to encode a given plenoptic image "
+         "modality (such as Light Fields, Point Clouds and Holograms). To "
+         "obtain help, run the encoder again with --help option. "
+      << std::endl;
+  throw JPLMConfigurationExceptions::InvalidPartException();
 }
 
