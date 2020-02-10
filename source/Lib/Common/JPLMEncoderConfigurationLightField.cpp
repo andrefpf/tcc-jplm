@@ -40,39 +40,48 @@
 
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
+void JPLMEncoderConfigurationLightField::add_options_to_cli() {
+  cli_options.push_back({"--view_height", "-v", "Single-view height dimension",
+                         [this](std::any value) {
+                           this->view_height_v = std::stoi(std::any_cast<string>(value));
+                         },
+                         this->current_hierarchy_level});
+
+  cli_options.push_back({"--view_width", "-u", "Single-view width dimension",
+                         [this](std::any value) {
+                           this->view_width_u = std::stoi(std::any_cast<string>(value));
+                         },
+                         this->current_hierarchy_level});
+
+  cli_options.push_back(
+      {"--number_of_rows", "-t", "Number of light-field views rows",
+       [this](std::any value) {
+         this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
+       },
+       this->current_hierarchy_level});
+
+  cli_options.push_back(
+      {"--number_of_columns", "-s", "Number of light-field views columns",
+       [this](std::any value) {
+         this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
+       },
+       this->current_hierarchy_level});
+
+  cli_options.push_back({"--type", "-T",
+                         "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
+                         "prediction_mode=1}",
+                         [this](std::any v) {
+                           std::string typed_string = std::any_cast<std::string>(v);
+                           int type = std::stoi(typed_string);
+                           this->type = static_cast<Type>(type);
+                         },
+                         this->current_hierarchy_level});
+}
+
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
-    : JPLMEncoderConfiguration(argc, argv) {
-  arguments.push_back({"--type", "-T",
-                       "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
-                       "prediction_mode=1}",
-                       [this](std::any v) {
-                         std::string typed_string = std::any_cast<std::string>(v);
-                         int type = std::stoi(typed_string);
-                         this->type = static_cast<Type>(type);
-                       }});
-
-  arguments.push_back({"--view_height", "-v", "Single-view height dimension",
-                       [this](std::any value) {
-                         this->view_height_v = std::stoi(std::any_cast<string>(value));
-                       }});
-
-  arguments.push_back({"--view_width", "-u", "Single-view width dimension",
-                       [this](std::any value) {
-                         this->view_width_u = std::stoi(std::any_cast<string>(value));
-                       }});
-
-  arguments.push_back({"--number_of_rows", "-t",
-                       "Number of light-field views rows", [this](std::any value) {
-        this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
-      }});
-
-  arguments.push_back({"--number_of_columns", "-s",
-                       "Number of light-field views columns", [this](std::any value) {
-        this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
-      }});
-
-  this->parse_cli(argc, argv);
+    : JPLMEncoderConfigurationLightField(argc, argv,
+                                         JPLMEncoderConfigurationLightField::current_hierarchy_level) {
   run_help();
 }
 
@@ -104,7 +113,8 @@ void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
       type = Type::prediction_mode;
     } else {
       //! \todo check if this is the right exception to be thown here...
-      throw NotImplementedYetInputTypeParseException(t);
+      throw JPLMConfigurationExceptions::
+      NotImplementedYetInputTypeParseException(t);
     }
   }
 }

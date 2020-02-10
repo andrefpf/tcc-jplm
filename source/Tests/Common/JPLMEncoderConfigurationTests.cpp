@@ -41,7 +41,6 @@
 
 #include <exception>
 #include <filesystem>
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "gtest/gtest.h"

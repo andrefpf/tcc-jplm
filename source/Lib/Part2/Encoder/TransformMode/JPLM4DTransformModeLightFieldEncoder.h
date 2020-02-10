@@ -86,11 +86,7 @@ class JPLM4DTransformModeLightFieldEncoder
             {transform_mode_configuration
                     ->get_maximal_transform_sizes()},  //block_dimension,
             {30, 30, 30},  //max_bitplane
-            (transform_mode_configuration->get_border_blocks_policy() ==
-                BorderBlocksPolicy::truncate)
-                ? true
-                : false  //truncate
-        ) {
+            is_truncated()) {
     tp.mPartitionData.set_dimension(
         transform_mode_configuration->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
@@ -108,6 +104,10 @@ class JPLM4DTransformModeLightFieldEncoder
     this->initialize_extension_lengths();
   }
 
+  bool is_truncated() {
+    return transform_mode_configuration->get_border_blocks_policy() ==
+           BorderBlocksPolicy::truncate;
+  }
 
   void setup_hierarchical_4d_encoder() {
     hierarchical_4d_encoder.set_transform_dimension(
