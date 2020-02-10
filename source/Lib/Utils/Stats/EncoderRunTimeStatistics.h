@@ -54,31 +54,13 @@ class EncoderRunTimeStatistics : public RunTimeStatistics {
   bool finished_counting_bytes = false;
 
  public:
-  EncoderRunTimeStatistics(std::ofstream& stream)
-      : RunTimeStatistics(), ref_to_stream(stream),
-        initial_of_stream_position(stream.tellp()) {
-    if (!ref_to_stream.is_open()) {
-      std::cerr << "Error opening output file" << std::endl;
-      exit(EXIT_FAILURE);
-    }
-  }
+  EncoderRunTimeStatistics(std::ofstream& stream);
 
   virtual ~EncoderRunTimeStatistics() = default;
 
-  virtual void mark_end() override {
-    if (!finished_counting_bytes) {
-      final_of_stream_position = ref_to_stream.tellp();
-      finished_counting_bytes = true;
-    }
-    RunTimeStatistics::mark_end();
-  }
+  virtual void mark_end() override;
 
-  virtual void show_statistics() {
-    RunTimeStatistics::show_statistics();
-    std::cout << "Bytes written to file: "
-              << final_of_stream_position - initial_of_stream_position
-              << " bytes " << std::endl;
-  }
+  virtual void show_statistics() override;
 };
 
 #endif  // JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H

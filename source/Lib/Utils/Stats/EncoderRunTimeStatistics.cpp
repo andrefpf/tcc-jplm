@@ -37,3 +37,31 @@
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-02-10
  */
+
+#include "EncoderRunTimeStatistics.h"
+
+EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::ofstream& stream)
+    : RunTimeStatistics(), ref_to_stream(stream),
+      initial_of_stream_position(stream.tellp()) {
+  if (!ref_to_stream.is_open()) {
+    std::cerr << "Error opening output file" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+}
+
+
+void EncoderRunTimeStatistics::mark_end() {
+  if (!finished_counting_bytes) {
+    final_of_stream_position = ref_to_stream.tellp();
+    finished_counting_bytes = true;
+  }
+  RunTimeStatistics::mark_end();
+}
+
+
+void EncoderRunTimeStatistics::show_statistics() {
+  RunTimeStatistics::show_statistics();
+  std::cout << "Bytes written to file: "
+            << final_of_stream_position - initial_of_stream_position
+            << " bytes " << std::endl;
+}
