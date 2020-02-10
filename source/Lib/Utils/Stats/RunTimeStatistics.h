@@ -73,13 +73,7 @@ class RunTimeStatistics {
   virtual ~RunTimeStatistics() = default;
 
 
-  void mark_end() {
-    if (!finished_counting) {
-      end = std::chrono::steady_clock::now();
-      final_of_stream_position = ref_to_stream.tellp();
-      finished_counting = true;
-    }
-  }
+  void mark_end();
 
   void show_statistics();
 };

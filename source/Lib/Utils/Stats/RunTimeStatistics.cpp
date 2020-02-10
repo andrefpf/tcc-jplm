@@ -40,6 +40,15 @@
 
 #include "RunTimeStatistics.h"
 
+void RunTimeStatistics::mark_end() {
+  if (!finished_counting) {
+    end = std::chrono::steady_clock::now();
+    final_of_stream_position = ref_to_stream.tellp();
+    finished_counting = true;
+  }
+}
+
+
 void RunTimeStatistics::show_statistics() {
   mark_end();
   std::cout
