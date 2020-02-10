@@ -52,7 +52,7 @@ int main(int argc, char const* argv[]) {
   std::ofstream of_stream(configuration->get_output_filename(),
       std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
 
-  auto run_statistics = RunStatistics(of_stream);
+  auto run_statistics = RunTimeStatistics(of_stream);
 
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(

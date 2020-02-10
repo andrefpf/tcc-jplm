@@ -50,7 +50,7 @@
 #endif
 
 
-class RunStatistics {
+class RunTimeStatistics {
  protected:
   const std::chrono::time_point<std::chrono::steady_clock> start;
   std::chrono::time_point<std::chrono::steady_clock> end;
@@ -60,7 +60,7 @@ class RunStatistics {
   std::iostream::pos_type final_of_stream_position;
 
  public:
-  RunStatistics(std::ofstream& stream)
+  RunTimeStatistics(std::ofstream& stream)
       : start(std::chrono::steady_clock::now()), ref_to_stream(stream),
         initial_of_stream_position(stream.tellp()) {
     if (!ref_to_stream.is_open()) {
@@ -68,7 +68,10 @@ class RunStatistics {
       exit(EXIT_FAILURE);
     }
   }
-  virtual ~RunStatistics() = default;
+
+
+  virtual ~RunTimeStatistics() = default;
+
 
   void mark_end() {
     if (!finished_counting) {
@@ -78,27 +81,7 @@ class RunStatistics {
     }
   }
 
-  void show_statistics() {
-    mark_end();
-    std::cout
-        << "Elapsed time in seconds (wall time): "
-        << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
-        << " s" << std::endl;
-
-#ifdef __unix__
-    int who = RUSAGE_SELF;
-    struct rusage usage;
-    [[maybe_unused]] auto ret = getrusage(who, &usage);
-    std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
-              << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
-              << "Max memory usage: " << usage.ru_maxrss << " kbytes."
-              << std::endl;
-#endif
-
-    std::cout << "Bytes written to file: "
-              << final_of_stream_position - initial_of_stream_position
-              << " bytes " << std::endl;
-  }
+  void show_statistics();
 };
 
 
