@@ -78,10 +78,11 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
   const BitsPerComponentBox& get_const_ref_to_bpcc() const;
 
 
-  std::optional<BitsPerComponentBox> get_copy_of_bits_per_component_box() const;
+  [[nodiscard]] std::optional<BitsPerComponentBox>
+  get_copy_of_bits_per_component_box() const;
 
 
-  const ChannelDefinitionBox& get_const_ref_to_cdef() const;
+  [[nodiscard]] const ChannelDefinitionBox& get_const_ref_to_cdef() const;
 
 
   std::optional<ChannelDefinitionBox> get_copy_of_channel_definition_box()
@@ -107,13 +108,13 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
       std::unique_ptr<ChannelDefinitionBox>&& cdef = nullptr);
 
 
-  virtual JpegPlenoLightFieldHeaderContents* clone() const override;
+  JpegPlenoLightFieldHeaderContents* clone() const override;
 
 
   uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override;
+  bool is_equal(const DBox& other) const override;
 
 
   bool operator==(const JpegPlenoLightFieldHeaderContents& other) const
@@ -123,7 +124,7 @@ class JpegPlenoLightFieldHeaderContents : public SuperBoxDBox {
   bool operator!=(const JpegPlenoLightFieldHeaderContents& other) const
       noexcept;
 
-  virtual ~JpegPlenoLightFieldHeaderContents() = default;
+  ~JpegPlenoLightFieldHeaderContents() override = default;
 
 
   std::ostream& write_to(std::ostream& stream) const final;
