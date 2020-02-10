@@ -1,0 +1,103 @@
+%!TEX jobname = get_encoder_configuration
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-07
+
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings, shadows}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\usepackage{amsmath}
+%\usepackage{rtl}
+\usepackage{color}
+% \usepackage[left=1cm,right=1cm]{geometry}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+\input{styles}
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (name) {get\_configuration(args)};
+	\node[init, below=-2mm of name] (init) {};
+
+	\node[below=of init, draw] (JPLMEncoderConfiguration) {JPLMEncoderConfiguration(args)};
+	\node[below=2cm of JPLMEncoderConfiguration, decision] (isHelp) {is help?};
+
+	\node[left=2cm of isHelp, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightFieldHelp) {JPLMEncoderConfiguration\\LightField(args)};
+	\node[below=1cm of JPLMEncoderConfigurationLightFieldHelp, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DTransformModeHelp) {JPLMEncoderConfiguration\\LightField\\4DTransformMode(args)};
+
+	\node[below=1cm of isHelp, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ get\_jpeg\_pleno\_part()};
+
+	\node[below=2cm of getPart, decision] (isPart2) {is Part 2?};
+
+	\node[below=1cm of isPart2, text width=4.5cm, align=center, rounded corners, draw] (exception) {\textbf{default}: throw \\ Not Implemented Exception};
+
+	\node[right=1cm of JPLMEncoderConfiguration, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField) {JPLMEncoderConfiguration\\LightField(args)};
+
+	\node[draw, below=1cm of JPLMEncoderConfigurationLightField] (getType) {get\_type()};
+
+
+
+	\node[below=2cm of getType, decision] (isTransform) {is\\ transform \\mode?};
+	
+	\node[below=1cm of isTransform, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DPredictionMode) {JPLMEncoderConfiguration\\LightField\\4DPredictionMode(args)};
+
+	\node[right=1cm of JPLMEncoderConfigurationLightField4DPredictionMode, draw, text width=5cm, align=center] (JPLMEncoderConfigurationLightField4DTransformMode) {JPLMEncoderConfiguration\\LightField\\4DTransformMode(args)};
+
+	
+
+	\node[rounded corners, draw] (return) at (exception -| JPLMEncoderConfigurationLightField4DTransformMode) {\large \textbf{return configuration}};
+
+	\node[rounded corners, draw] (exit) at (exception -| JPLMEncoderConfigurationLightField4DTransformModeHelp) {exit(0)};
+
+	% \node[right=1cm of isPart2, text width=4cm, align=center, draw] (getPart) {\textbf{switch} \\ get\_type()};
+	\draw[myArrow] (init) -- (JPLMEncoderConfiguration);
+	\draw[myArrow] (JPLMEncoderConfiguration) -- (isHelp);
+	\draw[myArrow] (isHelp) -- node[pos=0.1, above]{yes} (JPLMEncoderConfigurationLightFieldHelp);
+	\draw[myArrow] (JPLMEncoderConfigurationLightFieldHelp) -- (JPLMEncoderConfigurationLightField4DTransformModeHelp);
+	\draw[myArrow] (isHelp) -- node[pos=0.1, right]{no} (getPart);
+	\draw[myArrow] (getPart) -- (isPart2);
+	\draw[myArrow] (isPart2) --node[pos=0.1, right]{no} (exception);
+	\draw[myArrow] (isPart2) -| node[pos=0.1, above]{yes} ($(JPLMEncoderConfigurationLightField.north west)+(-.5,.5)$) -| (JPLMEncoderConfigurationLightField);
+	\draw[myArrow] (JPLMEncoderConfigurationLightField) -- (getType);
+	\draw[myArrow] (getType) -- (isTransform);
+	\draw[myArrow] (isTransform) -|node[pos=0.05, above]{yes} (JPLMEncoderConfigurationLightField4DTransformMode);
+	\draw[myArrow] (isTransform) --node[pos=0.1, right]{no} (JPLMEncoderConfigurationLightField4DPredictionMode);
+	\draw[myArrow] (JPLMEncoderConfigurationLightField4DPredictionMode) |- (exception);
+	\draw[myArrow] (JPLMEncoderConfigurationLightField4DTransformModeHelp) -- (exit);
+	\draw[myArrow] (JPLMEncoderConfigurationLightField4DTransformMode) -- (return);
+
+
+\end{tikzpicture}
+
+\end{document}

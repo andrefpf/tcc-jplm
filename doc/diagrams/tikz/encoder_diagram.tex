@@ -1,0 +1,86 @@
+%!TEX jobname = encoder_diagram
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-07
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings, shadows}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+
+
+\input{styles}
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (args) {\texttt{./jpl-encoder ...args...}};
+	\node[init, below=-1mm of args] (init) {};
+
+	\node[draw, below=of init, fill=white, text width=3.5cm, align=center] (config) {configuration=\\ConfigurationFactory::\\get\_configuration(args)};
+	\node[left=.5cm of config, multidocument, text width=1cm, align=center] (cfg) {*.cfg};
+
+	\node[draw, below=of config, fill=white, text width=4.5cm, align=center] (encoder) {encoder=\\CodecFactory::\\get\_encoder(configuration)};
+	\node[draw, below=of encoder, fill=white] (run) {encoder.run()};
+	\node[left=1cm of run, multidocument, text width=1.5cm, align=center] (input) {plenoptic\\input};
+	\node[draw, below=of run, fill=white, text width=3.5cm, align=center] (stream) {stream $\ll$ \\ encoder.get\_jpl\_file()};
+	\node[draw, below=of stream, fill=white, rounded corners] (exit) {exit(0)};
+
+	\node[right=.4cm of stream, document] (jplFile) {file.jpl};
+
+
+	\begin{scope}[on background layer]
+		\node[codec,fit=(config) (encoder) (run) (stream) (exit)] (co) {};
+	\end{scope}	
+
+
+	\draw[myArrow] (init) -- (config);
+	\draw[myArrow] (cfg) -- (config);
+	\draw[myArrow] (config) -- (encoder);
+	\draw[myArrow] (encoder) -- (run);
+	\draw[myArrow] (input) -- (run);	
+	\draw[myArrow] (run) -- (stream);
+	\draw[myArrow] (stream) -- (jplFile);
+	\draw[myArrow] (stream) -- (exit);
+\end{tikzpicture}
+
+% The \gls{jplm} encoder execution can be divided in four main phases (Fig.~\ref{fig.encoder.phases}).
+% The first one is the configuration parsing, that organizes the relevant information from the command line.
+% The second one instantiates one specific encoder from the encoder hierarchy, according to the parsed configurations.
+% The encoding itself occurs during the third phase, when the run method is called. 
+% Finally, the fourth phase redirects the jpl file from the encoder to a given output stream, such as the filesystem.
+% In this last step, all boxes are recursivelly redirected to the stream, according to JPEG Pleno box structure. 
+
+\end{document}

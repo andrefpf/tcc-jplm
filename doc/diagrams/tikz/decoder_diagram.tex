@@ -1,0 +1,89 @@
+%!TEX jobname = decoder_diagram
+%!TEX output_directory = ./output/
+
+% @Author: Ismael Seidel
+% @Date:   2020-02-05
+% @Last Modified by:   Ismael Seidel
+% @Last Modified time: 2020-02-07
+
+\documentclass[a4paper,landscape]{article}
+\usepackage{pgf,tikz}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{0pt}%
+\usetikzlibrary{calc,arrows,fit, positioning, arrows.meta, fit}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, shapes,decorations,fit,matrix,chains,scopes,positioning,arrows,automata,spy, shapes.callouts, patterns,calc,decorations.pathreplacing,decorations.markings, shadows}
+% \usepgflibrary{shapes.callouts}
+\usetikzlibrary{shapes.callouts}
+\usetikzlibrary{decorations.text}
+% \usepgflibrary{decorations.markings,fadings,shadings}
+% \usepackage{verbatim}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.gates.logic.US,shapes.geometric,quotes}
+\usetikzlibrary{patterns}
+\usetikzlibrary{fpu}
+
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{ifthen}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,          % false: boxed links; true: colored links
+    linkcolor=black,           % color of internal links
+    citecolor=black,           % color of links to bibliography
+}
+\begin{document}
+
+\input{styles}
+
+\begin{tikzpicture}[node distance=5mm]
+	\node[] (args) {\texttt{./jpl-decoder -\--input file.jpl -\--output output/}};
+	\node[init, below=-1mm of args, xshift=-10mm] (init) {};
+
+	\node[draw, below=of init, fill=white, text width=3.5cm, align=center] (config) {configuration=\\ConfigurationFactory::\\get\_configuration(args)};
+	\node[draw, below=of config, fill=white, text width=3.5cm, align=center] (stream) {jpl\_file=\\ JPLFileFromStream\\(configuration)};
+	\node[document, left=.5cm of stream] (file) {file.jpl};
+
+
+
+	%\node[draw, below=of stream, fill=white] (decoder) {decoders=factory(jpl\_file)};
+	\node[draw, below=of stream, fill=white, text width=4.5cm, align=center] (decoders) {decoders=\\CodecFactory::\\get\_decoders(jpl\_file)};
+
+	\node[decision, below=1.5cm of decoders] (hasMore) {decoders empty?};
+
+	\node[draw, right=1cm of hasMore, text width=2.5cm, align=center] (get) {decoder = \\decoders.next()};
+
+	\node[draw, above=1cm of get, fill=white] (run) {decoder.run()};
+
+	\node[right=1.75cm of decoders, multidocument, text width=1.5cm, align=center] (outputs) {plenoptic\\outputs};
+	\node[draw, below=of hasMore, fill=white, rounded corners] (exit) {exit(0)};
+
+	\begin{scope}[on background layer]
+		\node[codec, fit=(config) (decoders) (run) (stream) (exit)] (co) {};
+	\end{scope}	
+
+
+	\draw[myArrow] (init) -- (config);
+	\draw[myArrow] (file) -- (stream);
+	\draw[myArrow] (config) -- (stream);
+	\draw[myArrow] (stream) -- (decoders);
+	\draw[myArrow] (decoders) -- (hasMore);
+	\draw[myArrow] (hasMore) -- (get);
+	\draw[myArrow] (get) -- (run);
+	\draw[myArrow] (run) -- (run -| hasMore);
+	\draw[myArrow] (run) |- (outputs);
+	\draw[myArrow] (hasMore) -- (exit);
+
+	% \draw[myArrow] ($(run)!.4!(outputs)$) -| ($(run.east)+(.5,0)$) |- ($(decoder)!.4!(run)$);
+
+	% \draw[myArrow] (file) -- (stream);
+\end{tikzpicture}
+
+\end{document}
