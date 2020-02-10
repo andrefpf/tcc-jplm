@@ -46,7 +46,7 @@ JpegPlenoLightFieldHeaderContents::JpegPlenoLightFieldHeaderContents(
     : lhdr(std::make_unique<LightFieldHeaderBox>(lhdr)) {
   auto number_of_colour_specification_boxes = colr.size();
   if (number_of_colour_specification_boxes == 0) {
-    //throw
+    // \todo: Create an exception to throw here
   }
   this->colr.reserve(number_of_colour_specification_boxes);
   for (const auto &colour_specification_box : colr) {
