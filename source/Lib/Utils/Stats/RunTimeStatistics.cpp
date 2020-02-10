@@ -31,40 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     jpl-encoder.cpp
- *  \brief
- *  \details
+/** \file     RunTimeStatistics.cpp
+ *  \brief    
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-10
  */
 
-
-#include <cstdlib>
-#include <string>
-#include "Lib/Common/JPLMCodecFactory.h"
-#include "Lib/Common/JPLMConfigurationFactory.h"
-#include "Lib/Utils/Stats/RunTimeStatistics.h"
-
-
-int main(int argc, char const* argv[]) {
-  auto configuration =
-      JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
-  std::ofstream of_stream(configuration->get_output_filename(),
-      std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
-
-  auto run_statistics = RunStatistics(of_stream);
-
-  auto encoder = JPLMCodecFactory::get_encoder(
-      std::move(std::unique_ptr<JPLMEncoderConfiguration>(
-          static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
-
-  encoder->run();
-
-  of_stream << encoder->get_ref_to_jpl_file();
-
-  run_statistics.show_statistics();
-
-  of_stream.close();
-
-  exit(EXIT_SUCCESS);
-}
+#include "RunTimeStatistics.h"
