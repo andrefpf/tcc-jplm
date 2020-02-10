@@ -47,7 +47,6 @@
 #include <tuple>
 #include "CLI/CLI.hpp"
 #include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Lightfield.h"
@@ -96,8 +95,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   static constexpr std::size_t current_hierarchy_level = 1;
   void add_options_to_cli();
 };
-
-
 
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */

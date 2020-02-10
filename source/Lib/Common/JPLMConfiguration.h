@@ -52,7 +52,6 @@
 #include "CLI/CLI.hpp"
 #include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Common/CLIOption.h"
-#include "Lib/Common/JPLMConfigurationExceptions.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 
