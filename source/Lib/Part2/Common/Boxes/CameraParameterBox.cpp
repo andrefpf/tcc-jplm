@@ -31,46 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFileParser.h
+/** \file     CameraParameterBox.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-05
+ *  \date     2020-02-10
  */
-#ifndef JPLM_LIB_PART1_JPLFILEPARSER_H
-#define JPLM_LIB_PART1_JPLFILEPARSER_H
 
-
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Utils/Stream/ManagedStream.h"
-
-
-class JPLFileParser {
- protected:
-  const BoxParserRegistry& parser = BoxParserRegistry::get_instance();
-  const std::string filename;
-  const uint64_t file_size;
-  std::ifstream if_stream;
-  ManagedStream managed_stream;
-  std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
-  std::unique_ptr<FileTypeBox> temp_file_type;
-  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
-
-
-  uint64_t decode_boxes();
-
-
-  std::unique_ptr<JpegPlenoSignatureBox> get_signature_box();
-
-
-  std::unique_ptr<FileTypeBox> get_file_type_box();
-
- public:
-  JPLFileParser(const std::string& filename);
-
-
-  virtual ~JPLFileParser();
-};
-
-
-#endif  //JPLM_LIB_PART1_JPLFILEPARSER_H
+#include "Lib/Part2/Common/Boxes/CameraParameterBox.h"

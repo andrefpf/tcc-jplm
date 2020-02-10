@@ -38,8 +38,9 @@
  *  \date     2020-02-05
  */
 
-#include <filesystem>
 #include "JPLFileParser.h"
+#include <filesystem>
+
 
 uint64_t JPLFileParser::decode_boxes() {
   uint64_t decoded_boxes = 0;
@@ -52,8 +53,7 @@ uint64_t JPLFileParser::decode_boxes() {
         parser.parse(managed_stream.get_remaining_sub_managed_stream());
     decoded_boxes++;
     auto id = decoded_box->get_tbox().get_value();
-    if (auto it = temp_decoded_boxes.find(id);
-        it == temp_decoded_boxes.end()) {
+    if (auto it = temp_decoded_boxes.find(id); it == temp_decoded_boxes.end()) {
       temp_decoded_boxes[id] =
           std::vector<std::unique_ptr<Box>>();  //std::move(decoded_box)
     }
@@ -63,27 +63,30 @@ uint64_t JPLFileParser::decode_boxes() {
   return decoded_boxes;
 }
 
+
 std::unique_ptr<JpegPlenoSignatureBox> JPLFileParser::get_signature_box() {
   return std::move(temp_signature);
 }
+
 
 std::unique_ptr<FileTypeBox> JPLFileParser::get_file_type_box() {
   return std::move(temp_file_type);
 }
 
-JPLFileParser::JPLFileParser(const std::string &filename)
+
+JPLFileParser::JPLFileParser(const std::string& filename)
     : filename(filename), file_size(std::filesystem::file_size(filename)),
       if_stream(filename, std::ifstream::binary),
       managed_stream(if_stream, static_cast<uint64_t>(file_size)) {
   if (file_size < 20) {
-    throw JPLFileFromStreamExceptions::InvalidTooSmallFileException(
-        file_size);
+    throw JPLFileFromStreamExceptions::InvalidTooSmallFileException(file_size);
   }
   temp_signature = parser.parse<JpegPlenoSignatureBox>(
       managed_stream.get_remaining_sub_managed_stream());
   temp_file_type = parser.parse<FileTypeBox>(
       managed_stream.get_remaining_sub_managed_stream());
 }
+
 
 JPLFileParser::~JPLFileParser() {
   //! \todo check why it is needed to release the remaining ptrs in the map

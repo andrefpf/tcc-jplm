@@ -37,8 +37,8 @@
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-10
  */
-#include <functional>
 #include "Lib/Common/CLIOption.h"
+#include <functional>
 
 
 CLIOption::CLIOption(const std::string &longOption,

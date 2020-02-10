@@ -50,6 +50,7 @@
 #include "Lib/Part1/Decoder/JPLFileParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
+
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
  protected:
   uint64_t decoded_boxes =
@@ -57,14 +58,19 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
 
   void check_boxes_constraints();
 
+
   void populate_light_field_codestreams();
+
 
   //! \todo Implement for Point Cloud Boxes...
   void populate_point_cloud_codestreams();
 
+
   void populate_hologram_codestreams();
 
+
   void populate_codestreams_list();
+
 
   void populate_jpl_fields();
 

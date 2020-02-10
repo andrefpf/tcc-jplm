@@ -117,7 +117,7 @@ target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
-target_link_libraries(jpl-decoder-bin PRIVATE jplm_common_boxes_parsers)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common_boxes)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder_transform_mode)
 target_link_libraries(jpl-decoder-bin PRIVATE stream)
 

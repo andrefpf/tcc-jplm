@@ -31,46 +31,71 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLFileParser.h
+/** \file     CameraParameterContents.cpp
  *  \brief    Brief description
  *  \details  Detailed description
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-05
+ *  \date     2020-02-10
  */
-#ifndef JPLM_LIB_PART1_JPLFILEPARSER_H
-#define JPLM_LIB_PART1_JPLFILEPARSER_H
+#include "Lib/Part2/Common/Boxes/CameraParameterContents.h"
 
 
-#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
-#include "Lib/Utils/Stream/ManagedStream.h"
+CameraParameterContents* CameraParameterContents::clone() const {
+  return new CameraParameterContents(*this);
+}
 
 
-class JPLFileParser {
- protected:
-  const BoxParserRegistry& parser = BoxParserRegistry::get_instance();
-  const std::string filename;
-  const uint64_t file_size;
-  std::ifstream if_stream;
-  ManagedStream managed_stream;
-  std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
-  std::unique_ptr<FileTypeBox> temp_file_type;
-  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
+const VariablePrecisionFloatingPointCoordinates&
+CameraParameterContents::get_ref_to_coordinates() const {
+  return *coordinates;
+}
 
 
-  uint64_t decode_boxes();
+VariablePrecisionFloatingPointCoordinates&
+CameraParameterContents::get_ref_to_coordinates() {
+  return *coordinates;
+}
 
 
-  std::unique_ptr<JpegPlenoSignatureBox> get_signature_box();
+const CameraParametersArray&
+CameraParameterContents::get_ref_to_camera_parameters() const {
+  return camera_parameters;
+}
+
+CameraParametersArray& CameraParameterContents::get_ref_to_camera_parameters() {
+  return camera_parameters;
+}
 
 
-  std::unique_ptr<FileTypeBox> get_file_type_box();
-
- public:
-  JPLFileParser(const std::string& filename);
-
-
-  virtual ~JPLFileParser();
-};
+uint64_t CameraParameterContents::size() const noexcept {
+  return coordinates->size() + camera_parameters.size();  //
+}
 
 
-#endif  //JPLM_LIB_PART1_JPLFILEPARSER_H
+std::vector<std::byte> CameraParameterContents::get_bytes() const {
+  auto bytes = std::vector<std::byte>();
+  bytes.reserve(this->size());
+  BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
+  BinaryTools::byte_vector_cat(bytes, camera_parameters.get_bytes());
+  return bytes;
+}
+
+
+bool CameraParameterContents::is_equal(const DBox& other) const {
+  if (typeid(*this) != typeid(other))
+    return false;
+  const auto& cast_other = dynamic_cast<const CameraParameterContents&>(other);
+  return *this == cast_other;
+}
+
+
+bool CameraParameterContents::operator==(const CameraParameterContents&) const
+    noexcept {  //other
+  return true;
+}
+
+
+bool CameraParameterContents::operator!=(
+    const CameraParameterContents& other) const noexcept {
+  return !this->operator==(other);
+}

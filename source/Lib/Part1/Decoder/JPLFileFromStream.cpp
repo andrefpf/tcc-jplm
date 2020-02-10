@@ -41,12 +41,14 @@
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
 #include "Lib/Part1/Common/JPLFile.h"
 
+
 void JPLFileFromStream::check_boxes_constraints() {
   if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
       it != temp_decoded_boxes.end()) {
     throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
   }
 }
+
 
 void JPLFileFromStream::populate_light_field_codestreams() {
   if (auto it = temp_decoded_boxes.find(JpegPlenoLightFieldBox::id);
@@ -63,6 +65,7 @@ void JPLFileFromStream::populate_light_field_codestreams() {
   }
 }
 
+
 void JPLFileFromStream::populate_point_cloud_codestreams() {
   // if (auto it = temp_decoded_boxes.find(JpegPlenoPointCloudBox::id);
   //     it != temp_decoded_boxes.end()) {
@@ -77,6 +80,7 @@ void JPLFileFromStream::populate_hologram_codestreams() {
   // }
 }
 
+
 void JPLFileFromStream::populate_codestreams_list() {
   // jpeg_pleno_codestreams
   populate_light_field_codestreams();
@@ -84,19 +88,21 @@ void JPLFileFromStream::populate_codestreams_list() {
   populate_hologram_codestreams();
 }
 
+
 void JPLFileFromStream::populate_jpl_fields() {
   //! \todo populate_xml_box_with_catalog();
   //! \todo populate_thumbnail();
   populate_codestreams_list();
 }
 
-JPLFileFromStream::JPLFileFromStream(const std::string &filename)
+
+JPLFileFromStream::JPLFileFromStream(const std::string& filename)
     : JPLFileParser(filename), JPLFile(JPLFileParser::get_signature_box(),
-                                       JPLFileParser::get_file_type_box()) {
+                                   JPLFileParser::get_file_type_box()) {
   if (!this->file_type_box->get_ref_to_contents().is_the_file_compatible_with(
-      JpegPlenoSignatureBox::id)) {
+          JpegPlenoSignatureBox::id)) {
     throw JPLFileFromStreamExceptions::
-    JpegPlenoNotInCompatibilityListException();
+        JpegPlenoNotInCompatibilityListException();
   }
 
   this->managed_stream.seek(12 + 20);
@@ -105,6 +111,7 @@ JPLFileFromStream::JPLFileFromStream(const std::string &filename)
   populate_jpl_fields();
   // std::move(*(this->parser.parse<XMLBoxWithCatalog>()));
 }
+
 
 uint64_t JPLFileFromStream::get_number_of_decoded_boxes() {
   return decoded_boxes;
