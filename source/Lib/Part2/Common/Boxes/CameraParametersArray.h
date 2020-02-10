@@ -209,7 +209,7 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(
+  void set_baseline(
       const std::tuple<float, float>& new_baseline) noexcept;
 
 
@@ -220,7 +220,7 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(
+  void set_baseline(
       std::tuple<float, float>&& new_baseline) noexcept;
 
 

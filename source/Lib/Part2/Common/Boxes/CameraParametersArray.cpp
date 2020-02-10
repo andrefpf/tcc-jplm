@@ -210,17 +210,15 @@ std::vector<std::byte> CameraParametersArray::get_bytes() const noexcept {
 }
 
 
-std::tuple<float, float> CameraParametersArray::set_baseline(
+void CameraParametersArray::set_baseline(
     std::tuple<float, float> &&new_baseline) noexcept {
   baseline = std::move(new_baseline);
-  return baseline;
 }
 
 
-std::tuple<float, float> CameraParametersArray::set_baseline(
+void CameraParametersArray::set_baseline(
     const std::tuple<float, float> &new_baseline) noexcept {
   baseline = new_baseline;
-  return baseline;
 }
 
 
