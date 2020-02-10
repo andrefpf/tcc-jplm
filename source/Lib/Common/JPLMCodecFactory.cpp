@@ -122,13 +122,13 @@ std::vector<std::unique_ptr<JPLMCodec>> JPLMCodecFactory::get_decoders(
         break;
       }
       case JpegPlenoCodestreamBoxTypes::PointCloud: {
-        throw CommonExceptions::NotImplementedException(
+        throw JPLMCommonExceptions::NotImplementedException(
             "JPLMCodecFactory::get_decoders(): "
             "JpegPlenoCodestreamBoxTypes::PointCloud");
         break;
       }
       case JpegPlenoCodestreamBoxTypes::Hologram: {
-        throw CommonExceptions::NotImplementedException(
+        throw JPLMCommonExceptions::NotImplementedException(
             "JPLMCodecFactory::get_decoders(): "
             "JpegPlenoCodestreamBoxTypes::Hologram");
         break;

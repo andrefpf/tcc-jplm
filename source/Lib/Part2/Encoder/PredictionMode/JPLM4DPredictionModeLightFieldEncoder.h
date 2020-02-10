@@ -66,7 +66,7 @@ class JPLM4DPredictionModeLightFieldEncoder
   virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
 
   virtual void run() override {
-    throw CommonExceptions::NotImplementedException(
+    throw JPLMCommonExceptions::NotImplementedException(
         "JPLM4DPredictionModeLightFieldEncoder::run()");
     //! \todo implement run method for jpl lightfield encoder
   }
