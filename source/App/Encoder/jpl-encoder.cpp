@@ -52,7 +52,7 @@ int main(int argc, char const* argv[]) {
   std::ofstream of_stream(configuration->get_output_filename(),
       std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
 
-  auto run_statistics = EncoderRunTimeStatistics(of_stream);
+  auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
 
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
@@ -62,7 +62,7 @@ int main(int argc, char const* argv[]) {
 
   of_stream << encoder->get_ref_to_jpl_file();
 
-  run_statistics.show_statistics();
+  run_time_statistics.show_statistics();
 
   of_stream.close();
 

@@ -38,21 +38,16 @@
  *  \date     2019-09-26
  */
 
-#include <chrono>
 #include <cstdlib>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include "Lib/Common/JPLMCodecFactory.h"
 #include "Lib/Common/JPLMConfigurationFactory.h"
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
-#ifdef __unix__
-#include <sys/resource.h>
-#endif
+#include "Lib/Utils/Stats/RunTimeStatistics.h"
 
 int main(int argc, char const* argv[]) {
-  auto start = std::chrono::steady_clock::now();
+  auto run_time_statistics = RunTimeStatistics();
+
   auto configuration =
       JPLMConfigurationFactory::get_decoder_configuration(argc, argv);
 
@@ -65,23 +60,7 @@ int main(int argc, char const* argv[]) {
     decoder->run();
   }
 
-  auto end = chrono::steady_clock::now();
-
-
-  std::cout << "Elapsed time in seconds (wall time): "
-            << chrono::duration_cast<chrono::seconds>(end - start).count()
-            << " s" << std::endl;
-
-
-#ifdef __unix__
-  int who = RUSAGE_SELF;
-  struct rusage usage;
-  [[maybe_unused]] auto ret = getrusage(who, &usage);
-  std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
-            << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
-            << "Max memory usage: " << usage.ru_maxrss << " kbytes."
-            << std::endl;
-#endif
+  run_time_statistics.show_statistics();
 
   exit(EXIT_SUCCESS);
 }
