@@ -43,7 +43,6 @@
 void RunTimeStatistics::mark_end() {
   if (!finished_counting) {
     end = std::chrono::steady_clock::now();
-    final_of_stream_position = ref_to_stream.tellp();
     finished_counting = true;
   }
 }
@@ -65,8 +64,4 @@ void RunTimeStatistics::show_statistics() {
             << "Max memory usage: " << usage.ru_maxrss << " kbytes."
             << std::endl;
 #endif
-
-  std::cout << "Bytes written to file: "
-            << final_of_stream_position - initial_of_stream_position
-            << " bytes " << std::endl;
 }

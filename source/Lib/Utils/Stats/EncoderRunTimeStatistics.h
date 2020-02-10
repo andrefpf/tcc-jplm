@@ -31,40 +31,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     RunTimeStatistics.h
+/** \file     EncoderRunTimeStatistics.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-02-10
  */
 
-#ifndef JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
-#define JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
+#ifndef JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
+#define JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
 
-#include <chrono>
-#include <filesystem>
+#include <fstream>
 #include <iostream>
-#ifdef __unix__
-#include <sys/resource.h>
-#endif
+#include "RunTimeStatistics.h"
 
 
-class RunTimeStatistics {
+class EncoderRunTimeStatistics : public RunTimeStatistics {
  protected:
-  const std::chrono::time_point<std::chrono::steady_clock> start;
-  std::chrono::time_point<std::chrono::steady_clock> end;
-  bool finished_counting = false;
+  std::ofstream& ref_to_stream;
+  const std::iostream::pos_type initial_of_stream_position;
+  std::iostream::pos_type final_of_stream_position;
+  bool finished_counting_bytes = false;
 
  public:
-  RunTimeStatistics() : start(std::chrono::steady_clock::now()) {
+  EncoderRunTimeStatistics(std::ofstream& stream)
+      : RunTimeStatistics(), ref_to_stream(stream),
+        initial_of_stream_position(stream.tellp()) {
+    if (!ref_to_stream.is_open()) {
+      std::cerr << "Error opening output file" << std::endl;
+      exit(EXIT_FAILURE);
+    }
   }
 
-  virtual ~RunTimeStatistics() = default;
+  virtual ~EncoderRunTimeStatistics() = default;
 
-  virtual void mark_end();
+  virtual void mark_end() override {
+    if (!finished_counting_bytes) {
+      final_of_stream_position = ref_to_stream.tellp();
+      finished_counting_bytes = true;
+    }
+    RunTimeStatistics::mark_end();
+  }
 
-  virtual void show_statistics();
+  virtual void show_statistics() {
+    RunTimeStatistics::show_statistics();
+    std::cout << "Bytes written to file: "
+              << final_of_stream_position - initial_of_stream_position
+              << " bytes " << std::endl;
+  }
 };
 
-
-#endif  // JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
+#endif  // JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H

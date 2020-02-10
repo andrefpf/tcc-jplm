@@ -43,7 +43,7 @@
 #include <string>
 #include "Lib/Common/JPLMCodecFactory.h"
 #include "Lib/Common/JPLMConfigurationFactory.h"
-#include "Lib/Utils/Stats/RunTimeStatistics.h"
+#include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
 
 
 int main(int argc, char const* argv[]) {
@@ -52,7 +52,7 @@ int main(int argc, char const* argv[]) {
   std::ofstream of_stream(configuration->get_output_filename(),
       std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
 
-  auto run_statistics = RunTimeStatistics(of_stream);
+  auto run_statistics = EncoderRunTimeStatistics(of_stream);
 
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(

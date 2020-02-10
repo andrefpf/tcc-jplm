@@ -31,40 +31,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     RunTimeStatistics.h
+/** \file     EncoderRunTimeStatistics.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-02-10
  */
-
-#ifndef JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
-#define JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
-
-#include <chrono>
-#include <filesystem>
-#include <iostream>
-#ifdef __unix__
-#include <sys/resource.h>
-#endif
-
-
-class RunTimeStatistics {
- protected:
-  const std::chrono::time_point<std::chrono::steady_clock> start;
-  std::chrono::time_point<std::chrono::steady_clock> end;
-  bool finished_counting = false;
-
- public:
-  RunTimeStatistics() : start(std::chrono::steady_clock::now()) {
-  }
-
-  virtual ~RunTimeStatistics() = default;
-
-  virtual void mark_end();
-
-  virtual void show_statistics();
-};
-
-
-#endif  // JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
