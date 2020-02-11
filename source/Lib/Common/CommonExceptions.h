@@ -46,8 +46,8 @@
 #include <stdexcept>
 #include <string>
 
-//<! \todo After merging, change the name to JPLMCommonExceptions
-namespace CommonExceptions {
+
+namespace JPLMCommonExceptions {
 
 
 class NotImplementedException : public std::logic_error {
@@ -57,7 +57,7 @@ class NotImplementedException : public std::logic_error {
   }
 };
 
-}  // namespace CommonExceptions
+}  // namespace JPLMCommonExceptions
 
 
 namespace JPLMConfigurationExceptions {

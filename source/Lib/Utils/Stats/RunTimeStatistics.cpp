@@ -31,40 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     jpl-encoder.cpp
- *  \brief
- *  \details
+/** \file     RunTimeStatistics.cpp
+ *  \brief    
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-10
  */
 
+#include "RunTimeStatistics.h"
 
-#include <cstdlib>
-#include <string>
-#include "Lib/Common/JPLMCodecFactory.h"
-#include "Lib/Common/JPLMConfigurationFactory.h"
-#include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
+void RunTimeStatistics::mark_end() {
+  if (!finished_counting) {
+    end = std::chrono::steady_clock::now();
+    finished_counting = true;
+  }
+}
 
 
-int main(int argc, char const* argv[]) {
-  auto configuration =
-      JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
-  std::ofstream of_stream(configuration->get_output_filename(),
-      std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
+void RunTimeStatistics::show_statistics() {
+  mark_end();
+  std::cout
+      << "Elapsed time in seconds (wall time): "
+      << std::chrono::duration_cast<std::chrono::seconds>(end - start).count()
+      << " s" << std::endl;
 
-  auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
-
-  auto encoder = JPLMCodecFactory::get_encoder(
-      std::move(std::unique_ptr<JPLMEncoderConfiguration>(
-          static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
-
-  encoder->run();
-
-  of_stream << encoder->get_ref_to_jpl_file();
-
-  run_time_statistics.show_statistics();
-
-  of_stream.close();
-
-  exit(EXIT_SUCCESS);
+#ifdef __unix__
+  int who = RUSAGE_SELF;
+  struct rusage usage;
+  [[maybe_unused]] auto ret = getrusage(who, &usage);
+  std::cout << "User time: " << usage.ru_utime.tv_sec << "s"
+            << " " << usage.ru_utime.tv_usec / 1000 << "ms\n"
+            << "Max memory usage: " << usage.ru_maxrss << " kbytes."
+            << std::endl;
+#endif
 }

@@ -31,40 +31,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     jpl-encoder.cpp
- *  \brief
- *  \details
+/** \file     EncoderRunTimeStatistics.h
+ *  \brief    
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-10
  */
 
+#ifndef JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
+#define JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
 
-#include <cstdlib>
-#include <string>
-#include "Lib/Common/JPLMCodecFactory.h"
-#include "Lib/Common/JPLMConfigurationFactory.h"
-#include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
+#include <fstream>
+#include <iostream>
+#include "RunTimeStatistics.h"
 
 
-int main(int argc, char const* argv[]) {
-  auto configuration =
-      JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
-  std::ofstream of_stream(configuration->get_output_filename(),
-      std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
+class EncoderRunTimeStatistics : public RunTimeStatistics {
+ protected:
+  std::ofstream& ref_to_stream;
+  const std::iostream::pos_type initial_of_stream_position;
+  std::iostream::pos_type final_of_stream_position;
+  bool finished_counting_bytes = false;
 
-  auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
+ public:
+  EncoderRunTimeStatistics(std::ofstream& stream);
 
-  auto encoder = JPLMCodecFactory::get_encoder(
-      std::move(std::unique_ptr<JPLMEncoderConfiguration>(
-          static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
+  virtual ~EncoderRunTimeStatistics() = default;
 
-  encoder->run();
+  virtual void mark_end() override;
 
-  of_stream << encoder->get_ref_to_jpl_file();
+  virtual void show_statistics() override;
+};
 
-  run_time_statistics.show_statistics();
-
-  of_stream.close();
-
-  exit(EXIT_SUCCESS);
-}
+#endif  // JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H

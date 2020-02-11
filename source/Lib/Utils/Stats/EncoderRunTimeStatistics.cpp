@@ -31,21 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ParseExceptions.h
- *  \brief    Brief description
- *  \details  Detailed description
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2019-09-26
+/** \file     EncoderRunTimeStatistics.cpp
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \date     2020-02-10
  */
-#ifndef JPLM_PARSEEXCEPTIONS_H
-#define JPLM_PARSEEXCEPTIONS_H
 
-// #include <exception>
-// #include <string>
-// #include <type_traits>
-// #include "magic_enum.hpp"
+#include "EncoderRunTimeStatistics.h"
 
-// using namespace std;
+EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::ofstream& stream)
+    : RunTimeStatistics(), ref_to_stream(stream),
+      initial_of_stream_position(stream.tellp()) {
+  if (!ref_to_stream.is_open()) {
+    std::cerr << "Error opening output file" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+}
 
 
-#endif  //JPLM_PARSEEXCEPTIONS_H
+void EncoderRunTimeStatistics::mark_end() {
+  if (!finished_counting_bytes) {
+    final_of_stream_position = ref_to_stream.tellp();
+    finished_counting_bytes = true;
+  }
+  RunTimeStatistics::mark_end();
+}
+
+
+void EncoderRunTimeStatistics::show_statistics() {
+  RunTimeStatistics::show_statistics();
+  std::cout << "Bytes written to file: "
+            << final_of_stream_position - initial_of_stream_position
+            << " bytes " << std::endl;
+}

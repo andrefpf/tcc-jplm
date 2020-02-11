@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2020, ITU/ISO/IEC
+ * Copyright (c) 2010-2019, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfigurationExceptions.cpp
- *  \brief    Brief description
- *  \details  Detailed description
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-06
+/** \file     RunTimeStatistics.h
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \date     2020-02-10
  */
 
-#include "Lib/Common/JPLMConfigurationExceptions.h"
+#ifndef JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
+#define JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H
+
+#include <chrono>
+#include <filesystem>
+#include <iostream>
+#ifdef __unix__
+#include <sys/resource.h>
+#endif
+
+
+class RunTimeStatistics {
+ protected:
+  const std::chrono::time_point<std::chrono::steady_clock> start;
+  std::chrono::time_point<std::chrono::steady_clock> end;
+  bool finished_counting = false;
+
+ public:
+  RunTimeStatistics() : start(std::chrono::steady_clock::now()) {
+  }
+
+  virtual ~RunTimeStatistics() = default;
+
+  virtual void mark_end();
+
+  virtual void show_statistics();
+};
+
+
+#endif  // JPLM_LIB_UTILS_RUN_TIME_STATISTICS_H

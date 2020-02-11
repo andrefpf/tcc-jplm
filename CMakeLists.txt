@@ -102,6 +102,7 @@ target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-encoder-bin PRIVATE stream)
 target_link_libraries(jpl-encoder-bin PRIVATE image)
+target_link_libraries(jpl-encoder-bin PRIVATE run_time_stats)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 
 
@@ -120,6 +121,7 @@ target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_common_boxes_parsers)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder_transform_mode)
 target_link_libraries(jpl-decoder-bin PRIVATE stream)
+target_link_libraries(jpl-decoder-bin PRIVATE run_time_stats)
 
 
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_common)
@@ -131,6 +133,7 @@ target_link_libraries(jpl-decoder-bin PRIVATE image)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/App/Utils/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Image/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stream/)
+add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Utils/Stats/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/)
 add_subdirectory(${CMAKE_HOME_DIRECTORY}/source/Lib/Common/Boxes/Generic/)
