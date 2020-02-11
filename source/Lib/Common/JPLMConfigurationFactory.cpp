@@ -68,7 +68,8 @@ JPLMConfigurationFactory::get_encoder_configuration(
           JPLMEncoderConfigurationLightField(argc, const_cast<char**>(argv));
       auto type = light_field_configuration.get_type();
       if (type == Type::transform_mode) {
-        return make_unique<JPLMEncoderConfigurationLightField4DTransformMode>(
+        return std::make_unique<
+            JPLMEncoderConfigurationLightField4DTransformMode>(
             argc, const_cast<char**>(argv));
       } else {
         //<! \todo after implementing the prediction mode in JPLM, needs to return Prediction mode configuration
@@ -114,9 +115,10 @@ JPLMConfigurationFactory::get_encoder_configuration(
 }
 
 std::unique_ptr<JPLMConfiguration>
-JPLMConfigurationFactory::get_decoder_configuration(int argc, const char **argv) {
-  auto basic_config =
-      make_unique<JPLMDecoderConfiguration>(argc, const_cast<char**>(argv));
+JPLMConfigurationFactory::get_decoder_configuration(
+    int argc, const char** argv) {
+  auto basic_config = std::make_unique<JPLMDecoderConfiguration>(
+      argc, const_cast<char**>(argv));
   if (basic_config->is_help_mode()) {
     exit(0);
   }
@@ -132,4 +134,3 @@ void JPLMConfigurationFactory::show_invalid_part_common_message() {
       << std::endl;
   throw JPLMConfigurationExceptions::InvalidPartException();
 }
-

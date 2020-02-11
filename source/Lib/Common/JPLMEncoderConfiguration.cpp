@@ -40,6 +40,12 @@
 
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 
+using namespace std;
+
+using json = nlohmann::json;
+using Type = CompressionTypeLightField;
+namespace fs = std::filesystem;
+
 
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMEncoderConfiguration(
@@ -49,7 +55,7 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
 
 
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {
-  ifstream ifs(config_file_path);
+  std::ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
   parse_jpeg_pleno_part(conf);
   parse_colorspace(conf);

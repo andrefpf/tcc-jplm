@@ -165,7 +165,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam) {
       "../resources/out_small_greek/", "-T", "0"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_EQ(Type::transform_mode, config.get_type());
+  EXPECT_EQ(CompressionTypeLightField::transform_mode, config.get_type());
 }
 
 
@@ -174,7 +174,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam2) {
       "../resources/out_small_greek/", "-T", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_NE(Type::transform_mode, config.get_type());
+  EXPECT_NE(CompressionTypeLightField::transform_mode, config.get_type());
 }
 
 
@@ -183,7 +183,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeShortParam3) {
       "../resources/out_small_greek/", "-T", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_EQ(Type::prediction_mode, config.get_type());
+  EXPECT_EQ(CompressionTypeLightField::prediction_mode, config.get_type());
 }
 
 
@@ -192,7 +192,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam) {
       "../resources/out_small_greek/", "--type", "0"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_EQ(Type::transform_mode, config.get_type());
+  EXPECT_EQ(CompressionTypeLightField::transform_mode, config.get_type());
 }
 
 
@@ -201,7 +201,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam2) {
       "../resources/out_small_greek/", "--type", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_EQ(Type::prediction_mode, config.get_type());
+  EXPECT_EQ(CompressionTypeLightField::prediction_mode, config.get_type());
 }
 
 
@@ -210,7 +210,7 @@ TEST(JPLMEncoderConfigurationLightField, SimpleTestOnlyTypeLongParam3) {
       "../resources/out_small_greek/", "--type", "1"};
   int argc = 7;
   JPLMEncoderConfigurationLightField config(argc, const_cast<char**>(argv));
-  EXPECT_NE(Type::transform_mode, config.get_type());
+  EXPECT_NE(CompressionTypeLightField::transform_mode, config.get_type());
 }
 
 

@@ -45,7 +45,6 @@
 #include <filesystem>
 #include <optional>
 #include <tuple>
-#include "CLI/CLI.hpp"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
@@ -62,8 +61,8 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   uint32_t get_number_of_columns_s() const;
   uint32_t get_view_height_v() const;
   uint32_t get_view_width_u() const;
-  virtual Type get_type() const;
-  virtual Type get_compression_type() const;
+  virtual CompressionTypeLightField get_type() const;
+  virtual CompressionTypeLightField get_compression_type() const;
 
 
  protected:
@@ -81,15 +80,15 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
     this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
   }
 
-  void parse_json(string path);
-  void parse_number_of_rows_t(const json &conf);
-  void parse_number_of_columns_s(const json &conf);
-  void parse_view_height_v(const json &conf);
-  void parse_view_width_u(const json &conf);
+  void parse_json(std::string path);
+  void parse_number_of_rows_t(const nlohmann::json &conf);
+  void parse_number_of_columns_s(const nlohmann::json &conf);
+  void parse_view_height_v(const nlohmann::json &conf);
+  void parse_view_width_u(const nlohmann::json &conf);
 
 
  private:
-  void parse_mode_type(const json &conf);
+  void parse_mode_type(const nlohmann::json &conf);
   void check_inconsistencies();
   CompressionTypeLightField type;
   static constexpr std::size_t current_hierarchy_level = 1;

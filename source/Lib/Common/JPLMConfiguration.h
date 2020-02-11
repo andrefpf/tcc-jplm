@@ -47,16 +47,13 @@
 
 #include <algorithm>
 #include <any>
+#include <filesystem>
 #include <iostream>
 #include <string>
-#include "CLI/CLI.hpp"
 #include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Common/CLIOption.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
-
-using namespace std;
-using Type = CompressionTypeLightField;
 
 enum class JpegPlenoPart {
   Undefined = 0,
@@ -82,7 +79,9 @@ class JPLMConfiguration {
   std::string executable_name = "undefined";
   void run_help() const;
   void parse_cli(int argc, char **argv);
+  //<! \todo check if "validate_param" method name could be "is_param_valid"
   bool validate_param(std::string param);
+  //<! \todo check if "validate_value" method name could be "is_value_valid"
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
   JPLMConfiguration(int argc, char **argv, std::size_t level);
   std::string message = std::string("");
@@ -95,7 +94,7 @@ class JPLMConfiguration {
 
   const std::string &get_input_filename() const;
   const std::string &get_output_filename() const;
-  const bool &is_help_mode() const;
+  bool is_help_mode() const;
 };
 
 

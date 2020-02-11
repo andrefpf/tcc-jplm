@@ -40,6 +40,9 @@
 
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
+using json = nlohmann::json;
+using namespace std;
+
 void JPLMEncoderConfigurationLightField::add_options_to_cli() {
   cli_options.push_back({"--view_height", "-v", "Single-view height dimension",
       [this](std::any value) {
@@ -73,7 +76,7 @@ void JPLMEncoderConfigurationLightField::add_options_to_cli() {
       [this](std::any v) {
         std::string typed_string = std::any_cast<std::string>(v);
         int type = std::stoi(typed_string);
-        this->type = static_cast<Type>(type);
+        this->type = static_cast<CompressionTypeLightField>(type);
       },
       this->current_hierarchy_level});
 }
@@ -96,7 +99,7 @@ JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
 }
 
 
-Type JPLMEncoderConfigurationLightField::get_type() const {
+CompressionTypeLightField JPLMEncoderConfigurationLightField::get_type() const {
   return type;
 }
 
@@ -107,10 +110,10 @@ void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
     std::transform(t.begin(), t.end(), t.begin(),
         [](unsigned char c) { return std::tolower(c); });
     if (t == "transform mode" || t == "transform_mode" || t == "mule") {
-      type = Type::transform_mode;
+      type = CompressionTypeLightField::transform_mode;
     } else if (t == "prediction mode" || t == "prediction_mode" ||
                t == "wasp") {
-      type = Type::prediction_mode;
+      type = CompressionTypeLightField::prediction_mode;
     } else {
       //! \todo check if this is the right exception to be thown here...
       throw JPLMConfigurationExceptions::
@@ -141,16 +144,18 @@ void JPLMEncoderConfigurationLightField::check_inconsistencies() {
               << static_cast<int>(part)
               << ". Using Part 2 (Light Field) as default" << std::endl;
   }
-  if ((type != Type::transform_mode) && (type != Type::prediction_mode)) {
+  if ((type != CompressionTypeLightField::transform_mode) &&
+      (type != CompressionTypeLightField::prediction_mode)) {
     std::cout << "Inconsistent configuration. Compression type was set to "
               << static_cast<int>(type) << ". Using transform mode as default"
               << std::endl;
-    this->type = Type::transform_mode;
+    this->type = CompressionTypeLightField::transform_mode;
   }
 }
 
 
-Type JPLMEncoderConfigurationLightField::get_compression_type() const {
+CompressionTypeLightField
+JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
 }
 

@@ -94,22 +94,30 @@ class JPLMEncoderConfigurationLightField4DTransformMode
  protected:
   JPLMEncoderConfigurationLightField4DTransformMode(
       int argc, char **argv, std::size_t level);
-  void parse_json(string path);
-  void parse_minimal_transform_size_intra_view_vertical(const json &conf);
-  void parse_maximal_transform_size_intra_view_vertical(const json &conf);
-  void parse_minimal_transform_size_intra_view_horizontal(const json &conf);
-  void parse_maximal_transform_size_intra_view_horizontal(const json &conf);
-  void parse_minimal_transform_size_inter_view_vertical(const json &conf);
-  void parse_maximal_transform_size_inter_view_vertical(const json &conf);
-  void parse_minimal_transform_size_inter_view_horizontal(const json &conf);
-  void parse_maximal_transform_size_inter_view_horizontal(const json &conf);
-  void parse_lambda(const json &conf);
-  void parse_border_policy(const json &conf);
+  void parse_json(std::string path);
+  void parse_minimal_transform_size_intra_view_vertical(
+      const nlohmann::json &conf);
+  void parse_maximal_transform_size_intra_view_vertical(
+      const nlohmann::json &conf);
+  void parse_minimal_transform_size_intra_view_horizontal(
+      const nlohmann::json &conf);
+  void parse_maximal_transform_size_intra_view_horizontal(
+      const nlohmann::json &conf);
+  void parse_minimal_transform_size_inter_view_vertical(
+      const nlohmann::json &conf);
+  void parse_maximal_transform_size_inter_view_vertical(
+      const nlohmann::json &conf);
+  void parse_minimal_transform_size_inter_view_horizontal(
+      const nlohmann::json &conf);
+  void parse_maximal_transform_size_inter_view_horizontal(
+      const nlohmann::json &conf);
+  void parse_lambda(const nlohmann::json &conf);
+  void parse_border_policy(const nlohmann::json &conf);
 
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
   double get_lambda() const;
-  virtual Type get_compression_type() const override;
+  virtual CompressionTypeLightField get_compression_type() const override;
   uint32_t get_minimal_transform_size_intra_view_vertical();
   uint32_t get_maximal_transform_size_intra_view_vertical();
   uint32_t get_minimal_transform_size_intra_view_horizontal();
