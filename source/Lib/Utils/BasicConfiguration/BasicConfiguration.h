@@ -31,56 +31,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
- *  \brief    General configuration data object
- *  \details  JPLMConfiguration is the most basic abstraction of configuration
- *            data object for being used by the JPLM Encoder and Decoders. It
- *            contains only the input and output paths extracted from the
- *            command line interface. All configuration objects are derived
- *            from JPLMConfiguration.
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+/** \file     BasicConfiguration.h
+ *  \brief    
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-11
  */
-#ifndef JPLM_JPLMConfiguration_H
-#define JPLM_JPLMConfiguration_H
+
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_H
 
 #include <algorithm>
+#include <any>
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
+#include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Utils/BasicConfiguration/CLIOption.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
 
 
-enum class JpegPlenoPart {
-  Undefined = 0,
-  Framework = 1,
-  LightField = 2,
-  ConformanceTest = 3,
-  ReferenceSoftware = 4,
-};
-
-
-class JPLMConfiguration : public BasicConfiguration {
+class BasicConfiguration {
  private:
+  bool help_mode_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
+  void add_options_to_cli(char **argv);
 
  protected:
-  std::string input;
-  std::string output;
-  JPLMConfiguration(int argc, char **argv, std::size_t level);
+  std::vector<CLIOption> cli_options;
+  std::size_t hierarchy_level =
+      0;  //<! the hierarchy level used for printing help
+  std::string executable_name = "undefined";
+  void run_help() const;
+  void parse_cli(int argc, char **argv);
+  //<! \todo check if "validate_param" method name could be "is_param_valid"
+  bool validate_param(std::string param);
+  //<! \todo check if "validate_value" method name could be "is_value_valid"
+  bool validate_value(unsigned int size, unsigned int pos, char **argv);
+  BasicConfiguration(int argc, char **argv, std::size_t level);
+  std::string message = std::string("");
 
  public:
-  JPLMConfiguration(int argc, char **argv);
+  BasicConfiguration(int argc, char **argv);
 
-  virtual ~JPLMConfiguration() = default;
+  virtual ~BasicConfiguration() = default;
 
-  const std::string &get_input_filename() const;
-  const std::string &get_output_filename() const;
+  bool is_help_mode() const;
 };
 
-
-#endif  //JPLM_JPLMConfiguration_H
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_H

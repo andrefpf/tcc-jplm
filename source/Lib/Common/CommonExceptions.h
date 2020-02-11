@@ -49,7 +49,9 @@
 
 namespace JPLMCommonExceptions {
 
-
+/**
+ * @brief      Exception for signaling not implemented errors.
+ */
 class NotImplementedException : public std::logic_error {
  public:
   NotImplementedException(const std::string& what)

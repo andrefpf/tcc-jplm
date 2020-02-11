@@ -31,56 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMConfiguration.h
- *  \brief    General configuration data object
- *  \details  JPLMConfiguration is the most basic abstraction of configuration
- *            data object for being used by the JPLM Encoder and Decoders. It
- *            contains only the input and output paths extracted from the
- *            command line interface. All configuration objects are derived
- *            from JPLMConfiguration.
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+/** \file     CLIOption.cpp
+ *  \brief    
+ *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-26
+ *  \date     2020-02-11
  */
-#ifndef JPLM_JPLMConfiguration_H
-#define JPLM_JPLMConfiguration_H
 
-#include <algorithm>
-#include <filesystem>
-#include <iostream>
-#include <string>
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
-#include "Lib/Utils/BasicConfiguration/CLIOption.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-
-
-enum class JpegPlenoPart {
-  Undefined = 0,
-  Framework = 1,
-  LightField = 2,
-  ConformanceTest = 3,
-  ReferenceSoftware = 4,
-};
-
-
-class JPLMConfiguration : public BasicConfiguration {
- private:
-  static constexpr std::size_t current_hierarchy_level = 0;
-
- protected:
-  std::string input;
-  std::string output;
-  JPLMConfiguration(int argc, char **argv, std::size_t level);
-
- public:
-  JPLMConfiguration(int argc, char **argv);
-
-  virtual ~JPLMConfiguration() = default;
-
-  const std::string &get_input_filename() const;
-  const std::string &get_output_filename() const;
-};
-
-
-#endif  //JPLM_JPLMConfiguration_H
+#include "CLIOption.h"

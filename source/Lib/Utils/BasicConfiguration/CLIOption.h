@@ -42,6 +42,11 @@
 #ifndef JPLM_LIB_PART2_COMMON_CLIOPTION_H
 #define JPLM_LIB_PART2_COMMON_CLIOPTION_H
 
+#include <any>
+#include <functional>
+#include <string>
+
+
 class CLIOption {
  private:
   std::string long_option;

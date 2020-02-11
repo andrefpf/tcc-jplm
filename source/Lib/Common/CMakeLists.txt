@@ -21,3 +21,4 @@ set(PART2_SOURCES
     ../Part2/Decoder/TransformMode/ABACDecoder.cpp)
 
 add_library(jplm_common ${COMMON_SOURCES} ${PART1_SOURCES} ${PART2_SOURCES})
+target_link_libraries(jplm_common PUBLIC basic_configuration)

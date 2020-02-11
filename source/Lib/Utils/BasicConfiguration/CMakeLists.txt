@@ -1,0 +1,2 @@
+set(UTIL_BASIC_CONFIGURATIONS_SOURCES BasicConfiguration.cpp CLIOption.cpp)
+add_library(basic_configuration ${UTIL_BASIC_CONFIGURATIONS_SOURCES})
