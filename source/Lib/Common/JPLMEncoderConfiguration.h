@@ -43,20 +43,13 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <fstream>
 #include <optional>
-#include "CLI/CLI.hpp"
 #include "Lib/Common/CommonExceptions.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
-
-
-using namespace std;
-
-using json = nlohmann::json;
-using Type = CompressionTypeLightField;
-namespace fs = std::filesystem;
 
 
 class JPLMEncoderConfiguration : public JPLMConfiguration {
@@ -66,9 +59,9 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
  protected:
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-  void parse_json(string path);
-  void parse_jpeg_pleno_part(const json &conf);
-  void parse_colorspace(const json &conf);
+  void parse_json(std::string path);
+  void parse_jpeg_pleno_part(const nlohmann::json &conf);
+  void parse_colorspace(const nlohmann::json &conf);
 
   std::string config;
   JpegPlenoPart part = JpegPlenoPart::Undefined;
@@ -76,14 +69,11 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;
-  const string &get_config() const;
+  const std::string &get_config() const;
   ColorSpaces::ColorSpace get_colorspace() const;
 
   JPLMEncoderConfiguration(int argc, char **argv);
 };
-
-
-
 
 
 #endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */

@@ -41,7 +41,8 @@
 
 #include "Lib/Common/JPLMConfiguration.h"
 
-
+using namespace std;
+using Type = CompressionTypeLightField;
 using ConsoleTable = samilton::ConsoleTable;
 using sAlign = samilton::Alignment;
 
@@ -143,6 +144,6 @@ void JPLMConfiguration::parse_cli(int argc, char **argv) {
 }
 
 
-const bool &JPLMConfiguration::is_help_mode() const {
+bool JPLMConfiguration::is_help_mode() const {
   return help_mode_flag;
 }

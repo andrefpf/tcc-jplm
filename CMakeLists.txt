@@ -50,7 +50,6 @@ include(JPLMWarnings)
 #including external libraries by downloading them from git..
 include(ExternalGoogleTest)
 include(ExternalMagic_Enum)
-include(ExternalCLI11)
 include(ExternalCppConsoleTable)
 include(ExternalCXXProperties)
 include(ExternalGetOptForVisualStudio)

@@ -40,6 +40,9 @@
 
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
+
+using json = nlohmann::json;
+
 void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
   cli_options.push_back(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
@@ -164,9 +167,10 @@ JPLMEncoderConfigurationLightField4DTransformMode::
 }
 
 
-Type JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
+CompressionTypeLightField
+JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
     const {
-  return Type::transform_mode;
+  return CompressionTypeLightField::transform_mode;
 }
 
 
@@ -175,9 +179,10 @@ double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
 }
 
 
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(string p) {
+void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(
+    std::string p) {
   JPLMEncoderConfigurationLightField::parse_json(p);
-  ifstream ifs(p);
+  std::ifstream ifs(p);
   json conf = json::parse(ifs);
   parse_minimal_transform_size_intra_view_vertical(conf);
   parse_maximal_transform_size_intra_view_vertical(conf);
@@ -381,7 +386,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
 void JPLMEncoderConfigurationLightField4DTransformMode::parse_border_policy(
     const json &conf) {
   if (conf.contains("border_policy")) {
-    std::string s = conf["lambda"].get<string>();
+    std::string s = conf["lambda"].get<std::string>();
     std::transform(s.begin(), s.end(), s.begin(),
         [](unsigned char c) { return std::tolower(c); });
     if (s == "0" || s == "padding") {
@@ -395,41 +400,41 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_border_policy(
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 JPLMEncoderConfigurationLightField4DTransformMode::get_maximal_transform_sizes()
-const {
+    const {
   return {maximal_transform_size_inter_view_vertical_t,
-          maximal_transform_size_inter_view_horizontal_s,
-          maximal_transform_size_intra_view_vertical_v,
-          maximal_transform_size_intra_view_horizontal_u};
+      maximal_transform_size_inter_view_horizontal_s,
+      maximal_transform_size_intra_view_vertical_v,
+      maximal_transform_size_intra_view_horizontal_u};
 }
 
 
 LightfieldDimension<uint32_t>
 JPLMEncoderConfigurationLightField4DTransformMode::
-get_maximal_transform_dimension() const {
+    get_maximal_transform_dimension() const {
   return {get_maximal_transform_sizes()};
 }
 
 
 std::tuple<double, double, double, double>
 JPLMEncoderConfigurationLightField4DTransformMode::get_transform_scalings()
-const {
+    const {
   return {transform_scale_t, transform_scale_s, transform_scale_v,
-          transform_scale_u};
+      transform_scale_u};
 }
 
 
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 JPLMEncoderConfigurationLightField4DTransformMode::get_minimal_transform_sizes()
-const {
+    const {
   return {minimal_transform_size_inter_view_vertical_t,
-          minimal_transform_size_inter_view_horizontal_s,
-          minimal_transform_size_intra_view_vertical_v,
-          minimal_transform_size_intra_view_horizontal_u};
+      minimal_transform_size_inter_view_horizontal_s,
+      minimal_transform_size_intra_view_vertical_v,
+      minimal_transform_size_intra_view_horizontal_u};
 }
 
 
 LightfieldDimension<uint32_t>
 JPLMEncoderConfigurationLightField4DTransformMode::
-get_minimal_transform_dimension() const {
+    get_minimal_transform_dimension() const {
   return {get_minimal_transform_sizes()};
 }
