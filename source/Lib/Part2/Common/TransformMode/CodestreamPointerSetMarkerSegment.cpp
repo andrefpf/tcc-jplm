@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,54 +31,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CodestreamPointerSetMarkerSegment.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-01-03
+/** \file     CodestreamPointerSetMarkerSegment.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-11
  */
-
-#ifndef CODESTREAMPOINTERSETMARKERSEGMENT_H__
-#define CODESTREAMPOINTERSETMARKERSEGMENT_H__
+#include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
 
 
-#include <cmath>
-#include <cstdint>
-#include <variant>
-#include <vector>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
+std::size_t CodestreamPointerSetMarkerSegment::get_number_of_pointers() {
+  return PPnt.size();
+}
 
 
-class CodestreamPointerSetMarkerSegment {
- protected:
-  static constexpr auto marker_code = Marker::PNT;
-
-  std::vector<std::variant<uint32_t, uint64_t>> PPnt;
-
- public:
-  static constexpr uint8_t SLpnt = 2;
-  CodestreamPointerSetMarkerSegment(
-      const std::vector<std::variant<uint32_t, uint64_t>>& PPnt)
-      : PPnt(PPnt) {
-  }
-
-
-  CodestreamPointerSetMarkerSegment(
-      std::vector<std::variant<uint32_t, uint64_t>>&& PPnt)
-      : PPnt(std::move(PPnt)) {
-  }
-
-
-  ~CodestreamPointerSetMarkerSegment() = default;
-
-
-  std::size_t get_number_of_pointers();
-
-
-  std::variant<uint32_t, uint64_t> get_pointer_at(std::size_t i);
-};
-
-
-#endif /* end of include guard: CODESTREAMPOINTERSETMARKERSEGMENT_H__ */
+std::variant<uint32_t, uint64_t>
+CodestreamPointerSetMarkerSegment::get_pointer_at(std::size_t i) {
+  return PPnt.at(i);
+}

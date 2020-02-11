@@ -460,3 +460,8 @@ std::ostream& operator<<(std::ostream& o_stream, const Block4D& block) {
   o_stream << "END Block4D" << std::endl;
   return o_stream;
 }
+
+Block4D::Block4D(const LightfieldDimension<uint32_t> &block_dimension) {
+  set_dimension(block_dimension.get_t(), block_dimension.get_s(),
+                block_dimension.get_v(), block_dimension.get_u());
+}

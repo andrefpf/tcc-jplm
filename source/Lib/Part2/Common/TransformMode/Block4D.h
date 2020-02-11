@@ -103,12 +103,15 @@ class Block4D {
   int mlength_s = 0; /*!< s dimension block size */
   int mlength_v = 0; /*!< v dimension block size */
   int mlength_u = 0; /*!< u dimension block size */
+
+
   Block4D() = default;
+
+
   Block4D(Block4D&& other);  //move constructor
-  Block4D(const LightfieldDimension<uint32_t>& block_dimension) {
-    set_dimension(block_dimension.get_t(), block_dimension.get_s(),
-        block_dimension.get_v(), block_dimension.get_u());
-  }
+
+
+  Block4D(const LightfieldDimension<uint32_t>& block_dimension);
   ~Block4D();
   void set_dimension(int length_t, int length_s, int length_v, int length_u);
   void set_dimension(const std::tuple<int, int, int, int>& lengths);
