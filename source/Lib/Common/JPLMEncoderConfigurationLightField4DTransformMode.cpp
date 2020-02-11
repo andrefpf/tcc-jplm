@@ -65,7 +65,8 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         std::string::size_type sz;
         this->lambda = std::stod(typed_string, &sz);
       },
-      this->current_hierarchy_level});
+      this->current_hierarchy_level,
+      {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
 
   cli_options.push_back({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",

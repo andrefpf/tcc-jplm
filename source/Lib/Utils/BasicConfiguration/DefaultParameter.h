@@ -31,51 +31,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BasicConfiguration.h
+/** \file     DefaultParameter.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-02-11
  */
 
-#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
-#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_DEFAULT_PARAMETER_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_DEFAULT_PARAMETER_H
 
-#include <algorithm>
 #include <any>
-#include <filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
-#include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Utils/BasicConfiguration/CLIOption.h"
 
-
-class BasicConfiguration {
+class DefaultParameter {
  private:
-  bool help_mode_flag = false;
-  static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli(char **argv);
-
- protected:
-  std::vector<CLIOption> cli_options;
-  std::size_t hierarchy_level =
-      0;  //<! the hierarchy level used for printing help
-  std::string executable_name = "undefined";
-  void run_help() const;
-  void parse_cli(int argc, char **argv);
-  //<! \todo check if "validate_param" method name could be "is_param_valid"
-  bool validate_param(std::string param);
-  //<! \todo check if "validate_value" method name could be "is_value_valid"
-  bool validate_value(unsigned int size, unsigned int pos, char **argv);
-  BasicConfiguration(int argc, char **argv, std::size_t level);
-  std::string message = std::string("");
+  std::optional<std::function<void()>> default_action;
+  std::string default_help_message;
 
  public:
-  BasicConfiguration(int argc, char **argv);
+  DefaultParameter(
+      const std::optional<std::function<void()>>& default_action = std::nullopt,
+      const std::string& default_help_message = std::string(""))
+      : default_action(default_action),
+        default_help_message(default_help_message) {
+  }
 
-  virtual ~BasicConfiguration() = default;
+  void run() const {
+    if (default_action) {
+      // if verbose...
+      std::cout << default_help_message << std::endl;
+      (*default_action)();
+    }
+  }
 
-  bool is_help_mode() const;
+  virtual ~DefaultParameter() = default;
 };
 
-#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_DEFAULT_PARAMETER_H

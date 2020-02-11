@@ -113,6 +113,11 @@ void BasicConfiguration::parse_cli(int argc, char **argv) {
       }
     }
   }
+  for (const auto &cli_option : cli_options) {
+    if (!cli_option.is_parsed()) {
+      cli_option.run_default_action();
+    }
+  }
 }
 
 

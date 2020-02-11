@@ -39,12 +39,11 @@
  *  \date     2020-02-06
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_CLIOPTION_H
-#define JPLM_LIB_PART2_COMMON_CLIOPTION_H
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
 
-#include <any>
-#include <functional>
-#include <string>
+
+#include "Lib/Utils/BasicConfiguration/DefaultParameter.h"
 
 
 class CLIOption {
@@ -54,18 +53,17 @@ class CLIOption {
   std::string description;
   std::function<void(std::any)> action;
   std::size_t level;
-  std::optional<std::function<void(std::any)>> default_action;
+  DefaultParameter default_parameter;
   bool parsed = false;
 
  public:
   CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
       const std::function<void(std::any)> &action, std::size_t level,
-      const std::optional<std::function<void(std::any)>> &default_action =
-          std::nullopt)
+      const DefaultParameter &default_parameter = DefaultParameter())
       : long_option(longOption), short_option(short_option),
         description(description), action(action), level(level),
-        default_action(default_action) {
+        default_parameter(default_parameter) {
   }
 
 
@@ -74,6 +72,11 @@ class CLIOption {
       action(value);
       this->parsed = true;
     }
+  }
+
+
+  void run_default_action() const {
+    default_parameter.run();
   }
 
 
@@ -95,6 +98,10 @@ class CLIOption {
   std::size_t get_level() const {
     return level;
   }
+
+  bool is_parsed() const {
+    return parsed;
+  }
 };
 
-#endif  // JPLM_LIB_PART2_COMMON_CLIOPTION_H
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
