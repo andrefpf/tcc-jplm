@@ -52,17 +52,20 @@ class CLIOption {
   std::string long_option;
   std::string short_option;
   std::string description;
-  bool parsed;
   std::function<void(std::any)> action;
   std::size_t level;
+  std::optional<std::function<void(std::any)>> default_action;
+  bool parsed = false;
 
  public:
   CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level)
+      const std::function<void(std::any)> &action, std::size_t level,
+      const std::optional<std::function<void(std::any)>> &default_action =
+          std::nullopt)
       : long_option(longOption), short_option(short_option),
-        description(description), action(action), level(level) {
-    this->parsed = false;
+        description(description), action(action), level(level),
+        default_action(default_action) {
   }
 
 
