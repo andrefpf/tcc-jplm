@@ -44,12 +44,9 @@
 #include "Lib/Common/Boxes/SuperBoxDBox.h"
 
 class JpegPlenoLightFieldNormalizedDisparityViewContents : public SuperBoxDBox {
-protected:
-
-public:
-	JpegPlenoLightFieldNormalizedDisparityViewContents() = default;
-	~JpegPlenoLightFieldNormalizedDisparityViewContents() = default;
-	
+ public:
+  JpegPlenoLightFieldNormalizedDisparityViewContents() = default;
+  ~JpegPlenoLightFieldNormalizedDisparityViewContents() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDNORMALIZEDDISPARITYVIEWCONTENTS_H__ */

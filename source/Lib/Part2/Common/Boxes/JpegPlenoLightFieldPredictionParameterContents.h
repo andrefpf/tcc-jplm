@@ -43,8 +43,6 @@
 
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
-class JpegPlenoLightFieldPredictionParameterContents : public InMemoryDBox  {
-	
-};
+class JpegPlenoLightFieldPredictionParameterContents : public InMemoryDBox {};
 
 #endif /* end of include guard: JPEGPLENOLIGHTFIELDPREDICTIONPARAMETERCONTENTS_H__ */

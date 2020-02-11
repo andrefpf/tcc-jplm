@@ -51,8 +51,7 @@
 using colour_space_unknown_flag_type = uint8_t;
 
 enum class ColourSpaceUnknownFlag : colour_space_unknown_flag_type {
-  known =
-      0,  //the colour space is known and correctly specified in the Colourspace Specification boxes
+  known =   0,  //the colour space is known and correctly specified in the Colourspace Specification boxes
   unknown = 1,  //the colour space is unknown
   //other values are reserved for ISO use
 };
@@ -185,10 +184,10 @@ class LightFieldHeaderContents : public InMemoryDBox {
     //rows, columns, rows, columns
     const auto& [rows, columns, height, width] = light_field_dimension;
     const auto& [t, s, v, u] = light_field_dimension;
-        std::cout << "t: " << t << std::endl;
-        std::cout << "s: " << s << std::endl;
-        std::cout << "v: " << v << std::endl;
-        std::cout << "u: " << u << std::endl;
+    std::cout << "t: " << t << std::endl;
+    std::cout << "s: " << s << std::endl;
+    std::cout << "v: " << v << std::endl;
+    std::cout << "u: " << u << std::endl;
 
 
     BinaryTools::append_big_endian_bytes(bytes, rows);

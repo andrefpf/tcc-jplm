@@ -50,6 +50,7 @@
  * \tparam JpegPlenoLightFieldNormalizedDisparityViewContents
  * \note Used only in 4D Prediction Mode
  */
-using JpegPlenoLightFieldNormalizedDisparityViewBox = GenericBox<0x6c666476, JpegPlenoLightFieldNormalizedDisparityViewContents>;
+using JpegPlenoLightFieldNormalizedDisparityViewBox =
+    GenericBox<0x6c666476, JpegPlenoLightFieldNormalizedDisparityViewContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDNORMALIZEDDISPARITYVIEWBOX_H__ */

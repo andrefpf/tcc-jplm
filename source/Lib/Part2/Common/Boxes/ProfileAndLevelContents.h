@@ -47,6 +47,7 @@
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
+
 class ProfileAndLevelContents : public InMemoryDBox {
  protected:
   uint16_t ppih;  // profile of the codestream
@@ -60,7 +61,8 @@ class ProfileAndLevelContents : public InMemoryDBox {
    * \brief      Constructs the object with default values
    * \warning    The current standard is not defining any default value
    */
-  ProfileAndLevelContents() : ppih(0), plev(0) {}
+  ProfileAndLevelContents() : ppih(0), plev(0) {
+  }
 
 
   auto get_profile_of_the_codestream() const noexcept {

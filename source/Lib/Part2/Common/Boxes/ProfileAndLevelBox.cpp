@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldIntermediateViewBox.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-10
+/** \file     ProfileAndLevelBox.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-11
  */
-
-#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__
-#define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__
-
-#include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldIntermediateViewContents.h"
-
-/**
- * \ingroup DefinedBoxes
- * \brief Definition of the Jpeg Pleno Light Field Intermediate View Box
- * \tparam JpegPlenoLightFieldIntermediateViewContents
- * \note Used only in 4D Prediction Mode
- */
-using JpegPlenoLightFieldIntermediateViewBox =
-    GenericBox<0x6c666976, JpegPlenoLightFieldIntermediateViewContents>;
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__ */
+#include "Lib/Part2/Common/Boxes/ProfileAndLevelBox.h"
