@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CommonExceptions.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-10-22
+/** \file     MarkerSegmentHelper.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
-
-
-#include <exception>
-#include <limits>
-#include <string>
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "magic_enum.hpp"
-
-
-namespace JPLM4DTransformModeLightFieldDecoderExceptions {
-class ExpectingAMarkerException : public std::exception {
- protected:
-  std::string message;
-
- public:
-  ExpectingAMarkerException(Marker marker)
-      : message(std::string("Expecting a marker ") +
-                std::to_string(static_cast<uint16_t>(marker))) {
-  }
-  const char* what() const noexcept override {
-    return message.c_str();
-  }
-};
-}  // namespace JPLM4DTransformModeLightFieldDecoderExceptions
-
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__ */
+#include "Lib/Part2/Decoder/TransformMode/MarkerSegmentHelper.h"

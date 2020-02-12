@@ -55,7 +55,8 @@ void Hierarchical4DDecoder::decode_block(int position_t, int position_s,
 
   if (length_t * length_s * length_v * length_u ==
       1) {  //perhaps & instead of *?
-    mSubbandLF.mPixel[position_t][position_s][position_v][position_u] = decode_coefficient(bitplane);
+    mSubbandLF.mPixel[position_t][position_s][position_v][position_u] =
+        decode_coefficient(bitplane);
     return;
   }
 
@@ -128,7 +129,7 @@ int Hierarchical4DDecoder::decode_coefficient(int bitplane) {
 
   for (bit_position = bitplane; bit_position >= inferior_bit_plane;
        --bit_position) {
-    magnitude<<=1;
+    magnitude <<= 1;
     auto bit = entropy_decoder.decode_bit(
         probability_models[bit_position + SYMBOL_PROBABILITY_MODEL_INDEX]);
     if (bit_position > BITPLANE_BYPASS) {

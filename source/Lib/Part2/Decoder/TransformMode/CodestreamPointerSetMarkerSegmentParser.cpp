@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CommonExceptions.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-10-22
+/** \file     CodestreamPointerSetMarkerSegmentParser.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
+#include "Lib/Part2/Decoder/TransformMode/CodestreamPointerSetMarkerSegmentParser.h"
 
-#ifndef JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
-#define JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__
-
-
-#include <exception>
-#include <limits>
-#include <string>
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "magic_enum.hpp"
-
-
-namespace JPLM4DTransformModeLightFieldDecoderExceptions {
-class ExpectingAMarkerException : public std::exception {
- protected:
-  std::string message;
-
- public:
-  ExpectingAMarkerException(Marker marker)
-      : message(std::string("Expecting a marker ") +
-                std::to_string(static_cast<uint16_t>(marker))) {
+CodestreamPointerSetMarkerSegment CodestreamPointerSetMarkerSegmentParser::
+    get_codestream_pointer_set_marker_segment(
+        const ContiguousCodestreamCode &codestream_code) {
+  auto SLpnt_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+  if (SLpnt_from_codestream_code != CodestreamPointerSetMarkerSegment::SLpnt) {
+    //throw error
   }
-  const char* what() const noexcept override {
-    return message.c_str();
+
+  auto Lpnt_from_codestream_code =
+      MarkerSegmentHelper::get_next<uint64_t>(codestream_code);
+  //limits 9 to 8x(2^32-1);
+
+  auto Spnt = MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+
+  if ((Spnt != 0) && (Spnt != 1)) {
+    //throw error
   }
-};
-}  // namespace JPLM4DTransformModeLightFieldDecoderExceptions
+
+  auto bytes_per_pointer = (Spnt == 0) ? 4 : 8;
+
+  auto number_of_pointers_in_pnt_segment =
+      (Lpnt_from_codestream_code - 4) / bytes_per_pointer;
+
+  auto ppnts = std::vector<std::variant<uint32_t, uint64_t>>();
 
 
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORM_MODE_COMMONEXCEPTIONS_H__ */
+  if (Spnt == 0) {
+    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
+         i < number_of_pointers_in_pnt_segment; ++i) {
+      ppnts.push_back(MarkerSegmentHelper::get_next<uint32_t>(codestream_code));
+    }
+  } else {
+    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
+         i < number_of_pointers_in_pnt_segment; ++i) {
+      ppnts.push_back(MarkerSegmentHelper::get_next<uint64_t>(codestream_code));
+    }
+  }
+
+
+  return CodestreamPointerSetMarkerSegment(std::move(ppnts));
+}
