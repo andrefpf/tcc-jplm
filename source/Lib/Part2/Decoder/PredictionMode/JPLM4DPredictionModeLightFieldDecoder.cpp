@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,24 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldDecoder.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+/** \file     JPLM4DPredictionModeLightFieldDecoder.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER_H__
-#define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER_H__
-
-#include "Lib/Part2/Common/JPLMLightFieldCodec.h"
-
-template<typename PelType = uint16_t>
-class JPLMLightFieldDecoder : public virtual JPLMLightFieldCodec<PelType> {
- public:
-  JPLMLightFieldDecoder() : JPLMLightFieldCodec<PelType>() {
-  }
-  virtual ~JPLMLightFieldDecoder() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER_H__ */
+#include "Lib/Part2/Decoder/PredictionMode/JPLM4DPredictionModeLightFieldDecoder.h"

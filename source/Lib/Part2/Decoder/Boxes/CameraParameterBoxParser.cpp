@@ -55,7 +55,7 @@ std::unique_ptr<VariablePrecisionFloatingPointCoordinates> get_fp_coordinates(
 std::size_t determine_the_number_of_views(
     uint16_t ext_int, std::size_t camera_parameter_bytes) {
   auto number_of_ones = count_ones(ext_int);
-  auto number_of_zeros = 12-number_of_ones;
+  auto number_of_zeros = 12 - number_of_ones;
   return (camera_parameter_bytes - number_of_zeros * sizeof(float)) /
          (number_of_ones * sizeof(float));
 }
