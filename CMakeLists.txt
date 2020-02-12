@@ -95,15 +95,19 @@ add_executable(jpl-encoder-bin
     source/App/Encoder/jpl-encoder.cpp
     CMakeLists.txt)
 
+
+
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common_boxes)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common_boxes)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common_transform_mode)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 target_link_libraries(jpl-encoder-bin PRIVATE stream)
 target_link_libraries(jpl-encoder-bin PRIVATE image)
-target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
+
 
 
 
