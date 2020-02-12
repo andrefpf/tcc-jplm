@@ -44,12 +44,11 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "Lib/Part2/Common/LightfieldDimension.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
+#include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
-
+#include "Lib/Part2/Common/TransformMode/Markers.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
 class LightFieldConfigurationMarkerSegment {
@@ -65,15 +64,17 @@ class LightFieldConfigurationMarkerSegment {
   // uint32_t number_of_4d_blocks; //!< N_4D;
   LightfieldDimension<uint32_t> block_dimension;  //!< BLOCK-SIZE_ (t, s, v, u)
   std::vector<uint8_t> max_bitplane;
-  bool truncate; //!< TRNC
+  bool truncate;  //!< TRNC
 
  public:
-  LightFieldConfigurationMarkerSegment(const LightfieldDimension<uint32_t>& lightfield_dimension, 
-                const std::vector<ComponentSsizParameter>& Ssiz,
-                const LightfieldDimension<uint32_t>& block_dimension, 
-                const std::vector<uint8_t>& max_bitplane,
-                bool truncate) : lightfield_dimension(lightfield_dimension),
-  Ssiz_vector(Ssiz), block_dimension(block_dimension), max_bitplane(max_bitplane), truncate(truncate) {
+  LightFieldConfigurationMarkerSegment(
+      const LightfieldDimension<uint32_t>& lightfield_dimension,
+      const std::vector<ComponentSsizParameter>& Ssiz,
+      const LightfieldDimension<uint32_t>& block_dimension,
+      const std::vector<uint8_t>& max_bitplane, bool truncate)
+      : lightfield_dimension(lightfield_dimension), Ssiz_vector(Ssiz),
+        block_dimension(block_dimension), max_bitplane(max_bitplane),
+        truncate(truncate) {
   }
 
 
@@ -83,81 +84,37 @@ class LightFieldConfigurationMarkerSegment {
   virtual ~LightFieldConfigurationMarkerSegment() = default;
 
 
-  uint16_t get_number_of_colour_components() const noexcept {
-    return Ssiz_vector.size();
-  }
+  uint16_t get_number_of_colour_components() const noexcept;
 
 
-  uint16_t get_length_of_marker_segment() const noexcept {
-    return 40 + 2 * get_number_of_colour_components();
-  }
+  uint16_t get_length_of_marker_segment() const noexcept;
 
 
-  uint32_t get_number_of_4d_blocks() const noexcept {
-    const auto& [T, S, V, U] = lightfield_dimension;
-    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
-        block_dimension;
-    return static_cast<uint32_t>(std::ceil(T / ((double) BLOCK_SIZE_t)) *
-                                 std::ceil(S / ((double) BLOCK_SIZE_s)) *
-                                 std::ceil(V / ((double) BLOCK_SIZE_v)) *
-                                 std::ceil(U / ((double) BLOCK_SIZE_u)));
-  }
+  uint32_t get_number_of_4d_blocks() const noexcept;
 
 
-  const auto& get_ref_to_block_dimension() const {
-    return block_dimension;
-  }
+  const LightfieldDimension<uint32_t>& get_ref_to_block_dimension() const;
 
 
-  const auto& get_ref_to_lightfield_dimension() const {
-    return lightfield_dimension;
-  }
+  const LightfieldDimension<uint32_t>& get_ref_to_lightfield_dimension() const;
 
 
-  const std::vector<uint8_t>& get_ref_to_max_bitplanes() {
-    return max_bitplane;
-  }
+  const std::vector<uint8_t>& get_ref_to_max_bitplanes();
 
 
-  uint8_t get_max_bitplane_at_channel(const std::size_t channel) {
-    return max_bitplane.at(channel);
-  }
+  uint8_t get_max_bitplane_at_channel(const std::size_t channel);
 
 
-  const std::vector<ComponentSsizParameter>& get_ref_to_bitdepths() {
-    return Ssiz_vector;
-  }
+  const std::vector<ComponentSsizParameter>& get_ref_to_bitdepths();
 
 
-  uint8_t get_max_bitdepth_at_channel(const std::size_t channel) {
-    return Ssiz_vector.at(channel)();
-  }
+  uint8_t get_max_bitdepth_at_channel(const std::size_t channel);
 
 
-  bool get_truncate_flag() const {
-    return truncate;
-  }
+  bool get_truncate_flag() const;
 
 
-  std::vector<std::byte> get_bytes() const {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->get_length_of_marker_segment()+2); //+2 is because it will include the marker
-    BinaryTools::byte_vector_cat(bytes, Markers::get_bytes(LightFieldConfigurationMarkerSegment::marker_code));
-    bytes.push_back(std::byte{LightFieldConfigurationMarkerSegment::SLlfc});
-    BinaryTools::append_big_endian_bytes(bytes, get_length_of_marker_segment());
-    BinaryTools::append_big_endian_bytes(bytes, lightfield_dimension.as_tuple());
-    BinaryTools::append_big_endian_bytes(bytes, get_number_of_colour_components());
-    for(const auto& Ssiz: Ssiz_vector) {
-      BinaryTools::append_big_endian_bytes(bytes, Ssiz());
-    }
-    BinaryTools::append_big_endian_bytes(bytes, get_number_of_4d_blocks());
-    BinaryTools::append_big_endian_bytes(bytes, block_dimension.as_tuple());
-    BinaryTools::append_big_endian_bytes(bytes, max_bitplane);
-    bytes.push_back(std::byte{truncate});
-    return bytes;
-  }
-
-
+  std::vector<std::byte> get_bytes() const;
 };
 
 #endif /* end of include guard: LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__ */
