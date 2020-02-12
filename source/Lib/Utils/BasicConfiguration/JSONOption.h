@@ -46,8 +46,8 @@
 
 class JSONOption : public virtual Option {
  protected:
-  const std::function<std::optional<std::any>(const nlohmann::json &json)>
-      &parse_action;
+  std::function<std::optional<std::any>(const nlohmann::json &json)>
+      parse_action;
 
  public:
   JSONOption(const std::string &description,

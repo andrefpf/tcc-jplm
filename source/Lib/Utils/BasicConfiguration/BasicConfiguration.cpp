@@ -102,14 +102,15 @@ void BasicConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
     std::string key(reinterpret_cast<char *>(argv[n]));
     if (validate_param(key)) {
+      std::string value("");
       if (validate_value(argc, n, argv)) {
-        std::string value(reinterpret_cast<char *>(argv[n + 1]));
-        std::for_each(cli_options.begin(), cli_options.end(),
-            [key, value](auto &s) { s.parse(key, value); });
-      } else {
-        std::string value("");
-        std::for_each(cli_options.begin(), cli_options.end(),
-            [key, value](auto &s) { s.parse(key, value); });
+        value = std::string(reinterpret_cast<char *>(argv[n + 1]));
+      }
+      for (auto &option : this->cli_options) {
+        option.parse(key, value);
+      }
+      for (auto &option : this->cli_json_options) {
+        option.CLIOption::parse(key, value);
       }
     }
   }

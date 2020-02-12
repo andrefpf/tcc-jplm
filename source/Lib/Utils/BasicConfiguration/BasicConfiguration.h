@@ -47,7 +47,7 @@
 #include <iostream>
 #include <string>
 #include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Utils/BasicConfiguration/CLIOption.h"
+#include "Lib/Utils/BasicConfiguration/CLIAndJSONOption.h"
 
 
 class BasicConfiguration {
@@ -56,8 +56,13 @@ class BasicConfiguration {
   static constexpr std::size_t current_hierarchy_level = 0;
   void add_options_to_cli(char **argv);
 
+
  protected:
+  // std::vector<Options> options;
   std::vector<CLIOption> cli_options;
+  std::vector<JSONOption> json_options;
+  std::vector<CLIAndJSONOption> cli_json_options;
+
   std::size_t hierarchy_level =
       0;  //<! the hierarchy level used for printing help
   std::string executable_name = "undefined";
@@ -69,6 +74,21 @@ class BasicConfiguration {
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
   BasicConfiguration(int argc, char **argv, std::size_t level);
   std::string message = std::string("");
+
+
+  void add_cli_option(const CLIOption &option) {
+    cli_options.push_back(option);
+  }
+
+
+  void add_json_option(const JSONOption &option) {
+    json_options.push_back(option);
+  }
+
+
+  void add_cli_json_option(const CLIAndJSONOption &option) {
+    cli_json_options.push_back(option);
+  }
 
  public:
   BasicConfiguration(int argc, char **argv);

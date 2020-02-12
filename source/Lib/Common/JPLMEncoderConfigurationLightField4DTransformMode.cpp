@@ -58,15 +58,15 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
           },
           this->current_hierarchy_level});
 
-  cli_options.push_back({"--lambda", "-l",
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        std::string::size_type sz;
-        this->lambda = std::stod(typed_string, &sz);
-      },
-      this->current_hierarchy_level,
-      {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
+  // cli_options.push_back({"--lambda", "-l",
+  //     "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+  //     [this](std::any v) {
+  //       std::string typed_string = std::any_cast<std::string>(v);
+  //       std::string::size_type sz;
+  //       this->lambda = std::stod(typed_string, &sz);
+  //     },
+  //     this->current_hierarchy_level,
+  //     {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
 
   cli_options.push_back({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
@@ -140,6 +140,40 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(typed_string));
       },
       this->current_hierarchy_level});
+
+  using namespace std::placeholders;
+  const std::function<std::optional<std::any>(const nlohmann::json &json)>
+      exec_lambda_parsing = std::bind(
+          &JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda,
+          this, _1);
+  //
+
+  this->add_cli_json_option(CLIAndJSONOption("--lambda", "-l",
+      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+      std::bind(
+          &JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda,
+          this, _1),
+      [this](std::any v) {
+        std::string typed_string = std::any_cast<std::string>(v);
+        std::string::size_type sz;
+        this->lambda = std::stod(typed_string, &sz);
+      },
+      this->current_hierarchy_level,
+      {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}));
+
+
+  // this->add_json_option(JSONOption(
+  //     "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+  //     std::bind(
+  //         &JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda,
+  //         this, _1),
+  //     [this](std::any v) {
+  //       std::string typed_string = std::any_cast<std::string>(v);
+  //       std::string::size_type sz;
+  //       this->lambda = std::stod(typed_string, &sz);
+  //     },
+  //     this->current_hierarchy_level,
+  //     {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}));
 }
 
 
@@ -155,6 +189,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
 
   if (!config.empty())
     parse_json(config);
+
   init_transform_size();
 }
 
@@ -193,7 +228,16 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(
   parse_maximal_transform_size_inter_view_vertical(conf);
   parse_minimal_transform_size_inter_view_horizontal(conf);
   parse_maximal_transform_size_inter_view_horizontal(conf);
-  parse_lambda(conf);
+  // parse_lambda(conf);
+
+  for (auto &option : this->json_options) {
+    option.parse(conf);
+  }
+
+  for (auto &option : this->cli_json_options) {
+    // std::cout << "aaaa" << std::endl;
+    option.JSONOption::parse(conf);
+  }
 }
 
 
@@ -377,10 +421,13 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 }
 
 
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
+std::optional<std::any>
+JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
     const json &conf) {
+  std::cout << "Running lambda" << std::endl;
   if (conf.contains("lambda"))
-    this->lambda = conf["lambda"].get<double>();
+    return std::to_string(conf["lambda"].get<double>());
+  return std::nullopt;
 }
 
 

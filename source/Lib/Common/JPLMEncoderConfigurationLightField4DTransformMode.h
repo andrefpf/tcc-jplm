@@ -111,7 +111,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
       const nlohmann::json &conf);
   void parse_maximal_transform_size_inter_view_horizontal(
       const nlohmann::json &conf);
-  void parse_lambda(const nlohmann::json &conf);
+  std::optional<std::any> parse_lambda(const nlohmann::json &conf);
   void parse_border_policy(const nlohmann::json &conf);
 
  public:
