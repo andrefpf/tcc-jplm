@@ -47,16 +47,20 @@
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 
+
 enum class PartitionFlag {
   transform = 0,
   spatialSplit = 1,
   viewSplit = 2
 };  //Table C.30
+
+
 enum class HexadecaTreeFlag {
   lowerBitPlane = 0,
   splitBlock = 1,
   zeroBlock = 2
 };  //Table C.44
+
 
 class Hierarchical4DCodec {
  protected:
@@ -90,21 +94,33 @@ class Hierarchical4DCodec {
  public:
   Block4D mSubbandLF;
 
-  
+
   auto get_number_of_elements_in_transform() const {
     return mTransformLength_t * mTransformLength_s * mTransformLength_v *
            mTransformLength_u;
   }
 
+
   void set_level_shift(int value);
+
+
   int get_level_shift() const;
 
+
   void set_inferior_bit_plane(uint8_t value);
+
+
   uint8_t get_inferior_bit_plane() const;
 
   void set_superior_bit_plane(uint8_t value);
+
+
   uint8_t get_superior_bit_plane() const;
+
+
   void set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension);
+
+
   LightfieldDimension<std::size_t> get_lightfield_dimension() const {
     return {mNumberOfVerticalViews, mNumberOfHorizontalViews,
         mNumberOfViewLines, mNumberOfViewColumns};
@@ -114,8 +130,6 @@ class Hierarchical4DCodec {
   void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
   void set_minimum_transform_dimension(
       const LightfieldDimension<uint32_t>& dimension);
-
-
 
 
   Hierarchical4DCodec() : superior_bit_plane(30), inferior_bit_plane(0){};
