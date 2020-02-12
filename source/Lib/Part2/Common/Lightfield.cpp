@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,41 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMLightFieldCodec.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+/** \file     Lightfield.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#ifndef JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__
-#define JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__
-
-#include "Lib/Part1/Common/JPLMCodec.h"
 #include "Lib/Part2/Common/Lightfield.h"
-
-template<typename PelType>
-class JPLMLightFieldCodec : public JPLMCodec {
- protected:
-  std::unique_ptr<Lightfield<PelType>> light_field;
-
- public:
-  JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file,
-      std::unique_ptr<Lightfield<PelType>>&& light_field)
-      : JPLMCodec(jpl_file), light_field(std::move(light_field)) {
-    std::cout << "Using the shared_ptr constructor of JPLMLightFieldCodec"
-              << std::endl;
-  }
-
-
-  JPLMLightFieldCodec(std::unique_ptr<Lightfield<PelType>>&& light_field)
-      : light_field(std::move(light_field)) {
-  }
-
-
-  JPLMLightFieldCodec() = default;
-
-  virtual ~JPLMLightFieldCodec() = default;
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_COMMON_JPLMLIGHTFIELDCODEC_H__ */
