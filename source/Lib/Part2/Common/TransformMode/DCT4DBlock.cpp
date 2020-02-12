@@ -41,43 +41,47 @@
 #include "DCT4DBlock.h"
 
 DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
-	DCT4DCoefficientsManager& manager(DCT4DCoefficientsManager::get_instance(true));
+  DCT4DCoefficientsManager& manager(
+      DCT4DCoefficientsManager::get_instance(true));
 
-	auto coefficients = std::make_tuple(
-			manager.get_coefficients_for_size(block.mlength_t), //
-			manager.get_coefficients_for_size(block.mlength_s), 
-			manager.get_coefficients_for_size(block.mlength_v), 
-			manager.get_coefficients_for_size(block.mlength_u)
-	);
+  auto coefficients =
+      std::make_tuple(manager.get_coefficients_for_size(block.mlength_t),  //
+          manager.get_coefficients_for_size(block.mlength_s),
+          manager.get_coefficients_for_size(block.mlength_v),
+          manager.get_coefficients_for_size(block.mlength_u));
 
-	auto weights = std::make_tuple(
-			manager.get_weight_for_size_in_dimension(block.mlength_t, LightFieldDimensions::T), //
-			manager.get_weight_for_size_in_dimension(block.mlength_s, LightFieldDimensions::S), 
-			manager.get_weight_for_size_in_dimension(block.mlength_v, LightFieldDimensions::V), 
-			manager.get_weight_for_size_in_dimension(block.mlength_u, LightFieldDimensions::U)
-	);
+  auto weights =
+      std::make_tuple(manager.get_weight_for_size_in_dimension(
+                          block.mlength_t, LightFieldDimensions::T),  //
+          manager.get_weight_for_size_in_dimension(
+              block.mlength_s, LightFieldDimensions::S),
+          manager.get_weight_for_size_in_dimension(
+              block.mlength_v, LightFieldDimensions::V),
+          manager.get_weight_for_size_in_dimension(
+              block.mlength_u, LightFieldDimensions::U));
 
-	do_4d_transform(data.get(), block.mPixelData, coefficients, weights);
+  do_4d_transform(data.get(), block.mPixelData, coefficients, weights);
 }
 
 Block4D DCT4DBlock::inverse() {
-	DCT4DCoefficientsManager& manager(DCT4DCoefficientsManager::get_instance(false));
+  DCT4DCoefficientsManager& manager(
+      DCT4DCoefficientsManager::get_instance(false));
 
-	auto coefficients = std::make_tuple(
-			manager.get_coefficients_for_size(mlength_t), //
-			manager.get_coefficients_for_size(mlength_s), 
-			manager.get_coefficients_for_size(mlength_v), 
-			manager.get_coefficients_for_size(mlength_u)
-	);
+  auto coefficients =
+      std::make_tuple(manager.get_coefficients_for_size(mlength_t),  //
+          manager.get_coefficients_for_size(mlength_s),
+          manager.get_coefficients_for_size(mlength_v),
+          manager.get_coefficients_for_size(mlength_u));
 
-	auto weights = std::make_tuple(
-			1.0/manager.get_weight_for_size_in_dimension(mlength_t, LightFieldDimensions::T), //
-			1.0/manager.get_weight_for_size_in_dimension(mlength_s, LightFieldDimensions::S), 
-			1.0/manager.get_weight_for_size_in_dimension(mlength_v, LightFieldDimensions::V), 
-			1.0/manager.get_weight_for_size_in_dimension(mlength_u, LightFieldDimensions::U)
-	);
+  auto weights =
+      std::make_tuple(1.0 / manager.get_weight_for_size_in_dimension(
+                                mlength_t, LightFieldDimensions::T),  //
+          1.0 / manager.get_weight_for_size_in_dimension(
+                    mlength_s, LightFieldDimensions::S),
+          1.0 / manager.get_weight_for_size_in_dimension(
+                    mlength_v, LightFieldDimensions::V),
+          1.0 / manager.get_weight_for_size_in_dimension(
+                    mlength_u, LightFieldDimensions::U));
 
-	return Transformed4DBlock::inverse(
-		coefficients, 
-		weights);
+  return Transformed4DBlock::inverse(coefficients, weights);
 }
