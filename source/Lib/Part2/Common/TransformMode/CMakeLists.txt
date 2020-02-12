@@ -4,7 +4,8 @@ set(PART2_COMMON_TRANSFORM_MODE_SOURCES
     Transformed4DBlock.cpp Markers.cpp CodestreamPointerSetMarkerSegment.cpp
     ColourComponentScalingMarkerSegment.cpp
     ComponentSsizParameter.cpp
-    LightFieldConfigurationMarkerSegment.cpp)
+    LightFieldConfigurationMarkerSegment.cpp
+    LightFieldTransformMode.cpp)
 
 
 add_library(jplm_part2_common_transform_mode ${PART2_COMMON_TRANSFORM_MODE_SOURCES})
