@@ -40,6 +40,7 @@
 
 #include "DCT4DBlock.h"
 
+
 DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
   DCT4DCoefficientsManager& manager(
       DCT4DCoefficientsManager::get_instance(true));
@@ -62,6 +63,7 @@ DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
 
   do_4d_transform(data.get(), block.mPixelData, coefficients, weights);
 }
+
 
 Block4D DCT4DBlock::inverse() {
   DCT4DCoefficientsManager& manager(

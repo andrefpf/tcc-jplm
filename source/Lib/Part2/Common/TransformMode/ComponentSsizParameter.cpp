@@ -54,7 +54,8 @@ bool ComponentSsizParameter::is_signed() const noexcept {
 }
 
 
-uint8_t ComponentSsizParameter::get_component_sample_precision() const noexcept {
+uint8_t ComponentSsizParameter::get_component_sample_precision() const
+    noexcept {
   uint8_t mask = 0x7F;  // dec 127, bin 0111 1111
   return (value & mask) + 1;  //removes the possible msb
 }
