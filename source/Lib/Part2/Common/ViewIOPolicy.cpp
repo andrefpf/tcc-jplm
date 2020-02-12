@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,18 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     PGX3CharViewToFilename.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-02-03
+/** \file     ViewIOPolicy.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#include "Lib/Part2/Common/PGX3CharViewToFilename.h"
-
-
-// std::string PGX3CharViewToFilename::view_position_to_filename(
-//     const std::pair<std::size_t, std::size_t>& position) const {
-//   check_for_overflow(position);
-//   return get_name_from_position(position);
-// }
+#include "Lib/Part2/Common/ViewIOPolicy.h"

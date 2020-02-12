@@ -252,7 +252,7 @@ class View {
   }
 
 
-  virtual void write_image([[maybe_unused]]const bool overwrite_file = false) {
+  virtual void write_image([[maybe_unused]] const bool overwrite_file = false) {
     std::cout << "I'm a simple view and I have no idea on how to write an "
                  "image to file. Need specialized view for that operation"
               << std::endl;
