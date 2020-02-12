@@ -31,51 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CLIOption.h
+/** \file     Option.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-06
+ *  \date     2020-02-12
  */
 
-#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
-#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
-
-
-#include "Lib/Utils/BasicConfiguration/Option.h"
-
-class CLIOption : public Option {
- protected:
-  std::string long_option;
-  std::string short_option;
-
-
- public:
-  CLIOption(const std::string &longOption, const std::string &short_option,
-      const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level,
-      const DefaultParameter &default_parameter = DefaultParameter())
-      : Option(description, action, level, default_parameter),
-        long_option(longOption), short_option(short_option) {
-  }
-
-
-  void parse(std::string key, std::any value) {
-    if ((key == long_option || key == short_option)) {
-      run_action(value);
-    }
-  }
-
-
-  const std::string &get_long_option() const {
-    return long_option;
-  }
-
-
-  const std::string &get_short_option() const {
-    return short_option;
-  }
-};
-
-#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
+#include "Option.h"

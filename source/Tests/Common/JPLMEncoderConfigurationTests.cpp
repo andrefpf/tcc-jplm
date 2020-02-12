@@ -106,13 +106,14 @@ TEST(JPLMEncoderConfiguration, SimpleTestWIthInputAndOutputMixedStyles2) {
 }
 
 
+//changed behavior, the second parameter must be used
 TEST(JPLMEncoderConfiguration, TestRepeatedOptionWithSameParam) {
   const char* argv[] = {"", "-i", "/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
       "--output", "/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl", "-i",
       "/home/PLENO/DATASETS/LENSLETS/OUTRO"};
   int argc = 7;
   JPLMEncoderConfiguration config(argc, const_cast<char**>(argv));
-  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/I01_Bikes/",
+  EXPECT_STREQ("/home/PLENO/DATASETS/LENSLETS/OUTRO",
       config.get_input_filename().c_str());
   EXPECT_STREQ("/home/JPEG_PLENO/RESULTS/I01_Bikes.jpl",
       config.get_output_filename().c_str());

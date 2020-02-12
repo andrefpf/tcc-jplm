@@ -31,51 +31,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CLIOption.h
+/** \file     Option.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-06
+ *  \date     2020-02-12
  */
 
-#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
-#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_OPTION_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_OPTION_H
 
+#include "Lib/Utils/BasicConfiguration/DefaultParameter.h"
 
-#include "Lib/Utils/BasicConfiguration/Option.h"
-
-class CLIOption : public Option {
+class Option {
  protected:
-  std::string long_option;
-  std::string short_option;
+  std::string description;
+  std::function<void(std::any)> action;
+  std::size_t level;
+  bool parsed = false;
+  DefaultParameter default_parameter;
 
+  void run_action(std::any value) {
+    action(value);
+    this->parsed = true;
+  }
 
  public:
-  CLIOption(const std::string &longOption, const std::string &short_option,
-      const std::string &description,
+  Option(const std::string &description,
       const std::function<void(std::any)> &action, std::size_t level,
       const DefaultParameter &default_parameter = DefaultParameter())
-      : Option(description, action, level, default_parameter),
-        long_option(longOption), short_option(short_option) {
+      : description(description), action(action), level(level),
+        default_parameter(default_parameter) {
   }
 
 
-  void parse(std::string key, std::any value) {
-    if ((key == long_option || key == short_option)) {
-      run_action(value);
-    }
+  virtual ~Option() = default;
+
+
+  const std::string &get_description() const {
+    return description;
   }
 
 
-  const std::string &get_long_option() const {
-    return long_option;
+  std::size_t get_level() const {
+    return level;
   }
 
+  bool is_parsed() const {
+    return parsed;
+  }
 
-  const std::string &get_short_option() const {
-    return short_option;
+  void run_default_action() const {
+    default_parameter.run();
   }
 };
 
-#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_OPTION_H
