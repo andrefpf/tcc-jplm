@@ -1,2 +1,2 @@
-set(UTIL_BASIC_CONFIGURATIONS_SOURCES Option.cpp BasicConfiguration.cpp DefaultParameter.cpp CLIOption.cpp JSONOption.cpp)
+set(UTIL_BASIC_CONFIGURATIONS_SOURCES Option.cpp BasicConfiguration.cpp DefaultParameter.cpp CLIOption.cpp JSONOption.cpp CLIAndJSONOption.cpp)
 add_library(basic_configuration ${UTIL_BASIC_CONFIGURATIONS_SOURCES})
