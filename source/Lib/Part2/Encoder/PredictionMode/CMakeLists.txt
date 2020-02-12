@@ -1,0 +1,2 @@
+set(PART2_ENCODER_PREDICTION_MODE_SOURCES JPLM4DPredictionModeLightFieldEncoder.cpp)
+add_library(jplm_part2_prediction_mode_encoder ${PART2_ENCODER_PREDICTION_MODE_SOURCES})

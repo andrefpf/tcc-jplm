@@ -1,2 +1,2 @@
-set(PART2_DECODER_PREDICTIONMODE_SOURCES  JPLM4DPredictionModeLightFieldDecoder.cpp)
-add_library(jplm_part2_decoder_predictionmode ${PART2_DECODER_PREDICTIONMODE_SOURCES})
+set(PART2_DECODER_PREDICTION_MODE_SOURCES  JPLM4DPredictionModeLightFieldDecoder.cpp)
+add_library(jplm_part2_decoder_prediction_mode ${PART2_DECODER_PREDICTION_MODE_SOURCES})
