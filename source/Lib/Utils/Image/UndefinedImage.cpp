@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ImageIO.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-05-29
+/** \file     UndefinedImage.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#include "ImageIO.h"
-
-std::unique_ptr<ImageFile> ImageIO::open(const std::string& filename) {
-  using fpath = std::filesystem::path;
-  auto name = fpath(filename);
-  if (name.extension() == fpath(".ppm")) {
-    return PixelMapFileIO::open(filename);
-  }
-  if (name.extension() == fpath(".pgx")) {
-    return PGXFileIO::open(filename);
-  }
-  throw std::logic_error("Not fully implemented: ImageIO::open");
-}
+#include "Lib/Utils/Image/UndefinedImage.h"

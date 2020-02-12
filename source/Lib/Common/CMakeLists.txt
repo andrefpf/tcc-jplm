@@ -23,4 +23,4 @@ set(PART2_SOURCES
 
 add_library(jplm_common ${COMMON_SOURCES} ${PART1_SOURCES} ${PART2_SOURCES})
 
-target_link_libraries(jplm_common jplm_part2_common_transform_mode)
+target_link_libraries(jplm_common jplm_part2_common_transform_mode image)

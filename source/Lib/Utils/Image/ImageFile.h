@@ -57,7 +57,7 @@
 
 //! \todo  Implement other types of image file to allow easy reading
 //! like PGM, PNG, BMP, etc
-enum class ImageFileType { PixelMap = 0 , PGX = 1};
+enum class ImageFileType { PixelMap = 0, PGX = 1 };
 
 
 class ImageFile {
@@ -76,8 +76,7 @@ class ImageFile {
 
 
   ImageFile(const ImageFileType& type, const std::filesystem::path& file_name)
-      : type(type), filename(file_name.string()) {
-  };
+      : type(type), filename(file_name.string()){};
 
 
   ImageFile(const ImageFile& other) = delete;

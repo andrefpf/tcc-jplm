@@ -40,6 +40,7 @@
 
 #include "PPMBinaryFile.h"
 
+
 void correct_endianess(
     std::vector<std::tuple<uint16_t, uint16_t, uint16_t>>& pixel_vector) {
   if constexpr (using_little_endian()) {
@@ -50,6 +51,7 @@ void correct_endianess(
     }
   }
 }
+
 
 template<typename T>
 std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_rgb_image_patch(

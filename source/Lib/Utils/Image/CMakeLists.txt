@@ -1,11 +1,31 @@
+set(UTILS_IMAGE
+    ColorModelUtils.cpp
+    ColorSpaces.cpp
+    Generic2DIterator.cpp
+    Generic2DStructure.cpp
+    ImageChannel.cpp
+    ImageChannelUtils.cpp
+    ImageColorSpacesConversor.cpp
+    Image.cpp
+    ImageExceptions.cpp
+    ImageFile.cpp
+    ImageIO.cpp
+    ImageMetrics.cpp
+    ImageUtils.cpp
+    Metrics.cpp
+    PGXFile.cpp
+    PGXFileIO.cpp
+    PixelMapFileBinary.cpp
+    PixelMapFile.cpp
+    PixelMapFileIO.cpp
+    PPMBinaryFile.cpp
+    Raster2DIterator.cpp
+    RGBImage.cpp
+    Snake2DIterator.cpp
+    ThreeChannelImage.cpp
+    UndefinedImage.cpp
+    YCbCrImage.cpp
+    YCoCgImage.cpp)
 
-set(IMAGE_SOURCES Metrics.cpp ImageIO.cpp ImageChannel.cpp Image.cpp ColorModelUtils.cpp ColorSpaces.cpp ImageColorSpacesConversor.h)
-
-set(IMAGE_FILE_SOURCES ImageFile.cpp)
-
-set(PIXMAP_SOURCES PixelMapFile.cpp PixelMapFileBinary.h PPMBinaryFile.cpp PixelMapFileIO.cpp)
-
-set(PGX_SOURCES PGXFile.cpp PGXFileIO.cpp)
-
-add_library(image ${IMAGE_SOURCES} ${IMAGE_FILE_SOURCES} ${PIXMAP_SOURCES} ${PGX_SOURCES})
+add_library(image ${UTILS_IMAGE})
 target_link_libraries(image stream)

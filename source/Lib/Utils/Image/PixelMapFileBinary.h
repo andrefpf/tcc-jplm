@@ -60,10 +60,16 @@ class PixelMapFileBinary : public PixelMapFile {
  public:
   PixelMapFileBinary(const std::string& file_name, PixelMapType type)
       : PixelMapFile(file_name, type){};
+
+
   PixelMapFileBinary(const PixelMapFileBinary& other) = default;
+
+
   PixelMapFileBinary(const std::string& file_name, PixelMapType type,
       std::size_t width, std::size_t height, std::size_t max_value)
       : PixelMapFile(file_name, type, width, height, max_value){};
+
+
   PixelMapFileBinary(const std::string& file_name,
       const std::streampos raster_begin, PixelMapType type, std::size_t width,
       std::size_t height, std::size_t max_value)
