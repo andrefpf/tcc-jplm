@@ -42,23 +42,30 @@
 
 
 std::vector<std::byte> Markers::get_bytes(Marker marker) {
-	auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
-	marker_value&=0x00FF; //keeping only the least significative byte;
-	auto bytes = std::vector<std::byte>();
-	bytes.emplace_back(std::byte{0xFF});
-	bytes.emplace_back(std::byte{marker_value});
-	return bytes;
+  auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
+  marker_value &= 0x00FF;  //keeping only the least significative byte;
+  auto bytes = std::vector<std::byte>();
+  bytes.emplace_back(std::byte{0xFF});
+  bytes.emplace_back(std::byte{marker_value});
+  return bytes;
 }
 
 
 bool Markers::is_a_known_marker(Marker marker) {
-	switch (marker) {
-		case Marker::SOC: [[fall_through]];
-		case Marker::LFC: [[fall_through]];
-		case Marker::SCC: [[fall_through]];
-		case Marker::PNT: [[fall_through]];
-		case Marker::SOB: [[fall_through]];
-		case Marker::EOC: return true;
-		default: return false;
-	}
+  switch (marker) {
+    case Marker::SOC:
+      [[fall_through]];
+    case Marker::LFC:
+      [[fall_through]];
+    case Marker::SCC:
+      [[fall_through]];
+    case Marker::PNT:
+      [[fall_through]];
+    case Marker::SOB:
+      [[fall_through]];
+    case Marker::EOC:
+      return true;
+    default:
+      return false;
+  }
 }
