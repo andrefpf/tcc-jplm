@@ -1,7 +1,9 @@
 set(PART2_COMMON_TRANSFORM_MODE_SOURCES
     Block4D.cpp DCT4DBlock.cpp DCT4DCoefficientsManager.cpp
     Hierarchical4DCodec.cpp ProbabilityModel.cpp
-    Transformed4DBlock.cpp Markers.cpp CodestreamPointerSetMarkerSegment.cpp)
+    Transformed4DBlock.cpp Markers.cpp CodestreamPointerSetMarkerSegment.cpp
+    ColourComponentScalingMarkerSegment.cpp
+    ComponentSsizParameter.cpp)
 
 
 add_library(jplm_part2_common_transform_mode ${PART2_COMMON_TRANSFORM_MODE_SOURCES})

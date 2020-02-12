@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,72 +31,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ColourComponentScalingMarkerSegment.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-01-06
+/** \file     ComponentSsizParameter.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#ifndef COLOURCOMPONENTSCALINGMARKERSEGMENT_H__
-#define COLOURCOMPONENTSCALINGMARKERSEGMENT_H__
-
-#include <cmath>
-#include <cstdint>
-#include <variant>
-#include <vector>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
 
 
-class ColourComponentScalingMarkerSegment {
- protected:
-  static constexpr auto marker_code = Marker::SCC;
-  bool more_than_256_colour_components;
-  std::variant<uint8_t, uint16_t> colour_component;
-  uint8_t exponent;  // 0...   31
-  uint16_t mantissa;  // 0... 2047
-
-
-  uint8_t get_exponent_from_Spscc(uint16_t Spscc) {
-    uint8_t exp = (Spscc >> 11) & 0x1F;  // 0x1F == 0001 1111
-    return exp;
+void ComponentSsizParameter::check_validity() const {
+  auto sample_precision = get_component_sample_precision();
+  if (sample_precision > 38) {
+    // !\todo create this exception
+    // throw ComponentSsizParameterExceptions::InvalidComponentPrecisionException(sample_precision);
   }
+}
 
 
-  uint16_t get_mantissa_from_Spscc(uint16_t Spscc) {
-    return (Spscc & 0x7FF);
-  }
+bool ComponentSsizParameter::is_signed() const noexcept {
+  return is_signed_;
+}
 
 
- public:
-  static constexpr uint8_t SLscc = 0;
-
-  ColourComponentScalingMarkerSegment(bool has_more_than_256_colour_components,
-      std::size_t colour_component_index, uint16_t Spscc);
-
-
-  ColourComponentScalingMarkerSegment(
-      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc);
-
-
-  ~ColourComponentScalingMarkerSegment() = default;
-
-
-  uint8_t get_exponent();
-
-
-  uint16_t get_mantissa();
-
-
-  std::variant<uint8_t, uint16_t> get_colour_component_index();
-
-
-  bool has_more_than_256_colour_components();
-
-
-  double get_scaling_factor();
-};
-
-#endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENT_H__ */
+uint8_t ComponentSsizParameter::get_component_sample_precision() const noexcept {
+  uint8_t mask = 0x7F;  // dec 127, bin 0111 1111
+  return (value & mask) + 1;  //removes the possible msb
+}

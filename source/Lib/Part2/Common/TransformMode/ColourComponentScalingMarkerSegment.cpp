@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,72 +31,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ColourComponentScalingMarkerSegment.h
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-01-06
+/** \file     ColourComponentScalingMarkerSegment.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-12
  */
-
-#ifndef COLOURCOMPONENTSCALINGMARKERSEGMENT_H__
-#define COLOURCOMPONENTSCALINGMARKERSEGMENT_H__
-
-#include <cmath>
-#include <cstdint>
-#include <variant>
-#include <vector>
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
-#include "Lib/Part2/Common/TransformMode/Markers.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
+#include "Lib/Part2/Common/TransformMode/ColourComponentScalingMarkerSegment.h"
 
 
-class ColourComponentScalingMarkerSegment {
- protected:
-  static constexpr auto marker_code = Marker::SCC;
-  bool more_than_256_colour_components;
-  std::variant<uint8_t, uint16_t> colour_component;
-  uint8_t exponent;  // 0...   31
-  uint16_t mantissa;  // 0... 2047
+ColourComponentScalingMarkerSegment::ColourComponentScalingMarkerSegment(
+    bool has_more_than_256_colour_components,
+    std::size_t colour_component_index, uint16_t Spscc)
+    : more_than_256_colour_components(has_more_than_256_colour_components),
+      colour_component(
+          has_more_than_256_colour_components
+          ? std::variant<uint8_t, uint16_t>(
+              static_cast<uint16_t>(colour_component_index))
+          : std::variant<uint8_t, uint16_t>(
+              static_cast<uint8_t>(colour_component_index))),
+      exponent(get_exponent_from_Spscc(Spscc)),
+      mantissa(get_mantissa_from_Spscc(Spscc)) {
+}
 
 
-  uint8_t get_exponent_from_Spscc(uint16_t Spscc) {
-    uint8_t exp = (Spscc >> 11) & 0x1F;  // 0x1F == 0001 1111
-    return exp;
-  }
+ColourComponentScalingMarkerSegment::ColourComponentScalingMarkerSegment(
+    std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
+    : ColourComponentScalingMarkerSegment(
+    NC > 256 ? true : false, colour_component_index, Spscc) {
+}
 
 
-  uint16_t get_mantissa_from_Spscc(uint16_t Spscc) {
-    return (Spscc & 0x7FF);
-  }
+uint8_t ColourComponentScalingMarkerSegment::get_exponent() {
+  return exponent;
+}
 
 
- public:
-  static constexpr uint8_t SLscc = 0;
-
-  ColourComponentScalingMarkerSegment(bool has_more_than_256_colour_components,
-      std::size_t colour_component_index, uint16_t Spscc);
+uint16_t ColourComponentScalingMarkerSegment::get_mantissa() {
+  return mantissa;
+}
 
 
-  ColourComponentScalingMarkerSegment(
-      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc);
+std::variant<uint8_t, uint16_t>
+ColourComponentScalingMarkerSegment::get_colour_component_index() {
+  return colour_component;
+}
 
 
-  ~ColourComponentScalingMarkerSegment() = default;
+bool ColourComponentScalingMarkerSegment::has_more_than_256_colour_components() {
+  return more_than_256_colour_components;
+}
 
 
-  uint8_t get_exponent();
-
-
-  uint16_t get_mantissa();
-
-
-  std::variant<uint8_t, uint16_t> get_colour_component_index();
-
-
-  bool has_more_than_256_colour_components();
-
-
-  double get_scaling_factor();
-};
-
-#endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENT_H__ */
+double ColourComponentScalingMarkerSegment::get_scaling_factor() {
+  return std::pow(2.0, exponent - 16.0) * static_cast<double>(mantissa);
+}
