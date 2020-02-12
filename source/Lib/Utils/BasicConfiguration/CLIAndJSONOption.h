@@ -41,4 +41,25 @@
 #ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLI_AND_JSON_OPTION_H
 #define JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLI_AND_JSON_OPTION_H
 
+#include "Lib/Utils/BasicConfiguration/CLIOption.h"
+#include "Lib/Utils/BasicConfiguration/JSONOption.h"
+
+class CLIAndJSONOption : public CLIOption, public JSONOption {
+ public:
+  CLIAndJSONOption(const std::string &longOption,
+      const std::string &short_option, const std::string &description,
+      const std::function<std::optional<std::any>(const nlohmann::json &json)>
+          &parse_action,
+      const std::function<void(std::any)> &action, std::size_t level,
+      const DefaultParameter &default_parameter = DefaultParameter())
+      : Option(description, action, level, default_parameter),
+        CLIOption(longOption, short_option, description, action, level,
+            default_parameter),
+        JSONOption(
+            description, parse_action, action, level, default_parameter) {
+  }
+
+  virtual ~CLIAndJSONOption() = default;
+};
+
 #endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLI_AND_JSON_OPTION_H

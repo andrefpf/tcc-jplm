@@ -45,7 +45,7 @@
 
 #include "Lib/Utils/BasicConfiguration/Option.h"
 
-class CLIOption : public Option {
+class CLIOption : public virtual Option {
  protected:
   std::string long_option;
   std::string short_option;
