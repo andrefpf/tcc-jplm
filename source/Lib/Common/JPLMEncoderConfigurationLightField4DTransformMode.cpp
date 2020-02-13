@@ -257,11 +257,8 @@ JPLMEncoderConfigurationLightField4DTransformMode::
   add_options_to_cli();
 
   this->parse_cli(argc, argv);
-
   this->message = "Options for Transform mode ( -T,--type=0 ):";
 
-  if (!config.empty())
-    parse_json(config);
 
   init_transform_size();
 }
@@ -285,22 +282,6 @@ JPLMEncoderConfigurationLightField4DTransformMode::get_compression_type()
 
 double JPLMEncoderConfigurationLightField4DTransformMode::get_lambda() const {
   return lambda;
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(
-    std::string p) {
-  JPLMEncoderConfigurationLightField::parse_json(p);
-  std::ifstream ifs(p);
-  json conf = json::parse(ifs);
-
-  for (auto &option : this->json_options) {
-    option.parse(conf);
-  }
-
-  for (auto &option : this->cli_json_options) {
-    option.JSONOption::parse(conf);
-  }
 }
 
 

@@ -157,7 +157,7 @@ TEST(JPLMEncoderConfiguration, RaiseErrorWhetherConfigNotExists) {
 
   EXPECT_THROW(
       { JPLMEncoderConfiguration config(argc, const_cast<char**>(argv)); },
-      JPLMConfigurationExceptions::ConfigFileDoesNotExistException);
+      BasicConfigurationExceptions::ConfigFileDoesNotExistException);
 }
 
 

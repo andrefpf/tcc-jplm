@@ -31,63 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BasicConfiguration.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-02-11
+ *  \date     2020-02-13
  */
 
-#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
-#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
-
-#include <algorithm>
-#include <any>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string>
-#include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Utils/BasicConfiguration/CLIAndJSONOption.h"
-#include "Lib/Utils/BasicConfiguration/CommonExceptions.h"
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H
 
 
-class BasicConfiguration {
+namespace BasicConfigurationExceptions {
+
+class ConfigFileDoesNotExistException : public std::exception {
  private:
-  bool help_mode_flag = false;
-  static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli(char **argv);
-
-
- protected:
-  // std::vector<Options> options;
-  std::vector<CLIOption> cli_options;
-  std::vector<JSONOption> json_options;
-  std::vector<CLIAndJSONOption> cli_json_options;
-
-  std::size_t hierarchy_level =
-      0;  //<! the hierarchy level used for printing help
-  std::string executable_name = "undefined";
-  std::string message = std::string("");
-
-  void run_help() const;
-  void parse_cli(int argc, char **argv);
-  void parse_json(const std::string &path);
-  //<! \todo check if "validate_param" method name could be "is_param_valid"
-  bool validate_param(std::string param);
-  //<! \todo check if "validate_value" method name could be "is_value_valid"
-  bool validate_value(unsigned int size, unsigned int pos, char **argv);
-  void add_cli_option(const CLIOption &option);
-  void add_json_option(const JSONOption &option);
-  void add_cli_json_option(const CLIAndJSONOption &option);
-  BasicConfiguration(int argc, char **argv, std::size_t level);
+  std::string msg;
 
  public:
-  BasicConfiguration(int argc, char **argv);
+  ConfigFileDoesNotExistException(std::string m)
+      : msg("Config file " + m + " does not exists.") {
+  }
 
-  virtual ~BasicConfiguration() = default;
-
-  bool is_help_mode() const;
+  const char* what() const throw() {
+    return msg.c_str();
+  }
 };
 
-#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
+}  // namespace BasicConfigurationExceptions
+
+
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H

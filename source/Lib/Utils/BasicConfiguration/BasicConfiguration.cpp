@@ -50,6 +50,19 @@ void BasicConfiguration::add_options_to_cli(char **argv) {
         this->executable_name = std::string(argv[0]);
       },
       this->current_hierarchy_level});
+
+  this->add_cli_option({"--config", "-c", "Path to configuration file in JSON.",
+      [this](std::string arg) {
+        if (!arg.empty()) {
+          if (std::filesystem::exists(arg)) {
+            parse_json(arg);
+          } else {
+            throw BasicConfigurationExceptions::ConfigFileDoesNotExistException(
+                arg);
+          }
+        }
+      },
+      this->current_hierarchy_level});
 }
 
 

@@ -137,21 +137,6 @@ class UnsuportedPredictionMode : public std::exception {
 };
 
 
-class ConfigFileDoesNotExistException : public std::exception {
- private:
-  std::string msg;
-
- public:
-  ConfigFileDoesNotExistException(std::string m)
-      : msg("Config file " + m + " does not exists.") {
-  }
-
-  const char* what() const throw() {
-    return msg.c_str();
-  }
-};
-
-
 class UnknownCLIParameterException : public std::exception {
  private:
   std::string msg;

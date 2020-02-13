@@ -123,20 +123,34 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(
 }
 
 void JPLMEncoderConfiguration::add_options_to_cli() {
-  cli_options.push_back({"--input", "-i",
+  this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "
       "\n\tFor Part 2, light field, the input is a directory containing a "
       "set of directories (one for each color channel). Each one of those "
       "directories contains a set of views in PGX format.",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("input")) {
+          return conf["input"].get<string>();
+        }
+        return std::nullopt;
+      },
       [this]([[maybe_unused]] std::any v) {
         this->input = std::any_cast<std::string>(v);
       },
       this->current_hierarchy_level});
-  cli_options.push_back({"--output", "-o",
+
+
+  this->add_cli_json_option({"--output", "-o",
       "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
-      [this]([[maybe_unused]] std::any v) {
-        this->output = std::any_cast<std::string>(v);
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("output")) {
+          return conf["output"].get<string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        this->output = arg;
         //checking the file extension for showing a warning message
         if (this->current_hierarchy_level == hierarchy_level) {
           if (std::filesystem::path(this->output).extension() !=
@@ -154,25 +168,27 @@ void JPLMEncoderConfiguration::add_options_to_cli() {
       },
       this->current_hierarchy_level});
 
-  //<! \todo check if the config should be placed in the JPLMConfiguration (to allow its use in the decoder)
-  cli_options.push_back({"--config", "-c", "Path to config file",
-      [this](std::any v) {
-        this->config = std::any_cast<std::string>(v);
-        if (!this->config.empty()) {
-          if (fs::exists(this->config)) {
-            parse_json(this->config);
-          } else {
-            throw JPLMConfigurationExceptions::ConfigFileDoesNotExistException(
-                this->config);
-          }
+
+  this->add_cli_json_option({"--part", "-p",
+      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }"
+      "mode (floating point value).",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("part")) {
+          return conf["part"].get<string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        auto part = std::string("");
+        std::transform(arg.begin(), arg.end(), part.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (part == "2" || part == "part 2" || part == "part2" ||
+            part == "part_2" || part == "light_fields" ||
+            part == "lightfields" || part == "light fields" ||
+            part == "light_field" || part == "lightfield" ||
+            part == "light field") {
+          this->part = JpegPlenoPart::LightField;
         }
       },
       this->current_hierarchy_level});
-
-  cli_options.push_back(
-      {"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
-          [this](std::any value) {
-            this->part = JpegPlenoPart{std::stoi(std::any_cast<string>(value))};
-          },
-          this->current_hierarchy_level});
 }
