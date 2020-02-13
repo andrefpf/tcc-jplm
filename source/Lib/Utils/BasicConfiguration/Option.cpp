@@ -39,3 +39,39 @@
  */
 
 #include "Option.h"
+
+void Option::run_action(std::string value) {
+  action(value);
+  this->parsed = true;
+}
+
+
+Option::Option(const std::string &description,
+    const std::function<void(std::string)> &action, std::size_t level,
+    const DefaultParameter &default_parameter)
+    : description(description), action(action), level(level),
+      default_parameter(default_parameter) {
+}
+
+
+std::string Option::get_description() const {
+  return description + default_parameter.get_description();
+}
+
+
+std::size_t Option::get_level() const {
+  return level;
+}
+
+
+bool Option::is_parsed() const {
+  return parsed;
+}
+
+
+void Option::run_default_action() {
+  auto result_of_default_action = default_parameter.run();
+  if (result_of_default_action) {
+    run_action(*result_of_default_action);
+  }
+}

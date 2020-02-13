@@ -51,44 +51,18 @@ class Option {
   bool parsed = false;
   DefaultParameter default_parameter;
 
-  void run_action(std::string value) {
-    action(value);
-    this->parsed = true;
-  }
+  void run_action(std::string value);
 
  public:
   Option(const std::string &description,
       const std::function<void(std::string)> &action, std::size_t level,
-      const DefaultParameter &default_parameter = DefaultParameter())
-      : description(description), action(action), level(level),
-        default_parameter(default_parameter) {
-  }
-
-
+      const DefaultParameter &default_parameter = DefaultParameter());
   virtual ~Option() = default;
 
-
-  std::string get_description() const {
-    return description + default_parameter.get_description();
-  }
-
-
-  std::size_t get_level() const {
-    return level;
-  }
-
-
-  bool is_parsed() const {
-    return parsed;
-  }
-
-
-  void run_default_action() {
-    auto result_of_default_action = default_parameter.run();
-    if (result_of_default_action) {
-      run_action(*result_of_default_action);
-    }
-  }
+  std::string get_description() const;
+  std::size_t get_level() const;
+  bool is_parsed() const;
+  void run_default_action();
 };
 
 #endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_OPTION_H
