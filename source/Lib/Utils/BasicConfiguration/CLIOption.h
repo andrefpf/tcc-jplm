@@ -55,27 +55,12 @@ class CLIOption : public virtual Option {
   CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
       const std::function<void(std::string)> &action, std::size_t level,
-      const DefaultParameter &default_parameter = DefaultParameter())
-      : Option(description, action, level, default_parameter),
-        long_option(longOption), short_option(short_option) {
-  }
+      const DefaultParameter &default_parameter = DefaultParameter());
 
 
-  void parse(std::string option, std::string argument) {
-    if ((option == long_option || option == short_option)) {
-      run_action(argument);
-    }
-  }
-
-
-  const std::string &get_long_option() const {
-    return long_option;
-  }
-
-
-  const std::string &get_short_option() const {
-    return short_option;
-  }
+  void parse(std::string option, std::string argument);
+  const std::string &get_long_option() const;
+  const std::string &get_short_option() const;
 };
 
 #endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_CLIOPTION_H

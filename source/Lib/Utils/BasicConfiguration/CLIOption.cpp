@@ -39,3 +39,28 @@
  */
 
 #include "CLIOption.h"
+
+CLIOption::CLIOption(const std::string &longOption,
+    const std::string &short_option, const std::string &description,
+    const std::function<void(std::string)> &action, std::size_t level,
+    const DefaultParameter &default_parameter)
+    : Option(description, action, level, default_parameter),
+      long_option(longOption), short_option(short_option) {
+}
+
+
+void CLIOption::parse(std::string option, std::string argument) {
+  if ((option == long_option || option == short_option)) {
+    run_action(argument);
+  }
+}
+
+
+const std::string &CLIOption::get_long_option() const {
+  return long_option;
+}
+
+
+const std::string &CLIOption::get_short_option() const {
+  return short_option;
+}
