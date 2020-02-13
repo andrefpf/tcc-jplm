@@ -302,15 +302,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(
   JPLMEncoderConfigurationLightField::parse_json(p);
   std::ifstream ifs(p);
   json conf = json::parse(ifs);
-  parse_minimal_transform_size_intra_view_vertical(conf);
-  parse_maximal_transform_size_intra_view_vertical(conf);
-  parse_minimal_transform_size_intra_view_horizontal(conf);
-  parse_maximal_transform_size_intra_view_horizontal(conf);
-  parse_minimal_transform_size_inter_view_vertical(conf);
-  parse_maximal_transform_size_inter_view_vertical(conf);
-  parse_minimal_transform_size_inter_view_horizontal(conf);
-  parse_maximal_transform_size_inter_view_horizontal(conf);
-  // parse_lambda(conf);
 
   for (auto &option : this->json_options) {
     option.parse(conf);
