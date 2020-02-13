@@ -69,9 +69,9 @@ class BasicConfiguration {
   std::string executable_name = "undefined";
   void run_help() const;
   void parse_cli(int argc, char **argv);
-  void parse_json(std::string p) {
-    std::ifstream ifs(p);
-    nlohmann::json conf = nlohmann::json::parse(ifs);
+  void parse_json(const std::string &path) {
+    std::ifstream input_file_stream(path);
+    nlohmann::json conf = nlohmann::json::parse(input_file_stream);
 
     for (auto &option : this->json_options) {
       option.parse(conf);

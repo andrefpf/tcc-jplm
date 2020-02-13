@@ -53,22 +53,28 @@ void BasicConfiguration::add_options_to_cli(char **argv) {
 }
 
 
+ConsoleTable get_console_table() {
+  ConsoleTable table(1, 1, samilton::Alignment::centre);
+  ConsoleTable::TableChars chars;
+  chars.topDownSimple = '\0';
+  chars.leftSeparation = '\0';
+  chars.centreSeparation = '\0';
+  chars.downLeft = '\0';
+  chars.downRight = '\0';
+  chars.leftRightSimple = '\0';
+  chars.rightSeparation = '\0';
+  chars.topLeft = '\0';
+  chars.topRight = '\0';
+  chars.topSeparation = '\0';
+  chars.downSeparation = '\0';
+  table.setTableChars(chars);
+  return table;
+}
+
+
 void BasicConfiguration::run_help() const {
   if (this->help_mode_flag) {
-    ConsoleTable table(1, 1, samilton::Alignment::centre);
-    ConsoleTable::TableChars chars;
-    chars.topDownSimple = '\0';
-    chars.leftSeparation = '\0';
-    chars.centreSeparation = '\0';
-    chars.downLeft = '\0';
-    chars.downRight = '\0';
-    chars.leftRightSimple = '\0';
-    chars.rightSeparation = '\0';
-    chars.topLeft = '\0';
-    chars.topRight = '\0';
-    chars.topSeparation = '\0';
-    chars.downSeparation = '\0';
-    table.setTableChars(chars);
+    auto table = get_console_table();
     unsigned int count = 0;
     for (const auto &cli_option : this->cli_options) {
       if (cli_option.get_level() == this->hierarchy_level) {
