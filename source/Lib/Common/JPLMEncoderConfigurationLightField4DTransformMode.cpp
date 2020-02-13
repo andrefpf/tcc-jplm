@@ -73,7 +73,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         this->maximal_transform_size_intra_view_vertical_v =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->current_hierarchy_level});
+      this->current_hierarchy_level,
+      {[this]() { this->maximal_transform_size_intra_view_vertical_v = 64; },
+          "Default: 64"}});
 
   cli_options.push_back({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
