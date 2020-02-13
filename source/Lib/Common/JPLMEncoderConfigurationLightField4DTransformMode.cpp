@@ -85,8 +85,19 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
       {[this]() { this->maximal_transform_size_intra_view_vertical_v = 64; },
           "Default: 64"}});
 
-  cli_options.push_back({"--transform_size_maximum_intra_view_horizontal",
+  this->add_cli_json_option({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
+      [this](const json &conf) -> std::optional<std::string> {
+        try {
+          return std::to_string(conf.at("transform_size")
+                                    .at("maximum")
+                                    .at("intra-view")
+                                    .at("horizontal")
+                                    .get<uint32_t>());
+        } catch (json::out_of_range &e) {
+        }
+        return std::nullopt;
+      },
       [this](std::string arg) {
         this->maximal_transform_size_intra_view_horizontal_u =
             static_cast<uint32_t>(std::stoul(arg));
@@ -140,10 +151,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   this->add_cli_json_option({"--transform_size_minimum_intra_view_horizontal",
       "-Tmih", "Minimum 4D transform size in intra-view horizontal direction.",
-      [this](std::string arg) {
-        this->minimal_transform_size_intra_view_horizontal_u =
-            static_cast<uint32_t>(std::stoul(arg));
-      },
       [this](const json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
@@ -155,9 +162,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         }
         return std::nullopt;
       },
+      [this](std::string arg) {
+        this->minimal_transform_size_intra_view_horizontal_u =
+            static_cast<uint32_t>(std::stoul(arg));
+      },
       this->current_hierarchy_level,
       {[this]() { this->minimal_transform_size_intra_view_horizontal_u = 4; },
           "Default: 4"}});
+
 
   this->add_cli_json_option(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
