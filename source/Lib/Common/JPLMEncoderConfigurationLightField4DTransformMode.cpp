@@ -305,14 +305,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::init_transform_size() {
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_intra_view_vertical(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("minimum"))
-  //     if (conf["transform_size"]["minimum"].contains("intra-view"))
-  //       if (conf["transform_size"]["minimum"]["intra-view"].contains(
-  //               "vertical"))
-  //         minimal_transform_size_intra_view_vertical_v =
-  //             conf["transform_size"]["minimum"]["intra-view"]["vertical"]
-  //                 .get<uint32_t>();
   try {
     minimal_transform_size_intra_view_vertical_v = conf.at("transform_size")
                                                        .at("minimum")
@@ -341,14 +333,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_intra_view_horizontal(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("minimum"))
-  //     if (conf["transform_size"]["minimum"].contains("intra-view"))
-  //       if (conf["transform_size"]["minimum"]["intra-view"].contains(
-  //               "horizontal"))
-  //         minimal_transform_size_intra_view_horizontal_u =
-  //             conf["transform_size"]["minimum"]["intra-view"]["horizontal"]
-  //                 .get<uint32_t>();
   try {
     minimal_transform_size_intra_view_horizontal_u = conf.at("transform_size")
                                                          .at("minimum")
@@ -363,14 +347,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_intra_view_horizontal(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("maximum"))
-  //     if (conf["transform_size"]["maximum"].contains("intra-view"))
-  //       if (conf["transform_size"]["maximum"]["intra-view"].contains(
-  //               "horizontal"))
-  //         maximal_transform_size_intra_view_horizontal_u =
-  //             conf["transform_size"]["maximum"]["intra-view"]["horizontal"]
-  //                 .get<uint32_t>();
   try {
     maximal_transform_size_intra_view_horizontal_u = conf.at("transform_size")
                                                          .at("maximum")
@@ -385,36 +361,20 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_inter_view_vertical(const json &conf) {
-  if (conf.contains("transform_size"))
-    // if (conf["transform_size"].contains("minimum"))
-    //   if (conf["transform_size"]["minimum"].contains("inter-view"))
-    //     if (conf["transform_size"]["minimum"]["inter-view"].contains(
-    //             "vertical"))
-    //       minimal_transform_size_inter_view_vertical_t =
-    //           conf["transform_size"]["minimum"]["inter-view"]["vertical"]
-    //               .get<uint32_t>();
-    try {
-      minimal_transform_size_inter_view_vertical_t = conf.at("transform_size")
-                                                         .at("minimum")
-                                                         .at("inter-view")
-                                                         .at("vertical")
-                                                         .get<uint32_t>();
-      return;
-    } catch (json::out_of_range &e) {
-    }
+  try {
+    minimal_transform_size_inter_view_vertical_t = conf.at("transform_size")
+                                                       .at("minimum")
+                                                       .at("inter-view")
+                                                       .at("vertical")
+                                                       .get<uint32_t>();
+    return;
+  } catch (json::out_of_range &e) {
+  }
 }
 
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_inter_view_vertical(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("maximum"))
-  //     if (conf["transform_size"]["maximum"].contains("inter-view"))
-  //       if (conf["transform_size"]["maximum"]["inter-view"].contains(
-  //               "vertical"))
-  //         maximal_transform_size_inter_view_vertical_t =
-  //             conf["transform_size"]["maximum"]["inter-view"]["vertical"]
-  //                 .get<uint32_t>();
   try {
     maximal_transform_size_inter_view_vertical_t = conf.at("transform_size")
                                                        .at("maximum")
@@ -429,14 +389,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_minimal_transform_size_inter_view_horizontal(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("minimum"))
-  //     if (conf["transform_size"]["minimum"].contains("inter-view"))
-  //       if (conf["transform_size"]["minimum"]["inter-view"].contains(
-  //               "horizontal"))
-  //         minimal_transform_size_inter_view_horizontal_s =
-  //             conf["transform_size"]["minimum"]["inter-view"]["horizontal"]
-  //                 .get<uint32_t>();
   try {
     minimal_transform_size_inter_view_horizontal_s = conf.at("transform_size")
                                                          .at("minimum")
@@ -451,14 +403,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 
 void JPLMEncoderConfigurationLightField4DTransformMode::
     parse_maximal_transform_size_inter_view_horizontal(const json &conf) {
-  // if (conf.contains("transform_size"))
-  //   if (conf["transform_size"].contains("maximum"))
-  //     if (conf["transform_size"]["maximum"].contains("inter-view"))
-  //       if (conf["transform_size"]["maximum"]["inter-view"].contains(
-  //               "horizontal"))
-  //         maximal_transform_size_inter_view_horizontal_s =
-  //             conf["transform_size"]["maximum"]["inter-view"]["horizontal"]
-  //                 .get<uint32_t>();
   try {
     maximal_transform_size_inter_view_horizontal_s = conf.at("transform_size")
                                                          .at("maximum")
