@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2019, ITU/ISO/IEC
+ * Copyright (c) 2010-2020, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,41 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     BinaryTools.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-07-30
+/** \file     CommonExceptions.cpp
+ *  \brief    Brief description
+ *  \details  Detailed description
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-02-13
  */
 
-#include "BinaryTools.h"
-
-uint8_t BinaryTools::swap_endianess(const uint8_t in) {
-  return in;
-}
-
-
-uint16_t BinaryTools::swap_endianess(const uint16_t in) {
-  return ((in >> 8) & 0x00FF) | ((in << 8) & 0xFF00);
-}
-
-
-uint32_t BinaryTools::swap_endianess(const uint32_t in) {
-  return ((in >> 24) & 0x000000FF) | ((in >> 8)  & 0x0000FF00) |
-         ((in << 8)  & 0x00FF0000) | ((in << 24) & 0xFF000000);
-}
-
-
-uint64_t BinaryTools::swap_endianess(const uint64_t in) {
-  return ((in >> 56) & 0x00000000000000FF) | ((in >> 40) & 0x000000000000FF00) |
-         ((in >> 24) & 0x0000000000FF0000) | ((in >> 8)  & 0x00000000FF000000) |
-         ((in << 8)  & 0x000000FF00000000) | ((in << 24) & 0x0000FF0000000000) |
-         ((in << 40) & 0x00FF000000000000) | ((in << 56) & 0xFF00000000000000);
-}
-
-
-std::vector<std::byte>& BinaryTools::byte_vector_cat(
-    std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b) {
-  vec_a.insert(vec_a.end(), vec_b.begin(), vec_b.end());
-  return vec_a;
-}
+#include "Lib/Utils/Stream/CommonExceptions.h"
