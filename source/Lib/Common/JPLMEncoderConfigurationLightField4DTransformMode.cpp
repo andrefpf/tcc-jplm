@@ -46,10 +46,9 @@ using json = nlohmann::json;
 void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
   cli_options.push_back({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->maximal_transform_size_inter_view_vertical_t =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->maximal_transform_size_inter_view_vertical_t = 13; },
@@ -57,10 +56,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_maximum_inter_view_horizontal",
       "-TMIh", "Maximum 4D transform size in inter-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->maximal_transform_size_inter_view_horizontal_s =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->maximal_transform_size_inter_view_horizontal_s = 13; },
@@ -68,10 +66,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_maximum_intra_view_vertical",
       "-TMiv", "Maximum 4D transform size in intra-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->maximal_transform_size_intra_view_vertical_v =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->maximal_transform_size_intra_view_vertical_v = 64; },
@@ -79,10 +76,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->maximal_transform_size_intra_view_horizontal_u =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->maximal_transform_size_intra_view_horizontal_u = 64; },
@@ -91,10 +87,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_minimum_inter_view_vertical",
       "-TmIv", "Minimum 4D transform size in inter-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->minimal_transform_size_inter_view_vertical_t =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->minimal_transform_size_inter_view_vertical_t = 13; },
@@ -102,10 +97,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_minimum_inter_view_horizontal",
       "-TmIh", "Minimum 4D transform size in inter-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->minimal_transform_size_inter_view_horizontal_s =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->minimal_transform_size_inter_view_horizontal_s = 13; },
@@ -113,10 +107,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_minimum_intra_view_vertical",
       "-Tmiv", "Minimum 4D transform size in intra-view vertical direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->minimal_transform_size_intra_view_vertical_v =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->minimal_transform_size_intra_view_vertical_v = 4; },
@@ -124,10 +117,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   cli_options.push_back({"--transform_size_minimum_intra_view_horizontal",
       "-Tmih", "Minimum 4D transform size in intra-view horizontal direction.",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         this->minimal_transform_size_intra_view_horizontal_u =
-            static_cast<uint32_t>(std::stoul(typed_string));
+            static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
       {[this]() { this->minimal_transform_size_intra_view_horizontal_u = 4; },
@@ -141,13 +133,12 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             }
             return std::nullopt;
           },
-          [this](std::any v) {
-            std::string s = std::any_cast<std::string>(v);
-            std::transform(s.begin(), s.end(), s.begin(),
+          [this](std::string arg) {
+            std::transform(arg.begin(), arg.end(), arg.begin(),
                 [](unsigned char c) { return std::tolower(c); });
-            if (s == "0" || s == "padding") {
+            if (arg == "0" || arg == "padding") {
               this->border_policy = BorderBlocksPolicy::padding;
-            } else if (s == "1" || s == "truncate") {
+            } else if (arg == "1" || arg == "truncate") {
               this->border_policy = BorderBlocksPolicy::truncate;
             } else {
               std::cerr << "Ill formed parameter in option -B." << std::endl;
@@ -169,10 +160,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         }
         return std::nullopt;
       },
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
+      [this](std::string arg) {
         std::string::size_type sz;
-        this->lambda = std::stod(typed_string, &sz);
+        this->lambda = std::stod(arg, &sz);
       },
       this->current_hierarchy_level,
       {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
