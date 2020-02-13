@@ -156,3 +156,32 @@ BasicConfiguration::BasicConfiguration(int argc, char **argv, std::size_t level)
   add_options_to_cli(argv);
   this->parse_cli(argc, argv);
 }
+
+
+void BasicConfiguration::parse_json(const std::string &path) {
+  std::ifstream input_file_stream(path);
+  nlohmann::json conf = nlohmann::json::parse(input_file_stream);
+
+  for (auto &option : this->json_options) {
+    option.parse(conf);
+  }
+
+  for (auto &option : this->cli_json_options) {
+    option.JSONOption::parse(conf);
+  }
+}
+
+
+void BasicConfiguration::add_cli_option(const CLIOption &option) {
+  cli_options.push_back(option);
+}
+
+
+void BasicConfiguration::add_json_option(const JSONOption &option) {
+  json_options.push_back(option);
+}
+
+
+void BasicConfiguration::add_cli_json_option(const CLIAndJSONOption &option) {
+  cli_json_options.push_back(option);
+}

@@ -67,42 +67,19 @@ class BasicConfiguration {
   std::size_t hierarchy_level =
       0;  //<! the hierarchy level used for printing help
   std::string executable_name = "undefined";
+  std::string message = std::string("");
+
   void run_help() const;
   void parse_cli(int argc, char **argv);
-  void parse_json(const std::string &path) {
-    std::ifstream input_file_stream(path);
-    nlohmann::json conf = nlohmann::json::parse(input_file_stream);
-
-    for (auto &option : this->json_options) {
-      option.parse(conf);
-    }
-
-    for (auto &option : this->cli_json_options) {
-      option.JSONOption::parse(conf);
-    }
-  }
-
+  void parse_json(const std::string &path);
   //<! \todo check if "validate_param" method name could be "is_param_valid"
   bool validate_param(std::string param);
   //<! \todo check if "validate_value" method name could be "is_value_valid"
   bool validate_value(unsigned int size, unsigned int pos, char **argv);
+  void add_cli_option(const CLIOption &option);
+  void add_json_option(const JSONOption &option);
+  void add_cli_json_option(const CLIAndJSONOption &option);
   BasicConfiguration(int argc, char **argv, std::size_t level);
-  std::string message = std::string("");
-
-
-  void add_cli_option(const CLIOption &option) {
-    cli_options.push_back(option);
-  }
-
-
-  void add_json_option(const JSONOption &option) {
-    json_options.push_back(option);
-  }
-
-
-  void add_cli_json_option(const CLIAndJSONOption &option) {
-    cli_json_options.push_back(option);
-  }
 
  public:
   BasicConfiguration(int argc, char **argv);
