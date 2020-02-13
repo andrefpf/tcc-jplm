@@ -72,21 +72,34 @@ ConsoleTable get_console_table() {
 }
 
 
+void show_help(const std::string &message, ConsoleTable &table) {
+  std::cout << message << std::endl;
+  std::cout << table << std::endl;
+}
+
+
 void BasicConfiguration::run_help() const {
   if (this->help_mode_flag) {
     auto table = get_console_table();
     unsigned int count = 0;
-    for (const auto &cli_option : this->cli_options) {
-      if (cli_option.get_level() == this->hierarchy_level) {
+    for (const auto &option : this->cli_options) {
+      if (option.get_level() == this->hierarchy_level) {
         table[count][1](sAlign::right) =
-            cli_option.get_short_option() + "," + cli_option.get_long_option();
-        table[count][2](sAlign::left) = cli_option.get_description();
+            option.get_short_option() + "," + option.get_long_option();
+        table[count][2](sAlign::left) = option.get_description();
+        ++count;
+      }
+    }
+    for (const auto &option : this->cli_json_options) {
+      if (option.get_level() == this->hierarchy_level) {
+        table[count][1](sAlign::right) =
+            option.get_short_option() + "," + option.get_long_option();
+        table[count][2](sAlign::left) = option.get_description();
         ++count;
       }
     }
     if (count != 0) {
-      std::cout << message << std::endl;
-      std::cout << table << std::endl;
+      show_help(message, table);
     }
   }
 }

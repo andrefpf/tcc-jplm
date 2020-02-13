@@ -68,8 +68,8 @@ class Option {
   virtual ~Option() = default;
 
 
-  const std::string &get_description() const {
-    return description;
+  std::string get_description() const {
+    return description + default_parameter.get_description();
   }
 
 
@@ -77,9 +77,11 @@ class Option {
     return level;
   }
 
+
   bool is_parsed() const {
     return parsed;
   }
+
 
   void run_default_action() const {
     default_parameter.run();

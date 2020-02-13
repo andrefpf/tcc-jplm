@@ -67,6 +67,10 @@ class DefaultParameter {
     }
   }
 
+  const std::string& get_description() const {
+    return default_help_message;
+  }
+
   virtual ~DefaultParameter() = default;
 };
 
