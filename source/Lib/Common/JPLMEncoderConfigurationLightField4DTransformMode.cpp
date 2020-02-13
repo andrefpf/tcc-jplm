@@ -44,30 +44,6 @@
 using json = nlohmann::json;
 
 void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
-  cli_options.push_back(
-      {"--border_policy", "-B", "Policy to treat border 4D limits.",
-          [this](std::any v) {
-            std::string s = std::any_cast<std::string>(v);
-            std::transform(s.begin(), s.end(), s.begin(),
-                [](unsigned char c) { return std::tolower(c); });
-            if (s == "0" || s == "padding") {
-              this->border_policy = BorderBlocksPolicy::padding;
-            } else {
-              this->border_policy = BorderBlocksPolicy::truncate;
-            }
-          },
-          this->current_hierarchy_level});
-
-  // cli_options.push_back({"--lambda", "-l",
-  //     "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
-  //     [this](std::any v) {
-  //       std::string typed_string = std::any_cast<std::string>(v);
-  //       std::string::size_type sz;
-  //       this->lambda = std::stod(typed_string, &sz);
-  //     },
-  //     this->current_hierarchy_level,
-  //     {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
-
   cli_options.push_back({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
       [this](std::any v) {
@@ -141,13 +117,15 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
       },
       this->current_hierarchy_level});
 
-  using namespace std::placeholders;
 
   this->add_cli_json_option({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
-      std::bind(
-          &JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda,
-          this, _1),
+      [this](const json &conf) -> std::optional<std::any> {
+        if (conf.contains("lambda")) {
+          return std::to_string(conf["lambda"].get<double>());
+        }
+        return std::nullopt;
+      },
       [this](std::any v) {
         std::string typed_string = std::any_cast<std::string>(v);
         std::string::size_type sz;
