@@ -55,35 +55,12 @@ class DefaultParameter {
   DefaultParameter(
       const std::optional<std::function<std::string()>>& default_action =
           std::nullopt,
-      const std::string& default_help_message = std::string(""))
-      : default_action(default_action),
-        default_help_message(default_help_message) {
-  }
-
-
-  std::optional<std::string> run() const {
-    if (default_action) {
-      return (*default_action)();
-    }
-    //!< \todo make some way to define a required parameter so it may throw an error here
-    return std::nullopt;
-  }
-
-
-  std::string get_description() const {
-    if (default_action) {
-      auto default_value = std::string(" (Default: ");
-      try {
-        default_value += (*default_action)();
-      } catch (...) {
-        return default_help_message;
-      }
-      return default_value + default_help_message + ")";
-    }
-    return default_help_message;
-  }
+      const std::string& default_help_message = std::string(""));
 
   virtual ~DefaultParameter() = default;
+
+  std::optional<std::string> run() const;
+  std::string get_description() const;
 };
 
 #endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_DEFAULT_PARAMETER_H
