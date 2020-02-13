@@ -129,7 +129,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         this->minimal_transform_size_intra_view_horizontal_u =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->current_hierarchy_level});
+      this->current_hierarchy_level,
+      {[this]() { this->minimal_transform_size_intra_view_horizontal_u = 4; },
+          "Default: 4"}});
 
   this->add_cli_json_option(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
