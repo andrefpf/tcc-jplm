@@ -60,7 +60,6 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
   void parse_json(std::string path);
-  void parse_jpeg_pleno_part(const nlohmann::json &conf);
   void parse_colorspace(const nlohmann::json &conf);
 
   std::string config;

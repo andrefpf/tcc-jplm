@@ -57,19 +57,7 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
 void JPLMEncoderConfiguration::parse_json(string config_file_path) {
   std::ifstream ifs(config_file_path);
   json conf = json::parse(ifs);
-  parse_jpeg_pleno_part(conf);
   parse_colorspace(conf);
-}
-
-
-void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
-  if (conf.contains("part")) {
-    string p = conf["part"].get<string>();
-    std::transform(p.begin(), p.end(), p.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (p == "part 2" || p == "part2" || p == "part_2" || p == "light_fields")
-      part = JpegPlenoPart::LightField;
-  }
 }
 
 
