@@ -60,16 +60,26 @@ class DefaultParameter {
         default_help_message(default_help_message) {
   }
 
+
   std::optional<std::string> run() const {
     if (default_action) {
-      // if verbose...
-      // std::cout << default_help_message << std::endl;
       return (*default_action)();
     }
+    //!< \todo make some way to define a required parameter so it may throw an error here
     return std::nullopt;
   }
 
-  const std::string& get_description() const {
+
+  std::string get_description() const {
+    if (default_action) {
+      auto default_value = std::string(" (Default: ");
+      try {
+        default_value += (*default_action)();
+      } catch (...) {
+        return default_help_message;
+      }
+      return default_value + default_help_message + ")";
+    }
     return default_help_message;
   }
 
