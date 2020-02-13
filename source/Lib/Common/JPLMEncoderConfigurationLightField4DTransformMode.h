@@ -95,22 +95,6 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   JPLMEncoderConfigurationLightField4DTransformMode(
       int argc, char **argv, std::size_t level);
   void parse_json(std::string path);
-  void parse_minimal_transform_size_intra_view_vertical(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_intra_view_vertical(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_intra_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_intra_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_inter_view_vertical(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_inter_view_vertical(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_inter_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_inter_view_horizontal(
-      const nlohmann::json &conf);
 
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);

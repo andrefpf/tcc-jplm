@@ -308,7 +308,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::parse_json(
   }
 
   for (auto &option : this->cli_json_options) {
-    // std::cout << "aaaa" << std::endl;
     option.JSONOption::parse(conf);
   }
 }
@@ -387,118 +386,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::init_transform_size() {
       transform_size_minimum_intra_view, transform_size_minimum_inter_view};
   TransformSize t{maximum, minimum};
   this->transform_size = t;
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_intra_view_vertical(const json &conf) {
-  try {
-    minimal_transform_size_intra_view_vertical_v = conf.at("transform_size")
-                                                       .at("minimum")
-                                                       .at("intra-view")
-                                                       .at("vertical")
-                                                       .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_intra_view_vertical(const json &conf) {
-  try {
-    maximal_transform_size_intra_view_vertical_v = conf.at("transform_size")
-                                                       .at("maximum")
-                                                       .at("intra-view")
-                                                       .at("vertical")
-                                                       .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_intra_view_horizontal(const json &conf) {
-  try {
-    minimal_transform_size_intra_view_horizontal_u = conf.at("transform_size")
-                                                         .at("minimum")
-                                                         .at("intra-view")
-                                                         .at("horizontal")
-                                                         .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_intra_view_horizontal(const json &conf) {
-  try {
-    maximal_transform_size_intra_view_horizontal_u = conf.at("transform_size")
-                                                         .at("maximum")
-                                                         .at("intra-view")
-                                                         .at("horizontal")
-                                                         .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_inter_view_vertical(const json &conf) {
-  try {
-    minimal_transform_size_inter_view_vertical_t = conf.at("transform_size")
-                                                       .at("minimum")
-                                                       .at("inter-view")
-                                                       .at("vertical")
-                                                       .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_inter_view_vertical(const json &conf) {
-  try {
-    maximal_transform_size_inter_view_vertical_t = conf.at("transform_size")
-                                                       .at("maximum")
-                                                       .at("inter-view")
-                                                       .at("vertical")
-                                                       .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_minimal_transform_size_inter_view_horizontal(const json &conf) {
-  try {
-    minimal_transform_size_inter_view_horizontal_s = conf.at("transform_size")
-                                                         .at("minimum")
-                                                         .at("inter-view")
-                                                         .at("horizontal")
-                                                         .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::
-    parse_maximal_transform_size_inter_view_horizontal(const json &conf) {
-  try {
-    maximal_transform_size_inter_view_horizontal_s = conf.at("transform_size")
-                                                         .at("maximum")
-                                                         .at("inter-view")
-                                                         .at("horizontal")
-                                                         .get<uint32_t>();
-    return;
-  } catch (json::out_of_range &e) {
-  }
 }
 
 
