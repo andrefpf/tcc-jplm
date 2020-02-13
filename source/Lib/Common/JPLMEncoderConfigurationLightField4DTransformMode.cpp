@@ -415,31 +415,6 @@ void JPLMEncoderConfigurationLightField4DTransformMode::
 }
 
 
-std::optional<std::any>
-JPLMEncoderConfigurationLightField4DTransformMode::parse_lambda(
-    const json &conf) {
-  std::cout << "Running lambda" << std::endl;
-  if (conf.contains("lambda"))
-    return std::to_string(conf["lambda"].get<double>());
-  return std::nullopt;
-}
-
-
-void JPLMEncoderConfigurationLightField4DTransformMode::parse_border_policy(
-    const json &conf) {
-  if (conf.contains("border_policy")) {
-    std::string s = conf["lambda"].get<std::string>();
-    std::transform(s.begin(), s.end(), s.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (s == "0" || s == "padding") {
-      this->border_policy = BorderBlocksPolicy::padding;
-    } else {
-      this->border_policy = BorderBlocksPolicy::truncate;
-    }
-  }
-}
-
-
 std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
 JPLMEncoderConfigurationLightField4DTransformMode::get_maximal_transform_sizes()
     const {
