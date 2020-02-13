@@ -48,23 +48,25 @@
 
 class DefaultParameter {
  private:
-  std::optional<std::function<void()>> default_action;
+  std::optional<std::function<std::string()>> default_action;
   std::string default_help_message;
 
  public:
   DefaultParameter(
-      const std::optional<std::function<void()>>& default_action = std::nullopt,
+      const std::optional<std::function<std::string()>>& default_action =
+          std::nullopt,
       const std::string& default_help_message = std::string(""))
       : default_action(default_action),
         default_help_message(default_help_message) {
   }
 
-  void run() const {
+  std::optional<std::string> run() const {
     if (default_action) {
       // if verbose...
-      std::cout << default_help_message << std::endl;
-      (*default_action)();
+      // std::cout << default_help_message << std::endl;
+      return (*default_action)();
     }
+    return std::nullopt;
   }
 
   const std::string& get_description() const {

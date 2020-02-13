@@ -83,8 +83,11 @@ class Option {
   }
 
 
-  void run_default_action() const {
-    default_parameter.run();
+  void run_default_action() {
+    auto result_of_default_action = default_parameter.run();
+    if (result_of_default_action) {
+      run_action(*result_of_default_action);
+    }
   }
 };
 

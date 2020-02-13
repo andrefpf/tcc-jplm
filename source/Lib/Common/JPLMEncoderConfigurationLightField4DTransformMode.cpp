@@ -62,8 +62,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->maximal_transform_size_inter_view_vertical_t = 13; },
-          "Default: 13"}});
+      {[this]() -> std::string { return "13"; }}});
 
   this->add_cli_json_option({"--transform_size_maximum_inter_view_horizontal",
       "-TMIh", "Maximum 4D transform size in inter-view horizontal direction.",
@@ -83,8 +82,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->maximal_transform_size_inter_view_horizontal_s = 13; },
-          "Default: 13"}});
+      {[this]() -> std::string { return "13"; }}});
 
   this->add_cli_json_option({"--transform_size_maximum_intra_view_vertical",
       "-TMiv", "Maximum 4D transform size in intra-view vertical direction.",
@@ -104,8 +102,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->maximal_transform_size_intra_view_vertical_v = 64; },
-          "Default: 64"}});
+      {[this]() -> std::string { return "64"; }}});
 
   this->add_cli_json_option({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
@@ -125,8 +122,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->maximal_transform_size_intra_view_horizontal_u = 64; },
-          "Default: 64"}});
+      {[this]() -> std::string { return "64"; }}});
 
 
   this->add_cli_json_option({"--transform_size_minimum_inter_view_vertical",
@@ -147,8 +143,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->minimal_transform_size_inter_view_vertical_t = 13; },
-          "Default: 13"}});
+      {[this]() -> std::string { return "13"; }}});
 
   this->add_cli_json_option({"--transform_size_minimum_inter_view_horizontal",
       "-TmIh", "Minimum 4D transform size in inter-view horizontal direction.",
@@ -168,8 +163,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->minimal_transform_size_inter_view_horizontal_s = 13; },
-          "Default: 13"}});
+      {[this]() -> std::string { return "13"; }}});
 
   this->add_cli_json_option({"--transform_size_minimum_intra_view_vertical",
       "-Tmiv", "Minimum 4D transform size in intra-view vertical direction.",
@@ -189,8 +183,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->minimal_transform_size_intra_view_vertical_v = 4; },
-          "Default: 4"}});
+      {[this]() -> std::string { return "4"; }}});
 
 
   this->add_cli_json_option({"--transform_size_minimum_intra_view_horizontal",
@@ -211,8 +204,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             static_cast<uint32_t>(std::stoul(arg));
       },
       this->current_hierarchy_level,
-      {[this]() { this->minimal_transform_size_intra_view_horizontal_u = 4; },
-          "Default: 4"}});
+      {[this]() -> std::string { return "4"; }}});
 
 
   this->add_cli_json_option(
@@ -237,8 +229,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
             }
           },
           this->current_hierarchy_level,
-          {[this]() { this->border_policy = BorderBlocksPolicy::truncate; },
-              "Default: --border_policy=truncate"}});
+          {[this]() -> std::string { return "truncate"; }}});
 
 
   this->add_cli_json_option({"--lambda", "-l",
@@ -255,7 +246,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         this->lambda = std::stod(arg, &sz);
       },
       this->current_hierarchy_level,
-      {[this]() { this->lambda = 1000; }, "Default: --lambda=1000"}});
+      {[this]() -> std::string { return "1000.0"; }}});
 }
 
 
