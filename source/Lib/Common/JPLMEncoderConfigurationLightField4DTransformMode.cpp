@@ -84,7 +84,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         this->maximal_transform_size_intra_view_horizontal_u =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->current_hierarchy_level});
+      this->current_hierarchy_level,
+      {[this]() { this->maximal_transform_size_intra_view_horizontal_u = 64; },
+          "Default: 64"}});
 
 
   cli_options.push_back({"--transform_size_minimum_inter_view_vertical",
