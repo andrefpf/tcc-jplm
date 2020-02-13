@@ -114,16 +114,12 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_maximal_transform_sizes() const;
 
-
   LightfieldDimension<uint32_t> get_maximal_transform_dimension() const;
-
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_minimal_transform_sizes() const;
 
-
   LightfieldDimension<uint32_t> get_minimal_transform_dimension() const;
-
 
   std::tuple<double, double, double, double> get_transform_scalings() const;
 

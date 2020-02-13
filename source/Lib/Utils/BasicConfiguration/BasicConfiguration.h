@@ -44,6 +44,7 @@
 #include <algorithm>
 #include <any>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include "CppConsoleTable/CppConsoleTable.hpp"
@@ -68,6 +69,19 @@ class BasicConfiguration {
   std::string executable_name = "undefined";
   void run_help() const;
   void parse_cli(int argc, char **argv);
+  void parse_json(std::string p) {
+    std::ifstream ifs(p);
+    nlohmann::json conf = nlohmann::json::parse(ifs);
+
+    for (auto &option : this->json_options) {
+      option.parse(conf);
+    }
+
+    for (auto &option : this->cli_json_options) {
+      option.JSONOption::parse(conf);
+    }
+  }
+
   //<! \todo check if "validate_param" method name could be "is_param_valid"
   bool validate_param(std::string param);
   //<! \todo check if "validate_value" method name could be "is_value_valid"
