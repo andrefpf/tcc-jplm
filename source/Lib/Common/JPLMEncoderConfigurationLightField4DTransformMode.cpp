@@ -107,7 +107,9 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
         this->minimal_transform_size_inter_view_horizontal_s =
             static_cast<uint32_t>(std::stoul(typed_string));
       },
-      this->current_hierarchy_level});
+      this->current_hierarchy_level,
+      {[this]() { this->minimal_transform_size_inter_view_horizontal_s = 13; },
+          "Default: 13"}});
 
   cli_options.push_back({"--transform_size_minimum_intra_view_vertical",
       "-Tmiv", "Minimum 4D transform size in intra-view vertical direction.",
