@@ -117,9 +117,36 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
       },
       this->current_hierarchy_level});
 
+  this->add_cli_json_option(
+      {"--border_policy", "-B", "Policy to treat border 4D limits.",
+          [this](const json &conf) -> std::optional<std::any> {
+            if (conf.contains("border_policy")) {
+              return conf["border_policy"].get<std::string>();
+            }
+            return std::nullopt;
+          },
+          [this](std::any v) {
+            std::string s = std::any_cast<std::string>(v);
+            std::transform(s.begin(), s.end(), s.begin(),
+                [](unsigned char c) { return std::tolower(c); });
+            if (s == "0" || s == "padding") {
+              this->border_policy = BorderBlocksPolicy::padding;
+            } else if (s == "1" || s == "truncate") {
+              this->border_policy = BorderBlocksPolicy::truncate;
+            } else {
+              std::cerr << "Ill formed parameter in option -B." << std::endl;
+              exit(1);
+              //!< \todo throw exception
+            }
+          },
+          this->current_hierarchy_level,
+          {[this]() { this->border_policy = BorderBlocksPolicy::truncate; },
+              "Default: --border_policy=truncate"}});
+
 
   this->add_cli_json_option({"--lambda", "-l",
-      "Lagrangian multiplier used in the RDO process of 4D Transform mode.",
+      "Lagrangian multiplier used in the RDO process of 4D Transform "
+      "mode (floating point value).",
       [this](const json &conf) -> std::optional<std::any> {
         if (conf.contains("lambda")) {
           return std::to_string(conf["lambda"].get<double>());
