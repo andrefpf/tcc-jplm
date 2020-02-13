@@ -48,9 +48,9 @@ class CLIAndJSONOption : public CLIOption, public JSONOption {
  public:
   CLIAndJSONOption(const std::string &longOption,
       const std::string &short_option, const std::string &description,
-      const std::function<std::optional<std::any>(const nlohmann::json &json)>
-          &parse_action,
-      const std::function<void(std::any)> &action, std::size_t level,
+      const std::function<std::optional<std::string>(
+          const nlohmann::json &json)> &parse_action,
+      const std::function<void(std::string)> &action, std::size_t level,
       const DefaultParameter &default_parameter = DefaultParameter())
       : Option(description, action, level, default_parameter),
         CLIOption(longOption, short_option, description, action, level,

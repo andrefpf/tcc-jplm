@@ -46,19 +46,19 @@
 class Option {
  protected:
   std::string description;
-  std::function<void(std::any)> action;
+  std::function<void(std::string)> action;
   std::size_t level;
   bool parsed = false;
   DefaultParameter default_parameter;
 
-  void run_action(std::any value) {
+  void run_action(std::string value) {
     action(value);
     this->parsed = true;
   }
 
  public:
   Option(const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level,
+      const std::function<void(std::string)> &action, std::size_t level,
       const DefaultParameter &default_parameter = DefaultParameter())
       : description(description), action(action), level(level),
         default_parameter(default_parameter) {

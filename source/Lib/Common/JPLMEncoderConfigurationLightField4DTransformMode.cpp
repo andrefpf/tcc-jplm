@@ -127,7 +127,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
 
   this->add_cli_json_option(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
-          [this](const json &conf) -> std::optional<std::any> {
+          [this](const json &conf) -> std::optional<std::string> {
             if (conf.contains("border_policy")) {
               return conf["border_policy"].get<std::string>();
             }
@@ -154,7 +154,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
   this->add_cli_json_option({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform "
       "mode (floating point value).",
-      [this](const json &conf) -> std::optional<std::any> {
+      [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("lambda")) {
           return std::to_string(conf["lambda"].get<double>());
         }

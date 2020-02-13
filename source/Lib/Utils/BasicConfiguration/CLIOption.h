@@ -54,16 +54,16 @@ class CLIOption : public virtual Option {
  public:
   CLIOption(const std::string &longOption, const std::string &short_option,
       const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level,
+      const std::function<void(std::string)> &action, std::size_t level,
       const DefaultParameter &default_parameter = DefaultParameter())
       : Option(description, action, level, default_parameter),
         long_option(longOption), short_option(short_option) {
   }
 
 
-  void parse(std::string key, std::any value) {
-    if ((key == long_option || key == short_option)) {
-      run_action(value);
+  void parse(std::string option, std::string argument) {
+    if ((option == long_option || option == short_option)) {
+      run_action(argument);
     }
   }
 
