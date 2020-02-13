@@ -44,8 +44,19 @@
 using json = nlohmann::json;
 
 void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
-  cli_options.push_back({"--transform_size_maximum_inter_view_vertical",
+  this->add_cli_json_option({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
+      [this](const json &conf) -> std::optional<std::string> {
+        try {
+          return std::to_string(conf.at("transform_size")
+                                    .at("maximum")
+                                    .at("inter-view")
+                                    .at("vertical")
+                                    .get<uint32_t>());
+        } catch (json::out_of_range &e) {
+        }
+        return std::nullopt;
+      },
       [this](std::string arg) {
         this->maximal_transform_size_inter_view_vertical_t =
             static_cast<uint32_t>(std::stoul(arg));
