@@ -71,17 +71,17 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   };
   void init_transform_size();
 
-  uint32_t maximal_transform_size_inter_view_vertical_t = 100000;
-  uint32_t maximal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t maximal_transform_size_intra_view_vertical_v = 100000;
-  uint32_t maximal_transform_size_intra_view_horizontal_u = 100000;
+  uint32_t maximal_transform_size_inter_view_vertical_t = 13;
+  uint32_t maximal_transform_size_inter_view_horizontal_s = 13;
+  uint32_t maximal_transform_size_intra_view_vertical_v = 64;
+  uint32_t maximal_transform_size_intra_view_horizontal_u = 64;
 
-  uint32_t minimal_transform_size_inter_view_vertical_t = 100000;
-  uint32_t minimal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t minimal_transform_size_intra_view_vertical_v = 100000;
-  uint32_t minimal_transform_size_intra_view_horizontal_u = 100000;
+  uint32_t minimal_transform_size_inter_view_vertical_t = 13;
+  uint32_t minimal_transform_size_inter_view_horizontal_s = 13;
+  uint32_t minimal_transform_size_intra_view_vertical_v = 4;
+  uint32_t minimal_transform_size_intra_view_horizontal_u = 4;
 
-  double lambda;
+  double lambda = 1000.0;
   BorderBlocksPolicy border_policy = BorderBlocksPolicy::truncate;
 
   double transform_scale_t = 1.0;
