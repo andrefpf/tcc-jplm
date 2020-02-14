@@ -42,20 +42,10 @@
 #include "Lib/Common/JPLMConfiguration.h"
 
 using namespace std;
-using Type = CompressionTypeLightField;
-using ConsoleTable = samilton::ConsoleTable;
-using sAlign = samilton::Alignment;
 
-
-void JPLMConfiguration::add_options_to_cli(char **argv) {
-  cli_options.push_back({"--help", "-h", "Print this help message and exit",
-      [this, argv]([[maybe_unused]] std::any v) {
-        this->help_mode_flag = true;
-        this->executable_name = std::string(argv[0]);
-      },
-      this->current_hierarchy_level});
+void JPLMConfiguration::add_options() {
+  BasicConfiguration::add_options();
 }
-
 
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
@@ -67,83 +57,13 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 }
 
 
-void JPLMConfiguration::run_help() const {
-  if (this->help_mode_flag) {
-    ConsoleTable table(1, 1, samilton::Alignment::centre);
-    ConsoleTable::TableChars chars;
-    chars.topDownSimple = '\0';
-    chars.leftSeparation = '\0';
-    chars.centreSeparation = '\0';
-    chars.downLeft = '\0';
-    chars.downRight = '\0';
-    chars.leftRightSimple = '\0';
-    chars.rightSeparation = '\0';
-    chars.topLeft = '\0';
-    chars.topRight = '\0';
-    chars.topSeparation = '\0';
-    chars.downSeparation = '\0';
-    table.setTableChars(chars);
-    unsigned int count = 0;
-    for (const auto &cli_option : this->cli_options) {
-      if (cli_option.get_level() == this->hierarchy_level) {
-        table[count][1](sAlign::right) =
-            cli_option.get_short_option() + "," + cli_option.get_long_option();
-        table[count][2](sAlign::left) = cli_option.get_description();
-        ++count;
-      }
-    }
-    if (count != 0) {
-      std::cout << message << std::endl;
-      std::cout << table << std::endl;
-    }
-  }
+JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
+    : JPLMConfiguration(
+          argc, argv, JPLMConfiguration::current_hierarchy_level) {
+  this->init(argc, argv);
 }
 
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
-    : hierarchy_level(level) {
-  add_options_to_cli(argv);
-  this->parse_cli(argc, argv);
-}
-
-
-JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
-    : JPLMConfiguration(
-          argc, argv, JPLMConfiguration::current_hierarchy_level) {
-  run_help();
-}
-
-
-bool JPLMConfiguration::validate_param(std::string param) {
-  const std::string prefix = "-";
-  return !param.compare(0, prefix.size(), prefix);
-}
-
-
-bool JPLMConfiguration::validate_value(
-    unsigned int size, unsigned int pos, [[maybe_unused]] char **argv) {
-  return pos < size - 1;
-}
-
-
-void JPLMConfiguration::parse_cli(int argc, char **argv) {
-  for (int n = 1; n < argc; n++) {
-    std::string key(reinterpret_cast<char *>(argv[n]));
-    if (validate_param(key)) {
-      if (validate_value(argc, n, argv)) {
-        std::string value(reinterpret_cast<char *>(argv[n + 1]));
-        std::for_each(cli_options.begin(), cli_options.end(),
-            [key, value](auto &s) { s.parse(key, value); });
-      } else {
-        std::string value("");
-        std::for_each(cli_options.begin(), cli_options.end(),
-            [key, value](auto &s) { s.parse(key, value); });
-      }
-    }
-  }
-}
-
-
-bool JPLMConfiguration::is_help_mode() const {
-  return help_mode_flag;
+    : BasicConfiguration(argc, argv, level) {
 }

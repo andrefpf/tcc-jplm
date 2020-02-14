@@ -40,7 +40,34 @@
 
 #include "JPLMDecoderConfiguration.h"
 
-void JPLMDecoderConfiguration::add_options_to_cli() {
+/**
+ * @brief      Constructs a new instance. (protected)
+ *
+ * @param[in]  argc   The count of arguments
+ * @param      argv   The arguments array
+ * @param[in]  level  The level
+ */
+JPLMDecoderConfiguration::JPLMDecoderConfiguration(
+    int argc, char **argv, std::size_t level)
+    : JPLMConfiguration(argc, argv, level) {
+  this->message =
+      "JPLM Decoder\nUsage: " + this->executable_name + " [OPTIONS]\nOptions: ";
+}
+
+/**
+ * @brief      Constructs a new instance. (public)
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ */
+JPLMDecoderConfiguration::JPLMDecoderConfiguration(int argc, char **argv)
+    : JPLMDecoderConfiguration(
+          argc, argv, JPLMDecoderConfiguration::current_hierarchy_level) {
+  this->init(argc, argv);
+}
+
+void JPLMDecoderConfiguration::add_options() {
+  JPLMConfiguration::add_options();
   cli_options.push_back({"--input", "-i",
       "Input, i.e., a JPEG Pleno bitstream file (filename.jpl) to be "
       "decoded.",

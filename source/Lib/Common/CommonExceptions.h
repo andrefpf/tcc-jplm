@@ -49,7 +49,9 @@
 
 namespace JPLMCommonExceptions {
 
-
+/**
+ * @brief      Exception for signaling not implemented errors.
+ */
 class NotImplementedException : public std::logic_error {
  public:
   NotImplementedException(const std::string& what)
@@ -131,21 +133,6 @@ class UnsuportedPredictionMode : public std::exception {
   const char* what() const throw() {
     return "Prediction mode is currently not supported in this reference "
            "software.";
-  }
-};
-
-
-class ConfigFileDoesNotExistException : public std::exception {
- private:
-  std::string msg;
-
- public:
-  ConfigFileDoesNotExistException(std::string m)
-      : msg("Config file " + m + " does not exists.") {
-  }
-
-  const char* what() const throw() {
-    return msg.c_str();
   }
 };
 

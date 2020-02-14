@@ -112,6 +112,8 @@ JPLMConfigurationFactory::get_encoder_configuration(
       throw JPLMConfigurationExceptions::NotImplementedYetPartException();
     }
   }
+  //if control reaches this part is because an invalid part was found
+  throw JPLMConfigurationExceptions::InvalidPartException();
 }
 
 std::unique_ptr<JPLMConfiguration>
@@ -132,5 +134,4 @@ void JPLMConfigurationFactory::show_invalid_part_common_message() {
          "modality (such as Light Fields, Point Clouds and Holograms). To "
          "obtain help, run the encoder again with --help option. "
       << std::endl;
-  throw JPLMConfigurationExceptions::InvalidPartException();
 }

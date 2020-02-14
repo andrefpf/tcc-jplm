@@ -31,58 +31,67 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField.h
+/** \file     BasicConfiguration.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-02-11
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H
 
-#include <cstdint>
+#include <algorithm>
+#include <any>
 #include <filesystem>
-#include <optional>
-#include <tuple>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
+#include <fstream>
+#include <iostream>
+#include <string>
+#include "CppConsoleTable/CppConsoleTable.hpp"
+#include "Lib/Utils/BasicConfiguration/CLIAndJSONOption.h"
+#include "Lib/Utils/BasicConfiguration/CommonExceptions.h"
 
-class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
+
+class BasicConfiguration {
  private:
-  void parse_mode_type(const nlohmann::json &conf);
-  void check_inconsistencies();
-  CompressionTypeLightField type;
-  static constexpr std::size_t current_hierarchy_level = 1;
+  bool help_mode_flag = false;
+  static constexpr std::size_t current_hierarchy_level = 0;
+  char **arg_vector;
 
  protected:
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
+  // std::vector<Options> options;
+  std::vector<CLIOption> cli_options;
+  std::vector<JSONOption> json_options;
+  std::vector<CLIAndJSONOption> cli_json_options;
 
-  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
-  void parse_number_of_rows_t(const nlohmann::json &conf);
-  void parse_number_of_columns_s(const nlohmann::json &conf);
-  void parse_view_height_v(const nlohmann::json &conf);
-  void parse_view_width_u(const nlohmann::json &conf);
-  virtual void add_options() override;
+  std::size_t hierarchy_level =
+      0;  //<! the hierarchy level used for printing help
+  std::string executable_name = "undefined";
+  std::string message = std::string("");
+
+  /**
+  * @brief      Adds options.
+  */
+  virtual void add_options();
+  void run_help() const;
+  void parse_cli(int argc, char **argv);
+  void parse_json(const std::string &path);
+  //<! \todo check if "validate_param" method name could be "is_param_valid"
+  bool validate_param(std::string param);
+  //<! \todo check if "validate_value" method name could be "is_value_valid"
+  bool validate_value(unsigned int size, unsigned int pos, char **argv);
+  void add_cli_option(const CLIOption &option);
+  void add_json_option(const JSONOption &option);
+  void add_cli_json_option(const CLIAndJSONOption &option);
+  void init(int argc, char **argv);
+  BasicConfiguration(int argc, char **argv, std::size_t level);
 
  public:
-  JPLMEncoderConfigurationLightField(int argc, char **argv);
-  LightfieldIOConfiguration get_lightfield_io_configurations() const;
-  uint32_t get_number_of_rows_t() const;
-  uint32_t get_number_of_columns_s() const;
-  uint32_t get_view_height_v() const;
-  uint32_t get_view_width_u() const;
-  virtual CompressionTypeLightField get_type() const;
-  virtual CompressionTypeLightField get_compression_type() const;
+  BasicConfiguration(int argc, char **argv);
+
+  virtual ~BasicConfiguration() = default;
+
+  bool is_help_mode() const;
 };
 
-
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H

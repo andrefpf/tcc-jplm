@@ -31,58 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-02-13
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H
 
-#include <cstdint>
-#include <filesystem>
-#include <optional>
-#include <tuple>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
 
-class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
+namespace BasicConfigurationExceptions {
+
+class ConfigFileDoesNotExistException : public std::exception {
  private:
-  void parse_mode_type(const nlohmann::json &conf);
-  void check_inconsistencies();
-  CompressionTypeLightField type;
-  static constexpr std::size_t current_hierarchy_level = 1;
-
- protected:
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-
-  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
-  void parse_number_of_rows_t(const nlohmann::json &conf);
-  void parse_number_of_columns_s(const nlohmann::json &conf);
-  void parse_view_height_v(const nlohmann::json &conf);
-  void parse_view_width_u(const nlohmann::json &conf);
-  virtual void add_options() override;
+  std::string msg;
 
  public:
-  JPLMEncoderConfigurationLightField(int argc, char **argv);
-  LightfieldIOConfiguration get_lightfield_io_configurations() const;
-  uint32_t get_number_of_rows_t() const;
-  uint32_t get_number_of_columns_s() const;
-  uint32_t get_view_height_v() const;
-  uint32_t get_view_width_u() const;
-  virtual CompressionTypeLightField get_type() const;
-  virtual CompressionTypeLightField get_compression_type() const;
+  ConfigFileDoesNotExistException(std::string m)
+      : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
 };
 
+}  // namespace BasicConfigurationExceptions
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */
+
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_COMMON_EXCEPTIONS_H

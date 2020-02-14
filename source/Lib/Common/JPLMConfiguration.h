@@ -46,14 +46,14 @@
 #define JPLM_JPLMConfiguration_H
 
 #include <algorithm>
-#include <any>
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Common/CLIOption.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
+#include "Lib/Utils/BasicConfiguration/CLIOption.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
+
 
 enum class JpegPlenoPart {
   Undefined = 0,
@@ -64,28 +64,15 @@ enum class JpegPlenoPart {
 };
 
 
-class JPLMConfiguration {
+class JPLMConfiguration : public BasicConfiguration {
  private:
-  bool help_mode_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli(char **argv);
 
  protected:
-  std::vector<CLIOption> cli_options;
   std::string input;
   std::string output;
-  std::size_t hierarchy_level =
-      0;  //<! the hierarchy level used for printing help
-  std::string executable_name = "undefined";
-  void run_help() const;
-  void parse_cli(int argc, char **argv);
-  //<! \todo check if "validate_param" method name could be "is_param_valid"
-  bool validate_param(std::string param);
-  //<! \todo check if "validate_value" method name could be "is_value_valid"
-  bool validate_value(unsigned int size, unsigned int pos, char **argv);
   JPLMConfiguration(int argc, char **argv, std::size_t level);
-  std::string message = std::string("");
-
+  virtual void add_options() override;
 
  public:
   JPLMConfiguration(int argc, char **argv);
@@ -94,7 +81,6 @@ class JPLMConfiguration {
 
   const std::string &get_input_filename() const;
   const std::string &get_output_filename() const;
-  bool is_help_mode() const;
 };
 
 

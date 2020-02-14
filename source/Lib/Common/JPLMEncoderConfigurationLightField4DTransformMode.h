@@ -71,17 +71,17 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   };
   void init_transform_size();
 
-  uint32_t maximal_transform_size_inter_view_vertical_t = 100000;
-  uint32_t maximal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t maximal_transform_size_intra_view_vertical_v = 100000;
-  uint32_t maximal_transform_size_intra_view_horizontal_u = 100000;
+  uint32_t maximal_transform_size_inter_view_vertical_t = 13;
+  uint32_t maximal_transform_size_inter_view_horizontal_s = 13;
+  uint32_t maximal_transform_size_intra_view_vertical_v = 64;
+  uint32_t maximal_transform_size_intra_view_horizontal_u = 64;
 
-  uint32_t minimal_transform_size_inter_view_vertical_t = 100000;
-  uint32_t minimal_transform_size_inter_view_horizontal_s = 100000;
-  uint32_t minimal_transform_size_intra_view_vertical_v = 100000;
-  uint32_t minimal_transform_size_intra_view_horizontal_u = 100000;
+  uint32_t minimal_transform_size_inter_view_vertical_t = 13;
+  uint32_t minimal_transform_size_inter_view_horizontal_s = 13;
+  uint32_t minimal_transform_size_intra_view_vertical_v = 4;
+  uint32_t minimal_transform_size_intra_view_horizontal_u = 4;
 
-  double lambda;
+  double lambda = 1000.0;
   BorderBlocksPolicy border_policy = BorderBlocksPolicy::truncate;
 
   double transform_scale_t = 1.0;
@@ -89,30 +89,12 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
-  void add_options_to_cli();
 
  protected:
+  virtual void add_options() override;
   JPLMEncoderConfigurationLightField4DTransformMode(
       int argc, char **argv, std::size_t level);
   void parse_json(std::string path);
-  void parse_minimal_transform_size_intra_view_vertical(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_intra_view_vertical(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_intra_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_intra_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_inter_view_vertical(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_inter_view_vertical(
-      const nlohmann::json &conf);
-  void parse_minimal_transform_size_inter_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_maximal_transform_size_inter_view_horizontal(
-      const nlohmann::json &conf);
-  void parse_lambda(const nlohmann::json &conf);
-  void parse_border_policy(const nlohmann::json &conf);
 
  public:
   JPLMEncoderConfigurationLightField4DTransformMode(int argc, char **argv);
@@ -132,16 +114,12 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_maximal_transform_sizes() const;
 
-
   LightfieldDimension<uint32_t> get_maximal_transform_dimension() const;
-
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_minimal_transform_sizes() const;
 
-
   LightfieldDimension<uint32_t> get_minimal_transform_dimension() const;
-
 
   std::tuple<double, double, double, double> get_transform_scalings() const;
 

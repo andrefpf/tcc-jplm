@@ -31,58 +31,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField.h
+/** \file     Option.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-02-12
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#include "Option.h"
 
-#include <cstdint>
-#include <filesystem>
-#include <optional>
-#include <tuple>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
-
-class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
- private:
-  void parse_mode_type(const nlohmann::json &conf);
-  void check_inconsistencies();
-  CompressionTypeLightField type;
-  static constexpr std::size_t current_hierarchy_level = 1;
-
- protected:
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-
-  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
-  void parse_number_of_rows_t(const nlohmann::json &conf);
-  void parse_number_of_columns_s(const nlohmann::json &conf);
-  void parse_view_height_v(const nlohmann::json &conf);
-  void parse_view_width_u(const nlohmann::json &conf);
-  virtual void add_options() override;
-
- public:
-  JPLMEncoderConfigurationLightField(int argc, char **argv);
-  LightfieldIOConfiguration get_lightfield_io_configurations() const;
-  uint32_t get_number_of_rows_t() const;
-  uint32_t get_number_of_columns_s() const;
-  uint32_t get_view_height_v() const;
-  uint32_t get_view_width_u() const;
-  virtual CompressionTypeLightField get_type() const;
-  virtual CompressionTypeLightField get_compression_type() const;
-};
+void Option::run_action(std::string value) {
+  action(value);
+  this->parsed = true;
+}
 
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */
+Option::Option(const std::string &description,
+    const std::function<void(std::string)> &action, std::size_t level,
+    const DefaultParameter &default_parameter)
+    : description(description), action(action), level(level),
+      default_parameter(default_parameter) {
+}
+
+
+std::string Option::get_description() const {
+  return description + default_parameter.get_description();
+}
+
+
+std::size_t Option::get_level() const {
+  return level;
+}
+
+
+bool Option::is_parsed() const {
+  return parsed;
+}
+
+
+void Option::run_default_action() {
+  auto result_of_default_action = default_parameter.run();
+  if (result_of_default_action) {
+    run_action(*result_of_default_action);
+  }
+}

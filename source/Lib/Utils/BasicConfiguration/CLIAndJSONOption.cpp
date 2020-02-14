@@ -31,58 +31,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfigurationLightField.h
+/** \file     CLIAndJSONOption.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-02-12
  */
 
-#ifndef JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
-#define JPLMENCODERCONFIGURATIONLIGHTFIELD_H__
+#include "CLIAndJSONOption.h"
 
-#include <cstdint>
-#include <filesystem>
-#include <optional>
-#include <tuple>
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Part2/Common/Lightfield.h"
-#include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
-#include "nlohmann/json.hpp"
-
-class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
- private:
-  void parse_mode_type(const nlohmann::json &conf);
-  void check_inconsistencies();
-  CompressionTypeLightField type;
-  static constexpr std::size_t current_hierarchy_level = 1;
-
- protected:
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-
-  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
-  void parse_number_of_rows_t(const nlohmann::json &conf);
-  void parse_number_of_columns_s(const nlohmann::json &conf);
-  void parse_view_height_v(const nlohmann::json &conf);
-  void parse_view_width_u(const nlohmann::json &conf);
-  virtual void add_options() override;
-
- public:
-  JPLMEncoderConfigurationLightField(int argc, char **argv);
-  LightfieldIOConfiguration get_lightfield_io_configurations() const;
-  uint32_t get_number_of_rows_t() const;
-  uint32_t get_number_of_columns_s() const;
-  uint32_t get_view_height_v() const;
-  uint32_t get_view_width_u() const;
-  virtual CompressionTypeLightField get_type() const;
-  virtual CompressionTypeLightField get_compression_type() const;
-};
-
-
-#endif /* end of include guard: JPLMENCODERCONFIGURATIONLIGHTFIELD_H__ */
+CLIAndJSONOption::CLIAndJSONOption(const std::string &longOption,
+    const std::string &short_option, const std::string &description,
+    const std::function<std::optional<std::string>(const nlohmann::json &json)>
+        &parse_action,
+    const std::function<void(std::string)> &action, std::size_t level,
+    const DefaultParameter &default_parameter)
+    : Option(description, action, level, default_parameter),
+      CLIOption(longOption, short_option, description, action, level,
+          default_parameter),
+      JSONOption(description, parse_action, action, level, default_parameter) {
+}

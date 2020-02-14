@@ -39,3 +39,24 @@
  */
 
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+
+
+JPLMEncoderConfigurationLightField4DPredictionMode::
+    JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv)
+    : JPLMEncoderConfigurationLightField4DPredictionMode(argc, argv,
+          JPLMEncoderConfigurationLightField4DPredictionMode::
+              current_hierarchy_level) {
+  this->init(argc, argv);
+}
+
+CompressionTypeLightField
+JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
+    const {
+  return CompressionTypeLightField::prediction_mode;
+}
+
+
+void JPLMEncoderConfigurationLightField4DPredictionMode::add_options() {
+  JPLMEncoderConfigurationLightField::add_options();
+  //<! \todo add the needed options for transform mode configuration cli
+}

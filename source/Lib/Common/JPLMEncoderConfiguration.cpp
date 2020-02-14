@@ -50,50 +50,7 @@ namespace fs = std::filesystem;
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMEncoderConfiguration(
           argc, argv, JPLMEncoderConfiguration::current_hierarchy_level) {
-  run_help();
-}
-
-
-void JPLMEncoderConfiguration::parse_json(string config_file_path) {
-  std::ifstream ifs(config_file_path);
-  json conf = json::parse(ifs);
-  parse_jpeg_pleno_part(conf);
-  parse_colorspace(conf);
-}
-
-
-void JPLMEncoderConfiguration::parse_jpeg_pleno_part(const json &conf) {
-  if (conf.contains("part")) {
-    string p = conf["part"].get<string>();
-    std::transform(p.begin(), p.end(), p.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (p == "part 2" || p == "part2" || p == "part_2" || p == "light_fields")
-      part = JpegPlenoPart::LightField;
-  }
-}
-
-
-//<! \todo the colorspace is a part of the jpl encoder? Or it depends on the part?
-void JPLMEncoderConfiguration::parse_colorspace(const json &conf) {
-  //<! \todo include options to input the EnumCS for the ColourDefinitionBox
-  if (conf.contains("colorspace")) {
-    string c = conf["colorspace"].get<string>();
-    std::transform(c.begin(), c.end(), c.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (c == "ycbcr" || c == "bt601")
-      colorspace = ColorSpaces::ColorSpace::BT601;
-    else if (c == "rgb")
-      colorspace = ColorSpaces::ColorSpace::RGB;
-    else if (c == "bt709")
-      colorspace = ColorSpaces::ColorSpace::BT709;
-    else if (c == "bt2020")
-      colorspace = ColorSpaces::ColorSpace::BT2020;
-    else if (c == "ycocg")
-      colorspace = ColorSpaces::ColorSpace::YCoCg;
-    else
-      throw JPLMConfigurationExceptions::
-          NotImplementedYetInputTypeParseException(c);
-  }
+  this->init(argc, argv);
 }
 
 
@@ -114,29 +71,42 @@ ColorSpaces::ColorSpace JPLMEncoderConfiguration::get_colorspace() const {
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(
     int argc, char **argv, std::size_t level)
     : JPLMConfiguration(argc, argv, level) {
-  add_options_to_cli();
   this->message =
       "JPLM Encoder\nUsage: " + this->executable_name + " [OPTIONS]\nOptions: ";
-
-
-  this->parse_cli(argc, argv);
 }
 
-void JPLMEncoderConfiguration::add_options_to_cli() {
-  cli_options.push_back({"--input", "-i",
+
+void JPLMEncoderConfiguration::add_options() {
+  JPLMConfiguration::add_options();
+  std::cout << "adding options of JPLMEncoderConfiguration" << std::endl;
+  this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "
       "\n\tFor Part 2, light field, the input is a directory containing a "
       "set of directories (one for each color channel). Each one of those "
       "directories contains a set of views in PGX format.",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("input")) {
+          return conf["input"].get<string>();
+        }
+        return std::nullopt;
+      },
       [this]([[maybe_unused]] std::any v) {
         this->input = std::any_cast<std::string>(v);
       },
       this->current_hierarchy_level});
-  cli_options.push_back({"--output", "-o",
+
+
+  this->add_cli_json_option({"--output", "-o",
       "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
-      [this]([[maybe_unused]] std::any v) {
-        this->output = std::any_cast<std::string>(v);
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("output")) {
+          return conf["output"].get<string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        this->output = arg;
         //checking the file extension for showing a warning message
         if (this->current_hierarchy_level == hierarchy_level) {
           if (std::filesystem::path(this->output).extension() !=
@@ -154,25 +124,61 @@ void JPLMEncoderConfiguration::add_options_to_cli() {
       },
       this->current_hierarchy_level});
 
-  //<! \todo check if the config should be placed in the JPLMConfiguration (to allow its use in the decoder)
-  cli_options.push_back({"--config", "-c", "Path to config file",
-      [this](std::any v) {
-        this->config = std::any_cast<std::string>(v);
-        if (!this->config.empty()) {
-          if (fs::exists(this->config)) {
-            parse_json(this->config);
-          } else {
-            throw JPLMConfigurationExceptions::ConfigFileDoesNotExistException(
-                this->config);
-          }
+
+  this->add_cli_json_option({"--part", "-p",
+      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("part")) {
+          return conf["part"].get<string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        auto part = std::string(arg.size(), ' ');
+        std::transform(arg.begin(), arg.end(), part.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (part == "2" || part == "part 2" || part == "part2" ||
+            part == "part_2" || part == "light_fields" ||
+            part == "lightfields" || part == "light fields" ||
+            part == "light_field" || part == "lightfield" ||
+            part == "light field") {
+          this->part = JpegPlenoPart::LightField;
         }
       },
       this->current_hierarchy_level});
 
-  cli_options.push_back(
-      {"--part", "-p", "enum/JpegPlenoPart in { LightField=2 }",
-          [this](std::any value) {
-            this->part = JpegPlenoPart{std::stoi(std::any_cast<string>(value))};
-          },
-          this->current_hierarchy_level});
+  //<! \todo the colorspace is a part of the jpl encoder? Or it depends on the part?
+  //<! \todo include options to input the EnumCS for the ColourDefinitionBox
+  this->add_cli_json_option({"--colourspace", "-cs",
+      "Colour space to be signalized in EnumCS. It shall be the colour space "
+      "of the inputs.",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("colourspace")) {
+          return conf["colourspace"].get<string>();
+        }
+        if (conf.contains("colorspace")) {
+          return conf["colorspace"].get<string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        auto colourspace = std::string(arg.size(), ' ');
+        std::transform(arg.begin(), arg.end(), colourspace.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (colourspace == "ycbcr" || colourspace == "bt601")
+          this->colorspace = ColorSpaces::ColorSpace::BT601;
+        else if (colourspace == "rgb")
+          this->colorspace = ColorSpaces::ColorSpace::RGB;
+        else if (colourspace == "bt709")
+          this->colorspace = ColorSpaces::ColorSpace::BT709;
+        else if (colourspace == "bt2020")
+          this->colorspace = ColorSpaces::ColorSpace::BT2020;
+        else if (colourspace == "ycocg")
+          this->colorspace = ColorSpaces::ColorSpace::YCoCg;
+        else
+          throw JPLMConfigurationExceptions::
+              NotImplementedYetInputTypeParseException(arg);
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "bt601"; }}});
 }

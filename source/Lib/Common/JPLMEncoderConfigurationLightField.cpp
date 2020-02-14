@@ -43,49 +43,107 @@
 using json = nlohmann::json;
 using namespace std;
 
-void JPLMEncoderConfigurationLightField::add_options_to_cli() {
-  cli_options.push_back({"--view_height", "-v", "Single-view height dimension",
-      [this](std::any value) {
-        this->view_height_v = std::stoi(std::any_cast<string>(value));
-      },
-      this->current_hierarchy_level});
-
-  cli_options.push_back({"--view_width", "-u", "Single-view width dimension",
-      [this](std::any value) {
-        this->view_width_u = std::stoi(std::any_cast<string>(value));
-      },
-      this->current_hierarchy_level});
-
-  cli_options.push_back(
-      {"--number_of_rows", "-t", "Number of light-field views rows",
-          [this](std::any value) {
-            this->number_of_rows_t = std::stoi(std::any_cast<string>(value));
+void JPLMEncoderConfigurationLightField::add_options() {
+  JPLMEncoderConfiguration::add_options();
+  this->add_cli_json_option(
+      {"--view_height", "-v", "Single-view height dimension. Mandatory.",
+          [this](const json &conf) -> std::optional<std::string> {
+            if (conf.contains("view_height")) {
+              return std::to_string(conf["view_height"].get<uint32_t>());
+            }
+            if (conf.contains("image_height")) {
+              return std::to_string(conf["image_height"].get<uint32_t>());
+            }
+            return std::nullopt;
           },
+          [this](std::string arg) { this->view_height_v = std::stoi(arg); },
           this->current_hierarchy_level});
 
-  cli_options.push_back(
-      {"--number_of_columns", "-s", "Number of light-field views columns",
-          [this](std::any value) {
-            this->number_of_columns_s = std::stoi(std::any_cast<string>(value));
+  this->add_cli_json_option(
+      {"--view_width", "-u", "Single-view width dimension. Mandatory.",
+          [this](const json &conf) -> std::optional<std::string> {
+            if (conf.contains("view_width")) {
+              return std::to_string(conf["view_width"].get<uint32_t>());
+            }
+            if (conf.contains("image_width")) {
+              return std::to_string(conf["image_width"].get<uint32_t>());
+            }
+            return std::nullopt;
           },
+          [this](std::string arg) { this->view_width_u = std::stoi(arg); },
           this->current_hierarchy_level});
 
-  cli_options.push_back({"--type", "-T",
+  this->add_cli_json_option(
+      {"--number_of_rows", "-t", "Number of light-field views rows. Mandatory.",
+          [this](const json &conf) -> std::optional<std::string> {
+            if (conf.contains("number_of_rows")) {
+              return std::to_string(conf["number_of_rows"].get<uint32_t>());
+            }
+            return std::nullopt;
+          },
+          [this](std::string arg) { this->number_of_rows_t = std::stoi(arg); },
+          this->current_hierarchy_level});
+
+  this->add_cli_json_option({"--number_of_columns", "-s",
+      "Number of light-field views columns",
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("number_of_columns")) {
+          return std::to_string(conf["number_of_columns"].get<uint32_t>());
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) { this->number_of_columns_s = std::stoi(arg); },
+      this->current_hierarchy_level});
+
+  this->add_cli_json_option({"--type", "-T",
       "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
       "prediction_mode=1}",
-      [this](std::any v) {
-        std::string typed_string = std::any_cast<std::string>(v);
-        int type = std::stoi(typed_string);
-        this->type = static_cast<CompressionTypeLightField>(type);
+      [this](const json &conf) -> std::optional<std::string> {
+        if (conf.contains("type")) {
+          return conf["type"].get<std::string>();
+        }
+        return std::nullopt;
       },
-      this->current_hierarchy_level});
+      [this](std::string arg) {
+        auto mode = std::string(arg.size(), ' ');
+        std::transform(arg.begin(), arg.end(), mode.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (mode == "transform mode" || mode == "transform_mode" ||
+            mode == "mule" || mode == "0") {
+          this->type = CompressionTypeLightField::transform_mode;
+        } else if (mode == "prediction mode" || mode == "prediction_mode" ||
+                   mode == "wasp" || mode == "1") {
+          this->type = CompressionTypeLightField::prediction_mode;
+        } else {
+          //! \todo check if this is the right exception to be thown here...
+          throw JPLMConfigurationExceptions::
+              NotImplementedYetInputTypeParseException(mode);
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "transform_mode"; }}});
 }
+
+
+/**
+ * @brief      Constructs a new instance. (protected)
+ *
+ * @param[in]  argc   The count of arguments
+ * @param      argv   The arguments array
+ * @param[in]  level  The level
+ */
+JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
+    int argc, char **argv, std::size_t level)
+    : JPLMEncoderConfiguration(argc, argv, level) {
+  this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
+}
+
 
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv,
           JPLMEncoderConfigurationLightField::current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
 }
 
 
@@ -103,36 +161,6 @@ CompressionTypeLightField JPLMEncoderConfigurationLightField::get_type() const {
   return type;
 }
 
-
-void JPLMEncoderConfigurationLightField::parse_mode_type(const json &conf) {
-  if (conf.contains("type")) {
-    string t = conf["type"].get<string>();
-    std::transform(t.begin(), t.end(), t.begin(),
-        [](unsigned char c) { return std::tolower(c); });
-    if (t == "transform mode" || t == "transform_mode" || t == "mule") {
-      type = CompressionTypeLightField::transform_mode;
-    } else if (t == "prediction mode" || t == "prediction_mode" ||
-               t == "wasp") {
-      type = CompressionTypeLightField::prediction_mode;
-    } else {
-      //! \todo check if this is the right exception to be thown here...
-      throw JPLMConfigurationExceptions::
-          NotImplementedYetInputTypeParseException(t);
-    }
-  }
-}
-
-
-void JPLMEncoderConfigurationLightField::parse_json(string path) {
-  JPLMEncoderConfiguration::parse_json(path);
-  ifstream ifs(path);
-  json conf = json::parse(ifs);
-  parse_mode_type(conf);
-  parse_number_of_columns_s(conf);
-  parse_number_of_rows_t(conf);
-  parse_view_height_v(conf);
-  parse_view_width_u(conf);
-}
 
 /**
  * \todo      check if it was created with wrong params, if so, uses a default
@@ -157,36 +185,6 @@ void JPLMEncoderConfigurationLightField::check_inconsistencies() {
 CompressionTypeLightField
 JPLMEncoderConfigurationLightField::get_compression_type() const {
   return type;
-}
-
-
-void JPLMEncoderConfigurationLightField::parse_number_of_rows_t(
-    const json &conf) {
-  if (conf.contains("number_of_rows"))
-    number_of_rows_t = conf["number_of_rows"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfigurationLightField::parse_number_of_columns_s(
-    const json &conf) {
-  if (conf.contains("number_of_columns"))
-    number_of_columns_s = conf["number_of_columns"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfigurationLightField::parse_view_height_v(const json &conf) {
-  if (conf.contains("view_height") || conf.contains("image_height"))
-    view_height_v = (conf.contains("view_height"))
-                        ? conf["view_height"].get<uint32_t>()
-                        : conf["image_height"].get<uint32_t>();
-}
-
-
-void JPLMEncoderConfigurationLightField::parse_view_width_u(const json &conf) {
-  if (conf.contains("view_width") || conf.contains("image_width"))
-    view_width_u = (conf.contains("view_width"))
-                       ? conf["view_width"].get<uint32_t>()
-                       : conf["image_width"].get<uint32_t>();
 }
 
 

@@ -31,62 +31,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     CLIOption.h
+/** \file     JSONOption.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-06
+ *  \date     2020-02-12
  */
 
-#ifndef JPLM_LIB_PART2_COMMON_CLIOPTION_H
-#define JPLM_LIB_PART2_COMMON_CLIOPTION_H
+#ifndef JPLM_LIB_UTILS_BASIC_CONFIGURATION_JSON_OPTION_H
+#define JPLM_LIB_UTILS_BASIC_CONFIGURATION_JSON_OPTION_H
 
-class CLIOption {
- private:
-  std::string long_option;
-  std::string short_option;
-  std::string description;
-  bool parsed;
-  std::function<void(std::any)> action;
-  std::size_t level;
+#include "Lib/Utils/BasicConfiguration/Option.h"
+#include "nlohmann/json.hpp"
+
+class JSONOption : public virtual Option {
+ protected:
+  std::function<std::optional<std::string>(const nlohmann::json &json)>
+      parse_action;
 
  public:
-  CLIOption(const std::string &longOption, const std::string &short_option,
-      const std::string &description,
-      const std::function<void(std::any)> &action, std::size_t level)
-      : long_option(longOption), short_option(short_option),
-        description(description), action(action), level(level) {
-    this->parsed = false;
-  }
+  JSONOption(const std::string &description,
+      const std::function<std::optional<std::string>(
+          const nlohmann::json &json)> &parse_action,
+      const std::function<void(std::string)> &action, std::size_t level,
+      const DefaultParameter &default_parameter = DefaultParameter());
 
+  virtual ~JSONOption() = default;
 
-  void parse(std::string key, std::any value) {
-    if (!this->parsed && (key == long_option || key == short_option)) {
-      action(value);
-      this->parsed = true;
-    }
-  }
-
-
-  const std::string &get_long_option() const {
-    return long_option;
-  }
-
-
-  const std::string &get_short_option() const {
-    return short_option;
-  }
-
-
-  const std::string &get_description() const {
-    return description;
-  }
-
-
-  std::size_t get_level() const {
-    return level;
-  }
+  void parse(const nlohmann::json &json);
 };
 
-#endif  // JPLM_LIB_PART2_COMMON_CLIOPTION_H
+#endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_JSON_OPTION_H
