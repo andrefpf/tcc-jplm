@@ -41,9 +41,10 @@
 #ifndef JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
 #define JPLM_LIB_UTILS_ENCODER_RUN_TIME_STATISTICS_H
 
+
 #include <fstream>
 #include <iostream>
-#include "RunTimeStatistics.h"
+#include "Lib/Utils/Stats/RunTimeStatistics.h"
 
 
 class EncoderRunTimeStatistics : public RunTimeStatistics {

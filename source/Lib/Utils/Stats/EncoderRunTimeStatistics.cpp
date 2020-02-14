@@ -37,8 +37,8 @@
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-02-10
  */
+#include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
 
-#include "EncoderRunTimeStatistics.h"
 
 EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::ofstream& stream)
     : RunTimeStatistics(), ref_to_stream(stream),
