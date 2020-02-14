@@ -41,8 +41,8 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_VARIABLEPRECISIONFLOATINGPOINTCOORDINATES_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_VARIABLEPRECISIONFLOATINGPOINTCOORDINATES_H__
 
-#include <vector>
 #include <cstdint>
+#include <vector>
 #include "Lib/Utils/Stream/BinaryTools.h"
 
 /**
@@ -87,7 +87,7 @@ class VariablePrecisionFloatingPointCoordinates {
    *
    * \return     The pp.
    */
-  auto get_pp() const noexcept {
+  uint8_t get_pp() const noexcept {
     return pp;
   }
 

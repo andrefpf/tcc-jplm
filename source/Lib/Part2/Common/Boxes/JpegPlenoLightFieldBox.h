@@ -42,8 +42,8 @@
 #define JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDBOX_H__
 
 #include "Lib/Common/Boxes/GenericBox.h"
-#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldContents.h"
 
 /**
  * \ingroup DefinedBoxes

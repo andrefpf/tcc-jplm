@@ -56,6 +56,7 @@
 #include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
+
 using camera_parameter = std::variant<float, std::vector<float>>;
 
 
@@ -92,22 +93,7 @@ class CameraParametersArray {
   CameraParametersArray(const std::tuple<float, float>& baseline,
       const lightfield_dimension_type& rows,
       const lightfield_dimension_type& columns,
-      std::array<camera_parameter, 12> camera_parameters)
-      : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
-        n_views(rows * columns), fully_initialized(true),
-        camera_parameters(camera_parameters) {
-    //checking if camera parameters are correctly initialized
-    for (const auto& param : camera_parameters) {
-      if (param.index() == 1) {
-        const auto& vec = std::get<1>(param);
-        if (vec.size() != n_views) {
-          throw CameraParameterBoxExceptions::
-              InvalidCameraParameterArrayVectorSizeException(
-                  n_views, vec.size());
-        }
-      }
-    }
-  }
+      std::array<camera_parameter, 12> camera_parameters);
 
 
   /**
@@ -121,21 +107,7 @@ class CameraParametersArray {
    */
   CameraParametersArray(const std::tuple<float, float>& baseline,
       const std::size_t& n_views,
-      const std::array<camera_parameter, 12>& camera_parameters)
-      : baseline(baseline), n_views(n_views), fully_initialized(false),
-        camera_parameters(camera_parameters) {
-    //checking if camera parameters are correctly initialized
-    for (const auto& param : camera_parameters) {
-      if (param.index() == 1) {
-        const auto& vec = std::get<1>(param);
-        if (vec.size() != n_views) {
-          throw CameraParameterBoxExceptions::
-              InvalidCameraParameterArrayVectorSizeException(
-                  n_views, vec.size());
-        }
-      }
-    }
-  }
+      const std::array<camera_parameter, 12>& camera_parameters);
 
 
   /**
@@ -149,21 +121,7 @@ class CameraParametersArray {
    */
   CameraParametersArray(const std::tuple<float, float>& baseline,
       const std::size_t& n_views,
-      std::array<camera_parameter, 12>&& camera_parameters)
-      : baseline(baseline), n_views(n_views), fully_initialized(false),
-        camera_parameters(std::move(camera_parameters)) {
-    //checking if camera parameters are correctly initialized
-    for (const auto& param : camera_parameters) {
-      if (param.index() == 1) {
-        const auto& vec = std::get<1>(param);
-        if (vec.size() != n_views) {
-          throw CameraParameterBoxExceptions::
-              InvalidCameraParameterArrayVectorSizeException(
-                  n_views, vec.size());
-        }
-      }
-    }
-  }
+      std::array<camera_parameter, 12>&& camera_parameters);
 
 
   /**
@@ -176,46 +134,7 @@ class CameraParametersArray {
    */
   CameraParametersArray(const std::tuple<float, float>& baseline,
       lightfield_dimension_type rows, lightfield_dimension_type columns,
-      uint16_t ext_int)
-      : baseline(baseline), n_view_rows(rows), n_view_columns(columns),
-        n_views(rows * columns), fully_initialized(true),
-        camera_parameters(
-            {(ext_int & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
-                           : camera_parameter(0.0),
-                ((ext_int >> 1) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 2) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 3) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 4) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 5) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 6) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 7) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 8) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 9) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 10) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0),
-                ((ext_int >> 11) & 1)
-                    ? camera_parameter(std::vector<float>(n_views, 0.0))
-                    : camera_parameter(0.0)}) {
-  }
+      uint16_t ext_int);
 
 
   /**
@@ -223,15 +142,7 @@ class CameraParametersArray {
    *
    * \return     The extent int bits.
    */
-  uint16_t get_ext_int_bits() const noexcept {
-    uint16_t ext_int = 0;
-    uint8_t count = 0;
-    for (const auto& param : camera_parameters) {
-      ext_int |= (param.index() << count++);
-    }
-    assert(count == 12);
-    return ext_int;
-  }
+  uint16_t get_ext_int_bits() const noexcept;
 
 
   /**
@@ -239,18 +150,7 @@ class CameraParametersArray {
    *
    * \return     The size (in bytes)
    */
-  uint64_t size() const noexcept {
-    //initially is size in number of values (floats)
-    uint64_t size = 2;  //initialized with 2 == baselines
-    for (const auto& param : camera_parameters) {
-      if (param.index() == 1) {
-        size += std::get<1>(param).size();
-      } else {
-        size++;
-      }
-    }
-    return (size * sizeof(float)) + sizeof(uint16_t);
-  }
+  uint64_t size() const noexcept;
 
 
   /**
@@ -260,16 +160,7 @@ class CameraParametersArray {
    * \param[in]  columns  The number of view columns in the light field
    */
   void initialize_missing_row_and_column(
-      lightfield_dimension_type rows, lightfield_dimension_type columns) {
-    std::size_t n_views_from_param = rows * columns;
-    if (n_views != n_views_from_param) {
-      throw CameraParameterBoxExceptions::InvalidLazzyInitializationException(
-          rows, columns, n_views);
-    }
-    n_view_rows = rows;
-    n_view_columns = columns;
-    fully_initialized = true;
-  }
+      lightfield_dimension_type rows, lightfield_dimension_type columns);
 
 
   /**
@@ -284,30 +175,7 @@ class CameraParametersArray {
   template<CameraParameterType camera_parameter_type>
   float get(
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
-          position) const {
-    if (!fully_initialized) {
-      throw CameraParameterBoxExceptions::
-          MissingCompleteInitializationException();
-    }
-    const auto& [t, s] = position;
-    if ((t >= n_view_rows) || (s >= n_view_columns)) {
-      throw CameraParameterBoxExceptions::InvalidCoordinateException(
-          n_view_rows, n_view_columns, position);
-    }
-    const auto& value = std::get<static_cast<uint8_t>(camera_parameter_type)>(
-        camera_parameters);
-    if (std::holds_alternative<float>(value)) {
-      if constexpr (camera_parameter_type == CameraParameterType::XCC) {
-        return std::get<0>(value) + s * std::get<0>(baseline);
-      }
-      if constexpr (camera_parameter_type == CameraParameterType::YCC) {
-        return std::get<0>(value) + t * std::get<1>(baseline);
-      }
-      return std::get<0>(value);
-    }
-    auto linear_position = t * n_view_columns + s;
-    return std::get<1>(value).at(linear_position);
-  }
+          position) const;
 
 
   /**
@@ -315,9 +183,7 @@ class CameraParametersArray {
    *
    * \return     The baseline as a tuple ordered as baseline_x, baseline_y.
    */
-  std::tuple<float, float> get_baseline() const noexcept {
-    return baseline;
-  }
+  std::tuple<float, float> get_baseline() const noexcept;
 
 
   /**
@@ -325,9 +191,7 @@ class CameraParametersArray {
    *
    * \return     The baseline x.
    */
-  float get_baseline_x() const noexcept {
-    return std::get<0>(baseline);
-  }
+  float get_baseline_x() const noexcept;
 
 
   /**
@@ -335,9 +199,7 @@ class CameraParametersArray {
    *
    * \return     The baseline y.
    */
-  float get_baseline_y() const noexcept {
-    return std::get<1>(baseline);
-  }
+  float get_baseline_y() const noexcept;
 
 
   /**
@@ -347,11 +209,8 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(
-      const std::tuple<float, float>& new_baseline) noexcept {
-    baseline = new_baseline;
-    return baseline;
-  }
+  void set_baseline(
+      const std::tuple<float, float>& new_baseline) noexcept;
 
 
   /**
@@ -361,28 +220,39 @@ class CameraParametersArray {
    *
    * \return     Returns the newly set baseline for further use
    */
-  std::tuple<float, float> set_baseline(
-      std::tuple<float, float>&& new_baseline) noexcept {
-    baseline = std::move(new_baseline);
-    return baseline;
-  }
+  void set_baseline(
+      std::tuple<float, float>&& new_baseline) noexcept;
 
 
-  std::vector<std::byte> get_bytes() const noexcept {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-    //bytes.push_back(this->get_ext_int_bits())
-    BinaryTools::append_big_endian_bytes(bytes, this->get_ext_int_bits());
-    BinaryTools::append_big_endian_bytes(bytes, this->get_baseline());
-    for (const auto& param_variant : camera_parameters) {
-      std::visit(
-          [&bytes](const auto& param) {
-            BinaryTools::append_big_endian_bytes(bytes, param);
-          },
-          param_variant);
-    }
-    return bytes;
-  }
+  std::vector<std::byte> get_bytes() const noexcept;
 };
 
+
+template<CameraParameterType camera_parameter_type>
+float CameraParametersArray::get(
+    const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
+        position) const {
+  if (!fully_initialized) {
+    throw CameraParameterBoxExceptions::
+        MissingCompleteInitializationException();
+  }
+  const auto& [t, s] = position;
+  if ((t >= n_view_rows) || (s >= n_view_columns)) {
+    throw CameraParameterBoxExceptions::InvalidCoordinateException(
+        n_view_rows, n_view_columns, position);
+  }
+  const auto& value =
+      std::get<static_cast<uint8_t>(camera_parameter_type)>(camera_parameters);
+  if (std::holds_alternative<float>(value)) {
+    if constexpr (camera_parameter_type == CameraParameterType::XCC) {
+      return std::get<0>(value) + s * std::get<0>(baseline);
+    }
+    if constexpr (camera_parameter_type == CameraParameterType::YCC) {
+      return std::get<0>(value) + t * std::get<1>(baseline);
+    }
+    return std::get<0>(value);
+  }
+  auto linear_position = t * n_view_columns + s;
+  return std::get<1>(value).at(linear_position);
+}
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_CAMERAPARAMETERSARRAY_H__ */

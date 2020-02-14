@@ -54,7 +54,7 @@ double get_maximum_absolute_error(const std::vector<T>& errors) {
   double max = 0.0;
   for (auto v : errors) {
     auto diff = std::abs(static_cast<double>(v));
-    if(diff > max) {
+    if (diff > max) {
       max = diff;
     }
   }

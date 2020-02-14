@@ -45,6 +45,7 @@
 #include <string>
 #include <tuple>
 
+
 namespace CameraParameterBoxExceptions {
 class InvalidCameraParameterArrayVectorSizeException : public std::exception {
  protected:
@@ -60,7 +61,7 @@ class InvalidCameraParameterArrayVectorSizeException : public std::exception {
                 std::string(" were available. ")) {
   }
 
-  
+
   const char* what() const noexcept override {
     return message.c_str();
   }
@@ -124,22 +125,24 @@ class InvalidCoordinateException : public std::exception {
     return message.c_str();
   }
 };
-
 }  // namespace CameraParameterBoxExceptions
 
 
 namespace JpegPlenoLightFieldBoxExceptions {
-  class UninitializedContigousCodestreamException : public std::exception {
-  protected: 
-    std::string message;
-public:
-    UninitializedContigousCodestreamException() : message("Trying to access an uninitialized contigous codestream") {}
+class UninitializedContigousCodestreamException : public std::exception {
+ protected:
+  std::string message;
 
-    const char* what() const noexcept override {
-      return message.c_str();
+ public:
+  UninitializedContigousCodestreamException()
+      : message("Trying to access an uninitialized contigous codestream") {
   }
-  };
 
-}
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
+}  // namespace JpegPlenoLightFieldBoxExceptions
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_COMMONEXCEPTIONS_H__ */

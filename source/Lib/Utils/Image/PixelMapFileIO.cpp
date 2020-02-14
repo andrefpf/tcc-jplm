@@ -165,7 +165,6 @@ std::size_t get_next_size(std::ifstream& istream) {
  */
 std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     const std::string& filename) {
-
   ImageFile::check(filename);
 
   std::ifstream file(filename, std::ios::in);

@@ -47,6 +47,7 @@
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 
+
 template<typename T>
 class ViewIOPolicy {
  protected:
@@ -77,7 +78,8 @@ class ViewIOPolicy {
   }
 
 
-  ViewIOPolicy& set_overwrite_image_when_save_if_file_already_exists(bool overwrite) {
+  ViewIOPolicy& set_overwrite_image_when_save_if_file_already_exists(
+      bool overwrite) {
     overwrite_image_when_save_if_file_already_exists = overwrite;
     return *this;
   }
@@ -118,7 +120,7 @@ class ViewIOPolicy {
 
 
   void release_image_from_view(View<T>& view) {
-    if(save_image_when_release) {
+    if (save_image_when_release) {
       this->save_image(view);
     }
     auto view_image = view.release_image();

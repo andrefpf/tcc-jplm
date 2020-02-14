@@ -56,14 +56,18 @@ class JPLFileParser {
   std::unique_ptr<FileTypeBox> temp_file_type;
   std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
 
+
   uint64_t decode_boxes();
 
+
   std::unique_ptr<JpegPlenoSignatureBox> get_signature_box();
+
 
   std::unique_ptr<FileTypeBox> get_file_type_box();
 
  public:
   JPLFileParser(const std::string& filename);
+
 
   virtual ~JPLFileParser();
 };

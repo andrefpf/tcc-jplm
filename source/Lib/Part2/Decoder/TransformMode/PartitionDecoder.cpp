@@ -41,7 +41,7 @@
 #include "PartitionDecoder.h"
 
 
-Block4D PartitionDecoder::decode_partition(uint16_t channel, 
+Block4D PartitionDecoder::decode_partition(uint16_t channel,
     Hierarchical4DDecoder &hierarchical_decoder,
     const LightfieldDimension<uint32_t> &size) {
   int position[] = {0, 0, 0, 0};
@@ -61,11 +61,12 @@ Block4D PartitionDecoder::decode_partition(uint16_t channel,
 }
 
 
-void PartitionDecoder::decode_partition(uint16_t channel, int *position, uint32_t *length,
-    Hierarchical4DDecoder &hierarchical_decoder) {
+void PartitionDecoder::decode_partition(uint16_t channel, int *position,
+    uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
   switch (hierarchical_decoder.decode_partition_flag()) {
     case PartitionFlag::transform: {
-      return decode_transform_partition(channel, position, length, hierarchical_decoder);
+      return decode_transform_partition(
+          channel, position, length, hierarchical_decoder);
     }
     case PartitionFlag::spatialSplit: {
       int new_position[] = {position[0], position[1], position[2], position[3]};
@@ -124,15 +125,17 @@ void inverse_scale_block(Block4D &transformed_block, double scaling_factor) {
 }
 
 
-void PartitionDecoder::decode_transform_partition(uint16_t channel, int *position,
-    uint32_t *length, Hierarchical4DDecoder &hierarchical_decoder) {
+void PartitionDecoder::decode_transform_partition(uint16_t channel,
+    int *position, uint32_t *length,
+    Hierarchical4DDecoder &hierarchical_decoder) {
   hierarchical_decoder.mSubbandLF.set_dimension(
       length[0], length[1], length[2], length[3]);
   hierarchical_decoder.mSubbandLF.fill_with_zeros();
   hierarchical_decoder.decode_block(0, 0, 0, 0, length[0], length[1], length[2],
       length[3], hierarchical_decoder.get_superior_bit_plane());
 
-  inverse_scale_block(hierarchical_decoder.mSubbandLF, scaling_factors[channel]);
+  inverse_scale_block(
+      hierarchical_decoder.mSubbandLF, scaling_factors[channel]);
 
   DCT4DBlock dctblock(std::move(
       hierarchical_decoder
@@ -142,4 +145,16 @@ void PartitionDecoder::decode_transform_partition(uint16_t channel, int *positio
 
   mPartitionData.copy_sub_block_from(hierarchical_decoder.mSubbandLF, 0, 0, 0,
       0, position[0], position[1], position[2], position[3]);
+}
+
+
+void PartitionDecoder::set_colour_component_scaling_factor(
+    const std::size_t colour_component_index, double scaling_factor) {
+  this->scaling_factors[colour_component_index] = scaling_factor;
+}
+
+
+void PartitionDecoder::set_number_of_colour_components(
+    uint16_t number_of_colour_components) {
+  this->scaling_factors = std::vector<double>(number_of_colour_components, 1.0);
 }

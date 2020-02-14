@@ -95,13 +95,12 @@ double get_peak_signal_to_noise_ratio(const ImageChannel<T>& original_channel,
 template<typename T>
 double get_maximum_absolute_error(const ImageChannel<T>& original_channel,
     const ImageChannel<T>& encoded_channel) {
-
   auto number_of_pixels = original_channel.get_number_of_pixels();
 
   auto differences_image = original_channel - encoded_channel;
   auto error_vector = differences_image.as_raster_vector();
-  return Metrics::get_maximum_absolute_error<typename std::make_signed<T>::type>(
-       error_vector);
+  return Metrics::get_maximum_absolute_error<
+      typename std::make_signed<T>::type>(error_vector);
 
   // std::cout << std::dec;
   // for(auto i=decltype(number_of_pixels){0};i<number_of_pixels;++i) {
@@ -116,7 +115,6 @@ double get_maximum_absolute_error(const ImageChannel<T>& original_channel,
   // }
 
   // return maximum_error;
-
 }
 
 }  // namespace ImageChannelUtils

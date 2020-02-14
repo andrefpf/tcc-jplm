@@ -41,20 +41,20 @@
 #ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DBLOCK_H__
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DBLOCK_H__
 
-#include "Lib/Part2/Common/TransformMode/Transformed4DBlock.h"
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
+#include "Lib/Part2/Common/TransformMode/Transformed4DBlock.h"
 
 
-class DCT4DBlock : public Transformed4DBlock
-{
-public:
-	DCT4DBlock(const Block4D& block);
-	DCT4DBlock(const block4DElementType* transformed_values, int u, int v, int s, int t) : Transformed4DBlock(transformed_values, u, v, s, t) {};
-	DCT4DBlock(Block4D&& source) : Transformed4DBlock(std::move(source)) {};
-	~DCT4DBlock() = default;
+class DCT4DBlock : public Transformed4DBlock {
+ public:
+  DCT4DBlock(const Block4D& block);
+  DCT4DBlock(
+      const block4DElementType* transformed_values, int u, int v, int s, int t)
+      : Transformed4DBlock(transformed_values, u, v, s, t){};
+  DCT4DBlock(Block4D&& source) : Transformed4DBlock(std::move(source)){};
+  ~DCT4DBlock() = default;
 
-	Block4D inverse();
-	
+  Block4D inverse();
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DBLOCK_H__ */

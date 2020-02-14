@@ -42,97 +42,119 @@
 #include "DCT4DCoefficientsManager.h"
 
 
-void DCT4DCoefficientsManager::set_transform_max_sizes(int max_size_u, int max_size_v, int max_size_s, int max_size_t) {
-	size_to_transform_weights_map.clear();
-	max_sizes[static_cast<uint32_t>(LightFieldDimensions::U)]=max_size_u;
-	max_sizes[static_cast<uint32_t>(LightFieldDimensions::V)]=max_size_v;
-	max_sizes[static_cast<uint32_t>(LightFieldDimensions::S)]=max_size_s;
-	max_sizes[static_cast<uint32_t>(LightFieldDimensions::T)]=max_size_t;
+void DCT4DCoefficientsManager::set_transform_max_sizes(
+    int max_size_u, int max_size_v, int max_size_s, int max_size_t) {
+  size_to_transform_weights_map.clear();
+  max_sizes[static_cast<uint32_t>(LightFieldDimensions::U)] = max_size_u;
+  max_sizes[static_cast<uint32_t>(LightFieldDimensions::V)] = max_size_v;
+  max_sizes[static_cast<uint32_t>(LightFieldDimensions::S)] = max_size_s;
+  max_sizes[static_cast<uint32_t>(LightFieldDimensions::T)] = max_size_t;
 }
 
-void DCT4DCoefficientsManager::set_transform_gains(double transform_gain_u, double transform_gain_v, double transform_gain_s, double transform_gain_t) {
-	size_to_transform_weights_map.clear();//all data that is there is now invalid
-	gains[static_cast<uint32_t>(LightFieldDimensions::U)]=transform_gain_u;
-	gains[static_cast<uint32_t>(LightFieldDimensions::V)]=transform_gain_v;
-	gains[static_cast<uint32_t>(LightFieldDimensions::S)]=transform_gain_s;
-	gains[static_cast<uint32_t>(LightFieldDimensions::T)]=transform_gain_t;
+
+void DCT4DCoefficientsManager::set_transform_gains(double transform_gain_u,
+    double transform_gain_v, double transform_gain_s, double transform_gain_t) {
+  size_to_transform_weights_map
+      .clear();  //all data that is there is now invalid
+  gains[static_cast<uint32_t>(LightFieldDimensions::U)] = transform_gain_u;
+  gains[static_cast<uint32_t>(LightFieldDimensions::V)] = transform_gain_v;
+  gains[static_cast<uint32_t>(LightFieldDimensions::S)] = transform_gain_s;
+  gains[static_cast<uint32_t>(LightFieldDimensions::T)] = transform_gain_t;
 }
 
-double DCT4DCoefficientsManager::compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimensions> size_dimension_pair) {
-	int size  = std::get<0>(size_dimension_pair);
-	LightFieldDimensions dimension_name = std::get<1>(size_dimension_pair);
 
-	double transform_gain =gains[static_cast<uint32_t>(dimension_name)]*sqrt(max_sizes[static_cast<uint32_t>(dimension_name)]/static_cast<double>(size));
-	//used to test correctness of corner block shrinking: 
-	//double transform_gain =gains[dimension_name]*sqrt(2.0/static_cast<double>(size));
+double DCT4DCoefficientsManager::compute_weight_for_size_in_dimension(
+    std::pair<int, LightFieldDimensions> size_dimension_pair) {
+  int size = std::get<0>(size_dimension_pair);
+  LightFieldDimensions dimension_name = std::get<1>(size_dimension_pair);
 
-	size_to_transform_weights_map.insert(std::make_pair(size_dimension_pair, transform_gain));
+  double transform_gain =
+      gains[static_cast<uint32_t>(dimension_name)] *
+      sqrt(max_sizes[static_cast<uint32_t>(dimension_name)] /
+           static_cast<double>(size));
+  //used to test correctness of corner block shrinking:
+  //double transform_gain =gains[dimension_name]*sqrt(2.0/static_cast<double>(size));
 
-	return transform_gain;
+  size_to_transform_weights_map.insert(
+      std::make_pair(size_dimension_pair, transform_gain));
+
+  return transform_gain;
 }
 
-double DCT4DCoefficientsManager::get_weight_for_size_in_dimension(int size, LightFieldDimensions dimension_name) {
-	auto key = std::make_pair(size, dimension_name);
-	auto it = size_to_transform_weights_map.find(key);
-	if (it != size_to_transform_weights_map.end()) { 
-		return it->second;
-	}
-	return compute_weight_for_size_in_dimension(key);
+
+double DCT4DCoefficientsManager::get_weight_for_size_in_dimension(
+    int size, LightFieldDimensions dimension_name) {
+  auto key = std::make_pair(size, dimension_name);
+  auto it = size_to_transform_weights_map.find(key);
+  if (it != size_to_transform_weights_map.end()) {
+    return it->second;
+  }
+  return compute_weight_for_size_in_dimension(key);
 }
 
 
 //in theory the IDCT can be computed using the same coefficients, but transposed and scaled..
-const double* DCT4DCoefficientsManager::generate_coeffients_for_size(std::pair<int, int> size) { 
-// in a multi thread execution, this is not thread safe... perhaps this can be called using std::call_once
-	int columns  = std::get<0>(size);
-	int rows = std::get<1>(size);
+const double* DCT4DCoefficientsManager::generate_coeffients_for_size(
+    std::pair<int, int> size) {
+  // in a multi thread execution, this is not thread safe... perhaps this can be called using std::call_once
+  int columns = std::get<0>(size);
+  int rows = std::get<1>(size);
 
-	auto coefficients = std::make_unique<double[]>(columns*rows);
-	double* coefficients_ptr=coefficients.get();
+  auto coefficients = std::make_unique<double[]>(columns * rows);
+  double* coefficients_ptr = coefficients.get();
 
-	if (forward){
-		for(auto j = 0; j < columns; ++j) { //i=0
-			*coefficients_ptr=1.0;
-			coefficients_ptr++;
-		}
-		for(auto i = 1; i < rows; ++i) {
-			for(auto j = 0; j < columns; ++j) {
-				*coefficients_ptr=sqrt(2.0)*cos(dctPi*(i*(2.0*j+1.0))/(2.0*rows));
-				coefficients_ptr++;
-			}
-		}
-	} else {//inverse
-		for(auto j = 0; j < columns; ++j) {
-			*coefficients_ptr=1.0/static_cast<double>(columns);
-			coefficients_ptr++;
-			for(auto i = 1; i < rows; ++i) {
-				*coefficients_ptr=sqrt(2.0)*cos(dctPi*(i*(2.0*j+1.0))/(2.0*rows))/static_cast<double>(columns);
-				coefficients_ptr++;
-			}
-		}
-	}
+  if (forward) {
+    for (auto j = 0; j < columns; ++j) {  //i=0
+      *coefficients_ptr = 1.0;
+      coefficients_ptr++;
+    }
+    for (auto i = 1; i < rows; ++i) {
+      for (auto j = 0; j < columns; ++j) {
+        *coefficients_ptr =
+            sqrt(2.0) * cos(dctPi * (i * (2.0 * j + 1.0)) / (2.0 * rows));
+        coefficients_ptr++;
+      }
+    }
+  } else {  //inverse
+    for (auto j = 0; j < columns; ++j) {
+      *coefficients_ptr = 1.0 / static_cast<double>(columns);
+      coefficients_ptr++;
+      for (auto i = 1; i < rows; ++i) {
+        *coefficients_ptr = sqrt(2.0) *
+                            cos(dctPi * (i * (2.0 * j + 1.0)) / (2.0 * rows)) /
+                            static_cast<double>(columns);
+        coefficients_ptr++;
+      }
+    }
+  }
 
-	coefficients_ptr=coefficients.get(); //this is required because the move changes the ownership and sets the uniqueptr to null
-	size_to_coefficients_map.insert(std::make_pair(size, std::move(coefficients)));
+  coefficients_ptr =
+      coefficients
+          .get();  //this is required because the move changes the ownership and sets the uniqueptr to null
+  size_to_coefficients_map.insert(
+      std::make_pair(size, std::move(coefficients)));
 
-	return coefficients_ptr;
+  return coefficients_ptr;
 }
 
 
-const double* DCT4DCoefficientsManager::get_coefficients_for_size(int width, int height) {
-	auto key = std::make_pair(width, height);
-	auto it = size_to_coefficients_map.find(key);
-	if (it != size_to_coefficients_map.end()) { 
-		return it->second.get();
-	}
-	return generate_coeffients_for_size(key);
+const double* DCT4DCoefficientsManager::get_coefficients_for_size(
+    int width, int height) {
+  auto key = std::make_pair(width, height);
+  auto it = size_to_coefficients_map.find(key);
+  if (it != size_to_coefficients_map.end()) {
+    return it->second.get();
+  }
+  return generate_coeffients_for_size(key);
 }
+
 
 const double* DCT4DCoefficientsManager::get_coefficients_for_size(int size) {
-	return get_coefficients_for_size(size, size);
+  return get_coefficients_for_size(size, size);
 }
 
+
 DCT4DCoefficientsManager& DCT4DCoefficientsManager::get_instance(bool forward) {
-	static DCT4DCoefficientsManager instance(forward);
-	return instance;
+  static DCT4DCoefficientsManager instance(forward);
+  return instance;
 }

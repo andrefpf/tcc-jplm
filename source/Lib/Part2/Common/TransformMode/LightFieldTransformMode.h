@@ -66,117 +66,127 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
 
   Block4D get_block_4D_from(const int channel,
       const LightfieldCoordinate<uint32_t>& coordinate_4d,
-      const LightfieldDimension<uint32_t>& size) {
-    auto block = Block4D(size);
-    const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
-    const auto [t_max, s_max, v_max, u_max] = coordinate_4d + size;
-    auto c = 0;
-    bool has_invalid_coordinates = false;
-    for (auto t = t_initial; t < t_max; ++t) {
-      for (auto s = s_initial; s < s_max; ++s) {
-        //! \todo Check this for errors
-        if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
-          const auto& image_channel =
-              this->get_image_at({t, s}).get_channel(channel);
-          for (auto v = v_initial; v < v_max; ++v) {
-            for (auto u = u_initial; u < u_max; ++u) {
-              // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
-              if (this->is_coordinate_valid({t, s, v, u})) {
-                block.mPixelData[c++] = image_channel[v][u];
-              } else {
-                has_invalid_coordinates = true;
-                // ++c;
-                block.mPixelData[c++] = 0;
-              }
-            }
-          }
-        } else {
-          for (auto v = v_initial; v < v_max; ++v) {
-            for (auto u = u_initial; u < u_max; ++u) {
+      const LightfieldDimension<uint32_t>& size);
+
+
+  void set_block_4D_at(const Block4D& block_4d, const int channel,
+      const LightfieldCoordinate<uint32_t>& coordinate_4d);
+};
+
+
+template<typename T>
+Block4D LightFieldTransformMode<T>::get_block_4D_from(const int channel,
+    const LightfieldCoordinate<uint32_t>& coordinate_4d,
+    const LightfieldDimension<uint32_t>& size) {
+  auto block = Block4D(size);
+  const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
+  const auto [t_max, s_max, v_max, u_max] = coordinate_4d + size;
+  auto c = 0;
+  bool has_invalid_coordinates = false;
+  for (auto t = t_initial; t < t_max; ++t) {
+    for (auto s = s_initial; s < s_max; ++s) {
+      //! \todo Check this for errors
+      if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
+        const auto& image_channel =
+            this->get_image_at({t, s}).get_channel(channel);
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            // std::cout << t << ", " << s << ", " << v << ", " << u << std::endl;
+            if (this->is_coordinate_valid({t, s, v, u})) {
+              block.mPixelData[c++] = image_channel[v][u];
+            } else {
               has_invalid_coordinates = true;
               // ++c;
               block.mPixelData[c++] = 0;
             }
           }
         }
-      }
-    }
-
-
-    if (has_invalid_coordinates) {
-      auto last_valid_t = 0;
-      auto t = t_initial;
-      while (this->is_coordinate_valid({t, s_initial, v_initial, u_initial}) &&
-             t < t_max) {
-        ++t;
-        ++last_valid_t;
-      }
-
-      auto last_valid_s = 0;
-      auto s = s_initial;
-      while (this->is_coordinate_valid({t_initial, s, v_initial, u_initial}) &&
-             s < s_max) {
-        ++s;
-        ++last_valid_s;
-      }
-
-      auto last_valid_v = 0;
-      auto v = v_initial;
-      while (this->is_coordinate_valid({t_initial, s_initial, v, u_initial}) &&
-             v < v_max) {
-        ++v;
-        ++last_valid_v;
-      }
-
-      auto last_valid_u = 0;
-      auto u = u_initial;
-      while (this->is_coordinate_valid({t_initial, s_initial, v_initial, u}) &&
-             u < u_max) {
-        ++u;
-        ++last_valid_u;
-      }
-#ifdef _WIN32
-      LightfieldCoordinate<int> c(
-          last_valid_t, last_valid_s, last_valid_v, last_valid_u);
-      block.extend(c);
-#else
-      block.extend({last_valid_t, last_valid_s, last_valid_v, last_valid_u});
-#endif
-    }
-
-    return block;
-  }
-
-
-  void set_block_4D_at(const Block4D& block_4d, const int channel,
-      const LightfieldCoordinate<uint32_t>& coordinate_4d) {
-    const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
-    const auto [t_max, s_max, v_max, u_max] =
-        coordinate_4d + block_4d.get_dimension();
-    auto c = 0;
-    for (auto t = t_initial; t < t_max; ++t) {
-      for (auto s = s_initial; s < s_max; ++s) {
-        if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
-          auto& image_channel = this->get_image_at({t, s}).get_channel(channel);
-          for (auto v = v_initial; v < v_max; ++v) {
-            for (auto u = u_initial; u < u_max; ++u) {
-              if (this->is_coordinate_valid({t, s, v, u})) {
-                image_channel[v][u] = block_4d.mPixelData[c++];
-              } else {
-                ++c;
-              }
-            }
-          }
-        } else {
-          for (auto v = v_initial; v < v_max; ++v) {
-            for (auto u = u_initial; u < u_max; ++u) {
-              ++c;
-            }
+      } else {
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            has_invalid_coordinates = true;
+            // ++c;
+            block.mPixelData[c++] = 0;
           }
         }
       }
     }
   }
-};
+
+
+  if (has_invalid_coordinates) {
+    uint32_t last_valid_t = 0;
+    auto t = t_initial;
+    while (this->is_coordinate_valid({t, s_initial, v_initial, u_initial}) &&
+           t < t_max) {
+      ++t;
+      ++last_valid_t;
+    }
+
+    uint32_t last_valid_s = 0;
+    auto s = s_initial;
+    while (this->is_coordinate_valid({t_initial, s, v_initial, u_initial}) &&
+           s < s_max) {
+      ++s;
+      ++last_valid_s;
+    }
+
+    uint32_t last_valid_v = 0;
+    auto v = v_initial;
+    while (this->is_coordinate_valid({t_initial, s_initial, v, u_initial}) &&
+           v < v_max) {
+      ++v;
+      ++last_valid_v;
+    }
+
+    uint32_t last_valid_u = 0;
+    auto u = u_initial;
+    while (this->is_coordinate_valid({t_initial, s_initial, v_initial, u}) &&
+           u < u_max) {
+      ++u;
+      ++last_valid_u;
+    }
+#ifdef _WIN32
+    LightfieldCoordinate<int> c(
+        last_valid_t, last_valid_s, last_valid_v, last_valid_u);
+    block.extend(c);
+#else
+    block.extend({last_valid_t, last_valid_s, last_valid_v, last_valid_u});
+#endif
+  }
+
+  return block;
+}
+
+template<typename T>
+void LightFieldTransformMode<T>::set_block_4D_at(const Block4D& block_4d,
+    const int channel, const LightfieldCoordinate<uint32_t>& coordinate_4d) {
+  const auto& [t_initial, s_initial, v_initial, u_initial] = coordinate_4d;
+  const auto [t_max, s_max, v_max, u_max] =
+      coordinate_4d + block_4d.get_dimension();
+  auto c = 0;
+  for (auto t = t_initial; t < t_max; ++t) {
+    for (auto s = s_initial; s < s_max; ++s) {
+      if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
+        auto& image_channel = this->get_image_at({t, s}).get_channel(channel);
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            if (this->is_coordinate_valid({t, s, v, u})) {
+              image_channel[v][u] = block_4d.mPixelData[c++];
+            } else {
+              ++c;
+            }
+          }
+        }
+      } else {
+        for (auto v = v_initial; v < v_max; ++v) {
+          for (auto u = u_initial; u < u_max; ++u) {
+            ++c;
+          }
+        }
+      }
+    }
+  }
+}
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDTRANSFORMMODE_H__ */

@@ -45,34 +45,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits>
-#include <cstdint>
-#include <iomanip> // for leading zeros in hex cout
-#include <iostream>
 #include <cstddef>
+#include <cstdint>
+#include <iomanip>  // for leading zeros in hex cout
+#include <iostream>
+#include <limits>
 
 
 class ABACCodec {
  protected:
-  static constexpr uint16_t MAXINT = 0xffff;//std::numeric_limits<uint32_t>::max();
+  static constexpr uint16_t MAXINT =
+      0xffff;  //std::numeric_limits<uint32_t>::max();
   static constexpr uint16_t RESET_LSB_MASK = 0xfffe;
   static constexpr uint16_t SET_LSB_MASK = 0x0001;
   static constexpr uint16_t INTERVAL_PRECISION = 16;
   static constexpr uint16_t MSB_MASK = 0x8000;
   static constexpr uint16_t SECOND_MSB_MASK = 0x4000;
-  static constexpr uint16_t TWO_MSBS_MASK = MSB_MASK+SECOND_MSB_MASK;
+  static constexpr uint16_t TWO_MSBS_MASK = MSB_MASK + SECOND_MSB_MASK;
   uint16_t mLow; /*!< interval lower limit */
   uint16_t mHigh; /*!< interval upper limit */
   int number_of_bits_in_byte; /*!< number of valid bits in buffer */
   // unsigned char mBitBuffer; /*!< bit-readable buffer */
-  std::byte byte_buffer; 
+  std::byte byte_buffer;
   FILE *file_ptr = nullptr; /*!< pointer to file */
  public:
-  ABACCodec() : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0), byte_buffer(std::byte{0}) {
+  ABACCodec()
+      : mLow(0), mHigh(MAXINT), number_of_bits_in_byte(0),
+        byte_buffer(std::byte{0}) {
   }
 
   void print_byte(std::byte byte) const {
-    std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex << std::to_integer<uint16_t>(byte) << std::dec << std::endl;
+    std::cout << "0x" << std::setfill('0') << std::setw(2) << std::hex
+              << std::to_integer<uint16_t>(byte) << std::dec << std::endl;
   }
 
   virtual ~ABACCodec() = default;

@@ -51,6 +51,8 @@
  * \note Used only in 4D Prediction Mode
  * \warning Is this the Jpeg Pleno LF residual view description box??
  */
-using JpegPlenoLightFieldViewPredictionResidualDescriptionBox = GenericBox<0x6c667265, JpegPlenoLightFieldViewPredictionResidualDescriptionContents>;
+using JpegPlenoLightFieldViewPredictionResidualDescriptionBox =
+    GenericBox<0x6c667265,
+        JpegPlenoLightFieldViewPredictionResidualDescriptionContents>;
 
 #endif /* end of include guard: JPEGPLENOLIGHTFIELDVIEWPREDICTIONRESIDUALDESCRIPTIONBOX_H__ */

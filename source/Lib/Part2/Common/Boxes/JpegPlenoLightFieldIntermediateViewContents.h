@@ -44,12 +44,9 @@
 #include "Lib/Common/Boxes/SuperBoxDBox.h"
 
 class JpegPlenoLightFieldIntermediateViewContents : public SuperBoxDBox {
-protected:
-
-public:
-	JpegPlenoLightFieldIntermediateViewContents() = default;
-	~JpegPlenoLightFieldIntermediateViewContents() = default;
-	
+ public:
+  JpegPlenoLightFieldIntermediateViewContents() = default;
+  ~JpegPlenoLightFieldIntermediateViewContents() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWCONTENTS_H__ */

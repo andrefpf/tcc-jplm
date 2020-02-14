@@ -42,43 +42,47 @@
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DCOEFFICIENTSMANAGER_H__
 
 #include <cmath>
-#include <memory>
 #include <map>
+#include <memory>
 #include <tuple>
-
 #include "Lib/Part2/Common/Lightfield.h"
 
-class DCT4DCoefficientsManager
-{
-private:
-	const double dctPi = 3.141592653589793;
-	//static constexpr double dctPi = std::atan(1.0)*4.0;
-	//static constexpr auto dctPi = std::acos(-1);
+class DCT4DCoefficientsManager {
+ private:
+  const double dctPi = 3.141592653589793;
+  //static constexpr double dctPi = std::atan(1.0)*4.0;
+  //static constexpr auto dctPi = std::acos(-1);
 
-	bool forward;
-	std::map<std::pair<int, int>, std::unique_ptr<double[]> > size_to_coefficients_map;
-	
-	std::map<std::pair<int, LightFieldDimensions>, double> size_to_transform_weights_map;
-	int max_sizes[4];
-	double gains[4];
+  bool forward;
+  std::map<std::pair<int, int>, std::unique_ptr<double[]>>
+      size_to_coefficients_map;
+
+  std::map<std::pair<int, LightFieldDimensions>, double>
+      size_to_transform_weights_map;
+  int max_sizes[4];
+  double gains[4];
 
 
-	const double* generate_coeffients_for_size(std::pair<int, int> size);
-	double compute_weight_for_size_in_dimension(std::pair<int, LightFieldDimensions> size_dimension_pair);
-	DCT4DCoefficientsManager(bool is_forward) : forward(is_forward) {};
-	~DCT4DCoefficientsManager()= default;
-	DCT4DCoefficientsManager(const DCT4DCoefficientsManager&)= delete;
-	DCT4DCoefficientsManager& operator=(const DCT4DCoefficientsManager&)= delete;
+  const double* generate_coeffients_for_size(std::pair<int, int> size);
+  double compute_weight_for_size_in_dimension(
+      std::pair<int, LightFieldDimensions> size_dimension_pair);
+  DCT4DCoefficientsManager(bool is_forward) : forward(is_forward){};
+  ~DCT4DCoefficientsManager() = default;
+  DCT4DCoefficientsManager(const DCT4DCoefficientsManager&) = delete;
+  DCT4DCoefficientsManager& operator=(const DCT4DCoefficientsManager&) = delete;
 
-public:
-	static DCT4DCoefficientsManager& get_instance(bool forward);
-	
-	const double* get_coefficients_for_size(int width, int height); //returns const double* to ensure that the returned data will not be modified
-	const double* get_coefficients_for_size(int size);
-	void set_transform_max_sizes(int max_size_u, int max_size_v, int max_size_s, int max_size_t);
-	void set_transform_gains(double transform_gain_u, double transform_gain_v, double transform_gain_s, double transform_gain_t);
-	double get_weight_for_size_in_dimension(int size, LightFieldDimensions dimension_name); //
+ public:
+  static DCT4DCoefficientsManager& get_instance(bool forward);
 
+  const double* get_coefficients_for_size(int width,
+      int height);  //returns const double* to ensure that the returned data will not be modified
+  const double* get_coefficients_for_size(int size);
+  void set_transform_max_sizes(
+      int max_size_u, int max_size_v, int max_size_s, int max_size_t);
+  void set_transform_gains(double transform_gain_u, double transform_gain_v,
+      double transform_gain_s, double transform_gain_t);
+  double get_weight_for_size_in_dimension(
+      int size, LightFieldDimensions dimension_name);  //
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DCOEFFICIENTSMANAGER_H__ */

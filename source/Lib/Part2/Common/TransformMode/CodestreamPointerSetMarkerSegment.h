@@ -42,7 +42,6 @@
 #define CODESTREAMPOINTERSETMARKERSEGMENT_H__
 
 
-
 #include <cmath>
 #include <cstdint>
 #include <variant>
@@ -52,11 +51,10 @@
 #include "Lib/Utils/Stream/BinaryTools.h"
 
 
-
 class CodestreamPointerSetMarkerSegment {
  protected:
   static constexpr auto marker_code = Marker::PNT;
-  
+
   std::vector<std::variant<uint32_t, uint64_t>> PPnt;
 
  public:
@@ -76,15 +74,10 @@ class CodestreamPointerSetMarkerSegment {
   ~CodestreamPointerSetMarkerSegment() = default;
 
 
-  auto get_number_of_pointers() {
-  	return PPnt.size();
-  }
+  std::size_t get_number_of_pointers();
 
 
-  auto get_pointer_at(std::size_t i) {
-  	return PPnt.at(i);
-  }
-
+  std::variant<uint32_t, uint64_t> get_pointer_at(std::size_t i);
 };
 
 

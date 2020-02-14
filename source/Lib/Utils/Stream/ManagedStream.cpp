@@ -135,15 +135,44 @@ ManagedStream& ManagedStream::seek(
 }
 
 
-uint64_t ManagedStream::tell() const noexcept {
+std::size_t ManagedStream::tell() const noexcept {
   return get_current_pos();
 }
 
 
-uint64_t ManagedStream::get_current_pos() const noexcept {
+std::size_t ManagedStream::get_current_pos() const noexcept {
   return ref_to_stream.tellg();
 }
 
-uint64_t ManagedStream::get_length() const noexcept {
+std::size_t ManagedStream::get_length() const noexcept {
   return final_pos - initial_pos;
+}
+
+std::size_t ManagedStream::get_initial_pos() const noexcept {
+  return initial_pos;
+}
+
+std::size_t ManagedStream::get_final_pos() const noexcept {
+  return final_pos;
+}
+
+void ManagedStream::dynamic_assert_access_bounds(const uint64_t n) const {
+  auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
+  if ((current_position < initial_pos) ||
+      (current_position + n > final_pos)) {
+    throw ManagedStreamExceptions::OutOfBoundsException(
+        n, initial_pos, final_pos, current_position);
+  }
+}
+
+std::vector<std::byte> ManagedStream::get_n_bytes(uint64_t n) {
+  dynamic_assert_access_bounds(n);
+  std::vector<std::byte> temp_vector(n);
+  ref_to_stream.read(reinterpret_cast<char*>(temp_vector.data()), n);
+  return temp_vector;
+}
+
+
+std::byte ManagedStream::get_byte() {
+  return get_bytes<1>()[0];
 }

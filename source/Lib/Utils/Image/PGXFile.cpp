@@ -38,5 +38,35 @@
  *  \date     2019-12-05
  */
 
-#include "PGXFile.h"
+#include "Lib/Utils/Image/PGXFile.h"
+
+/* \todo improve this functions, make it clearer, split into more functions */
+bool PGXFile::is_different_endianess() const {
+  if (this->endianess == PGXEndianess::PGX_ML_BIG_ENDIAN) {
+    if constexpr (BinaryTools::using_little_endian()) {
+      return true;
+    }
+  } else {
+    if constexpr (!BinaryTools::using_little_endian()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool PGXFile::is_signed() const noexcept {
+  return _is_signed;
+}
+
+
+std::size_t PGXFile::get_depth() const noexcept {
+  return depth;
+}
+
+
+PGXEndianess PGXFile::get_endianess() const noexcept {
+  return endianess;
+}
+
 

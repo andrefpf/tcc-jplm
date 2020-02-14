@@ -43,16 +43,14 @@
 
 
 #include <math.h>  //required for sqrt computation
-
-// #include <stdlib.h>
 #include <algorithm>  //for std::max
+#include <cstring>
+#include <functional>
+#include <iostream>
 #include <memory>  //for unique_ptr, make_unique
 #include <numeric>  //for inner_product
+#include <numeric>  //if c++17 and using transform_reduce
 #include <tuple>
-// #include <functional>
-// #include <numeric> //if c++17 and using transform_reduce
-#include <cstring>
-#include <iostream>
 #include <utility>
 #include "Block4D.h"
 
@@ -88,11 +86,14 @@ class Transformed4DBlock {
       data; /*!< pointer to a linear array of transformed pixel data */
   std::size_t get_number_of_elements() const;
   Transformed4DBlock(const Block4D& block);
+
+
   void do_4d_transform(block4DElementType* dest, const block4DElementType* src,
       const std::tuple<const double*, const double*, const double*,
           const double*>
           coefficients,
       const std::tuple<double, double, double, double> transform_gains);
+
 
  public:
   Transformed4DBlock(const Block4D& block,
@@ -100,14 +101,18 @@ class Transformed4DBlock {
           const double*>
           coefficients,
       const std::tuple<double, double, double, double> transform_gains);
+
   Transformed4DBlock(
       const block4DElementType* transformed_values, int u, int v, int s, int t);
+
   Transformed4DBlock(Block4D&& source);
 
   //move constructor
   Transformed4DBlock(Transformed4DBlock&& other);
 
+
   ~Transformed4DBlock() = default;
+
 
   std::size_t get_energy() const;
 
@@ -119,17 +124,26 @@ class Transformed4DBlock {
       const std::tuple<double, double, double, double> transform_gains);
 
   Block4D generate_copy_in_block() const;
+
+
   void swap_data_with_block(Block4D& block);
+
 
   decltype(mlength_t) get_t() const {
     return mlength_t;
   }
+
+
   decltype(mlength_s) get_s() const {
     return mlength_s;
   }
+
+
   decltype(mlength_v) get_v() const {
     return mlength_v;
   }
+
+
   decltype(mlength_u) get_u() const {
     return mlength_u;
   }

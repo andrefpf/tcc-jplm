@@ -4,14 +4,14 @@
 #include <cstddef>  //for std::ptrdiff_t
 #include <iterator>
 
+
 template<typename T>
 class Generic2DIterator {
  protected:
   T* data_ptr;
-  std::size_t stride; //! \todo: check if this is the best type for keeping a stride
+  std::size_t stride;
 
  public:
-
   Generic2DIterator(T* ptr = nullptr) : data_ptr(ptr){};
 
 
@@ -19,6 +19,7 @@ class Generic2DIterator {
 
 
   virtual ~Generic2DIterator() = default;
+
 
   virtual Generic2DIterator<T>& operator=(
       const Generic2DIterator<T>& rawIterator) = default;

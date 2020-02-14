@@ -49,6 +49,7 @@
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
+
 class ColourComponentScalingMarkerSegment {
  protected:
   static constexpr auto marker_code = Marker::SCC;
@@ -56,6 +57,7 @@ class ColourComponentScalingMarkerSegment {
   std::variant<uint8_t, uint16_t> colour_component;
   uint8_t exponent;  // 0...   31
   uint16_t mantissa;  // 0... 2047
+
 
   uint8_t get_exponent_from_Spscc(uint16_t Spscc) {
     uint8_t exp = (Spscc >> 11) & 0x1F;  // 0x1F == 0001 1111
@@ -67,56 +69,34 @@ class ColourComponentScalingMarkerSegment {
     return (Spscc & 0x7FF);
   }
 
+
  public:
   static constexpr uint8_t SLscc = 0;
 
   ColourComponentScalingMarkerSegment(bool has_more_than_256_colour_components,
-      std::size_t colour_component_index, uint16_t Spscc)
-      : more_than_256_colour_components(
-            has_more_than_256_colour_components),
-        colour_component(
-            has_more_than_256_colour_components
-                ? std::variant<uint8_t, uint16_t>(
-                      static_cast<uint16_t>(colour_component_index))
-                : std::variant<uint8_t, uint16_t>(
-                      static_cast<uint8_t>(colour_component_index))),
-        exponent(get_exponent_from_Spscc(Spscc)),
-        mantissa(get_mantissa_from_Spscc(Spscc)) {
-  }
+      std::size_t colour_component_index, uint16_t Spscc);
 
 
   ColourComponentScalingMarkerSegment(
-      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
-      : ColourComponentScalingMarkerSegment(
-            NC > 256 ? true : false, colour_component_index, Spscc) {
-  }
+      std::size_t NC, std::size_t colour_component_index, uint16_t Spscc);
+
 
   ~ColourComponentScalingMarkerSegment() = default;
 
 
-  auto get_exponent() {
-    return exponent;
-  }
+  uint8_t get_exponent();
 
 
-  auto get_mantissa() {
-    return mantissa;
-  }
+  uint16_t get_mantissa();
 
 
-  auto get_colour_component_index() {
-    return colour_component;
-  }
+  std::variant<uint8_t, uint16_t> get_colour_component_index();
 
 
-  bool has_more_than_256_colour_components() {
-  	return more_than_256_colour_components;
-  }
+  bool has_more_than_256_colour_components();
 
 
-  double get_scaling_factor() {
-    return std::pow(2.0, exponent - 16.0) * static_cast<double>(mantissa);
-  }
+  double get_scaling_factor();
 };
 
 #endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENT_H__ */

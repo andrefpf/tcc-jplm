@@ -48,14 +48,14 @@
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldViewDescriptionBox.h"
 
 
-
 class JpegPlenoLightFieldReferenceViewContents : public SuperBoxDBox {
  protected:
   std::unique_ptr<JpegPlenoLightFieldViewDescriptionBox>
       jpeg_pleno_light_field_view_description_box;  //required
   std::unique_ptr<CommonCodestreamElementsBox>
       common_codestream_elements_box;  //optional
-  std::unique_ptr<ContiguousCodestreamBox> contiguous_codestream_box;  //required
+  std::unique_ptr<ContiguousCodestreamBox>
+      contiguous_codestream_box;  //required
  public:
   JpegPlenoLightFieldReferenceViewContents() = default;
   ~JpegPlenoLightFieldReferenceViewContents() = default;

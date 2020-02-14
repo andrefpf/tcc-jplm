@@ -49,13 +49,14 @@ ColourComponentScalingMarkerSegment get_colour_component_scaling_marker_segment(
     const ContiguousCodestreamCode& codestream_code) {
   auto SLscc_from_codestream_code =
       MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
-  if (SLscc_from_codestream_code != ColourComponentScalingMarkerSegment::SLscc) {
+  if (SLscc_from_codestream_code !=
+      ColourComponentScalingMarkerSegment::SLscc) {
     //throw error
   }
 
   auto Lscc_from_codestream_code =
       MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
-  
+
 
   if ((Lscc_from_codestream_code != 6) && (Lscc_from_codestream_code != 8)) {
     //throw error
@@ -63,29 +64,31 @@ ColourComponentScalingMarkerSegment get_colour_component_scaling_marker_segment(
 
   auto more_than_256_colour_components = false;
 
-  if(Lscc_from_codestream_code == 8) {
-  	more_than_256_colour_components = true;
+  if (Lscc_from_codestream_code == 8) {
+    more_than_256_colour_components = true;
   }
 
 
-  std::size_t colour_component_index = 0; //temporary initialization
+  std::size_t colour_component_index = 0;  //temporary initialization
 
 
-  if(more_than_256_colour_components) {
-  	colour_component_index = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
+  if (more_than_256_colour_components) {
+    colour_component_index =
+        MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
   } else {
-	colour_component_index = MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
+    colour_component_index =
+        MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
   }
 
 
   auto Spscc = MarkerSegmentHelper::get_next<uint16_t>(codestream_code);
 
 
-  return ColourComponentScalingMarkerSegment(more_than_256_colour_components, colour_component_index, Spscc);
-
+  return ColourComponentScalingMarkerSegment(
+      more_than_256_colour_components, colour_component_index, Spscc);
 }
 
-}
+}  // namespace ColourComponentScalingMarkerSegmentParser
 
 
 #endif /* end of include guard: COLOURCOMPONENTSCALINGMARKERSEGMENTPARSER_H__ */

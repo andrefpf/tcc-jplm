@@ -47,15 +47,9 @@ class ComponentSsizParameter {
  protected:
   uint8_t value;
   bool is_signed_;
-  
 
-  void check_validity() const {
-    auto sample_precision = get_component_sample_precision();
-    if (sample_precision > 38) {
-      // !\todo create this exception
-      // throw ComponentSsizParameterExceptions::InvalidComponentPrecisionException(sample_precision);
-    }
-  }
+
+  void check_validity() const;
 
  public:
   ComponentSsizParameter(uint8_t value)
@@ -63,9 +57,7 @@ class ComponentSsizParameter {
   }
 
 
-  bool is_signed() const noexcept {
-    return is_signed_;
-  }
+  bool is_signed() const noexcept;
 
 
   uint8_t operator()() const noexcept {
@@ -73,11 +65,7 @@ class ComponentSsizParameter {
   }
 
 
-  uint8_t get_component_sample_precision() const noexcept {
-    uint8_t mask = 0x7F;  // dec 127, bin 0111 1111
-    return (value & mask) + 1;  //removes the possible msb
-  }
+  uint8_t get_component_sample_precision() const noexcept;
 };
 
 #endif /* end of include guard: COMPONENTSSIZPARAMETER_H__ */
-

@@ -45,6 +45,7 @@
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "Lib/Utils/Image/PixelMapFileBinary.h"
 
+
 class PPMBinaryFile : public PixelMapFileBinary {
  public:
   PPMBinaryFile(const std::string& file_name)

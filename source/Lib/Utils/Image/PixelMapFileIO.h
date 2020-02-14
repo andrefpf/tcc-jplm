@@ -41,13 +41,12 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEIO_H__
 
-#include "Lib/Utils/Image/ImageExceptions.h"
+#include <memory>
 #include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/ImageUtils.h"
 #include "Lib/Utils/Image/PPMBinaryFile.h"
-// #include "PGMBinaryFile.h"
 
-#include <memory>
 
 namespace PixelMapFileIO {
 

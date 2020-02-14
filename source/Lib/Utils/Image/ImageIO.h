@@ -94,15 +94,15 @@ void imwrite(const Image<T>& image, const std::string& filename,
     oppened_image_as_ppm->write_image_to_file(image);
   } else {
     if (name.extension() == fpath(".pgx")) {
-      if(image.get_type() == ImageType::Undefined) {
-        auto oppened_image = PGXFileIO::open(
-            filename, image.get_width(), image.get_height(), image.get_bpp(), image.is_signed());
-        oppened_image->write_image_to_file(dynamic_cast<const UndefinedImage<T>&>(image));
+      if (image.get_type() == ImageType::Undefined) {
+        auto oppened_image = PGXFileIO::open(filename, image.get_width(),
+            image.get_height(), image.get_bpp(), image.is_signed());
+        oppened_image->write_image_to_file(
+            dynamic_cast<const UndefinedImage<T>&>(image));
       } else {
         //! \todo throw error if trying to write a pgx image that is not an undefined image type
         //throw
       }
-
     }
   }
 }
@@ -230,10 +230,12 @@ std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
   auto image = read<T>(image_file);
 
   if constexpr (std::is_same_v<ImageT<T>, UndefinedImage<T>>) {
-    return std::unique_ptr<ImageT<T>>(static_cast<UndefinedImage<T>*>(image.release()));
+    return std::unique_ptr<ImageT<T>>(
+        static_cast<UndefinedImage<T>*>(image.release()));
   } else {
     if (image->get_type() == ImageT<T>::image_type) {
-      return std::unique_ptr<ImageT<T>>(static_cast<ImageT<T>*>(image.release()));
+      return std::unique_ptr<ImageT<T>>(
+          static_cast<ImageT<T>*>(image.release()));
     }
 
     switch (image->get_type()) {
@@ -242,14 +244,13 @@ std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
             std::move(convert::to<ImageT>(dynamic_cast<RGBImage<T>&>(*image))));
       }
       case ImageType::BT601: {
-        return std::make_unique<ImageT<T>>(
-            std::move(convert::to<ImageT>(dynamic_cast<BT601Image<T>&>(*image))));
+        return std::make_unique<ImageT<T>>(std::move(
+            convert::to<ImageT>(dynamic_cast<BT601Image<T>&>(*image))));
       }
       case ImageType::Undefined: {
         //
-      }    
-  }
-
+      }
+    }
   }
   // return convert::to<ImageT<T>>(image);
 
