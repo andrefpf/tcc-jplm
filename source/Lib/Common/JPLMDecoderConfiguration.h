@@ -48,25 +48,11 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
   static constexpr std::size_t current_hierarchy_level = 0;
   void add_options_to_cli();
 
-
  protected:
-  JPLMDecoderConfiguration(int argc, char **argv, std::size_t level)
-      : JPLMConfiguration(argc, argv, level) {
-    add_options_to_cli();
-    this->message = "JPLM Decoder\nUsage: " + this->executable_name +
-                    " [OPTIONS]\nOptions: ";
-    this->parse_cli(argc, argv);
-  }
-
+  JPLMDecoderConfiguration(int argc, char **argv, std::size_t level);
 
  public:
-  JPLMDecoderConfiguration(int argc, char **argv)
-      : JPLMDecoderConfiguration(
-            argc, argv, JPLMDecoderConfiguration::current_hierarchy_level) {
-    run_help();
-  }
-
-
+  JPLMDecoderConfiguration(int argc, char **argv);
   virtual ~JPLMDecoderConfiguration() = default;
 };
 
