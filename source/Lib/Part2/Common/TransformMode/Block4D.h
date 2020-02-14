@@ -103,12 +103,15 @@ class Block4D {
   int mlength_s = 0; /*!< s dimension block size */
   int mlength_v = 0; /*!< v dimension block size */
   int mlength_u = 0; /*!< u dimension block size */
+
+
   Block4D() = default;
+
+
   Block4D(Block4D&& other);  //move constructor
-  Block4D(const LightfieldDimension<uint32_t>& block_dimension) {
-    set_dimension(block_dimension.get_t(), block_dimension.get_s(),
-        block_dimension.get_v(), block_dimension.get_u());
-  }
+
+
+  Block4D(const LightfieldDimension<uint32_t>& block_dimension);
   ~Block4D();
   void set_dimension(int length_t, int length_s, int length_v, int length_u);
   void set_dimension(const std::tuple<int, int, int, int>& lengths);
@@ -144,16 +147,16 @@ class Block4D {
   void extend(ExtensionMethod extensionMethod, int extensionLength,
       LightFieldDimension direction);
   void extend(const LightfieldCoordinate<uint32_t>& last_valid) {
-    if(last_valid.get_t() < mlength_t) {
+    if (last_valid.get_t() < mlength_t) {
       extend_t(last_valid.get_t());
     }
-    if(last_valid.get_s() < mlength_s) {
+    if (last_valid.get_s() < mlength_s) {
       extend_s(last_valid.get_s());
     }
-    if(last_valid.get_v() < mlength_v) {
+    if (last_valid.get_v() < mlength_v) {
       extend_v(last_valid.get_v());
     }
-    if(last_valid.get_u() < mlength_u) {
+    if (last_valid.get_u() < mlength_u) {
       extend_u(last_valid.get_u());
     }
   }

@@ -50,6 +50,7 @@
  * \tparam JpegPlenoLightFieldIntermediateViewContents
  * \note Used only in 4D Prediction Mode
  */
-using JpegPlenoLightFieldIntermediateViewBox = GenericBox<0x6c666976,JpegPlenoLightFieldIntermediateViewContents>;
+using JpegPlenoLightFieldIntermediateViewBox =
+    GenericBox<0x6c666976, JpegPlenoLightFieldIntermediateViewContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDINTERMEDIATEVIEWBOX_H__ */

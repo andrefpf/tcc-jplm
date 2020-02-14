@@ -47,6 +47,7 @@
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "Lib/Utils/Image/Metrics.h"
 
+
 namespace ImageMetrics {
 enum class Available { PSNR, MSE, SSE, MAX_ABS_ERROR };
 
@@ -80,7 +81,8 @@ void check_image_properties(
 
 
 template<typename T>
-std::vector<std::size_t> get_maximum_absolute_error(const Image<T>& original_image, const Image<T>& encoded_image) {
+std::vector<std::size_t> get_maximum_absolute_error(
+    const Image<T>& original_image, const Image<T>& encoded_image) {
   check_image_properties(original_image, encoded_image);
   auto number_of_channels = original_image.get_number_of_channels();
   auto rect_vector = std::vector<std::size_t>();
@@ -93,10 +95,6 @@ std::vector<std::size_t> get_maximum_absolute_error(const Image<T>& original_ima
 
   return rect_vector;
 }
-
-
-
-
 
 
 template<typename T>
@@ -176,7 +174,8 @@ void print_psnrs(const Image<T>& original, const Image<T>& encoded) {
 
 
 template<typename T>
-void print_maximum_absolute_errors(const Image<T>& original, const Image<T>& encoded) {
+void print_maximum_absolute_errors(
+    const Image<T>& original, const Image<T>& encoded) {
   auto maximum_absolute_errors = get_maximum_absolute_error(original, encoded);
   for (const auto maximum_absolute_error : maximum_absolute_errors) {
     std::cout << "Max Abs Error: " << maximum_absolute_error << std::endl;
@@ -205,16 +204,13 @@ void print_sses(const Image<T>& original, const Image<T>& encoded) {
 namespace visitors {
 
 template<template<typename> class ImageT0, template<typename> class ImageT1,
-      typename T0, typename T1>
+    typename T0, typename T1>
 void image_parameter_check() {
-static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
-        "Original image must be an image!");
-    static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
-        "Encoded image must be an image!");
+  static_assert(std::is_base_of<Image<T0>, ImageT0<T0>>(),
+      "Original image must be an image!");
+  static_assert(std::is_base_of<Image<T1>, ImageT1<T1>>(),
+      "Encoded image must be an image!");
 }
-
-
-
 
 
 // struct ColorSpaceVisitor {
@@ -282,14 +278,15 @@ struct PSNRPrinter {
     different_representations_message<T0, T1>();
   }
 
-  template<template<typename> class type_class, template<typename> class ImageT0, template<typename> class ImageT1,
+  template<template<typename> class type_class,
+      template<typename> class ImageT0, template<typename> class ImageT1,
       typename T0, typename T1>
   void operator()(const std::unique_ptr<ImageT0<T0>>& original,
       const std::unique_ptr<ImageT1<T1>>& encoded) {
-      using namespace ImageColorSpaceConversion;
-      operator()(convert::to<type_class>(encoded), convert::to<type_class>(original));
+    using namespace ImageColorSpaceConversion;
+    operator()(
+        convert::to<type_class>(encoded), convert::to<type_class>(original));
   }
-
 };
 
 
@@ -301,7 +298,8 @@ struct MaximumErrorPrinter {
     // image_parameter_check<ImageT0, ImageT1, T0, T1>();
     if constexpr (std::is_same<T0, T1>::value) {
       if (original->get_type() == encoded->get_type()) {
-        return print_maximum_absolute_errors(*(static_cast<Image<T0>*>(original.get())),
+        return print_maximum_absolute_errors(
+            *(static_cast<Image<T0>*>(original.get())),
             *(static_cast<Image<T1>*>(encoded.get())));
       }
       std::cerr << "Images are from different types..." << std::endl;
@@ -310,12 +308,14 @@ struct MaximumErrorPrinter {
   }
 
 
-  template<template<typename> class type_class, template<typename> class ImageT0, template<typename> class ImageT1,
+  template<template<typename> class type_class,
+      template<typename> class ImageT0, template<typename> class ImageT1,
       typename T0, typename T1>
   void operator()(const std::unique_ptr<ImageT0<T0>>& original,
       const std::unique_ptr<ImageT1<T1>>& encoded) {
-      using namespace ImageColorSpaceConversion;
-      operator()(convert::to<type_class>(encoded), convert::to<type_class>(original));
+    using namespace ImageColorSpaceConversion;
+    operator()(
+        convert::to<type_class>(encoded), convert::to<type_class>(original));
   }
 };
 
@@ -337,7 +337,6 @@ struct PSNRGetter {
     }
     return std::vector<double>();
   }
-
 };
 
 

@@ -50,6 +50,7 @@
  * \tparam JpegPlenoLightFieldReferenceViewContents
  * \note Used only in 4D Prediction Mode
  */
-using JpegPlenoLightFieldReferenceViewBox = GenericBox<0x6c667276, JpegPlenoLightFieldReferenceViewContents>;
+using JpegPlenoLightFieldReferenceViewBox =
+    GenericBox<0x6c667276, JpegPlenoLightFieldReferenceViewContents>;
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_JPEGPLENOLIGHTFIELDREFERENCEVIEWBOX_H__ */

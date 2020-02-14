@@ -59,18 +59,7 @@ class PGXFile : public ImageFile {
   bool _is_signed;
   const PGXEndianess endianess;
 
-  bool is_different_endianess() const {
-    if (this->endianess == PGXEndianess::PGX_ML_BIG_ENDIAN) {
-      if constexpr (BinaryTools::using_little_endian()) {
-        return true;
-      }
-    } else {
-      if constexpr (!BinaryTools::using_little_endian()) {
-        return true;
-      }
-    }
-    return false;
-  }
+  bool is_different_endianess() const;
 
 
  public:
@@ -82,95 +71,24 @@ class PGXFile : public ImageFile {
   }
 
 
-  bool is_signed() const noexcept {
-    return _is_signed;
-  }
+  bool is_signed() const noexcept;
 
 
-  auto get_depth() const noexcept {
-    return depth;
-  }
+  std::size_t get_depth() const noexcept;
 
 
-  auto get_endianess() const noexcept {
-    return endianess;
-  }
+  PGXEndianess get_endianess() const noexcept;
 
 
   virtual ~PGXFile() = default;
 
 
   template<typename T>
-  T change_endianess(T value) {
-    if constexpr (std::is_signed<T>::value) {
-      // typedef std::make_unsigned<T>::type unsiged_T_type;
-      return (T) BinaryTools::swap_endianess(
-          static_cast<typename std::make_unsigned<T>::type>(value));
-    } else {
-      return BinaryTools::swap_endianess(value);
-    }
-  }
+  T change_endianess(T value);
 
 
   template<typename T>
-  void write_image_to_file(const UndefinedImage<T>& image) {
-    if (image.get_number_of_channels() != 1) {
-      //! \todo throw error if number of channels of the current undefined image is not 1
-      //throw error
-      std::cout << "there is more than one channel..." << std::endl;
-    }
-
-    if (!file.is_open()) {
-      //first check if directory exists
-      auto filename_path = std::filesystem::path(filename);
-      if(!std::filesystem::exists(filename_path.parent_path())) {
-        // std::cout << "filename_path.parent_path " << filename_path.parent_path() << " does not exist" << std::endl;
-        std::filesystem::create_directory(filename_path.parent_path());
-      }
-
-      if (!std::filesystem::exists(filename)) {
-        file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        //should write
-      } else {
-        file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
-        //should read
-      }
-      // std::cout << "for some reason the file was not open..." << std::endl;
-      // std::cout << "Filename is " << filename << std::endl;
-    }
-
-    auto bytes_per_pixel = std::ceil(image.get_bpp() / (double) 8.0);
-
-    if (sizeof(T) != bytes_per_pixel) {
-      //what to do?
-      // std::cout << "Bytes per pixel " << bytes_per_pixel << std::endl;
-      // std::cout << "sizeof(T) " << sizeof(T) << std::endl;
-      // std::cout << "I should do something here..." << std::endl;
-    }
-
-    file.seekp(this->raster_begin);
-
-    if constexpr (sizeof(T) > 1) {
-      if (is_different_endianess()) {
-        std::vector<T> values;
-        values.reserve(image.get_number_of_pixels());
-        for (const auto& value : image.get_channel(0)) {
-          values.push_back(change_endianess(value));
-        }
-        // auto size_of_vector = image.get_number_of_pixels();
-        // std::cout << "considered endianess" << std::endl;
-        // std::cout << "values " << values.size() << std::endl;
-        file.write(reinterpret_cast<const char*>(values.data()),
-            image.get_number_of_pixels_per_channel() * sizeof(T));
-        // file.flush();
-        // file.close();
-        return;
-      }
-    }
-
-    file.write(reinterpret_cast<const char*>(image.get_channel(0).data()),
-        image.get_number_of_pixels_per_channel() * sizeof(T));
-  }
+  void write_image_to_file(const UndefinedImage<T>& image);
 
 
   template<typename T>
@@ -245,5 +163,78 @@ class PGXFile : public ImageFile {
     //throw
   }
 };
+
+
+template<typename T>
+T PGXFile::change_endianess(T value) {
+  if constexpr (std::is_signed<T>::value) {
+    // typedef std::make_unsigned<T>::type unsiged_T_type;
+    return (T) BinaryTools::swap_endianess(
+        static_cast<typename std::make_unsigned<T>::type>(value));
+  } else {
+    return BinaryTools::swap_endianess(value);
+  }
+}
+
+
+template<typename T>
+void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
+  if (image.get_number_of_channels() != 1) {
+    //! \todo throw error if number of channels of the current undefined image is not 1
+    //throw error
+    std::cout << "there is more than one channel..." << std::endl;
+  }
+
+  if (!file.is_open()) {
+    //first check if directory exists
+    auto filename_path = std::filesystem::path(filename);
+    if (!std::filesystem::exists(filename_path.parent_path())) {
+      // std::cout << "filename_path.parent_path " << filename_path.parent_path() << " does not exist" << std::endl;
+      std::filesystem::create_directory(filename_path.parent_path());
+    }
+
+    if (!std::filesystem::exists(filename)) {
+      file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
+      //should write
+    } else {
+      file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
+      //should read
+    }
+    // std::cout << "for some reason the file was not open..." << std::endl;
+    // std::cout << "Filename is " << filename << std::endl;
+  }
+
+  auto bytes_per_pixel = std::ceil(image.get_bpp() / (double) 8.0);
+
+  if (sizeof(T) != bytes_per_pixel) {
+    //what to do?
+    // std::cout << "Bytes per pixel " << bytes_per_pixel << std::endl;
+    // std::cout << "sizeof(T) " << sizeof(T) << std::endl;
+    // std::cout << "I should do something here..." << std::endl;
+  }
+
+  file.seekp(this->raster_begin);
+
+  if constexpr (sizeof(T) > 1) {
+    if (is_different_endianess()) {
+      std::vector<T> values;
+      values.reserve(image.get_number_of_pixels());
+      for (const auto& value : image.get_channel(0)) {
+        values.push_back(change_endianess(value));
+      }
+      // auto size_of_vector = image.get_number_of_pixels();
+      // std::cout << "considered endianess" << std::endl;
+      // std::cout << "values " << values.size() << std::endl;
+      file.write(reinterpret_cast<const char*>(values.data()),
+          image.get_number_of_pixels_per_channel() * sizeof(T));
+      // file.flush();
+      // file.close();
+      return;
+    }
+  }
+
+  file.write(reinterpret_cast<const char*>(image.get_channel(0).data()),
+      image.get_number_of_pixels_per_channel() * sizeof(T));
+}
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PGXFILE_H__ */

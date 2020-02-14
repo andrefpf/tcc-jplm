@@ -53,8 +53,8 @@
 #include "Lib/Part2/Common/Boxes/CameraParameterType.h"
 #include "Lib/Part2/Common/Boxes/CameraParametersArray.h"
 #include "Lib/Part2/Common/Boxes/CommonExceptions.h"
-#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Part2/Common/Boxes/FloatingPointCoordinates.h"
+#include "Lib/Part2/Common/Boxes/LightFieldHeaderContents.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
 
@@ -116,72 +116,50 @@ class CameraParameterContents : public InMemoryDBox {
   }
 
 
-  virtual CameraParameterContents* clone() const override {
-    return new CameraParameterContents(*this);
-  }
+  virtual CameraParameterContents* clone() const override;
 
 
   const VariablePrecisionFloatingPointCoordinates& get_ref_to_coordinates()
-      const {
-    return *coordinates;
-  }
+      const;
 
 
-  VariablePrecisionFloatingPointCoordinates& get_ref_to_coordinates() {
-    return *coordinates;
-  }
+  VariablePrecisionFloatingPointCoordinates& get_ref_to_coordinates();
 
 
-  const CameraParametersArray& get_ref_to_camera_parameters() const {
-    return camera_parameters;
-  }
+  const CameraParametersArray& get_ref_to_camera_parameters() const;
 
 
-  CameraParametersArray& get_ref_to_camera_parameters() {
-    return camera_parameters;
-  }
+  CameraParametersArray& get_ref_to_camera_parameters();
 
 
   template<CameraParameterType camera_parameter_type>
   float get(
       const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
-          position) const {
-    return camera_parameters.get<camera_parameter_type>(position);
-  }
+          position) const;
 
 
-  uint64_t size() const noexcept override {
-    return coordinates->size() + camera_parameters.size();  //
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const CameraParameterContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const CameraParameterContents&) const noexcept {  //other
-    return true;
-  }
+  bool operator==(const CameraParameterContents&) const noexcept;
 
 
-  bool operator!=(const CameraParameterContents& other) const noexcept {
-    return !this->operator==(other);
-  }
+  bool operator!=(const CameraParameterContents& other) const noexcept;
 
 
-  virtual std::vector<std::byte> get_bytes() const override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-    BinaryTools::byte_vector_cat(bytes, coordinates->get_bytes());
-    BinaryTools::byte_vector_cat(bytes, camera_parameters.get_bytes());
-    return bytes;
-  }
+  virtual std::vector<std::byte> get_bytes() const override;
 };
+
+
+template<CameraParameterType camera_parameter_type>
+float CameraParameterContents::get(
+    const std::tuple<lightfield_dimension_type, lightfield_dimension_type>&
+        position) const {
+  return camera_parameters.get<camera_parameter_type>(position);
+}
 
 // }  // namespace CameraParameters
 

@@ -94,15 +94,19 @@ add_executable(jpl-encoder-bin
     source/App/Encoder/jpl-encoder.cpp
     CMakeLists.txt)
 
+
+
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part1_common_boxes)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder)
 target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common_boxes)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_common_transform_mode)
+target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
 target_link_libraries(jpl-encoder-bin PRIVATE stream)
 target_link_libraries(jpl-encoder-bin PRIVATE image)
-target_link_libraries(jpl-encoder-bin PRIVATE run_time_stats)
-target_link_libraries(jpl-encoder-bin PRIVATE jplm_part2_encoder_transform_mode)
+
 
 
 
@@ -117,7 +121,7 @@ target_link_libraries(jpl-decoder-bin PRIVATE jplm_part1_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_boxes_decoder)
-target_link_libraries(jpl-decoder-bin PRIVATE jplm_common_boxes_parsers)
+target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_common_boxes)
 target_link_libraries(jpl-decoder-bin PRIVATE jplm_part2_decoder_transform_mode)
 target_link_libraries(jpl-decoder-bin PRIVATE stream)
 target_link_libraries(jpl-decoder-bin PRIVATE run_time_stats)

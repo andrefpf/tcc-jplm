@@ -346,8 +346,7 @@ class InvalidNewLine : public std::exception {
 
  public:
   explicit InvalidNewLine(const std::string obtained_char) {
-    message_ = "Obtained an invalid sign field: " + obtained_char +
-               ". 0x0a";
+    message_ = "Obtained an invalid sign field: " + obtained_char + ". 0x0a";
   }
 
   virtual const char* what() const throw() {

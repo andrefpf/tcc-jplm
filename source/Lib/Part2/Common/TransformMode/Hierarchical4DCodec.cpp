@@ -38,55 +38,63 @@
  *  \date     2019-04-11
  */
 
-#include "Hierarchical4DCodec.h"
+#include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
+
 
 void Hierarchical4DCodec::reset_probability_models() {
-    for(auto& probability_model: probability_models) {
-        probability_model.reset();
-    }
+  for (auto& probability_model : probability_models) {
+    probability_model.reset();
+  }
 }
 
 
 void Hierarchical4DCodec::set_level_shift(int value) {
-    mPGMScale = value;
+  mPGMScale = value;
 }
 
 
 int Hierarchical4DCodec::get_level_shift() const {
-    return mPGMScale;
+  return mPGMScale;
 }
 
 
 void Hierarchical4DCodec::set_inferior_bit_plane(uint8_t value) {
-    inferior_bit_plane = value;
+  inferior_bit_plane = value;
 }
 
 
 uint8_t Hierarchical4DCodec::get_inferior_bit_plane() const {
-    return inferior_bit_plane;
+  return inferior_bit_plane;
 }
 
 
 void Hierarchical4DCodec::set_superior_bit_plane(uint8_t value) {
-    superior_bit_plane = value;
+  superior_bit_plane = value;
 }
 
 
 uint8_t Hierarchical4DCodec::get_superior_bit_plane() const {
-    return superior_bit_plane;
+  return superior_bit_plane;
 }
 
 
-void Hierarchical4DCodec::set_lightfield_dimension(const LightfieldDimension<uint32_t>& dimension) {
-    std::tie(mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines, mNumberOfViewColumns) = dimension.as_tuple();
+void Hierarchical4DCodec::set_lightfield_dimension(
+    const LightfieldDimension<uint32_t>& dimension) {
+  std::tie(mNumberOfVerticalViews, mNumberOfHorizontalViews, mNumberOfViewLines,
+      mNumberOfViewColumns) = dimension.as_tuple();
 }
 
 
-void Hierarchical4DCodec::set_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
-    std::tie(mTransformLength_t, mTransformLength_s, mTransformLength_v, mTransformLength_u) = dimension.as_tuple();
+void Hierarchical4DCodec::set_transform_dimension(
+    const LightfieldDimension<uint32_t>& dimension) {
+  std::tie(mTransformLength_t, mTransformLength_s, mTransformLength_v,
+      mTransformLength_u) = dimension.as_tuple();
 }
 
 
-void Hierarchical4DCodec::set_minimum_transform_dimension(const LightfieldDimension<uint32_t>& dimension) {
-    std::tie(mMinimumTransformLength_t, mMinimumTransformLength_s, mMinimumTransformLength_v, mMinimumTransformLength_u) = dimension.as_tuple();
+void Hierarchical4DCodec::set_minimum_transform_dimension(
+    const LightfieldDimension<uint32_t>& dimension) {
+  std::tie(mMinimumTransformLength_t, mMinimumTransformLength_s,
+      mMinimumTransformLength_v, mMinimumTransformLength_u) =
+      dimension.as_tuple();
 }

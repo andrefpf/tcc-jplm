@@ -50,7 +50,6 @@
 #include <vector>
 
 
-
 /**
  * \brief This namespace defines a set of free functions that are usefull to guarantee endianess.
  */
@@ -69,16 +68,6 @@ struct uint24_t {
   }
 };
 
-constexpr bool using_little_endian() {
-#ifdef _WIN32
-  return true;
-#else
-  if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
-    return true;
-  return false;
-#endif
-}
-
 
 uint8_t swap_endianess(const uint8_t in);
 
@@ -90,6 +79,21 @@ uint32_t swap_endianess(const uint32_t in);
 
 
 uint64_t swap_endianess(const uint64_t in);
+
+
+std::vector<std::byte>& byte_vector_cat(
+    std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b);
+
+
+constexpr bool using_little_endian() {
+#ifdef _WIN32
+  return true;
+#else
+  if constexpr (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
+    return true;
+  return false;
+#endif
+}
 
 
 template<typename T, bool big_endian = true>
@@ -177,9 +181,6 @@ std::tuple<Args...> get_tuple_from_big_endian_byte_vector(
 }
 
 
-std::vector<std::byte>& byte_vector_cat(
-    std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b);
-
 template<typename T>
 std::vector<std::byte> get_big_endian_bytes_vector_from_vector(
     const std::vector<T>& vec) {
@@ -191,7 +192,6 @@ std::vector<std::byte> get_big_endian_bytes_vector_from_vector(
   }
   return bytes_vector;
 }
-
 
 
 template<typename T>
@@ -221,7 +221,6 @@ std::vector<std::byte>& append_big_endian_bytes(
       tuple);
   return byte_list;
 }
-
 
 
 }  // namespace BinaryTools

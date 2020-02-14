@@ -45,8 +45,7 @@
 
 template<typename T>
 class ViewIOPolicyLimitlessMemory : public ViewIOPolicy<T> {
-protected:
-
+ protected:
   void load_image_if_necessary(View<T>& view) override {
     if (!view.has_image())
       view.load_image();

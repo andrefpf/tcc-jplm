@@ -49,6 +49,7 @@
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
 
+
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldCodec
     : public virtual JPLMLightFieldCodec<PelType> {
@@ -58,6 +59,7 @@ class JPLM4DTransformModeLightFieldCodec
   LightfieldDimension<uint32_t> lightfield_dimension;
   LightfieldDimension<uint32_t> block_4d_dimension;
 
+
  public:
   JPLM4DTransformModeLightFieldCodec(
       const LightfieldDimension<uint32_t>& lightfield_dimension,
@@ -65,7 +67,6 @@ class JPLM4DTransformModeLightFieldCodec
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
         block_4d_dimension(block_4d_dimension) {
-    // std::cout << "JPLM4DTransformModeLightFieldCodec" << std::endl;
   }
 
 
@@ -74,110 +75,121 @@ class JPLM4DTransformModeLightFieldCodec
 
   void setup_transform_coefficients(bool forward,
       const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>& max_sizes,
-      const std::tuple<double, double, double, double>& scalings) {
-    const auto& [t_size, s_size, v_size, u_size] = max_sizes;
-    const auto& [t_scaling, s_scaling, v_scaling, u_scaling] = scalings;
-    DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
-        u_size, v_size, s_size, t_size);
-
-    DCT4DCoefficientsManager::get_instance(forward).set_transform_gains(
-        u_scaling, v_scaling, s_scaling, t_scaling);
-  }
+      const std::tuple<double, double, double, double>& scalings);
 
 
-  void initialize_extension_lengths() {
-    const auto& [number_of_vertical_views, number_of_horizontal_views,
-                    mNumberOfViewLines, mNumberOfViewColumns] =
-        lightfield_dimension.as_tuple();
-    const auto& [transform_length_t, transform_length_s, transform_length_v,
-                    transform_length_u] = block_4d_dimension.as_tuple();
-
-    std::cout << "Initializing extension lengths" << std::endl;
-
-    auto extension_length_t = number_of_vertical_views % transform_length_t;
-    auto extension_length_s = number_of_horizontal_views % transform_length_s;
-    auto extension_length_v = mNumberOfViewLines % transform_length_v;
-    auto extension_length_u = mNumberOfViewColumns % transform_length_u;
-
-
-    if (extension_length_t + extension_length_s + extension_length_v +
-            extension_length_u >
-        0) {
-      needs_block_extension = true;
-    }
-
-    extensions = {extension_length_t, extension_length_s, extension_length_v,
-        extension_length_u};
-  }
+  void initialize_extension_lengths();
 
 
   virtual void finalization(){};
 
+
   virtual BorderBlocksPolicy get_border_blocks_policy() const = 0;
 
-  virtual void run() override {
-    const auto& [T, S, V, U] = lightfield_dimension;
 
-    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
-        block_4d_dimension;
-
-
-    const auto& boder_blocks_policy = this->get_border_blocks_policy();
-
-    int32_t level_shift = 512;
-    //std::pow(2, lightfield->get_views_bpp()) / 2;  //
-    auto size_padding = LightfieldDimension<uint32_t>(
-        BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-
-    for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
-      auto used_size_t =
-          (t + BLOCK_SIZE_t > T) ? T % BLOCK_SIZE_t : BLOCK_SIZE_t;
-      for (auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
-        auto used_size_s =
-            (s + BLOCK_SIZE_s > S) ? S % BLOCK_SIZE_s : BLOCK_SIZE_s;
-        for (auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
-          auto used_size_v =
-              (v + BLOCK_SIZE_v > V) ? V % BLOCK_SIZE_v : BLOCK_SIZE_v;
-          for (auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
-            auto used_size_u =
-                (u + BLOCK_SIZE_u > U) ? U % BLOCK_SIZE_u : BLOCK_SIZE_u;
-
-
-            // if (parameter_handler.verbose) {
-            printf("transforming the 4D block at position (%d %d %d %d)\n", t,
-                s, v, u);
-            // }
-
-            auto size_shrink = LightfieldDimension<uint32_t>(
-                used_size_t, used_size_s, used_size_v, used_size_u);
-
-            const auto& size =
-                (boder_blocks_policy == BorderBlocksPolicy::truncate)
-                    ? size_shrink
-                    : size_padding;
-            std::cout << "Shrink? "
-                      << (boder_blocks_policy == BorderBlocksPolicy::truncate)
-                      << std::endl;
-
-            for (auto color_channel_index = 0; color_channel_index < 3;
-                 ++color_channel_index) {
-              run_for_block_4d(
-                  color_channel_index, level_shift, {t, s, v, u}, size);
-            }
-          }
-        }
-      }
-    }
-    std::cout << "finished" << std::endl;
-    //up to now, this finalization step is required only in the encoder.
-    finalization();
-  }
+  virtual void run() override;
 
 
   virtual void run_for_block_4d(const uint32_t channel,
       const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) = 0;
 };
+
+
+template<typename PelType>
+void JPLM4DTransformModeLightFieldCodec<PelType>::setup_transform_coefficients(
+    bool forward,
+    const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>& max_sizes,
+    const std::tuple<double, double, double, double>& scalings) {
+  const auto& [t_size, s_size, v_size, u_size] = max_sizes;
+  const auto& [t_scaling, s_scaling, v_scaling, u_scaling] = scalings;
+  DCT4DCoefficientsManager::get_instance(forward).set_transform_max_sizes(
+      u_size, v_size, s_size, t_size);
+
+  DCT4DCoefficientsManager::get_instance(forward).set_transform_gains(
+      u_scaling, v_scaling, s_scaling, t_scaling);
+}
+
+
+template<typename PelType>
+void JPLM4DTransformModeLightFieldCodec<
+    PelType>::initialize_extension_lengths() {
+  const auto& [number_of_vertical_views, number_of_horizontal_views,
+                  mNumberOfViewLines, mNumberOfViewColumns] =
+      lightfield_dimension.as_tuple();
+  const auto& [transform_length_t, transform_length_s, transform_length_v,
+                  transform_length_u] = block_4d_dimension.as_tuple();
+
+  std::cout << "Initializing extension lengths" << std::endl;
+
+  auto extension_length_t = number_of_vertical_views % transform_length_t;
+  auto extension_length_s = number_of_horizontal_views % transform_length_s;
+  auto extension_length_v = mNumberOfViewLines % transform_length_v;
+  auto extension_length_u = mNumberOfViewColumns % transform_length_u;
+
+
+  if (extension_length_t + extension_length_s + extension_length_v +
+          extension_length_u >
+      0) {
+    needs_block_extension = true;
+  }
+
+  extensions = {extension_length_t, extension_length_s, extension_length_v,
+      extension_length_u};
+}
+
+
+template<typename PelType>
+void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
+  const auto& [T, S, V, U] = lightfield_dimension;
+  const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
+      block_4d_dimension;
+  const auto& boder_blocks_policy = this->get_border_blocks_policy();
+  int32_t level_shift = 512;
+  auto size_padding = LightfieldDimension<uint32_t>(
+      BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
+  /* \todo Remove so many nested for. Use cppitertools/product.hpp instead */
+  for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
+    auto used_size_t = (t + BLOCK_SIZE_t > T) ? T % BLOCK_SIZE_t : BLOCK_SIZE_t;
+    for (auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
+      auto used_size_s =
+          (s + BLOCK_SIZE_s > S) ? S % BLOCK_SIZE_s : BLOCK_SIZE_s;
+      for (auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
+        auto used_size_v =
+            (v + BLOCK_SIZE_v > V) ? V % BLOCK_SIZE_v : BLOCK_SIZE_v;
+        for (auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
+          auto used_size_u =
+              (u + BLOCK_SIZE_u > U) ? U % BLOCK_SIZE_u : BLOCK_SIZE_u;
+
+          // if (parameter_handler.verbose) {
+          printf("transforming the 4D block at position (%d %d %d %d)\n", t, s,
+              v, u);
+          // }
+
+          auto size_shrink = LightfieldDimension<uint32_t>(
+              used_size_t, used_size_s, used_size_v, used_size_u);
+
+          const auto& size =
+              (boder_blocks_policy == BorderBlocksPolicy::truncate)
+                  ? size_shrink
+                  : size_padding;
+          std::cout << "Shrink? "
+                    << (boder_blocks_policy == BorderBlocksPolicy::truncate)
+                    << std::endl;
+
+          for (auto color_channel_index = 0; color_channel_index < 3;
+               ++color_channel_index) {
+            run_for_block_4d(
+                color_channel_index, level_shift, {t, s, v, u}, size);
+          }
+        }
+      }
+    }
+  }
+  std::cout << "finished" << std::endl;
+  //up to now, this finalization step is required only in the encoder.
+  finalization();
+}
 
 
 #endif /* end of include guard: JPLM4DTRANSFORMMODELIGHTFIELDCODEC_H__ */

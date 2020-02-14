@@ -63,6 +63,7 @@ uint64_t BinaryTools::swap_endianess(const uint64_t in) {
          ((in << 40) & 0x00FF000000000000) | ((in << 56) & 0xFF00000000000000);
 }
 
+
 std::vector<std::byte>& BinaryTools::byte_vector_cat(
     std::vector<std::byte>& vec_a, const std::vector<std::byte>& vec_b) {
   vec_a.insert(vec_a.end(), vec_b.begin(), vec_b.end());

@@ -46,8 +46,7 @@
 template<typename PelType = uint16_t>
 class JPLMLightFieldDecoder : public virtual JPLMLightFieldCodec<PelType> {
  public:
-  JPLMLightFieldDecoder()
-      : JPLMLightFieldCodec<PelType>() {
+  JPLMLightFieldDecoder() : JPLMLightFieldCodec<PelType>() {
   }
   virtual ~JPLMLightFieldDecoder() = default;
 };

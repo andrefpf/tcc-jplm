@@ -48,6 +48,7 @@
 #include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
 #include "Lib/Part2/Decoder/TransformMode/Hierarchical4DDecoder.h"
 
+
 class PartitionDecoder {
  private:
   static constexpr auto MINIMUM_BITPLANE_PRECISION = 5;
@@ -69,15 +70,10 @@ class PartitionDecoder {
 
 
   void set_colour_component_scaling_factor(
-      const std::size_t colour_component_index, double scaling_factor) {
-    this->scaling_factors[colour_component_index] = scaling_factor;
-  }
+      const std::size_t colour_component_index, double scaling_factor);
 
 
-  void set_number_of_colour_components(uint16_t number_of_colour_components) {
-    this->scaling_factors =
-        std::vector<double>(number_of_colour_components, 1.0);
-  }
+  void set_number_of_colour_components(uint16_t number_of_colour_components);
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_DECODER_TRANSFORMMODE_PARTITIONDECODER_H__ */

@@ -41,23 +41,24 @@
 #ifndef MARKERS_H__
 #define MARKERS_H__
 
+#include <cstddef>  //std::byte
 #include <cstdint>
-#include <type_traits> //std::underlying_type_t
-#include <cstddef> //std::byte
+#include <type_traits>  //std::underlying_type_t
 #include <vector>
 
+
 enum class Marker : uint16_t {
-	SOC = 0xFFA0, //!< Start of Codestream
-	LFC = 0xFFA1, //!< Light Field Configuration
-	SCC = 0xFFA2, //!< Colour Component Scaling
-	PNT = 0xFFA3, //!< Codestream Pointer Set
-	SOB = 0xFFA4, //!< Start of Block
-	EOC = 0xFFD9, //!< End of Codestream
+  SOC = 0xFFA0,  //!< Start of Codestream
+  LFC = 0xFFA1,  //!< Light Field Configuration
+  SCC = 0xFFA2,  //!< Colour Component Scaling
+  PNT = 0xFFA3,  //!< Codestream Pointer Set
+  SOB = 0xFFA4,  //!< Start of Block
+  EOC = 0xFFD9,  //!< End of Codestream
 };
 
 namespace Markers {
-	std::vector<std::byte> get_bytes(Marker marker);
-	bool is_a_known_marker(Marker marker);
-}
+std::vector<std::byte> get_bytes(Marker marker);
+bool is_a_known_marker(Marker marker);
+}  // namespace Markers
 
 #endif /* end of include guard: MARKERS_H__ */

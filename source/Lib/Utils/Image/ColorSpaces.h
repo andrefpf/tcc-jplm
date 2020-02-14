@@ -488,37 +488,53 @@ class ConversorProvider {
       case 8:
         return std::make_unique<ColorSpacesConverter<T, 8,
             ConversionCoefficients, keep_dynamic_range>>();
-      case 9: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 9,
-            ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
-      case 10: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 10,
-            ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
-      case 11: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 11,
-            ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
-      case 12: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 12,
-            ConversionCoefficients, keep_dynamic_range>>(); } 
-            [[fallthrough]];
-      case 13: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 13,
-            ConversionCoefficients, keep_dynamic_range>>(); } 
-            [[fallthrough]];
-      case 14: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 14,
-            ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
-      case 15: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 15,
-            ConversionCoefficients, keep_dynamic_range>>(); }
-            [[fallthrough]];
-      case 16: if constexpr (sizeof(T) > 1) {
-        return std::make_unique<ColorSpacesConverter<T, 16,
-            ConversionCoefficients, keep_dynamic_range>>(); }
+      case 9:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 9,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 10:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 10,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 11:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 11,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 12:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 12,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 13:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 13,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 14:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 14,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 15:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 15,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
+        [[fallthrough]];
+      case 16:
+        if constexpr (sizeof(T) > 1) {
+          return std::make_unique<ColorSpacesConverter<T, 16,
+              ConversionCoefficients, keep_dynamic_range>>();
+        }
     }
     //this is the default
     std::cerr << "nbits=" << nbits
@@ -527,10 +543,10 @@ class ConversorProvider {
               << std::endl;
     std::cerr << "Assuming 15 bits" << std::endl;
     if constexpr (sizeof(T) > 1) {
-    return std::make_unique<ColorSpacesConverter<T, 15, ConversionCoefficients,
-        keep_dynamic_range>>();
-      }
-  return nullptr;
+      return std::make_unique<ColorSpacesConverter<T, 15,
+          ConversionCoefficients, keep_dynamic_range>>();
+    }
+    return nullptr;
   }
 };
 

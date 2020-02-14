@@ -41,7 +41,9 @@
 #ifndef JPLM_LIB_PART2_COMMON_BOXES_FLOATINGPOINTCOORDINATES_H__
 #define JPLM_LIB_PART2_COMMON_BOXES_FLOATINGPOINTCOORDINATES_H__
 
+#include <tuple>
 #include "Lib/Part2/Common/Boxes/VariablePrecisionFloatingPointCoordinates.h"
+
 
 template<typename T>
 class FloatingPointCoordinates
@@ -63,14 +65,13 @@ class FloatingPointCoordinates
   std::tuple<T, T, T> scaling;
 
 
-  constexpr uint64_t my_size() const noexcept {
-    return sizeof(T) * 9 + 1;  //1 for pp
-  }
+  constexpr uint64_t my_size() const noexcept;
 
 
   constexpr uint8_t compute_p() const {
     return std::log2(sizeof(T)) - 1;
   }
+
 
  public:
   FloatingPointCoordinates(const std::tuple<T, T, T>& origin_position,
@@ -102,9 +103,7 @@ class FloatingPointCoordinates
    * \return     The origin position tuple (x, y, z).
    * \note       It is possible to use structured binding
    */
-  std::tuple<T, T, T> get_origin_position() const {
-    return origin_position;
-  }
+  std::tuple<T, T, T> get_origin_position() const;
 
 
   /**
@@ -124,9 +123,7 @@ class FloatingPointCoordinates
    * \return     The scaling tuple (x, y, z).
    * \note       It is possible to use structured binding
    */
-  std::tuple<T, T, T> get_scaling() const {
-    return scaling;
-  }
+  std::tuple<T, T, T> get_scaling() const;
 
 
   /**
@@ -144,18 +141,40 @@ class FloatingPointCoordinates
   //    split_in_big_endian_bytes
   //   return stream;
   // }
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    bytes.emplace_back(std::byte{this->get_pp()});
-
-    BinaryTools::append_big_endian_bytes(bytes, origin_position);
-    BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
-    BinaryTools::append_big_endian_bytes(bytes, scaling);
-
-    return bytes;
-  }
+  virtual std::vector<std::byte> get_bytes() const noexcept override;
 };
+
+
+template<typename T>
+std::vector<std::byte> FloatingPointCoordinates<T>::get_bytes() const noexcept {
+  auto bytes = std::vector<std::byte>();
+  bytes.reserve(this->size());
+
+  bytes.emplace_back(std::byte{this->get_pp()});
+
+  BinaryTools::append_big_endian_bytes(bytes, origin_position);
+  BinaryTools::append_big_endian_bytes(bytes, rotation_around_axis);
+  BinaryTools::append_big_endian_bytes(bytes, scaling);
+
+  return bytes;
+}
+
+
+template<typename T>
+std::tuple<T, T, T> FloatingPointCoordinates<T>::get_scaling() const {
+  return scaling;
+}
+
+
+template<typename T>
+std::tuple<T, T, T> FloatingPointCoordinates<T>::get_origin_position() const {
+  return origin_position;
+}
+
+
+template<typename T>
+constexpr uint64_t FloatingPointCoordinates<T>::my_size() const noexcept {
+  return sizeof(T) * 9 + 1;  //1 for pp
+}
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_BOXES_FLOATINGPOINTCOORDINATES_H__ */

@@ -55,12 +55,19 @@ class ABACDecoder : public ABACCodec {
   inline void update_tag();
   inline void init_tag();
   bool get_next_bit_from_codestream();
+
  public:
   ABACDecoder(const ContiguousCodestreamCode& codestream_code)
       : ABACCodec(), codestream_code(codestream_code) {
   }
+
+
   ~ABACDecoder() = default;
+
+
   void start();
+
+
   bool decode_bit(const ProbabilityModel& mPmodel);
 };
 

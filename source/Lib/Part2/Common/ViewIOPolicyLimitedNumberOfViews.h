@@ -43,6 +43,7 @@
 
 #include "Lib/Part2/Common/ViewIOPolicyQueue.h"
 
+
 template<typename T>
 class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
  protected:
@@ -62,8 +63,7 @@ class ViewIOPolicyLimitedNumberOfViews : public ViewIOPolicyQueue<T> {
     }
   }
 
-public:
-
+ public:
   virtual ViewIOPolicyLimitedNumberOfViews<T>* clone() const override {
     return new ViewIOPolicyLimitedNumberOfViews(*this);
   }

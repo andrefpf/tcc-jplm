@@ -48,46 +48,7 @@
 namespace CodestreamPointerSetMarkerSegmentParser {
 
 CodestreamPointerSetMarkerSegment get_codestream_pointer_set_marker_segment(
-    const ContiguousCodestreamCode& codestream_code) {
-  auto SLpnt_from_codestream_code =
-      MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
-  if (SLpnt_from_codestream_code != CodestreamPointerSetMarkerSegment::SLpnt) {
-    //throw error
-  }
-
-  auto Lpnt_from_codestream_code =
-      MarkerSegmentHelper::get_next<uint64_t>(codestream_code);
-  //limits 9 to 8x(2^32-1);
-
-  auto Spnt = MarkerSegmentHelper::get_next<uint8_t>(codestream_code);
-
-  if ((Spnt != 0) && (Spnt != 1)) {
-    //throw error
-  }
-
-  auto bytes_per_pointer = (Spnt == 0) ? 4 : 8;
-
-  auto number_of_pointers_in_pnt_segment =
-      (Lpnt_from_codestream_code - 4) / bytes_per_pointer;
-
-  auto ppnts = std::vector<std::variant<uint32_t, uint64_t>>();
-
-
-  if (Spnt == 0) {
-    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
-         i < number_of_pointers_in_pnt_segment; ++i) {
-      ppnts.push_back(MarkerSegmentHelper::get_next<uint32_t>(codestream_code));
-    }
-  } else {
-    for (auto i = decltype(number_of_pointers_in_pnt_segment){0};
-         i < number_of_pointers_in_pnt_segment; ++i) {
-      ppnts.push_back(MarkerSegmentHelper::get_next<uint64_t>(codestream_code));
-    }
-  }
-
-
-  return CodestreamPointerSetMarkerSegment(std::move(ppnts));
-}
+    const ContiguousCodestreamCode& codestream_code);
 
 }  // namespace CodestreamPointerSetMarkerSegmentParser
 

@@ -73,13 +73,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
 
  public:
   JpegPlenoLightFieldContents(const ProfileAndLevelBox& profile_and_level_box,
-      const JpegPlenoLightFieldHeaderBox& jpeg_pleno_light_field_header_box)
-      : profile_and_level_box(
-            std::make_unique<ProfileAndLevelBox>(profile_and_level_box)),
-        jpeg_pleno_light_field_header_box(
-            std::make_unique<JpegPlenoLightFieldHeaderBox>(
-                jpeg_pleno_light_field_header_box)) {
-  }
+      const JpegPlenoLightFieldHeaderBox& jpeg_pleno_light_field_header_box);
 
 
   /**
@@ -91,11 +85,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
   JpegPlenoLightFieldContents(
       std::unique_ptr<ProfileAndLevelBox>&& profile_and_level_box,
       std::unique_ptr<JpegPlenoLightFieldHeaderBox>&&
-          jpeg_pleno_light_field_header_box)
-      : profile_and_level_box(std::move(profile_and_level_box)),
-        jpeg_pleno_light_field_header_box(
-            std::move(jpeg_pleno_light_field_header_box)) {
-  }
+          jpeg_pleno_light_field_header_box);
 
 
   /**
@@ -105,28 +95,13 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    * 
    * profile_and_level_box and jpeg_pleno_light_field_header_box are required fields and thus should not be nullptr
    */
-  JpegPlenoLightFieldContents(const JpegPlenoLightFieldContents& other)
-      : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(
-            *(other.profile_and_level_box))),
-        jpeg_pleno_light_field_header_box(
-            std::make_unique<JpegPlenoLightFieldHeaderBox>(
-                *(other.jpeg_pleno_light_field_header_box))),
-        contiguous_codestream_box(
-            other.contiguous_codestream_box
-                ? std::make_unique<ContiguousCodestreamBox>(
-                      *(other.contiguous_codestream_box))
-                : nullptr) {
-  }
+  JpegPlenoLightFieldContents(const JpegPlenoLightFieldContents& other);
 
 
-  const JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box() const {
-    return *jpeg_pleno_light_field_header_box;
-  }
+  const JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box() const;
 
 
-  JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box() {
-    return *jpeg_pleno_light_field_header_box;
-  }
+  JpegPlenoLightFieldHeaderBox& get_ref_to_light_field_header_box();
 
 
   /**
@@ -136,27 +111,13 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    * \warning    If a contiguous codestream box is already present it will be overwritten
    */
   void add_contiguous_codestream_box(
-      std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box) {
-    std::cout << "added contiguous codestream box" << std::endl;
-    this->contiguous_codestream_box = std::move(contiguous_codestream_box);
-  }
+      std::unique_ptr<ContiguousCodestreamBox>&& contiguous_codestream_box);
 
-  
-  ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() {
-    if(!contiguous_codestream_box) {
-      throw JpegPlenoLightFieldBoxExceptions::UninitializedContigousCodestreamException();
-    }
-    return *contiguous_codestream_box; 
-  }
 
-  
-  const ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() const {
-    if(!contiguous_codestream_box) {
-      throw JpegPlenoLightFieldBoxExceptions::UninitializedContigousCodestreamException();
-    }
-    return *contiguous_codestream_box; 
-  }
+  ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box();
 
+
+  const ContiguousCodestreamBox& get_ref_to_contiguous_codestream_box() const;
 
 
   /**
@@ -167,10 +128,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    */
   void add_jpeg_pleno_light_field_reference_view_box(
       std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>&&
-          jpeg_pleno_lf_reference_view_box) {
-    this->jpeg_pleno_lf_reference_view_box =
-        std::move(jpeg_pleno_lf_reference_view_box);
-  }
+          jpeg_pleno_lf_reference_view_box);
 
 
   /**
@@ -181,10 +139,7 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    */
   void add_jpeg_pleno_light_field_normalized_disparity_view_box(
       std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>&&
-          jpeg_pleno_lf_normalized_disparity_view_box) {
-    this->jpeg_pleno_lf_normalized_disparity_view_box =
-        std::move(jpeg_pleno_lf_normalized_disparity_view_box);
-  }
+          jpeg_pleno_lf_normalized_disparity_view_box);
 
 
   /**
@@ -195,83 +150,29 @@ class JpegPlenoLightFieldContents : public SuperBoxDBox {
    */
   void add_jpeg_pleno_light_field_intermediate_view_box(
       std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>&&
-          jpeg_pleno_lf_intermediate_view_box) {
-    this->jpeg_pleno_lf_intermediate_view_box =
-        std::move(jpeg_pleno_lf_intermediate_view_box);
-  }
+          jpeg_pleno_lf_intermediate_view_box);
 
 
   virtual ~JpegPlenoLightFieldContents() = default;
 
 
-  virtual JpegPlenoLightFieldContents* clone() const override {
-    return new JpegPlenoLightFieldContents(*this);
-  }
+  virtual JpegPlenoLightFieldContents* clone() const override;
 
 
-  uint64_t size() const noexcept override {
-    uint64_t size = profile_and_level_box->size() +
-                    jpeg_pleno_light_field_header_box->size();
-    if (jpeg_pleno_thumbnail_box) {
-      size += jpeg_pleno_thumbnail_box->size();
-    }
-    if (contiguous_codestream_box) {
-      size += contiguous_codestream_box->size();
-    }
-    if (jpeg_pleno_lf_reference_view_box) {
-      size += jpeg_pleno_lf_reference_view_box->size();
-    }
-    if (jpeg_pleno_lf_normalized_disparity_view_box) {
-      size += jpeg_pleno_lf_normalized_disparity_view_box->size();
-    }
-    if (jpeg_pleno_lf_intermediate_view_box) {
-      size += jpeg_pleno_lf_intermediate_view_box->size();
-    }
-    return size;
-  }
+  uint64_t size() const noexcept override;
 
 
-  virtual bool is_equal(const DBox& other) const override {
-    if (typeid(*this) != typeid(other))
-      return false;
-    const auto& cast_other =
-        dynamic_cast<const JpegPlenoLightFieldContents&>(other);
-    return *this == cast_other;
-  }
+  virtual bool is_equal(const DBox& other) const override;
 
 
-  bool operator==(const JpegPlenoLightFieldContents&) const noexcept {  //other
-    //! \todo implement here
-    return false;
-  }
+  bool operator==(const JpegPlenoLightFieldContents&) const noexcept;
 
 
-  bool operator!=(const JpegPlenoLightFieldContents& other) const noexcept {
-    return !this->operator==(other);
-  }
+  bool operator!=(const JpegPlenoLightFieldContents& other) const noexcept;
 
 
   //! [Overridden write_to in JpegPlenoLightFieldContents]
-  std::ostream& write_to(std::ostream& stream) const final {
-    stream << *profile_and_level_box;  //required
-    if (jpeg_pleno_thumbnail_box) {
-      stream << *jpeg_pleno_thumbnail_box;
-    }
-    stream << *jpeg_pleno_light_field_header_box;  //required
-    if (contiguous_codestream_box) {
-      stream << *contiguous_codestream_box;
-    }
-    if (jpeg_pleno_lf_reference_view_box) {
-      stream << *jpeg_pleno_lf_reference_view_box;
-    }
-    if (jpeg_pleno_lf_normalized_disparity_view_box) {
-      stream << *jpeg_pleno_lf_normalized_disparity_view_box;
-    }
-    if (jpeg_pleno_lf_intermediate_view_box) {
-      stream << *jpeg_pleno_lf_intermediate_view_box;
-    }
-    return stream;
-  }
+  std::ostream& write_to(std::ostream& stream) const final;
   //! [Overridden write_to in JpegPlenoLightFieldContents]
 };
 

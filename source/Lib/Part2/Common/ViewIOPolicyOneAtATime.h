@@ -58,12 +58,9 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
   }
 
  public:
-
   virtual ViewIOPolicyOneAtATime<T>* clone() const override {
     return new ViewIOPolicyOneAtATime(*this);
   }
-  
-
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_VIEWIOPOLICYONEATATIME_H__ */

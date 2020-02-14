@@ -56,7 +56,8 @@ class ExpectingAMarkerException : public std::exception {
 
  public:
   ExpectingAMarkerException(Marker marker)
-      : message(std::string("Expecting a marker ")+std::to_string(static_cast<uint16_t>(marker))) {
+      : message(std::string("Expecting a marker ") +
+                std::to_string(static_cast<uint16_t>(marker))) {
   }
   const char* what() const noexcept override {
     return message.c_str();

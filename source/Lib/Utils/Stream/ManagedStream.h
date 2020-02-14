@@ -9,12 +9,13 @@
 #include <vector>
 #include "CommonExceptions.h"
 
+
 class ManagedStream {
  protected:
   std::ifstream&
       ref_to_stream;  //it may be a good idea to change for a weak ptr
-  const uint64_t initial_pos;
-  const uint64_t final_pos;
+  const std::size_t initial_pos;
+  const std::size_t final_pos;
 
  public:
   ManagedStream(
@@ -23,23 +24,30 @@ class ManagedStream {
 
   ManagedStream get_sub_managed_stream(
       uint64_t initial_pos, uint64_t final_pos);
+
+
   ManagedStream get_sub_managed_stream(uint64_t max_offset);
+
 
   ManagedStream get_remaining_sub_managed_stream();
 
-  auto get_initial_pos() const noexcept {
-    return initial_pos;
-  }
 
-  auto get_final_pos() const noexcept {
-    return final_pos;
-  }
+  std::size_t get_initial_pos() const noexcept;
+
+
+  std::size_t get_final_pos() const noexcept;
+
+
+  std::size_t get_current_pos() const noexcept;
+
+
+  std::size_t tell() const noexcept;
 
 
   bool is_valid() const noexcept;
-  bool is_valid(uint64_t index) const noexcept;
 
-  uint64_t get_current_pos() const noexcept;
+
+  bool is_valid(uint64_t index) const noexcept;
 
 
   ManagedStream& rewind();  //! places the stream at initial position
@@ -52,17 +60,8 @@ class ManagedStream {
       const std::ios_base::seekdir relative_to =
           std::ios_base::beg);  //! place the stream at
 
-  uint64_t tell() const noexcept;
 
-
-  void dynamic_assert_access_bounds(const uint64_t n) const {
-    auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
-    if ((current_position < initial_pos) ||
-        (current_position + n > final_pos)) {
-      throw ManagedStreamExceptions::OutOfBoundsException(
-          n, initial_pos, final_pos, current_position);
-    }
-  }
+  void dynamic_assert_access_bounds(const uint64_t n) const;
 
 
   template<size_t N>
@@ -74,17 +73,10 @@ class ManagedStream {
   }
 
 
-  std::vector<std::byte> get_n_bytes(uint64_t n) {
-    dynamic_assert_access_bounds(n);
-    std::vector<std::byte> temp_vector(n);
-    ref_to_stream.read(reinterpret_cast<char*>(temp_vector.data()), n);
-    return temp_vector;
-  }
+  std::vector<std::byte> get_n_bytes(uint64_t n);
 
 
-  std::byte get_byte() {
-    return get_bytes<1>()[0];
-  }
+  std::byte get_byte();
 
 
   uint64_t get_length() const noexcept;

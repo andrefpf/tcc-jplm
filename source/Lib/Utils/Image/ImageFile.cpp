@@ -62,9 +62,10 @@ void ImageFile::check(const std::string& filename) {
     throw ImageIOExceptions::InexistentPathException();
   }
   if (!std::filesystem::exists(filename)) {
-    std::cerr << "File " << filename
-              << " does not exist... I need more information to create a new file"
-              << std::endl;
+    std::cerr
+        << "File " << filename
+        << " does not exist... I need more information to create a new file"
+        << std::endl;
     throw ImageIOExceptions::InexistentFileException();
   }
   if (!std::filesystem::is_regular_file(filename)) {

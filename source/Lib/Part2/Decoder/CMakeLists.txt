@@ -1,2 +1,4 @@
 set(PART2_DECODER_SOURCES  JPLMLightFieldDecoder.cpp)
 add_library(jplm_part2_decoder ${PART2_DECODER_SOURCES})
+
+target_link_libraries(jplm_part2_decoder jplm_part2_decoder_transform_mode)

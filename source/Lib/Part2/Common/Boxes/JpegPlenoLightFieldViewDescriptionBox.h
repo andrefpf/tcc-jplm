@@ -50,6 +50,7 @@
  * \tparam JpegPlenoLightFieldReferenceViewContents
  * \note Used only in 4D Prediction Mode
  */
-using JpegPlenoLightFieldViewDescriptionBox = GenericBox<0x6c667264, JpegPlenoLightFieldViewDescriptionContents>;
+using JpegPlenoLightFieldViewDescriptionBox =
+    GenericBox<0x6c667264, JpegPlenoLightFieldViewDescriptionContents>;
 
 #endif /* end of include guard: JPEGPLENOLIGHTFIELDVIEWDESCRIPTIONBOX_H__ */
