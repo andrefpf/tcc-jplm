@@ -54,6 +54,26 @@
 #include "nlohmann/json.hpp"
 
 class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
+ private:
+  void parse_mode_type(const nlohmann::json &conf);
+  void check_inconsistencies();
+  CompressionTypeLightField type;
+  static constexpr std::size_t current_hierarchy_level = 1;
+  void add_options_to_cli();
+
+ protected:
+  uint32_t number_of_rows_t;
+  uint32_t number_of_columns_s;
+  uint32_t view_height_v;
+  uint32_t view_width_u;
+
+  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
+  void parse_json(std::string path);
+  void parse_number_of_rows_t(const nlohmann::json &conf);
+  void parse_number_of_columns_s(const nlohmann::json &conf);
+  void parse_view_height_v(const nlohmann::json &conf);
+  void parse_view_width_u(const nlohmann::json &conf);
+
  public:
   JPLMEncoderConfigurationLightField(int argc, char **argv);
   LightfieldIOConfiguration get_lightfield_io_configurations() const;
@@ -63,36 +83,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   uint32_t get_view_width_u() const;
   virtual CompressionTypeLightField get_type() const;
   virtual CompressionTypeLightField get_compression_type() const;
-
-
- protected:
-  uint32_t number_of_rows_t;
-  uint32_t number_of_columns_s;
-  uint32_t view_height_v;
-  uint32_t view_width_u;
-
-  JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level)
-      : JPLMEncoderConfiguration(argc, argv, level) {
-    add_options_to_cli();
-
-    this->parse_cli(argc, argv);
-
-    this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
-  }
-
-  void parse_json(std::string path);
-  void parse_number_of_rows_t(const nlohmann::json &conf);
-  void parse_number_of_columns_s(const nlohmann::json &conf);
-  void parse_view_height_v(const nlohmann::json &conf);
-  void parse_view_width_u(const nlohmann::json &conf);
-
-
- private:
-  void parse_mode_type(const nlohmann::json &conf);
-  void check_inconsistencies();
-  CompressionTypeLightField type;
-  static constexpr std::size_t current_hierarchy_level = 1;
-  void add_options_to_cli();
 };
 
 

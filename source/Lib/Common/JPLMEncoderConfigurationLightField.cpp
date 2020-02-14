@@ -123,6 +123,25 @@ void JPLMEncoderConfigurationLightField::add_options_to_cli() {
       {[this]() -> std::string { return "transform_mode"; }}});
 }
 
+
+/**
+ * @brief      Constructs a new instance. (protected)
+ *
+ * @param[in]  argc   The count of arguments
+ * @param      argv   The arguments array
+ * @param[in]  level  The level
+ */
+JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
+    int argc, char **argv, std::size_t level)
+    : JPLMEncoderConfiguration(argc, argv, level) {
+  add_options_to_cli();
+
+  this->parse_cli(argc, argv);
+
+  this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
+}
+
+
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv,
