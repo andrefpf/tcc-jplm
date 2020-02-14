@@ -75,7 +75,6 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(
   this->message =
       "JPLM Encoder\nUsage: " + this->executable_name + " [OPTIONS]\nOptions: ";
 
-
   this->parse_cli(argc, argv);
 }
 
@@ -127,8 +126,7 @@ void JPLMEncoderConfiguration::add_options_to_cli() {
 
 
   this->add_cli_json_option({"--part", "-p",
-      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }"
-      "mode (floating point value).",
+      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("part")) {
           return conf["part"].get<string>();
