@@ -46,10 +46,10 @@
 class JPLMDecoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli();
 
  protected:
   JPLMDecoderConfiguration(int argc, char **argv, std::size_t level);
+  virtual void add_options() override;
 
  public:
   JPLMDecoderConfiguration(int argc, char **argv);

@@ -43,6 +43,10 @@
 
 using namespace std;
 
+void JPLMConfiguration::add_options() {
+  BasicConfiguration::add_options();
+}
+
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
 }
@@ -56,12 +60,10 @@ const std::string &JPLMConfiguration::get_output_filename() const {
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv)
     : JPLMConfiguration(
           argc, argv, JPLMConfiguration::current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
 }
 
 
 JPLMConfiguration::JPLMConfiguration(int argc, char **argv, std::size_t level)
     : BasicConfiguration(argc, argv, level) {
-  // this->add_options_to_cli(argv);
-  this->parse_cli(argc, argv);
 }

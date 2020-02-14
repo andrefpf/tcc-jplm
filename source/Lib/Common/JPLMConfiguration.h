@@ -72,6 +72,7 @@ class JPLMConfiguration : public BasicConfiguration {
   std::string input;
   std::string output;
   JPLMConfiguration(int argc, char **argv, std::size_t level);
+  virtual void add_options() override;
 
  public:
   JPLMConfiguration(int argc, char **argv);

@@ -43,7 +43,14 @@
 
 using json = nlohmann::json;
 
-void JPLMEncoderConfigurationLightField4DTransformMode::add_options_to_cli() {
+
+void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
+  /**
+   * Runs the method to add options of the base class
+   * \todo Add a tutorial explaining this point
+   */
+  JPLMEncoderConfigurationLightField::add_options();
+
   this->add_cli_json_option({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
       [this](const json &conf) -> std::optional<std::string> {
@@ -254,13 +261,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(
         int argc, char **argv, std::size_t level)
     : JPLMEncoderConfigurationLightField(argc, argv, level) {
-  add_options_to_cli();
-
-  this->parse_cli(argc, argv);
   this->message = "Options for Transform mode ( -T,--type=0 ):";
-
-
-  init_transform_size();
 }
 
 
@@ -269,7 +270,8 @@ JPLMEncoderConfigurationLightField4DTransformMode::
     : JPLMEncoderConfigurationLightField4DTransformMode(argc, argv,
           JPLMEncoderConfigurationLightField4DTransformMode::
               current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
+  init_transform_size();  //<! \todo check if this may bring problems when this class is derived
 }
 
 

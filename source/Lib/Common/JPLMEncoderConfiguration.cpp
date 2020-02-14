@@ -50,7 +50,7 @@ namespace fs = std::filesystem;
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
     : JPLMEncoderConfiguration(
           argc, argv, JPLMEncoderConfiguration::current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
 }
 
 
@@ -71,14 +71,14 @@ ColorSpaces::ColorSpace JPLMEncoderConfiguration::get_colorspace() const {
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(
     int argc, char **argv, std::size_t level)
     : JPLMConfiguration(argc, argv, level) {
-  add_options_to_cli();
   this->message =
       "JPLM Encoder\nUsage: " + this->executable_name + " [OPTIONS]\nOptions: ";
-
-  this->parse_cli(argc, argv);
 }
 
-void JPLMEncoderConfiguration::add_options_to_cli() {
+
+void JPLMEncoderConfiguration::add_options() {
+  JPLMConfiguration::add_options();
+  std::cout << "adding options of JPLMEncoderConfiguration" << std::endl;
   this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "

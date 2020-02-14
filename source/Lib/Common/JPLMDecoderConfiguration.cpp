@@ -50,10 +50,8 @@
 JPLMDecoderConfiguration::JPLMDecoderConfiguration(
     int argc, char **argv, std::size_t level)
     : JPLMConfiguration(argc, argv, level) {
-  add_options_to_cli();
   this->message =
       "JPLM Decoder\nUsage: " + this->executable_name + " [OPTIONS]\nOptions: ";
-  this->parse_cli(argc, argv);
 }
 
 /**
@@ -65,10 +63,11 @@ JPLMDecoderConfiguration::JPLMDecoderConfiguration(
 JPLMDecoderConfiguration::JPLMDecoderConfiguration(int argc, char **argv)
     : JPLMDecoderConfiguration(
           argc, argv, JPLMDecoderConfiguration::current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
 }
 
-void JPLMDecoderConfiguration::add_options_to_cli() {
+void JPLMDecoderConfiguration::add_options() {
+  JPLMConfiguration::add_options();
   cli_options.push_back({"--input", "-i",
       "Input, i.e., a JPEG Pleno bitstream file (filename.jpl) to be "
       "decoded.",

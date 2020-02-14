@@ -89,9 +89,9 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
-  void add_options_to_cli();
 
  protected:
+  virtual void add_options() override;
   JPLMEncoderConfigurationLightField4DTransformMode(
       int argc, char **argv, std::size_t level);
   void parse_json(std::string path);

@@ -46,6 +46,7 @@ JPLMEncoderConfigurationLightField4DPredictionMode::
     : JPLMEncoderConfigurationLightField4DPredictionMode(argc, argv,
           JPLMEncoderConfigurationLightField4DPredictionMode::
               current_hierarchy_level) {
+  this->init(argc, argv);
 }
 
 CompressionTypeLightField
@@ -55,6 +56,7 @@ JPLMEncoderConfigurationLightField4DPredictionMode::get_compression_type()
 }
 
 
-void JPLMEncoderConfigurationLightField4DPredictionMode::add_options_to_cli() {
+void JPLMEncoderConfigurationLightField4DPredictionMode::add_options() {
+  JPLMEncoderConfigurationLightField::add_options();
   //<! \todo add the needed options for transform mode configuration cli
 }

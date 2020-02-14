@@ -48,7 +48,6 @@ class JPLMEncoderConfigurationLightField4DPredictionMode
     : public JPLMEncoderConfigurationLightField {
  private:
   static constexpr std::size_t current_hierarchy_level = 2;
-  void add_options_to_cli();
 
  protected:
   JPLMEncoderConfigurationLightField4DPredictionMode(
@@ -56,6 +55,7 @@ class JPLMEncoderConfigurationLightField4DPredictionMode
       : JPLMEncoderConfigurationLightField(argc, argv, level) {
     throw JPLMConfigurationExceptions::NotImplementedYetModeException();
   }
+  virtual void add_options() override;
 
  public:
   virtual CompressionTypeLightField get_compression_type() const override;

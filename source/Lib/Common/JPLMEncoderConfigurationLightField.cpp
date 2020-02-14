@@ -43,7 +43,8 @@
 using json = nlohmann::json;
 using namespace std;
 
-void JPLMEncoderConfigurationLightField::add_options_to_cli() {
+void JPLMEncoderConfigurationLightField::add_options() {
+  JPLMEncoderConfiguration::add_options();
   this->add_cli_json_option(
       {"--view_height", "-v", "Single-view height dimension. Mandatory.",
           [this](const json &conf) -> std::optional<std::string> {
@@ -134,10 +135,6 @@ void JPLMEncoderConfigurationLightField::add_options_to_cli() {
 JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv, std::size_t level)
     : JPLMEncoderConfiguration(argc, argv, level) {
-  add_options_to_cli();
-
-  this->parse_cli(argc, argv);
-
   this->message = "Options for Part 2, Light Field ( -p,--part 2 ): ";
 }
 
@@ -146,7 +143,7 @@ JPLMEncoderConfigurationLightField::JPLMEncoderConfigurationLightField(
     int argc, char **argv)
     : JPLMEncoderConfigurationLightField(argc, argv,
           JPLMEncoderConfigurationLightField::current_hierarchy_level) {
-  run_help();
+  this->init(argc, argv);
 }
 
 

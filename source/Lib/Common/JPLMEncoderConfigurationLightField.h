@@ -59,7 +59,6 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   void check_inconsistencies();
   CompressionTypeLightField type;
   static constexpr std::size_t current_hierarchy_level = 1;
-  void add_options_to_cli();
 
  protected:
   uint32_t number_of_rows_t;
@@ -68,11 +67,11 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   uint32_t view_width_u;
 
   JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
-  void parse_json(std::string path);
   void parse_number_of_rows_t(const nlohmann::json &conf);
   void parse_number_of_columns_s(const nlohmann::json &conf);
   void parse_view_height_v(const nlohmann::json &conf);
   void parse_view_width_u(const nlohmann::json &conf);
+  virtual void add_options() override;
 
  public:
   JPLMEncoderConfigurationLightField(int argc, char **argv);

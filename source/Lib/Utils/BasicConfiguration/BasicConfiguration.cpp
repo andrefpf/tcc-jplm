@@ -43,11 +43,12 @@
 using ConsoleTable = samilton::ConsoleTable;
 using sAlign = samilton::Alignment;
 
-void BasicConfiguration::add_options_to_cli(char **argv) {
-  cli_options.push_back({"--help", "-h", "Print this help message and exit",
-      [this, argv]([[maybe_unused]] std::any v) {
+
+void BasicConfiguration::add_options() {
+  this->add_cli_option({"--help", "-h", "Print this help message and exit",
+      [this]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
-        this->executable_name = std::string(argv[0]);
+        this->executable_name = std::string(this->arg_vector[0]);
       },
       this->current_hierarchy_level});
 
@@ -164,10 +165,40 @@ bool BasicConfiguration::is_help_mode() const {
 }
 
 
-BasicConfiguration::BasicConfiguration(int argc, char **argv, std::size_t level)
-    : hierarchy_level(level) {
-  add_options_to_cli(argv);
+/**
+ * @brief      Constructs a new instance. (protected)
+ *
+ * @param[in]  argc   The count of arguments
+ * @param      argv   The arguments array
+ * @param[in]  level  The level
+ * 
+ * \todo remove argc from this protected constructor
+ */
+BasicConfiguration::BasicConfiguration(
+    [[maybe_unused]] int argc, char **argv, std::size_t level)
+    : arg_vector(argv), hierarchy_level(level) {
+}
+
+
+void BasicConfiguration::init(int argc, char **argv) {
+  this->add_options();
   this->parse_cli(argc, argv);
+  this->run_help();
+}
+
+
+/**
+ * @brief      Constructs a new instance.
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ * 
+ * \todo Add a tutorial to show that it is necessary to call all init in the public ctr
+ */
+BasicConfiguration::BasicConfiguration(int argc, char **argv)
+    : BasicConfiguration(
+          argc, argv, BasicConfiguration::current_hierarchy_level) {
+  this->init(argc, argv);
 }
 
 

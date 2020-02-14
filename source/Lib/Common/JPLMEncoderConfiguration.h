@@ -55,14 +55,15 @@
 class JPLMEncoderConfiguration : public JPLMConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli();
 
  protected:
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-
   std::string config;
   JpegPlenoPart part = JpegPlenoPart::Undefined;
   ColorSpaces::ColorSpace colorspace;
+
+  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
+  virtual void add_options() override;
+
 
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;

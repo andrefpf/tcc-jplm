@@ -56,8 +56,7 @@ class BasicConfiguration {
  private:
   bool help_mode_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
-  void add_options_to_cli(char **argv);
-
+  char **arg_vector;
 
  protected:
   // std::vector<Options> options;
@@ -70,6 +69,10 @@ class BasicConfiguration {
   std::string executable_name = "undefined";
   std::string message = std::string("");
 
+  /**
+  * @brief      Adds options.
+  */
+  virtual void add_options();
   void run_help() const;
   void parse_cli(int argc, char **argv);
   void parse_json(const std::string &path);
@@ -80,6 +83,7 @@ class BasicConfiguration {
   void add_cli_option(const CLIOption &option);
   void add_json_option(const JSONOption &option);
   void add_cli_json_option(const CLIAndJSONOption &option);
+  void init(int argc, char **argv);
   BasicConfiguration(int argc, char **argv, std::size_t level);
 
  public:
