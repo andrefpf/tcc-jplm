@@ -11,12 +11,16 @@
     <panel_attributes>type=Package
 JPLM
 	cfg
+  cmake
 	doc
 		diagrams
 		doxygen
-		software-guidelines
-	bin
-	build
+  resources
+    boxes
+    markers
+    pgx_tests
+    pixmap_exceptions
+    rgb_pattern
 	source
 		App
 			Common
