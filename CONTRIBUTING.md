@@ -9,3 +9,6 @@ By making a contribution to this project, I attest that:
 (d) I understand and agree that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the license(s) involved.
 
 Only contributions with a license compatible with the license at LICENSE.md can be accepted.
+
+**Only third-party software and libraries with permissive licenses are allowed.** Restrictive licenses are strictly forbidden.
+
