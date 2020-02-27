@@ -187,6 +187,10 @@ std::unique_ptr<Image<T>> read(ImageFile& image_file) {
           std::visit(PGXFileIO::UndefinedImageVisitor<T>(), variant_image);
       return image;
     }
+    default: {
+      throw JPLMCommonExceptions::NotImplementedException(
+          "std::unique_ptr<Image<T>> ImageIO::read(ImageFile& image_file)");
+    }
   }
 }
 
