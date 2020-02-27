@@ -82,14 +82,15 @@ class Block4D {
   std::size_t number_of_allocated_elements = 0;
   void set_number_of_elements();
   void set_strides();
-  void set_lengths(int length_t, int length_s, int length_v, int length_u);
+  void set_lengths(uint32_t length_t, uint32_t length_s, uint32_t length_v,
+      uint32_t length_u);
   void release_data();
-  void extend_u(int position_u);
-  void extend_v(int position_v);
-  void extend_s(int position_s);
-  void extend_t(int position_t);
-  bool has_equal_size(
-      int length_t, int length_s, int length_v, int length_u) const;
+  void extend_u(uint32_t position_u);
+  void extend_v(uint32_t position_v);
+  void extend_s(uint32_t position_s);
+  void extend_t(uint32_t position_t);
+  bool has_equal_size(uint32_t length_t, uint32_t length_s, uint32_t length_v,
+      uint32_t length_u) const;
 
  public:
   block4DElementType* mPixelData =
@@ -99,10 +100,10 @@ class Block4D {
   std::size_t stride_t;
   std::size_t stride_s;
   std::size_t stride_v;
-  int mlength_t = 0; /*!< t dimension block size */
-  int mlength_s = 0; /*!< s dimension block size */
-  int mlength_v = 0; /*!< v dimension block size */
-  int mlength_u = 0; /*!< u dimension block size */
+  uint32_t mlength_t = 0; /*!< t dimension block size */
+  uint32_t mlength_s = 0; /*!< s dimension block size */
+  uint32_t mlength_v = 0; /*!< v dimension block size */
+  uint32_t mlength_u = 0; /*!< u dimension block size */
 
 
   Block4D() = default;
@@ -113,38 +114,43 @@ class Block4D {
 
   Block4D(const LightfieldDimension<uint32_t>& block_dimension);
   ~Block4D();
-  void set_dimension(int length_t, int length_s, int length_v, int length_u);
-  void set_dimension(const std::tuple<int, int, int, int>& lengths);
+  void set_dimension(uint32_t length_t, uint32_t length_s, uint32_t length_v,
+      uint32_t length_u);
+  void set_dimension(
+      const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>& lengths);
   void set_dimension(const LightfieldDimension<uint32_t>& new_dimension) {
     const auto& [t, s, v, u] = new_dimension;
     this->set_dimension(t, s, v, u);
   }
 
-  std::tuple<int, int, int, int> get_dimension() {
+  std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> get_dimension() {
     return std::make_tuple(mlength_t, mlength_s, mlength_v, mlength_u);
   }
   LightfieldDimension<uint32_t> get_dimension() const {
     return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s),
         static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
   }
-  std::size_t get_linear_position(
-      int position_t, int position_s, int position_v, int position_u) const;
-  void set_pixel_at(block4DElementType pixel_value, int position_t,
-      int position_s, int position_v, int position_u);
-  block4DElementType get_pixel_at(
-      int position_t, int position_s, int position_v, int position_u) const;
+  std::size_t get_linear_position(uint32_t position_t, uint32_t position_s,
+      uint32_t position_v, uint32_t position_u) const;
+  void set_pixel_at(block4DElementType pixel_value, uint32_t position_t,
+      uint32_t position_s, uint32_t position_v, uint32_t position_u);
+  block4DElementType get_pixel_at(uint32_t position_t, uint32_t position_s,
+      uint32_t position_v, uint32_t position_u) const;
   std::size_t get_number_of_elements() const;
-  void resize_avoiding_free(
-      int length_t, int length_s, int length_v, int length_u);
+  void resize_avoiding_free(uint32_t length_t, uint32_t length_s,
+      uint32_t length_v, uint32_t length_u);
   void swap_data_with(Block4D& other);
-  void copy_sub_block_from(const Block4D& B, int source_offset_t,
-      int source_offset_s, int source_offset_v, int source_offset_u,
-      int target_offset_t = 0, int target_offset_s = 0, int target_offset_v = 0,
-      int target_offset_u = 0);
+  void copy_sub_block_from(const Block4D& B, std::size_t source_offset_t,
+      std::size_t source_offset_s, std::size_t source_offset_v,
+      std::size_t source_offset_u, std::size_t target_offset_t = 0,
+      std::size_t target_offset_s = 0, std::size_t target_offset_v = 0,
+      std::size_t target_offset_u = 0);
   void copy_sub_block_from(const Block4D& B,
-      const std::tuple<int, int, int, int>& source_offsets,
-      const std::tuple<int, int, int, int>& target_offsets = {0, 0, 0, 0});
-  void extend(ExtensionMethod extensionMethod, int extensionLength,
+      const std::tuple<std::size_t, std::size_t, std::size_t, std::size_t>&
+          source_offsets,
+      const std::tuple<std::size_t, std::size_t, std::size_t, std::size_t>&
+          target_offsets = {0, 0, 0, 0});
+  void extend(ExtensionMethod extensionMethod, uint32_t extensionLength,
       LightFieldDimension direction);
   void extend(const LightfieldCoordinate<uint32_t>& last_valid) {
     if (last_valid.get_t() < mlength_t) {
@@ -161,7 +167,8 @@ class Block4D {
     }
   }
   void clip(block4DElementType minValue, block4DElementType maxValue);
-  void shift_data_from_uv_plane_at(int shift, int position_t, int position_s);
+  void shift_data_from_uv_plane_at(
+      int shift, uint32_t position_t, uint32_t position_s);
   Block4D& operator+=(int const& value);
   Block4D& operator-=(int const& value);
   Block4D& operator*=(double const& value);

@@ -113,8 +113,8 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
   const auto elements_to_compute_in_u =
       std::get<LF::U>(range) - std::get<LF::U>(position);
   const auto elements_to_skip_before_in_u = std::get<LF::U>(position);
-  const auto elements_to_skip_after_in_u = mSubbandLF.mlength_u -
-                                     std::get<LF::U>(position);
+  const auto elements_to_skip_after_in_u =
+      mSubbandLF.mlength_u - std::get<LF::U>(position);
 
 
   auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
@@ -124,9 +124,12 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
       data_ptr += elements_to_skip_before_in_v;
       for (auto v = 0; v < elements_to_compute_in_v; ++v) {
         data_ptr += elements_to_skip_before_in_u;
-        auto data_ptr_end = data_ptr+elements_to_compute_in_u;
-        auto result = std::find_if(data_ptr, data_ptr_end, [threshold](const auto& coefficient){return std::abs(coefficient) >= threshold;});
-        if(result != data_ptr_end) {
+        auto data_ptr_end = data_ptr + elements_to_compute_in_u;
+        auto result = std::find_if(
+            data_ptr, data_ptr_end, [threshold](const auto& coefficient) {
+              return std::abs(coefficient) >= threshold;
+            });
+        if (result != data_ptr_end) {
           return true;
         }
         data_ptr += elements_to_skip_after_in_u;
@@ -228,16 +231,16 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   auto min_range_t =
       std::min(std::get<LF::T>(position) + std::get<LF::T>(lengths),
-          mSubbandLF.mlength_t);
+          (int) mSubbandLF.mlength_t);
   auto min_range_s =
       std::min(std::get<LF::S>(position) + std::get<LF::S>(lengths),
-          mSubbandLF.mlength_s);
+          (int) mSubbandLF.mlength_s);
   auto min_range_v =
       std::min(std::get<LF::V>(position) + std::get<LF::V>(lengths),
-          mSubbandLF.mlength_v);
+          (int) mSubbandLF.mlength_v);
   auto min_range_u =
       std::min(std::get<LF::U>(position) + std::get<LF::U>(lengths),
-          mSubbandLF.mlength_u);
+          (int) mSubbandLF.mlength_u);
 
   const auto Significance = get_mSubbandLF_significance(
       bitplane, position, {min_range_t, min_range_s, min_range_v, min_range_u});
