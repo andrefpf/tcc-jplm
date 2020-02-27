@@ -132,6 +132,7 @@ class PGXFile : public ImageFile {
     return image;
   }
 
+
   std::variant<std::unique_ptr<UndefinedImage<uint8_t>>,
       std::unique_ptr<UndefinedImage<int8_t>>,
       std::unique_ptr<UndefinedImage<uint16_t>>,
@@ -149,18 +150,20 @@ class PGXFile : public ImageFile {
       if (depth <= 32) {
         return read_full_image<int32_t>();
       }
-      //throw..
-    }  //else (not signed)
-    if (depth <= 8) {
-      return read_full_image<uint8_t>();
+      //<! \todo check if should throw..
+    } else {  // (not signed)
+      if (depth <= 8) {
+        return read_full_image<uint8_t>();
+      }
+      if (depth <= 16) {
+        return read_full_image<uint16_t>();
+      }
+      if (depth <= 32) {
+        return read_full_image<uint32_t>();
+      }
+      //<! \todo check if should throw..
     }
-    if (depth <= 16) {
-      return read_full_image<uint16_t>();
-    }
-    if (depth <= 32) {
-      return read_full_image<uint32_t>();
-    }
-    //throw
+    throw PGXFileIOExceptions::InvalidPGXException(depth, this->is_signed());
   }
 };
 

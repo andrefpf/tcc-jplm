@@ -148,6 +148,7 @@ class PermisionToReadDeniedException : public std::exception {
   }
 };
 
+
 class UnableToOpenFileException : public std::exception {
  public:
   const char* what() const noexcept override {
@@ -156,6 +157,27 @@ class UnableToOpenFileException : public std::exception {
 };
 }  // namespace ImageIOExceptions
 
+
+namespace PGXFileIOExceptions {
+class InvalidPGXException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit InvalidPGXException(const std::size_t depth, const bool is_signed) {
+    message_ =
+        "Invalid PGX file. It should have depth to be less or equal to 32 and "
+        "be either "
+        "signed or unsigned. It has depth = " +
+        std::to_string(depth) + " and is " + ((is_signed) ? "" : "not ") +
+        "signed";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+}  // namespace PGXFileIOExceptions
 
 namespace PixelMapFileIOExceptions {
 class InvalidPixelMapIndexException : public std::exception {
