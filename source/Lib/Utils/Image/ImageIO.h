@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 #define JPLM_LIB_UTILS_IMAGE_IMAGEIO_H__
 
+#include "Lib/Common/CommonExceptions.h"
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "Lib/Utils/Image/PGXFileIO.h"
 #include "Lib/Utils/Image/PPMBinaryFile.h"
@@ -131,10 +132,6 @@ void imwrite(const Image<T>& patch_image, const std::string& filename,
         static_cast<PPMBinaryFile*>(oppened_image.release()));
     oppened_image_as_rgb->write_image_patch_to_file(patch_image, origin);
   }
-
-  // if (name.extension() == fpath(".pgx")) {
-  //   auto oppened_image =
-  //       PGXFileIO::open(filename);  //should test if exists...
 }
 
 
@@ -167,10 +164,6 @@ std::unique_ptr<ImageT<T>> imread(const std::string& filename) {
       "ImageIO::imread");
 }
 
-// template<typename T>
-// std::unique_ptr<UndefinedImage<T>> imread(const std::string& filename) {
-//   return nullptr;
-// }
 
 /**
  * \brief      opens a image file pointer
@@ -193,7 +186,6 @@ std::unique_ptr<Image<T>> read(ImageFile& image_file) {
       auto image =
           std::visit(PGXFileIO::UndefinedImageVisitor<T>(), variant_image);
       return image;
-      // return nullptr;
     }
   }
 }
@@ -210,22 +202,6 @@ std::unique_ptr<Image<T>> read(ImageFile& image_file) {
  */
 template<template<typename> class ImageT, typename T>
 std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
-  // switch (image_file.get_type()) {
-  //   case ImageFileType::PixelMap: {
-  //     auto image = dynamic_cast<PixelMapFile&>(image_file).read_full_image();
-  //     auto converted_image =
-  //         PixelMapFileIO::extract_image_with_type_from_variant<ImageT, T>(
-  //             image);
-  //     return converted_image;
-  //   }
-  //   case ImageFileType::PGX: {
-  //     // if constexpr (std::is_same_v<ImageT<T>, UndefinedImage<T>>) {
-  //     //   return
-  //     // }
-  //     return nullptr;
-  //   }
-  // }
-
   using namespace ImageColorSpaceConversion;
   auto image = read<T>(image_file);
 
@@ -247,14 +223,15 @@ std::unique_ptr<ImageT<T>> read(ImageFile& image_file) {
         return std::make_unique<ImageT<T>>(std::move(
             convert::to<ImageT>(dynamic_cast<BT601Image<T>&>(*image))));
       }
-      case ImageType::Undefined: {
-        //
+      // case ImageType::Undefined: {
+      //   //
+      // }
+      default: {
+        throw JPLMCommonExceptions::NotImplementedException(
+            "std::unique_ptr<ImageT<T>> ImageIO::read(ImageFile& image_file)");
       }
     }
   }
-  // return convert::to<ImageT<T>>(image);
-
-  // throw std::logic_error("Not fully implemented: ImageIO::read");
 }
 
 
