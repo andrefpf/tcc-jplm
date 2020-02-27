@@ -49,13 +49,16 @@ void Block4D::set_number_of_elements() {
   number_of_elements = mlength_u * mlength_v * mlength_s * mlength_t;
 }
 
+
 std::size_t Block4D::get_number_of_elements() const {
   return number_of_elements;
 }
 
+
 Block4D::~Block4D() {
   set_dimension(0, 0, 0, 0);
 }
+
 
 void Block4D::resize_avoiding_free(uint32_t length_t, uint32_t length_s,
     uint32_t length_v, uint32_t length_u) {
@@ -82,6 +85,7 @@ void Block4D::resize_avoiding_free(uint32_t length_t, uint32_t length_s,
   //warning, this may lead to memory leaks
 }
 
+
 void Block4D::release_data() {
   if (mPixelData != nullptr) {
     for (auto t_index = decltype(mlength_t){0}; t_index < mlength_t;
@@ -98,11 +102,13 @@ void Block4D::release_data() {
   }
 }
 
+
 void Block4D::set_strides() {
   stride_v = mlength_u;
   stride_s = mlength_u * mlength_v;
   stride_t = mlength_u * mlength_v * mlength_s;
 }
+
 
 void Block4D::set_lengths(uint32_t length_t, uint32_t length_s,
     uint32_t length_v, uint32_t length_u) {
@@ -113,6 +119,7 @@ void Block4D::set_lengths(uint32_t length_t, uint32_t length_s,
   set_strides();
   set_number_of_elements();
 }
+
 
 void Block4D::set_dimension(uint32_t length_t, uint32_t length_s,
     uint32_t length_v, uint32_t length_u) {
@@ -138,6 +145,7 @@ void Block4D::set_dimension(uint32_t length_t, uint32_t length_s,
   }
 }
 
+
 void Block4D::set_dimension(
     const std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>& lengths) {
   using LF = LightFieldDimension;
@@ -145,12 +153,14 @@ void Block4D::set_dimension(
       std::get<LF::V>(lengths), std::get<LF::U>(lengths));
 }
 
+
 Block4D& Block4D::operator+=(int const& value) {
   std::transform(mPixelData, mPixelData + number_of_elements, mPixelData,
       [value](
           block4DElementType a) -> block4DElementType { return a + value; });
   return *this;
 }
+
 
 Block4D& Block4D::operator-=(int const& value) {
   std::transform(mPixelData, mPixelData + number_of_elements, mPixelData,
@@ -185,10 +195,12 @@ void Block4D::operator=(const Block4D& other) {
       number_of_elements * sizeof(block4DElementType));
 }
 
+
 void Block4D::swap_data_with(Block4D& other) {  //assumes the sizes are equal...
   std::swap(mPixelData, other.mPixelData);
   std::swap(mPixel, other.mPixel);
 }
+
 
 //move constructor
 Block4D::Block4D(Block4D&& other) {
@@ -201,6 +213,7 @@ Block4D::Block4D(Block4D&& other) {
   other.mPixelData = nullptr;
   other.mPixel = nullptr;
 }
+
 
 bool Block4D::has_equal_size(uint32_t length_t, uint32_t length_s,
     uint32_t length_v, uint32_t length_u) const {
@@ -215,10 +228,12 @@ bool Block4D::has_equal_size(uint32_t length_t, uint32_t length_s,
   return true;
 }
 
+
 bool Block4D::has_equal_size(const Block4D& other) const {
   return has_equal_size(
       other.mlength_t, other.mlength_s, other.mlength_v, other.mlength_u);
 }
+
 
 //move assignment
 Block4D& Block4D::operator=(Block4D&& other) {
@@ -236,6 +251,7 @@ Block4D& Block4D::operator=(Block4D&& other) {
   other.mPixel = nullptr;
   return *this;
 }
+
 
 void Block4D::copy_sub_block_from(const Block4D& B, std::size_t source_offset_t,
     std::size_t source_offset_s, std::size_t source_offset_v,
@@ -267,6 +283,7 @@ void Block4D::copy_sub_block_from(const Block4D& B, std::size_t source_offset_t,
   }
 }
 
+
 void Block4D::copy_sub_block_from(const Block4D& B,
     const std::tuple<std::size_t, std::size_t, std::size_t, std::size_t>&
         source_offsets,
@@ -280,10 +297,12 @@ void Block4D::copy_sub_block_from(const Block4D& B,
       std::get<LF::U>(target_offsets));
 }
 
+
 /*! Sets every pixel of this block to zero */
 void Block4D::fill_with_zeros() {
   std::memset(mPixelData, 0, number_of_elements * sizeof(block4DElementType));
 }
+
 
 void Block4D::extend(ExtensionMethod extensionMethod, uint32_t extensionLength,
     LightFieldDimension direction) {
@@ -321,6 +340,7 @@ void Block4D::extend(ExtensionMethod extensionMethod, uint32_t extensionLength,
   }
 }
 
+
 //The extend function could be more efficient if using raw pointer access
 void Block4D::extend_u(uint32_t position_u) {
   /*! extend this block by repeating the pixel at position_u in the u dimension from that position to the end of the block*/
@@ -328,9 +348,9 @@ void Block4D::extend_u(uint32_t position_u) {
     return;
   }
   auto number_of_elements_to_copy = mlength_u - position_u - 1;
-  for (auto t = 0; t < mlength_t; t++) {
-    for (auto s = 0; s < mlength_s; s++) {
-      for (auto v = 0; v < mlength_v; v++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
         std::fill_n(&mPixel[t][s][v][position_u + 1],
             number_of_elements_to_copy, mPixel[t][s][v][position_u]);
       }
@@ -338,15 +358,16 @@ void Block4D::extend_u(uint32_t position_u) {
   }
 }
 
+
 void Block4D::extend_v(uint32_t position_v) {
   /*! extend this block by repeating the pixel at position_v in the v dimension from that position to the end of the block*/
   if (position_v >= mlength_v - 1) {
     return;
   }
-  for (auto t = 0; t < mlength_t; t++) {
-    for (auto s = 0; s < mlength_s; s++) {
-      for (auto v = position_v + 1; v < mlength_v; v++) {
-        for (auto u = 0; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
+      for (auto v = decltype(mlength_v){position_v + 1}; v < mlength_v; v++) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
           mPixel[t][s][v][u] = mPixel[t][s][position_v][u];
         }
       }
@@ -354,15 +375,16 @@ void Block4D::extend_v(uint32_t position_v) {
   }
 }
 
+
 void Block4D::extend_s(uint32_t position_s) {
   /*! extend this block by repeating the pixel at position_s in the s dimension from that position to the end of the block*/
   if (position_s >= mlength_s - 1) {
     return;
   }
-  for (auto t = 0; t < mlength_t; t++) {
-    for (auto s = position_s + 1; s < mlength_s; s++) {
-      for (auto v = 0; v < mlength_v; v++) {
-        for (auto u = 0; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
+    for (auto s = decltype(mlength_s){position_s + 1}; s < mlength_s; s++) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
           mPixel[t][s][v][u] = mPixel[t][position_s][v][u];
         }
       }
@@ -370,21 +392,23 @@ void Block4D::extend_s(uint32_t position_s) {
   }
 }
 
+
 void Block4D::extend_t(uint32_t position_t) {
   /*! extend this block by repeating the pixel at position_t in the t dimension from that position to the end of the block*/
   if (position_t >= mlength_t - 1) {
     return;
   }
-  for (auto t = position_t + 1; t < mlength_t; t++) {
-    for (auto s = 0; s < mlength_s; s++) {
-      for (auto v = 0; v < mlength_v; v++) {
-        for (auto u = 0; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){position_t + 1}; t < mlength_t; t++) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
           mPixel[t][s][v][u] = mPixel[position_t][s][v][u];
         }
       }
     }
   }
 }
+
 
 void Block4D::clip(block4DElementType minValue, block4DElementType maxValue) {
   /*! restrict pixels values to the interval [minValue, maxValue] */
