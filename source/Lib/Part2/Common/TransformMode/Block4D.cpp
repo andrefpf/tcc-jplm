@@ -74,9 +74,9 @@ void Block4D::resize_avoiding_free(uint32_t length_t, uint32_t length_s,
   set_lengths(length_t, length_s, length_v, length_u);
 
   if (number_of_elements != 0) {
-    for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
-      for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
-        for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
+    for (auto t = decltype(mlength_t){0}; t < mlength_t; ++t) {
+      for (auto s = decltype(mlength_s){0}; s < mlength_s; ++s) {
+        for (auto v = decltype(mlength_v){0}; v < mlength_v; ++v) {
           mPixel[t][s][v] = &mPixelData[get_linear_position(t, s, v, 0)];
         }
       }
@@ -89,9 +89,9 @@ void Block4D::resize_avoiding_free(uint32_t length_t, uint32_t length_s,
 void Block4D::release_data() {
   if (mPixelData != nullptr) {
     for (auto t_index = decltype(mlength_t){0}; t_index < mlength_t;
-         t_index++) {
+         ++t_index) {
       for (auto s_index = decltype(mlength_s){0}; s_index < mlength_s;
-           s_index++) {
+           ++s_index) {
         delete[] mPixel[t_index][s_index];
       }
       delete[] mPixel[t_index];
@@ -133,11 +133,11 @@ void Block4D::set_dimension(uint32_t length_t, uint32_t length_s,
   if (number_of_elements != 0) {
     mPixelData = new block4DElementType[number_of_elements];
     mPixel = new block4DElementType***[mlength_t];
-    for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
+    for (auto t = decltype(mlength_t){0}; t < mlength_t; ++t) {
       mPixel[t] = new block4DElementType**[mlength_s];
-      for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
+      for (auto s = decltype(mlength_s){0}; s < mlength_s; ++s) {
         mPixel[t][s] = new block4DElementType*[mlength_v];
-        for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
+        for (auto v = decltype(mlength_v){0}; v < mlength_v; ++v) {
           mPixel[t][s][v] = &mPixelData[get_linear_position(t, s, v, 0)];
         }
       }
@@ -268,10 +268,10 @@ void Block4D::copy_sub_block_from(const Block4D& B, std::size_t source_offset_t,
       std::min(mlength_v - target_offset_v, B.mlength_v - source_offset_v);
   auto length_u =
       std::min(mlength_u - target_offset_u, B.mlength_u - source_offset_u);
-  for (auto index_t = decltype(length_t){0}; index_t < length_t; index_t++) {
-    for (auto index_s = decltype(length_t){0}; index_s < length_s; index_s++) {
+  for (auto index_t = decltype(length_t){0}; index_t < length_t; ++index_t) {
+    for (auto index_s = decltype(length_t){0}; index_s < length_s; ++index_s) {
       for (auto index_v = decltype(length_t){0}; index_v < length_v;
-           index_v++) {
+           ++index_v) {
         std::memcpy(
             &mPixel[index_t + target_offset_t][index_s + target_offset_s]
                    [index_v + target_offset_v][target_offset_u],
@@ -348,9 +348,9 @@ void Block4D::extend_u(uint32_t position_u) {
     return;
   }
   auto number_of_elements_to_copy = mlength_u - position_u - 1;
-  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
-    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
-      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; ++t) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; ++s) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; ++v) {
         std::fill_n(&mPixel[t][s][v][position_u + 1],
             number_of_elements_to_copy, mPixel[t][s][v][position_u]);
       }
@@ -364,10 +364,10 @@ void Block4D::extend_v(uint32_t position_v) {
   if (position_v >= mlength_v - 1) {
     return;
   }
-  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
-    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
-      for (auto v = decltype(mlength_v){position_v + 1}; v < mlength_v; v++) {
-        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; ++t) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; ++s) {
+      for (auto v = decltype(mlength_v){position_v + 1}; v < mlength_v; ++v) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; ++u) {
           mPixel[t][s][v][u] = mPixel[t][s][position_v][u];
         }
       }
@@ -381,10 +381,10 @@ void Block4D::extend_s(uint32_t position_s) {
   if (position_s >= mlength_s - 1) {
     return;
   }
-  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
-    for (auto s = decltype(mlength_s){position_s + 1}; s < mlength_s; s++) {
-      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
-        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; ++t) {
+    for (auto s = decltype(mlength_s){position_s + 1}; s < mlength_s; ++s) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; ++v) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; ++u) {
           mPixel[t][s][v][u] = mPixel[t][position_s][v][u];
         }
       }
@@ -398,10 +398,10 @@ void Block4D::extend_t(uint32_t position_t) {
   if (position_t >= mlength_t - 1) {
     return;
   }
-  for (auto t = decltype(mlength_t){position_t + 1}; t < mlength_t; t++) {
-    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
-      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
-        for (auto u = decltype(mlength_u){0}; u < mlength_u; u++) {
+  for (auto t = decltype(mlength_t){position_t + 1}; t < mlength_t; ++t) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; ++s) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; ++v) {
+        for (auto u = decltype(mlength_u){0}; u < mlength_u; ++u) {
           mPixel[t][s][v][u] = mPixel[position_t][s][v][u];
         }
       }
