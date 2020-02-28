@@ -137,7 +137,7 @@ class JPLM4DTransformModeLightFieldEncoder
   virtual ~JPLM4DTransformModeLightFieldEncoder() = default;
 
 
-  void run_for_block_4d(const uint32_t channel, const int32_t level_shift,
+  void run_for_block_4d(const uint32_t channel,
       const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override;
 };
@@ -158,13 +158,15 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
-    const uint32_t channel, const int32_t level_shift,
-    const LightfieldCoordinate<uint32_t>& position,
+    const uint32_t channel, const LightfieldCoordinate<uint32_t>& position,
     const LightfieldDimension<uint32_t>& size) {
   hierarchical_4d_encoder.write_marker(Marker::SOB);
 
   auto block_4d = ref_to_lightfield.get_block_4D_from(channel, position, size);
-  block_4d += 0 - level_shift;
+
+  int level_shift = -std::pow(2.0, ref_to_lightfield.get_views_bpp() - 1);
+
+  block_4d += level_shift;
 
 
   const auto lambda = transform_mode_configuration->get_lambda();
