@@ -54,15 +54,15 @@ std::vector<std::byte> Markers::get_bytes(Marker marker) {
 bool Markers::is_a_known_marker(Marker marker) {
   switch (marker) {
     case Marker::SOC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::LFC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::SCC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::PNT:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::SOB:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::EOC:
       return true;
     default:
