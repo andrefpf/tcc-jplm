@@ -49,7 +49,6 @@
 #include <iostream>
 #include <memory>  //for unique_ptr, make_unique
 #include <numeric>  //for inner_product
-#include <numeric>  //if c++17 and using transform_reduce
 #include <tuple>
 #include <utility>
 #include "Block4D.h"

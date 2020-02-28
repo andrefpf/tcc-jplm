@@ -114,6 +114,22 @@ class LightfieldCoordinate {
   }
 
 
+  LightfieldCoordinate<T>& operator=(LightfieldCoordinate<T>&& other) {
+    if (this != &other) {
+      std::swap(dimensions, other.dimensions);
+    }
+    return *this;
+  }
+
+
+  LightfieldCoordinate<T>& operator=(const LightfieldCoordinate<T>& other) {
+    if (this != &other) {
+      this->dimensions = other.dimensions;
+    }
+    return *this;
+  }
+
+
   LightfieldCoordinate<T> operator-(
       const LightfieldCoordinate<T>& other) const {
     if constexpr (std::is_unsigned<T>::value) {
