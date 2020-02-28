@@ -96,7 +96,7 @@ class LightfieldCoordinate {
   }
 
 
-  ~LightfieldCoordinate() = default;
+  virtual ~LightfieldCoordinate() = default;
 
 
   std::tuple<T, T, T, T> as_tuple() const noexcept {
