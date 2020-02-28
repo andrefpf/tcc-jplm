@@ -87,9 +87,9 @@ void Transformed4DBlock::swap_data_with_block(Block4D& block) {
   std::swap(data_ptr, block.mPixelData);
   data.reset(data_ptr);
 
-  for (int t = 0; t < mlength_t; t++) {
-    for (int s = 0; s < mlength_s; s++) {
-      for (int v = 0; v < mlength_v; v++) {
+  for (auto t = decltype(mlength_t){0}; t < mlength_t; t++) {
+    for (auto s = decltype(mlength_s){0}; s < mlength_s; s++) {
+      for (auto v = decltype(mlength_v){0}; v < mlength_v; v++) {
         block.mPixel[t][s][v] =
             block.mPixelData + block.get_linear_position(t, s, v, 0);
       }
@@ -261,8 +261,8 @@ void Transformed4DBlock::set_number_of_elements() {
 }
 
 
-void Transformed4DBlock::set_dimensions(
-    int length_t, int length_s, int length_v, int length_u) {
+void Transformed4DBlock::set_dimensions(uint32_t length_t, uint32_t length_s,
+    uint32_t length_v, uint32_t length_u) {
   mlength_t = length_t;
   mlength_s = length_s;
   mlength_v = length_v;
@@ -290,7 +290,8 @@ Transformed4DBlock::Transformed4DBlock(const Block4D& block,
 
 
 Transformed4DBlock::Transformed4DBlock(
-    const block4DElementType* transformed_values, int u, int v, int s, int t) {
+    const block4DElementType* transformed_values, uint32_t u, uint32_t v,
+    uint32_t s, uint32_t t) {
   set_dimensions(t, s, v, u);
   alloc_resources();
   std::memcpy(data.get(), transformed_values,
@@ -326,4 +327,3 @@ Block4D Transformed4DBlock::inverse(
   do_4d_transform(block.mPixelData, data.get(), coefficients, transform_gains);
   return block;
 }
-

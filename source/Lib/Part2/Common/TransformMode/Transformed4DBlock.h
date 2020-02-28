@@ -65,7 +65,8 @@ class Transformed4DBlock {
   void alloc_resources();
 
   void set_number_of_elements();
-  void set_dimensions(int length_t, int length_s, int length_v, int length_u);
+  void set_dimensions(uint32_t length_t, uint32_t length_s, uint32_t length_v,
+      uint32_t length_u);
   void copy_values_to_temp(const block4DElementType* ptr,
       std::size_t ptr_forward_stride, std::size_t num_elements);
   void generic_4d_separable_transform_in_1d(block4DElementType* dest,
@@ -77,10 +78,10 @@ class Transformed4DBlock {
 
  protected:
   /*The length values will be copied from the Block4D*/
-  int mlength_t; /*!< t dimension block size */
-  int mlength_s; /*!< s dimension block size */
-  int mlength_v; /*!< v dimension block size */
-  int mlength_u; /*!< u dimension block size */
+  uint32_t mlength_t; /*!< t dimension block size */
+  uint32_t mlength_s; /*!< s dimension block size */
+  uint32_t mlength_v; /*!< v dimension block size */
+  uint32_t mlength_u; /*!< u dimension block size */
   std::size_t number_of_elements;
   std::unique_ptr<block4DElementType[]>
       data; /*!< pointer to a linear array of transformed pixel data */
@@ -102,8 +103,8 @@ class Transformed4DBlock {
           coefficients,
       const std::tuple<double, double, double, double> transform_gains);
 
-  Transformed4DBlock(
-      const block4DElementType* transformed_values, int u, int v, int s, int t);
+  Transformed4DBlock(const block4DElementType* transformed_values, uint32_t u,
+      uint32_t v, uint32_t s, uint32_t t);
 
   Transformed4DBlock(Block4D&& source);
 
