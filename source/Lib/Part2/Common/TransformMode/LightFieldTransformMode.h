@@ -57,7 +57,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
       std::size_t max_value, const PixelMapType type,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromFile<T>(
-            configuration, max_value, type, std::move(view_io_policy)) {
+            configuration, max_value, std::move(view_io_policy)) {
   }
 
 

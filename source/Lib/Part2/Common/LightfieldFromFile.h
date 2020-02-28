@@ -93,7 +93,7 @@ class LightfieldFromFile : public Lightfield<T> {
 
 
   LightfieldFromFile(const LightfieldIOConfiguration& configuration,
-      std::size_t max_value, const PixelMapType type,
+      std::size_t max_value,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
@@ -129,7 +129,7 @@ class LightfieldFromFile : public Lightfield<T> {
   /**
    * \brief Destructor of the LightfieldFromFile (default)
    */
-  ~LightfieldFromFile() = default;
+  virtual ~LightfieldFromFile() = default;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_LIGHTFIELDFROMFILE_H__ */
