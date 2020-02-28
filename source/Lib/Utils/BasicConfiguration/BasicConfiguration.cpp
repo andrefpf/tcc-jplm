@@ -41,8 +41,6 @@
 #include "BasicConfiguration.h"
 
 using ConsoleTable = samilton::ConsoleTable;
-using sAlign = samilton::Alignment;
-
 
 void BasicConfiguration::add_options() {
   this->add_cli_option({"--help", "-h", "Print this help message and exit",
@@ -98,17 +96,17 @@ void BasicConfiguration::run_help() const {
     unsigned int count = 0;
     for (const auto &option : this->cli_options) {
       if (option.get_level() == this->hierarchy_level) {
-        table[count][1](sAlign::right) =
+        table[count][1](samilton::Alignment::right) =
             option.get_short_option() + "," + option.get_long_option();
-        table[count][2](sAlign::left) = option.get_description();
+        table[count][2](samilton::Alignment::left) = option.get_description();
         ++count;
       }
     }
     for (const auto &option : this->cli_json_options) {
       if (option.get_level() == this->hierarchy_level) {
-        table[count][1](sAlign::right) =
+        table[count][1](samilton::Alignment::right) =
             option.get_short_option() + "," + option.get_long_option();
-        table[count][2](sAlign::left) = option.get_description();
+        table[count][2](samilton::Alignment::left) = option.get_description();
         ++count;
       }
     }
