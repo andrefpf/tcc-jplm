@@ -93,14 +93,14 @@ class LightfieldFromFile : public Lightfield<T> {
 
 
   LightfieldFromFile(const LightfieldIOConfiguration& configuration,
-      std::size_t max_value,
+      std::size_t number_of_channels, std::size_t bits_per_sample,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
     //<! \todo check the number of channels...
 
-    std::size_t number_of_channels = 3;  //<! \todo check this out...
-    std::size_t bits_per_sample = 10;
+    // std::size_t number_of_channels = 3;  //<! \todo check this out...
+    // std::size_t bits_per_sample = 10;
 
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {

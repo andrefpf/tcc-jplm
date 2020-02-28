@@ -87,7 +87,18 @@ class JPLM4DTransformModeLightFieldDecoder
                                   .get_ref_to_light_field_header_box()
                                   .get_ref_to_contents()
                                   .get_light_field_dimension<std::size_t>()),
-                          1023, PixelMapType::P6)),
+                          light_field_box.get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_number_of_components(),
+                          light_field_box.get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_bits_per_component())),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
