@@ -87,7 +87,18 @@ class JPLM4DTransformModeLightFieldDecoder
                                   .get_ref_to_light_field_header_box()
                                   .get_ref_to_contents()
                                   .get_light_field_dimension<std::size_t>()),
-                          1023, PixelMapType::P6)),
+                          light_field_box.get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_number_of_components(),
+                          light_field_box.get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_ref_to_light_field_header_box()
+                              .get_ref_to_contents()
+                              .get_bits_per_component())),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -275,14 +286,16 @@ class JPLM4DTransformModeLightFieldDecoder
 
 
   virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override {
     hierarchical_4d_decoder.reset_probability_models();
 
     auto decoded_block = partition_decoder.decode_partition(
         channel, hierarchical_4d_decoder, size);
 
-    decoded_block += (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
+    int level_shift = (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
+    decoded_block += level_shift;
+
 
     decoded_block.clip(0, hierarchical_4d_decoder.get_level_shift());
 

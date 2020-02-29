@@ -91,7 +91,7 @@ class JPLM4DTransformModeLightFieldCodec
 
 
   virtual void run_for_block_4d(const uint32_t channel,
-      const int32_t level_shift, const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) = 0;
 };
 
@@ -145,7 +145,7 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
   const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
       block_4d_dimension;
   const auto& boder_blocks_policy = this->get_border_blocks_policy();
-  int32_t level_shift = 512;
+
   auto size_padding = LightfieldDimension<uint32_t>(
       BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
   /* \todo Remove so many nested for. Use cppitertools/product.hpp instead */
@@ -179,8 +179,7 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
 
           for (auto color_channel_index = 0; color_channel_index < 3;
                ++color_channel_index) {
-            run_for_block_4d(
-                color_channel_index, level_shift, {t, s, v, u}, size);
+            run_for_block_4d(color_channel_index, {t, s, v, u}, size);
           }
         }
       }

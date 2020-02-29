@@ -96,7 +96,7 @@ class LightfieldCoordinate {
   }
 
 
-  ~LightfieldCoordinate() = default;
+  virtual ~LightfieldCoordinate() = default;
 
 
   std::tuple<T, T, T, T> as_tuple() const noexcept {
@@ -111,6 +111,22 @@ class LightfieldCoordinate {
 
   bool operator!=(const LightfieldCoordinate<T>& other) const noexcept {
     return this->dimensions != other.dimensions;
+  }
+
+
+  LightfieldCoordinate<T>& operator=(LightfieldCoordinate<T>&& other) {
+    if (this != &other) {
+      std::swap(dimensions, other.dimensions);
+    }
+    return *this;
+  }
+
+
+  LightfieldCoordinate<T>& operator=(const LightfieldCoordinate<T>& other) {
+    if (this != &other) {
+      this->dimensions = other.dimensions;
+    }
+    return *this;
   }
 
 

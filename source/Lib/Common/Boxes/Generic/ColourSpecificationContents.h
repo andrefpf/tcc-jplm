@@ -56,12 +56,11 @@
  */
 using meth_field_type = uint8_t;
 
-enum class LegalMethValue : meth_field_type 
-{
+enum class LegalMethValue : meth_field_type {
   Enumerated = 1,
   RestrictedICC = 2,
   AnyICC = 3,
-  VendorColour = 4, 
+  VendorColour = 4,
 };
 
 
@@ -70,15 +69,17 @@ enum class LegalMethValue : meth_field_type
  */
 using approx_field_type = uint8_t;
 
-enum class LegalApproxValue : approx_field_type
-{
-  Illegal = 0, //!< only allowed in the JP2 (part 1), not JPX (part 2)
-  AccuratelyRepresents = 1, //!< This colour specification method accurately represents the correct definition of the colourspace 
-  ApproximatesWithExceptionalQuality = 2, //!< This colour specification method approximates the correct definition of the colourspace with exceptional quality
-  ApproximatesWithReasonableQuality = 3, //!< This colour specification method approximates the correct definition of the colourspace with reasonable quality
-  ApproximatesWithPoorQuality = 4, //!< This colour specification method approximates the correct definition of the colourspace with poor quality 
+enum class LegalApproxValue : approx_field_type {
+  Illegal = 0,  //!< only allowed in the JP2 (part 1), not JPX (part 2)
+  AccuratelyRepresents =
+      1,  //!< This colour specification method accurately represents the correct definition of the colourspace
+  ApproximatesWithExceptionalQuality =
+      2,  //!< This colour specification method approximates the correct definition of the colourspace with exceptional quality
+  ApproximatesWithReasonableQuality =
+      3,  //!< This colour specification method approximates the correct definition of the colourspace with reasonable quality
+  ApproximatesWithPoorQuality =
+      4,  //!< This colour specification method approximates the correct definition of the colourspace with poor quality
 };
-
 
 
 /**
@@ -270,6 +271,7 @@ class ColourSpecificationContents : public InMemoryDBox {
   bool operator!=(const ColourSpecificationContents& other) const {
     return !this->operator==(other);
   }
+
 
   /**
    * \brief      Gets the bytes of this content to put in a stream.

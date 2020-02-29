@@ -53,11 +53,22 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
   }
 
 
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  configuration       The configuration
+   * @param[in]  number_of_channels  The number of channels
+   * @param[in]  bits_per_sample     The bits per sample
+   * @param      view_io_policy      The view i/o policy
+   * 
+   * \todo number_of_channels and bits_per_sample could be on LightfieldIOConfiguration. However, this means
+   * only one constructor. How to know if encoder or decoder?
+   */
   LightFieldTransformMode(const LightfieldIOConfiguration& configuration,
-      std::size_t max_value, const PixelMapType type,
+      std::size_t number_of_channels, std::size_t bits_per_sample,
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
-      : LightfieldFromFile<T>(
-            configuration, max_value, type, std::move(view_io_policy)) {
+      : LightfieldFromFile<T>(configuration, number_of_channels,
+            bits_per_sample, std::move(view_io_policy)) {
   }
 
 

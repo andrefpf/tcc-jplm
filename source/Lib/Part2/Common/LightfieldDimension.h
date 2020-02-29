@@ -86,6 +86,9 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   }
 
 
+  virtual ~LightfieldDimension() = default;
+
+
   bool operator==(const LightfieldDimension<T>& other) const {
     return this->dimensions == other.dimensions;
   }

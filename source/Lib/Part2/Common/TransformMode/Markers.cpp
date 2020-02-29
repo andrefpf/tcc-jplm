@@ -42,11 +42,21 @@
 
 
 std::vector<std::byte> Markers::get_bytes(Marker marker) {
+  auto bytes = std::vector<std::byte>();
+  /**
+   * The first byte is always 0xFF
+   */
+  bytes.emplace_back(std::byte{0xFF});
+/**
+   * The following pragma is used to avoid warning on narrowing conversion.
+   * The conversion is not narrowing because we only use the 2 least signigicant bytes
+   */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
   auto marker_value = static_cast<std::underlying_type_t<Marker>>(marker);
   marker_value &= 0x00FF;  //keeping only the least significative byte;
-  auto bytes = std::vector<std::byte>();
-  bytes.emplace_back(std::byte{0xFF});
   bytes.emplace_back(std::byte{marker_value});
+#pragma GCC diagnostic pop
   return bytes;
 }
 
@@ -54,15 +64,15 @@ std::vector<std::byte> Markers::get_bytes(Marker marker) {
 bool Markers::is_a_known_marker(Marker marker) {
   switch (marker) {
     case Marker::SOC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::LFC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::SCC:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::PNT:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::SOB:
-      [[fall_through]];
+      [[fallthrough]];
     case Marker::EOC:
       return true;
     default:

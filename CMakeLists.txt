@@ -55,7 +55,6 @@ include(ExternalCXXProperties)
 include(ExternalGetOptForVisualStudio)
 include(ExternalCPPItertools)
 include(ExternalNlohmannJSON)
-include(ExternalOpenJPEG)
 
 if (UNIX)
     option(VISUALIZATION_TOOL "Compiles the Light field Visualization tool" OFF)

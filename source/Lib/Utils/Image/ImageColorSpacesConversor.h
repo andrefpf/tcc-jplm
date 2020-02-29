@@ -47,9 +47,9 @@
 #include <variant>
 #include "Lib/Utils/Image/ColorSpaces.h"
 #include "Lib/Utils/Image/RGBImage.h"
+#include "Lib/Utils/Image/UndefinedImage.h"
 #include "Lib/Utils/Image/YCbCrImage.h"
 #include "Lib/Utils/Image/YCoCgImage.h"
-
 
 namespace ImageColorSpaceConversion {
 
@@ -224,6 +224,24 @@ ImageOut<T> to(const ImageIn<T>& source) {
       }
       case ImageType::BT601: {
         return to<ImageOut>(dynamic_cast<const BT601Image<T>&>(source));
+      }
+      case ImageType::BT709: {
+        return to<ImageOut>(dynamic_cast<const BT709Image<T>&>(source));
+      }
+      case ImageType::BT2020: {
+        return to<ImageOut>(dynamic_cast<const BT2020Image<T>&>(source));
+      }
+      case ImageType::YCoCg: {
+        return to<ImageOut>(dynamic_cast<const YCoCgImage<T>&>(source));
+      }
+      case ImageType::Undefined: {
+        return to<ImageOut>(dynamic_cast<const UndefinedImage<T>&>(source));
+      }
+      case ImageType::GrayScale: {
+        return to<ImageOut>(dynamic_cast<const GrayScaleImage<T>&>(source));
+      }
+      default: {
+        //<! \todo check if should throw error...
       }
     }
   }

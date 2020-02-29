@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
 
+#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldHeaderBox.h"
@@ -49,7 +50,6 @@
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 #include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
-#include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 
 
 template<typename PelType = uint16_t>
@@ -67,13 +67,13 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
         this->light_field->get_views_bpp(),
         light_field_encoder_configuration.get_compression_type());
 
-    const auto& [t, s, v, u] = lf_header_contents.get_light_field_dimension();
 
     auto lightfield_header_box =
         std::make_unique<LightFieldHeaderBox>(std::move(lf_header_contents));
     auto colour_specification_boxes =
         std::vector<std::unique_ptr<ColourSpecificationBox>>();
-    colour_specification_boxes.emplace_back(std::make_unique<ColourSpecificationBox>());
+    colour_specification_boxes.emplace_back(
+        std::make_unique<ColourSpecificationBox>());
 
     auto jpeg_pleno_light_field_header_box =
         std::make_unique<JpegPlenoLightFieldHeaderBox>(
@@ -89,8 +89,7 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
 
 
  public:
-  JPLMLightFieldEncoder(
-      const JPLMEncoderConfigurationLightField& configuration)
+  JPLMLightFieldEncoder(const JPLMEncoderConfigurationLightField& configuration)
       : light_field_encoder_configuration(configuration) {
     add_pleno_lf_box();
   }
