@@ -36,7 +36,7 @@ add_jplm_util(
     "image;stream;jplm_part2_common")
 
 add_jplm_util(convert_ppm_to_pgx PPMToPGX.cpp
-    "image;stream")
+    "image;stream;basic_configuration")
 
 add_jplm_util(convert_pgx_to_ppm
               PGXToPPM.cpp

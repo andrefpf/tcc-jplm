@@ -40,56 +40,90 @@
 
 #include <filesystem>
 #include <iostream>
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
 #include "Lib/Utils/Image/ImageIO.h"
 
+class PPMToPGXConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
 
-bool are_input_and_output_paths_valid(
-    const std::string& input_path, const std::string& output_path) {
-  auto valid = true;
-  if (input_path == output_path) {
-    std::cerr << "Input and output paths must be different" << std::endl;
-    valid = false;
+ protected:
+  std::string input;
+  std::string output;
+  PPMToPGXConfiguration(int argc, char **argv, std::size_t level);
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
+
+
+    this->add_cli_json_option(
+        {"--input", "-i", "Input PPM (P6) file to be converted to PGX",
+            [this](const nlohmann::json &conf) -> std::optional<std::string> {
+              if (conf.contains("input")) {
+                return conf["input"].get<std::string>();
+              }
+              return std::nullopt;
+            },
+            [this]([[maybe_unused]] std::any v) {
+              this->input = std::any_cast<std::string>(v);
+            },
+            this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--output", "-o",
+        "Directory where the output PGX files will be saved.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("output")) {
+            return conf["output"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
   }
 
-  if (std::filesystem::is_directory(input_path)) {
-    std::cerr << "Input must be a ppm file" << std::endl;
-    valid = false;
-  }
+ public:
+  PPMToPGXConfiguration(int argc, char **argv);
 
-  if (!std::filesystem::is_directory(output_path)) {
-    std::cerr << "Output_path path must be a directory" << std::endl;
-    valid = false;
-  }
-  return valid;
+  virtual ~PPMToPGXConfiguration() = default;
+
+  const std::string &get_input_filename() const;
+  const std::string &get_output_filename() const;
+};
+
+
+const std::string &PPMToPGXConfiguration::get_input_filename() const {
+  return input;
+}
+const std::string &PPMToPGXConfiguration::get_output_filename() const {
+  return output;
+}
+PPMToPGXConfiguration::PPMToPGXConfiguration(int argc, char **argv)
+    : PPMToPGXConfiguration(
+          argc, argv, PPMToPGXConfiguration::current_hierarchy_level) {
+  this->init(argc, argv);
 }
 
 
-int main(int argc, char const* argv[]) {
-  if (argc < 3) {
-    std::cout << "Expecting 2 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " /path/to/input/file.ppm /path/to/output/directory"
-              << std::endl;
-    exit(1);
-  }
-
-  std::string input_path(argv[1]);
-  std::string output_path(argv[2]);
-
-  if (!are_input_and_output_paths_valid(input_path, output_path)) {
-    exit(1);
-  }
+PPMToPGXConfiguration::PPMToPGXConfiguration(
+    int argc, char **argv, std::size_t level)
+    : BasicConfiguration(argc, argv, level) {
+}
 
 
-  auto image_file = ImageIO::open(input_path);
+int main(int argc, char const *argv[]) {
+  auto configuration = PPMToPGXConfiguration(argc, const_cast<char **>(argv));
+
+
+  auto image_file = ImageIO::open(configuration.get_input_filename());
 
   auto image_from_file = ImageIO::read<BT601Image, uint16_t>(*image_file);
 
 
   auto split_images = ImageUtils::get_splitting_of(*image_from_file);
 
-  auto output = std::filesystem::path(output_path);
-  auto input = std::filesystem::path(input_path);
+  auto output = std::filesystem::path(configuration.get_output_filename());
+  auto input = std::filesystem::path(configuration.get_input_filename());
 
   auto number_of_channels = image_from_file->get_number_of_channels();
 
