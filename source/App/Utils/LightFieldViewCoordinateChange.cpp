@@ -42,18 +42,12 @@
  *  
  *  
  *  ```bash 
- *  ./bin/lightfield_coordinate_shift --input ~/RAW/set2/ --output ~/RAW/set2_corrected_coordinates/ --initial_input_t 0 --initial_input_s 2 --initial_output_t 0 --initial_output_s 0 --step_input_t 2 --step_input_s 3 
+ *  ../bin/utils/lightfield_coordinate_shift --input ~/RAW/set2/ --output ~/RAW/set2_corrected_coordinates2/ --input_initial_t 0 --input_initial_s 2 --output_initial_t 0 --output_initial_s 0 --input_step_t 2 --input_step_s 3 
  *  ```
  *  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-01-29
  */
-
-#ifdef _WIN32
-#include "getopt.h"
-#else
-#include <getopt.h>
-#endif
 
 #include <filesystem>
 #include <iostream>
