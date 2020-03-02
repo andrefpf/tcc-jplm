@@ -50,7 +50,11 @@ class PPMToPGXConfiguration : public BasicConfiguration {
  protected:
   std::string input;
   std::string output;
-  PPMToPGXConfiguration(int argc, char **argv, std::size_t level);
+  PPMToPGXConfiguration(int argc, char **argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
+  }
+
+
   virtual void add_options() override {
     BasicConfiguration::add_options();
 
@@ -83,32 +87,25 @@ class PPMToPGXConfiguration : public BasicConfiguration {
   }
 
  public:
-  PPMToPGXConfiguration(int argc, char **argv);
+  PPMToPGXConfiguration(int argc, char **argv)
+      : PPMToPGXConfiguration(
+            argc, argv, PPMToPGXConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+  }
+
 
   virtual ~PPMToPGXConfiguration() = default;
 
-  const std::string &get_input_filename() const;
-  const std::string &get_output_filename() const;
+
+  const std::string &get_input_filename() const {
+    return input;
+  }
+
+
+  const std::string &get_output_filename() const {
+    return output;
+  }
 };
-
-
-const std::string &PPMToPGXConfiguration::get_input_filename() const {
-  return input;
-}
-const std::string &PPMToPGXConfiguration::get_output_filename() const {
-  return output;
-}
-PPMToPGXConfiguration::PPMToPGXConfiguration(int argc, char **argv)
-    : PPMToPGXConfiguration(
-          argc, argv, PPMToPGXConfiguration::current_hierarchy_level) {
-  this->init(argc, argv);
-}
-
-
-PPMToPGXConfiguration::PPMToPGXConfiguration(
-    int argc, char **argv, std::size_t level)
-    : BasicConfiguration(argc, argv, level) {
-}
 
 
 int main(int argc, char const *argv[]) {
@@ -117,6 +114,9 @@ int main(int argc, char const *argv[]) {
 
   auto image_file = ImageIO::open(configuration.get_input_filename());
 
+  /**
+   * \todo include option that allows for changing the colour space of the output image
+   */
   auto image_from_file = ImageIO::read<BT601Image, uint16_t>(*image_file);
 
 
