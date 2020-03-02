@@ -1,0 +1,22 @@
+{
+	"input_shift": {
+		"initial": {
+			"t": 0,
+			"s": 2
+		},
+		"step": {
+			"t": 2,
+			"s": 3
+		}
+	},
+	"output_shift": {
+		"initial": {
+			"t": 0,
+			"s": 0
+		},
+		"step": {
+			"t": 1,
+			"s": 1
+		}	
+	}
+}

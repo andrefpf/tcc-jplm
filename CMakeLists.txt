@@ -52,7 +52,6 @@ include(ExternalGoogleTest)
 include(ExternalMagic_Enum)
 include(ExternalCppConsoleTable)
 include(ExternalCXXProperties)
-include(ExternalGetOptForVisualStudio)
 include(ExternalCPPItertools)
 include(ExternalNlohmannJSON)
 

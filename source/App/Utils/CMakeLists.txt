@@ -15,7 +15,7 @@ endfunction()
 
 add_jplm_util(
     lightfield_coordinate_shift LightFieldViewCoordinateChange.cpp
-    "image;jplm_part2_common")
+    "image;jplm_part2_common;basic_configuration")
 
 add_jplm_util(lenslet_13x13_shifter
               Lenslet13x13Shifter.cpp
@@ -28,7 +28,7 @@ add_jplm_util(compute_psnr ComputePSNR.cpp "image;stream")
 if (VISUALIZATION_TOOL)
   add_jplm_util(
       lightfield_visualizer LightfieldVisualization.cpp
-      "image;stream;jplm_part2_common;X11")
+      "image;stream;jplm_part2_common;basic_configuration;X11")
 endif (VISUALIZATION_TOOL)
 
 add_jplm_util(
@@ -36,8 +36,8 @@ add_jplm_util(
     "image;stream;jplm_part2_common")
 
 add_jplm_util(convert_ppm_to_pgx PPMToPGX.cpp
-    "image;stream")
+    "image;stream;basic_configuration")
 
 add_jplm_util(convert_pgx_to_ppm
               PGXToPPM.cpp
-              "image;stream")
+              "image;stream;basic_configuration")

@@ -42,6 +42,10 @@
 
 using ConsoleTable = samilton::ConsoleTable;
 
+
+/**
+ * @brief      Adds the basic options.
+ */
 void BasicConfiguration::add_options() {
   this->add_cli_option({"--help", "-h", "Print this help message and exit",
       [this]([[maybe_unused]] std::any v) {
@@ -65,6 +69,11 @@ void BasicConfiguration::add_options() {
 }
 
 
+/**
+ * @brief      Gets the console table already initialized (formated).
+ *
+ * @return     The console table.
+ */
 ConsoleTable get_console_table() {
   ConsoleTable table(1, 1, samilton::Alignment::centre);
   ConsoleTable::TableChars chars;
@@ -84,12 +93,21 @@ ConsoleTable get_console_table() {
 }
 
 
+/**
+ * @brief      Shows the help table.
+ *
+ * @param[in]  message  The message
+ * @param      table    The table
+ */
 void show_help(const std::string &message, ConsoleTable &table) {
   std::cout << message << std::endl;
   std::cout << table << std::endl;
 }
 
 
+/**
+ * @brief      Runs the help if help flag is set
+ */
 void BasicConfiguration::run_help() const {
   if (this->help_mode_flag) {
     auto table = get_console_table();
@@ -117,18 +135,42 @@ void BasicConfiguration::run_help() const {
 }
 
 
+/**
+ * @brief      Validades a parameter (option)
+ *
+ * @param[in]  param  The parameter
+ *
+ * @return     { description_of_the_return_value }
+ */
 bool BasicConfiguration::validate_param(std::string param) {
   const std::string prefix = "-";
   return !param.compare(0, prefix.size(), prefix);
 }
 
 
+/**
+ * @brief      Validades a value (argument)
+ *
+ * @param[in]  size  The size
+ * @param[in]  pos   The position
+ * @param      argv  The arguments array
+ *
+ *  \todo check if this function is still needed
+ *
+ * @return     True if a value is valid, false otherwise
+ */
 bool BasicConfiguration::validate_value(
     unsigned int size, unsigned int pos, [[maybe_unused]] char **argv) {
   return pos < size - 1;
 }
 
 
+/**
+ * @brief      Parses the arguments in cli
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ */
 void BasicConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
     std::string key(reinterpret_cast<char *>(argv[n]));
@@ -158,6 +200,11 @@ void BasicConfiguration::parse_cli(int argc, char **argv) {
 }
 
 
+/**
+ * @brief      Determines if help mode.
+ *
+ * @return     True if help mode, False otherwise.
+ */
 bool BasicConfiguration::is_help_mode() const {
   return help_mode_flag;
 }
@@ -178,6 +225,12 @@ BasicConfiguration::BasicConfiguration(
 }
 
 
+/**
+ * @brief      Initializes the object by adding all options and parsing cli
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ */
 void BasicConfiguration::init(int argc, char **argv) {
   this->add_options();
   this->parse_cli(argc, argv);
@@ -200,6 +253,11 @@ BasicConfiguration::BasicConfiguration(int argc, char **argv)
 }
 
 
+/**
+ * @brief      Parses the options present in the json on path
+ *
+ * @param[in]  path  The path
+ */
 void BasicConfiguration::parse_json(const std::string &path) {
   std::ifstream input_file_stream(path);
   nlohmann::json conf = nlohmann::json::parse(input_file_stream);
@@ -214,16 +272,31 @@ void BasicConfiguration::parse_json(const std::string &path) {
 }
 
 
+/**
+ * @brief      Adds a cli option to the list of options.
+ *
+ * @param[in]  option  The option
+ */
 void BasicConfiguration::add_cli_option(const CLIOption &option) {
   cli_options.push_back(option);
 }
 
 
+/**
+ * @brief      Adds a json option to the list of options.
+ *
+ * @param[in]  option  The option
+ */
 void BasicConfiguration::add_json_option(const JSONOption &option) {
   json_options.push_back(option);
 }
 
 
+/**
+ * @brief      Adds a cli/json option to the list of options.
+ *
+ * @param[in]  option  The option
+ */
 void BasicConfiguration::add_cli_json_option(const CLIAndJSONOption &option) {
   cli_json_options.push_back(option);
 }

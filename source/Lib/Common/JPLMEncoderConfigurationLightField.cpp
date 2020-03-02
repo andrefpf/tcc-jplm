@@ -74,7 +74,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
           this->current_hierarchy_level});
 
   this->add_cli_json_option(
-      {"--number_of_rows", "-t", "Number of light-field views rows. Mandatory.",
+      {"--number_of_rows", "-t", "Number of light-field view rows. Mandatory.",
           [this](const json &conf) -> std::optional<std::string> {
             if (conf.contains("number_of_rows")) {
               return std::to_string(conf["number_of_rows"].get<uint32_t>());
@@ -85,7 +85,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
           this->current_hierarchy_level});
 
   this->add_cli_json_option({"--number_of_columns", "-s",
-      "Number of light-field views columns",
+      "Number of light-field view columns",
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("number_of_columns")) {
           return std::to_string(conf["number_of_columns"].get<uint32_t>());
