@@ -161,6 +161,8 @@ void JPLMEncoderConfiguration::add_options() {
         }
         return std::nullopt;
       },
+
+      //<! \todo use one option from EnumCS
       [this](std::string arg) {
         auto colourspace = std::string(arg.size(), ' ');
         std::transform(arg.begin(), arg.end(), colourspace.begin(),
