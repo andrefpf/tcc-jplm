@@ -110,7 +110,9 @@ class PPMToPGXConfiguration : public BasicConfiguration {
 
 int main(int argc, char const *argv[]) {
   auto configuration = PPMToPGXConfiguration(argc, const_cast<char **>(argv));
-
+  if (configuration.is_help_mode()) {
+    exit(0);
+  }
 
   auto image_file = ImageIO::open(configuration.get_input_filename());
 

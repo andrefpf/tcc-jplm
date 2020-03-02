@@ -41,50 +41,86 @@
 #include <filesystem>
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
 #include "Lib/Utils/Image/ImageIO.h"
 
 
-bool are_input_and_output_paths_valid(
-    const std::string& input_path, const std::string& output_path) {
-  auto valid = true;
-  if (input_path == output_path) {
-    std::cerr << "Input and output paths must be different" << std::endl;
-    valid = false;
-  }
+class PGXToPPMConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
 
-  if (!std::filesystem::is_directory(input_path)) {
-    std::cerr << "Input path must be a directory" << std::endl;
-    valid = false;
-  }
-
-  if (std::filesystem::is_directory(output_path)) {
-    std::cerr << "output must be a ppm file" << std::endl;
-    valid = false;
-  }
-  return valid;
-}
-
-
-int main(int argc, char const* argv[]) {
-  if (argc < 3) {
-    std::cout << "Expecting 2 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " /path/to/input/file.ppm /path/to/output/directory"
-              << std::endl;
-    exit(1);
+ protected:
+  std::string input;
+  std::string output;
+  PGXToPPMConfiguration(int argc, char **argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
   }
 
 
-  std::string input_path(argv[1]);
-  std::string output_path(argv[2]);
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
 
-  if (!are_input_and_output_paths_valid(input_path, output_path)) {
-    exit(1);
+
+    this->add_cli_json_option({"--input", "-i",
+        "Input directory that contains at least three subdirectories with PGX "
+        "files.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("input")) {
+            return conf["input"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--output", "-o",
+        "Output PPM (P6) filename. The name of the output file will be used to "
+        "detect the input name in each channel directory. ",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("output")) {
+            return conf["output"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
   }
 
-  auto input = std::filesystem::path(input_path);
+ public:
+  PGXToPPMConfiguration(int argc, char **argv)
+      : PGXToPPMConfiguration(
+            argc, argv, PGXToPPMConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+  }
 
-  auto output = std::filesystem::path(output_path);
+
+  virtual ~PGXToPPMConfiguration() = default;
+
+
+  const std::string &get_input_filename() const {
+    return input;
+  }
+
+
+  const std::string &get_output_filename() const {
+    return output;
+  }
+};
+
+
+int main(int argc, char const *argv[]) {
+  auto configuration = PGXToPPMConfiguration(argc, const_cast<char **>(argv));
+  if (configuration.is_help_mode()) {
+    exit(0);
+  }
+
+  auto input = std::filesystem::path(configuration.get_input_filename());
+
+  auto output = std::filesystem::path(configuration.get_output_filename());
 
   std::vector<std::unique_ptr<UndefinedImage<uint16_t>>> images;
 
