@@ -15,7 +15,7 @@ endfunction()
 
 add_jplm_util(
     lightfield_coordinate_shift LightFieldViewCoordinateChange.cpp
-    "image;jplm_part2_common")
+    "image;jplm_part2_common;basic_configuration")
 
 add_jplm_util(lenslet_13x13_shifter
               Lenslet13x13Shifter.cpp

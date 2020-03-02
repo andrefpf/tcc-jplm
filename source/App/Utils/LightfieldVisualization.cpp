@@ -151,10 +151,10 @@ class X11WindowHandler {
     auto black = BlackPixel(display, screen_id);
     //, white = WhitePixel(display, screen);
     window = XCreateSimpleWindow(display,
-        DefaultRootWindow(display),  //! parent window
-        0, 0,  //! x, y
+        DefaultRootWindow(display),  //<! parent window
+        0, 0,  //<! x, y
         width, height,
-        5,  //! border width in pixels
+        5,  //<! border width in pixels
         black,  //! border pixel value
         black  //background
     );

@@ -59,7 +59,374 @@
 #include <iostream>
 #include <vector>
 #include "Lib/Part2/Common/PPM3CharViewToFilename.h"
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
+
+
+class LightfieldCoordinateChangeConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
+
+ protected:
+  std::string input;
+  std::string output;
+
+  bool need_to_compute_final_coordinate = true;
+
+  uint32_t input_initial_t;
+  uint32_t input_initial_s;
+  uint32_t input_step_t;
+  uint32_t input_step_s;
+  uint32_t input_final_t;
+  uint32_t input_final_s;
+
+  uint32_t output_initial_t;
+  uint32_t output_initial_s;
+  uint32_t output_step_t;
+  uint32_t output_step_s;
+
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  argc   The count of arguments
+   * @param      argv   The arguments array
+   * @param[in]  level  The level
+   */
+  LightfieldCoordinateChangeConfiguration(
+      int argc, char** argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
+  }
+
+
+  /**
+   * @brief      Adds options.
+   */
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
+
+
+    this->add_cli_json_option(
+        {"--input", "-i", "Input path that contains the light field.",
+            [this](const nlohmann::json& conf) -> std::optional<std::string> {
+              if (conf.contains("input")) {
+                return conf["input"].get<std::string>();
+              }
+              return std::nullopt;
+            },
+            [this]([[maybe_unused]] std::any v) {
+              this->input = std::any_cast<std::string>(v);
+            },
+            this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--output", "-o",
+        "Output path to contain the light field with shifted coordinates.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("output")) {
+            return conf["output"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+
+    this->add_cli_json_option({"--input_initial_t", "-Iit",
+        "Initial T value for the input lightfield.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            return std::to_string(
+                conf.at("input_shift").at("initial").at("t").get<uint32_t>());
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->input_initial_t = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+    this->add_cli_json_option({"--input_initial_s", "-Iis",
+        "Initial S value for the input lightfield.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            return std::to_string(
+                conf.at("input_shift").at("initial").at("s").get<uint32_t>());
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->input_initial_s = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+    this->add_cli_json_option(
+        {"--input_step_t", "-Ist", "Step to sample in T direction.",
+            [this](const nlohmann::json& conf) -> std::optional<std::string> {
+              try {
+                return std::to_string(
+                    conf.at("input_shift").at("step").at("t").get<uint32_t>());
+              } catch (nlohmann::json::out_of_range& e) {
+              }
+              return std::nullopt;
+            },
+            [this](std::string arg) {
+              this->input_step_t = static_cast<uint32_t>(std::stoul(arg));
+            },
+            this->current_hierarchy_level,
+            {[this]() -> std::string { return "1"; }}});
+
+    this->add_cli_json_option(
+        {"--input_step_s", "-Iss", "Step to sample in S direction.",
+            [this](const nlohmann::json& conf) -> std::optional<std::string> {
+              try {
+                return std::to_string(
+                    conf.at("input_shift").at("step").at("s").get<uint32_t>());
+              } catch (nlohmann::json::out_of_range& e) {
+              }
+              return std::nullopt;
+            },
+            [this](std::string arg) {
+              this->input_step_s = static_cast<uint32_t>(std::stoul(arg));
+            },
+            this->current_hierarchy_level,
+            {[this]() -> std::string { return "1"; }}});
+
+    this->add_cli_json_option({"--input_final_t", "-Ift",
+        "Final T value. If neither final T nor final S are set, all files that "
+        "meet the naming requirements will be considered as to be shifted. ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            auto ret_val = std::to_string(
+                conf.at("input_shift").at("final").at("t").get<uint32_t>());
+            this->need_to_compute_final_coordinate = false;
+            return ret_val;
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->input_final_t = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+
+    this->add_cli_json_option({"--input_final_s", "-Ifs",
+        "Final S value. If neither final T nor final S are set, all files that "
+        "meet the naming requirements will be considered as to be shifted. ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            auto ret_val = std::to_string(
+                conf.at("input_shift").at("final").at("s").get<uint32_t>());
+            this->need_to_compute_final_coordinate = false;
+            return ret_val;
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->input_final_s = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+
+    this->add_cli_json_option({"--output_initial_t", "-Oit",
+        "Initial T value for the output lightfield.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            return std::to_string(
+                conf.at("output_shift").at("initial").at("t").get<uint32_t>());
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->output_initial_t = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+    this->add_cli_json_option({"--output_initial_s", "-Ois",
+        "Initial S value for the output lightfield.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          try {
+            return std::to_string(
+                conf.at("output_shift").at("initial").at("s").get<uint32_t>());
+          } catch (nlohmann::json::out_of_range& e) {
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          this->output_initial_s = static_cast<uint32_t>(std::stoul(arg));
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "0"; }}});
+
+    this->add_cli_json_option(
+        {"--output_step_t", "-Ost", "Step to sample in T direction.",
+            [this](const nlohmann::json& conf) -> std::optional<std::string> {
+              try {
+                return std::to_string(
+                    conf.at("output_shift").at("step").at("t").get<uint32_t>());
+              } catch (nlohmann::json::out_of_range& e) {
+              }
+              return std::nullopt;
+            },
+            [this](std::string arg) {
+              this->output_step_t = static_cast<uint32_t>(std::stoul(arg));
+            },
+            this->current_hierarchy_level,
+            {[this]() -> std::string { return "1"; }}});
+
+    this->add_cli_json_option(
+        {"--output_step_s", "-Oss", "Step to sample in S direction.",
+            [this](const nlohmann::json& conf) -> std::optional<std::string> {
+              try {
+                return std::to_string(
+                    conf.at("output_shift").at("step").at("s").get<uint32_t>());
+              } catch (nlohmann::json::out_of_range& e) {
+              }
+              return std::nullopt;
+            },
+            [this](std::string arg) {
+              this->output_step_s = static_cast<uint32_t>(std::stoul(arg));
+            },
+            this->current_hierarchy_level,
+            {[this]() -> std::string { return "1"; }}});
+  }
+
+
+  std::pair<std::size_t, std::size_t> find_final_coordinates() {
+    const auto& [initial_t, initial_s] = this->get_initial_input_coordinate();
+    const auto& [step_t, step_s] = this->get_step_input();
+    auto name_translator = PPM3CharViewToFilename();
+
+    //find max_t
+    auto t = initial_t;
+    while (std::filesystem::is_regular_file(
+        input + name_translator.view_position_to_filename({t, initial_s}))) {
+      t += step_t;
+    }
+
+    //find max_s
+    auto s = initial_s;
+    while (std::filesystem::is_regular_file(
+        input + name_translator.view_position_to_filename({initial_t, s}))) {
+      s += step_s;
+    }
+
+    return {t, s};
+  }
+
+ public:
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  argc  The count of arguments
+   * @param      argv  The arguments array
+   */
+  LightfieldCoordinateChangeConfiguration(int argc, char** argv)
+      : LightfieldCoordinateChangeConfiguration(argc, argv,
+            LightfieldCoordinateChangeConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+    if (need_to_compute_final_coordinate) {
+      std::tie(input_final_t, input_final_s) = find_final_coordinates();
+      need_to_compute_final_coordinate = false;
+    }
+  }
+
+
+  /**
+   * @brief      Destroys the object.
+   */
+  virtual ~LightfieldCoordinateChangeConfiguration() = default;
+
+
+  /**
+   * @brief      Gets the input filename.
+   *
+   * @return     The input filename.
+   */
+  const std::string& get_input_filename() const {
+    return input;
+  }
+
+
+  /**
+   * @brief      Gets the output filename.
+   *
+   * @return     The output filename.
+   */
+  const std::string& get_output_filename() const {
+    return output;
+  }
+
+
+  /**
+   * @brief      Determines if required to compute the final coordidate.
+   *
+   * @return     True if required to compute the final coordidate, False otherwise.
+   */
+  bool is_required_to_compute_the_final_coordidate() const {
+    return need_to_compute_final_coordinate;
+  }
+
+
+  /**
+   * @brief      Gets the initial input coordinate.
+   *
+   * @return     The initial input coordinate.
+   */
+  std::pair<std::size_t, std::size_t> get_initial_input_coordinate() const {
+    return {input_initial_t, input_initial_s};
+  }
+
+
+  /**
+   * @brief      Gets the initial output coordinate.
+   *
+   * @return     The initial output coordinate.
+   */
+  std::pair<std::size_t, std::size_t> get_initial_output_coordinate() const {
+    return {output_initial_t, output_initial_s};
+  }
+
+
+  /**
+   * @brief      Gets the final input coordinate.
+   *
+   * @return     The final input coordinate.
+   */
+  std::pair<std::size_t, std::size_t> get_final_input_coordinate() const {
+    return {input_final_t, input_final_s};
+  }
+
+
+  /**
+   * @brief      Gets the step input.
+   *
+   * @return     The step input.
+   */
+  std::pair<std::size_t, std::size_t> get_step_input() const {
+    return {input_step_t, input_step_s};
+  }
+
+
+  /**
+   * @brief      Gets the step output.
+   *
+   * @return     The step output.
+   */
+  std::pair<std::size_t, std::size_t> get_step_output() const {
+    return {output_step_t, output_step_s};
+  }
+};
 
 
 void copy_view(
@@ -72,35 +439,6 @@ void copy_view(
     throw ImageIOExceptions::FileAlreadyExistsException();
   }
   fs::copy(filename_input, filename_output);
-}
-
-//how is the file named? T_S or S_T?
-//coordinate is t_s and filename is s_t
-
-std::pair<std::size_t, std::size_t> find_final_coordinates(
-    const std::string& input_path,
-    const std::pair<std::size_t, std::size_t>& initial_coordinate,
-    const std::pair<std::size_t, std::size_t>& step) {
-  const auto& [initial_t, initial_s] = initial_coordinate;
-  const auto& [step_t, step_s] = step;
-  auto name_translator = PPM3CharViewToFilename();
-
-  //find max_t
-  auto t = initial_t;
-  while (std::filesystem::is_regular_file(
-      input_path + name_translator.view_position_to_filename({t, initial_s}))) {
-    t += step_t;
-  }
-
-  //find max_s
-  auto s = initial_s;
-  while (std::filesystem::is_regular_file(
-      input_path + name_translator.view_position_to_filename({initial_t, s}))) {
-    s += step_s;
-  }
-
-
-  return {t, s};
 }
 
 
@@ -127,26 +465,33 @@ bool are_input_and_output_paths_valid(
   }
 
   if (!std::filesystem::is_directory(output_path)) {
-    std::cerr << "Output_path path must be a directory" << std::endl;
-    valid = false;
+    std::filesystem::create_directory(output_path);
+    if (!std::filesystem::is_directory(output_path)) {
+      std::cerr << "Output_path path must be a directory" << std::endl;
+      valid = false;
+    }
   }
   return valid;
 }
 
 
-void shift_coordinate_in_filenames(const std::string& input_path,
-    const std::string& output_path,
-    const std::pair<std::size_t, std::size_t>& initial_input_coordinate,
-    const std::pair<std::size_t, std::size_t>& final_input_coordinate,
-    const std::pair<std::size_t, std::size_t>& initial_output_coordinate,
-    const std::pair<std::size_t, std::size_t>& step_input = {1, 1},
-    const std::pair<std::size_t, std::size_t>& step_output = {1, 1}) {
-  const auto& [initial_input_t, initial_input_s] = initial_input_coordinate;
-  const auto& [initial_output_t, initial_output_s] = initial_output_coordinate;
-  const auto& [final_t, final_s] = final_input_coordinate;
-  const auto& [step_input_t, step_input_s] = step_input;
-  const auto& [step_output_t, step_output_s] = step_output;
+/**
+ * @brief      Shifts the light field coordinates (filenames)
+ *
+ * @param[in]  configuration  The configuration
+ */
+void shift_coordinate_in_filenames(
+    const LightfieldCoordinateChangeConfiguration& configuration) {
+  const auto& [initial_input_t, initial_input_s] =
+      configuration.get_initial_input_coordinate();
+  const auto& [initial_output_t, initial_output_s] =
+      configuration.get_initial_output_coordinate();
+  const auto& [final_t, final_s] = configuration.get_final_input_coordinate();
+  const auto& [step_input_t, step_input_s] = configuration.get_step_input();
+  const auto& [step_output_t, step_output_s] = configuration.get_step_output();
 
+  const std::string& input_path = configuration.get_input_filename();
+  const std::string& output_path = configuration.get_output_filename();
 
   auto output_t = initial_output_t;
   auto output_s = initial_output_s;
@@ -170,225 +515,19 @@ void shift_coordinate_in_filenames(const std::string& input_path,
 }
 
 
-class HelpDescription {
- private:
-  std::string long_option;
-  std::string description;
-  std::string short_option;
-  std::string default_argument;
-  std::size_t size_of_short_option = 0;
-  std::size_t size_of_long_option = 0;
-
- public:
-  HelpDescription(const std::string& long_option,
-      const std::string& description, const std::string& short_option = {""},
-      const std::string& default_argument = {""})
-      : long_option(long_option), description(description),
-        short_option(short_option), default_argument(default_argument) {
-    if (short_option != std::string("")) {
-      size_of_short_option = short_option.size() + 3;
-    }
-    size_of_long_option = long_option.size() + 2;
-  }
-
-
-  void print_help(int spacing_short, int spacing_long) const {
-    std::cout << "  ";
-    if (size_of_short_option > 0) {
-      std::cout << "-" << short_option << ", ";
-    }
-    std::cout << std::string(spacing_short - size_of_short_option, ' ');
-    std::cout << "--" << long_option;
-
-    std::cout << std::string(spacing_long - size_of_long_option + 2, ' ');
-    std::cout << description;
-    if (default_argument != std::string("")) {
-      std::cout << " [default: " << default_argument << "]";
-    }
-    std::cout << std::endl;
-  }
-
-  auto get_size_short() const {
-    return size_of_short_option;
-  }
-
-
-  auto get_size_long() const {
-    return size_of_long_option;
-  }
-};
-
-
-void print_help() {
-  auto help_items = std::vector<
-      HelpDescription>({HelpDescription("input=PATH",
-                            "specifies the input path where view files are to "
-                            "be found",
-                            "i PATH"),
-      HelpDescription("output=PATH",
-          "specifies the output path where renamed view files are to be saved",
-          "o PATH"),
-      HelpDescription("initial_input_t=UINT",
-          "specifies the initial T coordinate of the input lightfield"),
-      HelpDescription("initial_input_s=UINT",
-          "specifies the initial S coordinate of the input lightfield"),
-      HelpDescription("initial_output_t=UINT",
-          "specifies the initial T coordinate of the output lightfield"),
-      HelpDescription("initial_output_s=UINT",
-          "specifies the initial S coordinate of the output lightfield"),
-      HelpDescription("step_input_t=UINT",
-          "specifies the step to obtain the next input view in the T direction",
-          "", "1"),
-      HelpDescription("step_input_s=UINT",
-          "specifies the step to obtain the next input view in the S direction",
-          "", "1"),
-      HelpDescription("step_output_t=UINT",
-          "specifies the step to obtain the next output view in the T "
-          "direction",
-          "", "1"),
-      HelpDescription("step_output_s=UINT",
-          "specifies the step to obtain the next output view in the S "
-          "direction",
-          "", "1"),
-      HelpDescription("final_input_t=UINT",
-          "specifies the final T coordinate of input views. If no "
-          "final_input_t is specified, this util will check the files within "
-          "the input path"),
-      HelpDescription("final_input_s=UINT",
-          "specifies the final S coordinate of input views. If no "
-          "final_input_t is specified, this util will check the files within "
-          "the input path")});
-
-
-  std::size_t max_number_of_spaces_short_needed = 0;
-  std::size_t max_number_of_spaces_long_needed = 0;
-
-  for (const auto& help_item : help_items) {
-    if (help_item.get_size_short() > max_number_of_spaces_short_needed) {
-      max_number_of_spaces_short_needed = help_item.get_size_short();
-    }
-    if (help_item.get_size_long() > max_number_of_spaces_long_needed) {
-      max_number_of_spaces_long_needed = help_item.get_size_long();
-    }
-  }
-
-  std::cout << "Usage: lightfield_coordinate_shift [options]" << std::endl;
-  std::cout << "Options:\n";
-
-  for (const auto& help_item : help_items) {
-    help_item.print_help(
-        max_number_of_spaces_short_needed, max_number_of_spaces_long_needed);
-  }
-}
-
-
 int main(int argc, char** argv) {
-  int opt;
-
-  std::string input_path;
-  std::string output_path;
-  auto initial_input_coordinate = std::pair<std::size_t, std::size_t>(0, 0);
-  auto final_input_coordinate = std::pair<std::size_t, std::size_t>(0, 0);
-  auto need_to_compute_final_coordinate = true;
-  auto initial_output_coordinate = std::pair<std::size_t, std::size_t>(0, 0);
-  auto step_input = std::pair<std::size_t, std::size_t>(1, 1);
-  auto step_output = std::pair<std::size_t, std::size_t>(1, 1);
-
-  const struct option stopcoes[] = {
-      {"input", required_argument, 0, 'i'},
-      {"output", required_argument, 0, 'o'},
-      {"help", no_argument, 0, 'h'},
-      {"initial_input_t", required_argument, 0, 1},
-      {"initial_input_s", required_argument, 0, 2},
-      {"initial_output_t", required_argument, 0, 3},
-      {"initial_output_s", required_argument, 0, 4},
-      {"step_input_t", required_argument, 0, 5},
-      {"step_input_s", required_argument, 0, 6},
-      {"step_output_t", required_argument, 0, 7},
-      {"step_output_s", required_argument, 0, 8},
-      {"final_input_t", required_argument, 0, 9},
-      {"final_input_s", required_argument, 0, 10},
-      {0, 0, 0, 0},
-  };
-
-
-  while ((opt = getopt_long(argc, argv, "i:o:h", stopcoes, NULL)) > 0) {
-    switch (opt) {
-      case 'i':
-        input_path = std::string(optarg);
-        break;
-      case 'o':
-        output_path = std::string(optarg);
-        break;
-      case 'h':
-        print_help();
-        exit(0);
-      case 1:
-        initial_input_coordinate = std::pair<std::size_t, std::size_t>(
-            atoi(optarg), initial_input_coordinate.second);
-        break;
-      case 2:
-        initial_input_coordinate = std::pair<std::size_t, std::size_t>(
-            initial_input_coordinate.first, atoi(optarg));
-        break;
-      case 3:
-        initial_output_coordinate = std::pair<std::size_t, std::size_t>(
-            atoi(optarg), initial_output_coordinate.second);
-        break;
-      case 4:
-        initial_output_coordinate = std::pair<std::size_t, std::size_t>(
-            initial_output_coordinate.first, atoi(optarg));
-        break;
-      case 5:
-        step_input = std::pair<std::size_t, std::size_t>(
-            atoi(optarg), step_input.second);
-        break;
-      case 6:
-        step_input =
-            std::pair<std::size_t, std::size_t>(step_input.first, atoi(optarg));
-        break;
-      case 7:
-        step_output = std::pair<std::size_t, std::size_t>(
-            atoi(optarg), step_output.second);
-        break;
-      case 8:
-        step_output = std::pair<std::size_t, std::size_t>(
-            step_output.first, atoi(optarg));
-        break;
-      case 9:
-        final_input_coordinate = std::pair<std::size_t, std::size_t>(
-            atoi(optarg), final_input_coordinate.second);
-        need_to_compute_final_coordinate = false;
-        break;
-      case 10:
-        final_input_coordinate = std::pair<std::size_t, std::size_t>(
-            final_input_coordinate.first, atoi(optarg));
-        need_to_compute_final_coordinate = false;
-        break;
-      default:
-        std::cout << "Invalid option or argument missing" << std::endl;
-    }
+  auto configuration = LightfieldCoordinateChangeConfiguration(argc, argv);
+  if (configuration.is_help_mode()) {
+    exit(0);
   }
 
   //parameter checking
-  if (!are_input_and_output_paths_valid(input_path, output_path)) {
+  if (!are_input_and_output_paths_valid(configuration.get_input_filename(),
+          configuration.get_output_filename())) {
     exit(1);
   }
 
-  if (need_to_compute_final_coordinate) {
-    final_input_coordinate = find_final_coordinates(
-        input_path, initial_input_coordinate, step_input);
-  }
-
-  if (initial_input_coordinate == final_input_coordinate) {
-    std::cerr << "Initial and final input coordinates are the same"
-              << std::endl;
-    exit(1);
-  }
-
-  shift_coordinate_in_filenames(input_path, output_path,
-      initial_input_coordinate, final_input_coordinate,
-      initial_output_coordinate, step_input, step_output);
+  shift_coordinate_in_filenames(configuration);
 
   return 0;
 }
