@@ -41,11 +41,11 @@
 
 #include "Lib/Common/JPLMConfiguration.h"
 
-using namespace std;
 
 void JPLMConfiguration::add_options() {
   BasicConfiguration::add_options();
 }
+
 
 const std::string &JPLMConfiguration::get_input_filename() const {
   return input;
