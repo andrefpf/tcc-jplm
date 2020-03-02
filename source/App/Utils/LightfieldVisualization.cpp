@@ -42,10 +42,92 @@
 #include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/ViewIOPolicyLimitedMemory.h"
 #include "Lib/Part2/Common/ViewIOPolicyLimitlessMemory.h"
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
+
 //X11:
 #include <X11/Xlib.h>
 #include <X11/Xos.h>
 #include <X11/Xutil.h>
+
+class LightfieldVisualizationConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
+
+ protected:
+  std::string input;
+  uint32_t number_of_rows_t;
+  uint32_t number_of_columns_s;
+  LightfieldVisualizationConfiguration(int argc, char **argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
+  }
+
+
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
+
+
+    this->add_cli_json_option({"--input", "-i",
+        "Input directory that contains at least three subdirectories with PGX "
+        "files.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("input")) {
+            return conf["input"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--number_of_rows", "-t",
+        "Number of light-field view rows. Mandatory.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("number_of_rows")) {
+            return std::to_string(conf["number_of_rows"].get<uint32_t>());
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) { this->number_of_rows_t = std::stoi(arg); },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--number_of_columns", "-s",
+        "Number of light-field view columns",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("number_of_columns")) {
+            return std::to_string(conf["number_of_columns"].get<uint32_t>());
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) { this->number_of_columns_s = std::stoi(arg); },
+        this->current_hierarchy_level});
+  }
+
+ public:
+  LightfieldVisualizationConfiguration(int argc, char **argv)
+      : LightfieldVisualizationConfiguration(argc, argv,
+            LightfieldVisualizationConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+  }
+
+
+  virtual ~LightfieldVisualizationConfiguration() = default;
+
+
+  const std::string &get_input_filename() const {
+    return input;
+  }
+
+
+  auto get_t() const {
+    return this->number_of_rows_t;
+  }
+
+
+  auto get_s() const {
+    return this->number_of_columns_s;
+  }
+};
 
 
 class X11WindowHandler {
@@ -77,7 +159,6 @@ class X11WindowHandler {
         black,  //! border pixel value
         black  //background
     );
-    std::cout << "window created" << std::endl;
     XSetStandardProperties(display, window, window_name.c_str(),
         "Test",  //! icon name?
         None,  //! icon pixmap
@@ -103,15 +184,18 @@ class X11WindowHandler {
         width, height, 32, 0);
   }
 
+
   ~X11WindowHandler() {
     XFreeGC(display, graphics_context);
     XDestroyWindow(display, window);
     XCloseDisplay(display);
   }
 
+
   void clear_window() {
     XClearWindow(display, window);
   }
+
 
   virtual void redraw() {
     XPutImage(display, window, DefaultGC(display, 0), x_image_ptr, 0,
@@ -250,28 +334,19 @@ class LightfieldAtX11Window : public X11WindowHandler {
 std::string resources_path = "../resources";
 
 int main(int argc, char const *argv[]) {
-  std::string path_to_lightfield;
-  if (argc < 2) {
-    path_to_lightfield = std::string({resources_path + "/small_greek/"});
-  } else {
-    path_to_lightfield = std::string(argv[1]);
+  auto cli_configuration =
+      LightfieldVisualizationConfiguration(argc, const_cast<char **>(argv));
+  if (cli_configuration.is_help_mode()) {
+    exit(0);
   }
 
-  int t = 3;
-  int s = 3;
-
-  if (argc >= 3) {
-    t = s = atoi(argv[2]);
-  }
-
-  if (argc == 4) {
-    s = atoi(argv[3]);
-  }
 
   //! [Full LightfieldFromFile instantiation using a LightfieldIOConfiguration]
-  LightfieldDimension<std::size_t> size(t, s, 32, 32);
+  LightfieldDimension<std::size_t> size(
+      cli_configuration.get_t(), cli_configuration.get_s(), 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
-  LightfieldIOConfiguration configuration(path_to_lightfield, initial, size);
+  LightfieldIOConfiguration configuration(
+      cli_configuration.get_input_filename(), initial, size);
 
   //! [Instantiating a LightfieldFromFile using a LightfieldIOConfiguration]
   auto lightfield =
@@ -288,8 +363,8 @@ int main(int argc, char const *argv[]) {
   //! [Setting a view_io_policy into a Lightfield]
 
 
-  auto window_with_lightfield =
-      LightfieldAtX11Window<uint16_t>(path_to_lightfield, lightfield.get());
+  auto window_with_lightfield = LightfieldAtX11Window<uint16_t>(
+      cli_configuration.get_input_filename(), lightfield.get());
 
   window_with_lightfield.loop();
 

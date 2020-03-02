@@ -28,7 +28,7 @@ add_jplm_util(compute_psnr ComputePSNR.cpp "image;stream")
 if (VISUALIZATION_TOOL)
   add_jplm_util(
       lightfield_visualizer LightfieldVisualization.cpp
-      "image;stream;jplm_part2_common;X11")
+      "image;stream;jplm_part2_common;basic_configuration;X11")
 endif (VISUALIZATION_TOOL)
 
 add_jplm_util(
