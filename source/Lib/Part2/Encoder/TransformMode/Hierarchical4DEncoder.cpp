@@ -239,19 +239,29 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
       get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
   auto segmentation_flags_j_cost =
-      lambda * optimization_probability_models[(bitplane << 1) +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate<0>() +
-      lambda * optimization_probability_models[(bitplane << 1) + 1 +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate(significance);
+      lambda *
+      (optimization_probability_models[(bitplane << 1) +
+                                       SEGMENTATION_PROB_MODEL_INDEX]
+              .get_rate<0>() +
+          optimization_probability_models[(bitplane << 1) + 1 +
+                                          SEGMENTATION_PROB_MODEL_INDEX]
+              .get_rate(significance));
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
-  auto j_skip =
-      lambda * optimization_probability_models[(bitplane << 1) +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate<1>();
+
+
+  auto rate_of_skip =
+      optimization_probability_models[(bitplane << 1) +
+                                      SEGMENTATION_PROB_MODEL_INDEX]
+          .get_rate<1>();
+
+  //error and anergy will be obtained latter on
+  auto rd_cost_of_skip =
+      RDCostResult(lambda * rate_of_skip, 0.0, rate_of_skip, 0.0);
+  //j_cost error rate energy
+
+  auto j_skip = rd_cost_of_skip.get_j_cost();
 
   if (bitplane > BITPLANE_BYPASS_FLAGS) {
     optimization_probability_models[(bitplane << 1) +
@@ -263,7 +273,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   }
 
   //evaluate the cost J0 to encode this subblock
-  if (!significance) {  //this means that there is no value larger than the threshold (1<<bitplane)
+  if (!significance) {  //this means that there is no value larger than the threshold (1<<bitplane)/
     auto temp_j_and_energy = rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
