@@ -246,48 +246,34 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
     std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
   } else {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
-    std::tuple<int, int, int, int> half_lengths = std::apply(
-        [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
-        lengths);
-
     auto half_length = length.divided_by_half_in_all_possible_dimensions();
-
-    auto number_of_subdivisions = std::apply(
-        [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
-
     auto number_of_subdivisions_in_each_dimension =
         length.get_number_of_possible_divisions_by_half();
 
+    for (int t = 0; t < number_of_subdivisions_in_each_dimension.get_t(); ++t) {
+      auto new_position_t = position_coo.get_t() + t * half_length.get_t();
+      auto new_length_t = (t == 0) ? half_length.get_t()
+                                   : (length.get_t() - half_length.get_t());
 
-    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); ++t) {
-      int new_position_t =
-          std::get<LF::T>(position) + t * std::get<LF::T>(half_lengths);
-      int new_length_t =
-          (t == 0) ? std::get<LF::T>(half_lengths)
-                   : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lengths));
+      for (auto s = 0; s < number_of_subdivisions_in_each_dimension.get_s();
+           ++s) {
+        auto new_position_s = position_coo.get_s() + s * half_length.get_s();
+        auto new_length_s = (s == 0) ? half_length.get_s()
+                                     : (length.get_s() - half_length.get_s());
 
-      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); ++s) {
-        int new_position_s =
-            std::get<LF::S>(position) + s * std::get<LF::S>(half_lengths);
-        int new_length_s =
-            (s == 0)
-                ? std::get<LF::S>(half_lengths)
-                : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lengths));
+        for (auto v = 0; v < number_of_subdivisions_in_each_dimension.get_v();
+             ++v) {
+          auto new_position_v = position_coo.get_v() + v * half_length.get_v();
+          auto new_length_v = (v == 0) ? half_length.get_v()
+                                       : (length.get_v() - half_length.get_v());
 
-        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); ++v) {
-          int new_position_v =
-              std::get<LF::V>(position) + v * std::get<LF::V>(half_lengths);
-          int new_length_v =
-              (v == 0)
-                  ? std::get<LF::V>(half_lengths)
-                  : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lengths));
-
-          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); ++u) {
-            int new_position_u =
-                std::get<LF::U>(position) + u * std::get<LF::U>(half_lengths);
-            int new_length_u = (u == 0) ? std::get<LF::U>(half_lengths)
-                                        : (std::get<LF::U>(lengths) -
-                                              std::get<LF::U>(half_lengths));
+          for (auto u = 0; u < number_of_subdivisions_in_each_dimension.get_u();
+               ++u) {
+            auto new_position_u =
+                position_coo.get_u() + u * half_length.get_u();
+            auto new_length_u = (u == 0)
+                                    ? half_length.get_u()
+                                    : (length.get_u() - half_length.get_u());
 
             std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
 
