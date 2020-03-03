@@ -234,17 +234,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   auto segmentation_flags_j_cost =
       lambda * optimization_probability_models.get_segmentation_rate(
-                   (bitplane << 1), significance);
-
-  if (bitplane > BITPLANE_BYPASS_FLAGS) {
-    optimization_probability_models[(bitplane << 1) +
-                                    SEGMENTATION_PROB_MODEL_INDEX]
-        .update<0>();
-    optimization_probability_models[(bitplane << 1) + 1 +
-                                    SEGMENTATION_PROB_MODEL_INDEX]
-        .update(significance);
-  }
-
+                   bitplane, significance);
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
