@@ -83,50 +83,31 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
 }
 
 
-bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
-    const std::tuple<int, int, int, int>& position,
-    const std::tuple<int, int, int, int>& range) const {
-  using LF = LightFieldDimension;
-  const auto threshold = 1 << bitplane;
+bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint32_t threshold,
+    const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& range) const {
+  const auto elements_to_compute = range - position;
 
-  const auto elements_to_compute_in_t =
-      std::get<LF::T>(range) - std::get<LF::T>(position);
-  const auto elements_to_skip_before_in_t =
-      std::get<LF::T>(position) * mSubbandLF.stride_t;
+  //addresses to skip before
+  const auto ptr_to_skip_before =
+      position.hadamard_product(mSubbandLF.get_strides());
 
-  const auto elements_to_compute_in_s =
-      std::get<LF::S>(range) - std::get<LF::S>(position);
-  const auto elements_to_skip_before_in_s =
-      std::get<LF::S>(position) * mSubbandLF.stride_s;
-  const auto elements_to_skip_after_in_s =
-      (mSubbandLF.mlength_s - elements_to_compute_in_s -
-          std::get<LF::S>(position)) *
-      mSubbandLF.stride_s;
+  //addresses to skip after
+  const auto size_of_remaing_block =
+      mSubbandLF.get_dimension() -
+      elements_to_compute.hadamard_product({1, 1, 1, 0}) - position;
 
-  const auto elements_to_compute_in_v =
-      std::get<LF::V>(range) - std::get<LF::V>(position);
-  const auto elements_to_skip_before_in_v =
-      std::get<LF::V>(position) * mSubbandLF.stride_v;
-  const auto elements_to_skip_after_in_v =
-      (mSubbandLF.mlength_v - elements_to_compute_in_v -
-          std::get<LF::V>(position)) *
-      mSubbandLF.stride_v;
+  const auto ptr_to_skip_after =
+      size_of_remaing_block.hadamard_product(mSubbandLF.get_strides());
 
-  const auto elements_to_compute_in_u =
-      std::get<LF::U>(range) - std::get<LF::U>(position);
-  const auto elements_to_skip_before_in_u = std::get<LF::U>(position);
-  const auto elements_to_skip_after_in_u =
-      mSubbandLF.mlength_u - std::get<LF::U>(position);
-
-
-  auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
-  for (auto t = 0; t < elements_to_compute_in_t; ++t) {
-    data_ptr += elements_to_skip_before_in_s;
-    for (auto s = 0; s < elements_to_compute_in_s; ++s) {
-      data_ptr += elements_to_skip_before_in_v;
-      for (auto v = 0; v < elements_to_compute_in_v; ++v) {
-        data_ptr += elements_to_skip_before_in_u;
-        auto data_ptr_end = data_ptr + elements_to_compute_in_u;
+  auto data_ptr = mSubbandLF.mPixelData + ptr_to_skip_before.get_t();
+  for (auto t = 0; t < elements_to_compute.get_t(); ++t) {
+    data_ptr += ptr_to_skip_before.get_s();
+    for (auto s = 0; s < elements_to_compute.get_s(); ++s) {
+      data_ptr += ptr_to_skip_before.get_v();
+      for (auto v = 0; v < elements_to_compute.get_v(); ++v) {
+        data_ptr += ptr_to_skip_before.get_u();
+        auto data_ptr_end = data_ptr + elements_to_compute.get_u();
         auto result = std::find_if(
             data_ptr, data_ptr_end, [threshold](const auto& coefficient) {
               return std::abs(coefficient) >= threshold;
@@ -134,11 +115,11 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
         if (result != data_ptr_end) {
           return true;
         }
-        data_ptr += elements_to_skip_after_in_u;
+        data_ptr += ptr_to_skip_after.get_u();
       }
-      data_ptr += elements_to_skip_after_in_v;
+      data_ptr += ptr_to_skip_after.get_v();
     }
-    data_ptr += elements_to_skip_after_in_s;
+    data_ptr += ptr_to_skip_after.get_s();
   }
   return false;
 }
@@ -252,22 +233,10 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   std::vector<HexadecaTreeFlag> hexadecatree_flags_0;
 
-  auto min_range_t =
-      std::min(std::get<LF::T>(position) + std::get<LF::T>(lengths),
-          (int) mSubbandLF.mlength_t);
-  auto min_range_s =
-      std::min(std::get<LF::S>(position) + std::get<LF::S>(lengths),
-          (int) mSubbandLF.mlength_s);
-  auto min_range_v =
-      std::min(std::get<LF::V>(position) + std::get<LF::V>(lengths),
-          (int) mSubbandLF.mlength_v);
-  auto min_range_u =
-      std::min(std::get<LF::U>(position) + std::get<LF::U>(lengths),
-          (int) mSubbandLF.mlength_u);
+  auto min_range = position_coo + length;
 
-  const auto Significance = get_mSubbandLF_significance(
-      bitplane, position, {min_range_t, min_range_s, min_range_v, min_range_u});
-
+  const auto significance =
+      get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
   auto segmentation_flags_j_cost =
       lambda * optimization_probability_models[(bitplane << 1) +
@@ -275,7 +244,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                    .get_rate<0>() +
       lambda * optimization_probability_models[(bitplane << 1) + 1 +
                                                SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate(Significance);
+                   .get_rate(significance);
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
@@ -290,11 +259,11 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
         .update<0>();
     optimization_probability_models[(bitplane << 1) + 1 +
                                     SEGMENTATION_PROB_MODEL_INDEX]
-        .update(Significance);
+        .update(significance);
   }
 
   //evaluate the cost J0 to encode this subblock
-  if (!Significance) {  //this means that there is no value larger than the threshold (1<<bitplane)
+  if (!significance) {  //this means that there is no value larger than the threshold (1<<bitplane)
     auto temp_j_and_energy = rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
     std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
@@ -362,10 +331,10 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   j_skip += SignalEnergySum;
 
   //Choose the lowest cost
-  if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!Significance))) {
+  if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!significance))) {
     std::vector<HexadecaTreeFlag> temp_hexadecatree_flags = hexadecatree_flags;
 
-    if (Significance) {
+    if (significance) {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::splitBlock);
     } else {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::lowerBitPlane);

@@ -169,6 +169,14 @@ class LightfieldCoordinate {
   }
 
 
+  LightfieldCoordinate<T> hadamard_product(
+      const LightfieldCoordinate<T>& other) const {
+    return LightfieldCoordinate<T>(this->get_t() * other.get_t(),
+        this->get_s() * other.get_s(), this->get_v() * other.get_v(),
+        this->get_u() * other.get_u());
+  }
+
+
   T get_t() const noexcept {
     return std::get<0>(dimensions);
   }

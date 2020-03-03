@@ -83,9 +83,9 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
     return total_energy_sum;
   }
 
-  bool get_mSubbandLF_significance(uint8_t bitplane,
-      const std::tuple<int, int, int, int>& position,
-      const std::tuple<int, int, int, int>& range) const;
+  bool get_mSubbandLF_significance(uint32_t threshold,
+      const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& range) const;
   void reset_probability_models() override;
   void encode_coefficient(int coefficient, uint8_t bitplane);
   void encode_segmentation_lowerBitPlane_flag(uint8_t bitplane);
