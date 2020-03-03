@@ -53,16 +53,9 @@ Hierarchical4DEncoder::move_codestream_code_out() {
 }
 
 
-void Hierarchical4DEncoder::reset_optimization_models() {
-  for (auto& probability_model : optimization_probability_models) {
-    probability_model.reset();
-  }
-}
-
-
 void Hierarchical4DEncoder::reset_probability_models() {
   Hierarchical4DCodec::reset_probability_models();
-  reset_optimization_models();
+  optimization_probability_models.reset();
   mEntropyCoder.flush_byte();
 }
 
@@ -172,26 +165,13 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
   for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
        --bit_position) {
     int bit = (magnitude >> bit_position) & 01;
-    if (bit) {
-      there_is_one = true;
-      accumulated_rate +=
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .get_rate<1>();
-      if (bit_position > BITPLANE_BYPASS)
-        optimization_probability_models[bit_position +
-                                        SYMBOL_PROBABILITY_MODEL_INDEX]
-            .update<1>();
-    } else {
-      accumulated_rate +=
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .get_rate<0>();
-      if (bit_position > BITPLANE_BYPASS)
-        optimization_probability_models[bit_position +
-                                        SYMBOL_PROBABILITY_MODEL_INDEX]
-            .update<0>();
-    }
+    accumulated_rate +=
+        optimization_probability_models.get_rate_of_model_and_update(
+            bit, bit_position, SYMBOL_PROBABILITY_MODEL_INDEX);
+    // if (bit) {
+    //   there_is_one = true;
+    // }
+    there_is_one |= bit;
   }
 
   if (there_is_one) {
@@ -239,13 +219,9 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
       get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
   auto segmentation_flags_j_cost =
-      lambda *
-      (optimization_probability_models[(bitplane << 1) +
-                                       SEGMENTATION_PROB_MODEL_INDEX]
-              .get_rate<0>() +
-          optimization_probability_models[(bitplane << 1) + 1 +
-                                          SEGMENTATION_PROB_MODEL_INDEX]
-              .get_rate(significance));
+      lambda * optimization_probability_models.get_segmentation_rate(
+                   (bitplane << 1), significance);
+
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
@@ -598,8 +574,8 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
 }
 
 
-void Hierarchical4DEncoder::set_optimization_model(std::array<ProbabilityModel,
-    Hierarchical4DEncoder::number_of_probability_models>& model) {
+void Hierarchical4DEncoder::set_optimization_model(
+    const ProbabilityModelsHandler& model) {
   optimization_probability_models = model;
 }
 

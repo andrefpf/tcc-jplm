@@ -52,7 +52,7 @@
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModelsHandler.h"
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/RDCostResult.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
@@ -62,14 +62,12 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
  private:
   static constexpr unsigned int ONES_MASK =
       std::numeric_limits<unsigned int>::max();
-  void reset_optimization_models();
   std::unique_ptr<double[]> temporary_buffer;
   double total_energy_sum = 0.0;
 
  public:
   ABACEncoder mEntropyCoder;
-  std::array<ProbabilityModel, number_of_probability_models>
-      optimization_probability_models;
+  ProbabilityModelsHandler optimization_probability_models;
   std::vector<HexadecaTreeFlag> hexadecatree_flags;
 
   Hierarchical4DEncoder()
@@ -115,8 +113,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
   int get_optimum_bit_plane(double lambda);
   void load_optimizer_state();
-  void set_optimization_model(std::array<ProbabilityModel,
-      Hierarchical4DEncoder::number_of_probability_models>& model);
+  void set_optimization_model(const ProbabilityModelsHandler& model);
   void create_temporary_buffer();
 
 
