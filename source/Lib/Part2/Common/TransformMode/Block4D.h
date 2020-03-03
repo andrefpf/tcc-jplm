@@ -130,10 +130,14 @@ class Block4D {
     return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s),
         static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
   }
+  std::size_t get_linear_position(
+      const LightfieldCoordinate<uint32_t>& position) const;
   std::size_t get_linear_position(uint32_t position_t, uint32_t position_s,
       uint32_t position_v, uint32_t position_u) const;
   void set_pixel_at(block4DElementType pixel_value, uint32_t position_t,
       uint32_t position_s, uint32_t position_v, uint32_t position_u);
+  block4DElementType get_pixel_at(
+      const LightfieldCoordinate<uint32_t>& position) const;
   block4DElementType get_pixel_at(uint32_t position_t, uint32_t position_s,
       uint32_t position_v, uint32_t position_u) const;
   std::size_t get_number_of_elements() const;

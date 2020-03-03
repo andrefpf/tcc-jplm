@@ -424,6 +424,7 @@ void Block4D::clip(block4DElementType minValue, block4DElementType maxValue) {
       });
 }
 
+
 void Block4D::shift_data_from_uv_plane_at(
     int shift, uint32_t position_t, uint32_t position_s) {
   /*! The pixel values of the UV plane at st coordinates (position_t, position_s) are left shifted by shift bits if shift is positive,
@@ -452,17 +453,32 @@ void Block4D::shift_data_from_uv_plane_at(
       used_shift);
 }
 
+
+std::size_t Block4D::get_linear_position(
+    const LightfieldCoordinate<uint32_t>& position) const {
+  return position.get_t() * stride_t + position.get_s() * stride_s +
+         position.get_v() * stride_v + position.get_u();
+}
+
+
 std::size_t Block4D::get_linear_position(uint32_t position_t,
     uint32_t position_s, uint32_t position_v, uint32_t position_u) const {
-  return position_t * stride_t + position_s * stride_s + position_v * stride_v +
-         position_u;
+  return this->get_linear_position(
+      {position_t, position_s, position_v, position_u});
 }
+
+
+block4DElementType Block4D::get_pixel_at(
+    const LightfieldCoordinate<uint32_t>& position) const {
+  return *(mPixelData + get_linear_position(position));
+}
+
 
 block4DElementType Block4D::get_pixel_at(uint32_t position_t,
     uint32_t position_s, uint32_t position_v, uint32_t position_u) const {
-  return *(mPixelData +
-           get_linear_position(position_t, position_s, position_v, position_u));
+  return this->get_pixel_at({position_t, position_s, position_v, position_u});
 }
+
 
 void Block4D::set_pixel_at(block4DElementType pixel_value, uint32_t position_t,
     uint32_t position_s, uint32_t position_v, uint32_t position_u) {
@@ -491,6 +507,7 @@ std::ostream& operator<<(std::ostream& o_stream, const Block4D& block) {
   o_stream << "END Block4D" << std::endl;
   return o_stream;
 }
+
 
 Block4D::Block4D(const LightfieldDimension<uint32_t>& block_dimension) {
   set_dimension(block_dimension.get_t(), block_dimension.get_s(),
