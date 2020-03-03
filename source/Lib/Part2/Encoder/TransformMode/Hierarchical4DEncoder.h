@@ -60,7 +60,7 @@
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
  private:
-  static constexpr unsigned int onesMask =
+  static constexpr unsigned int ONES_MASK =
       std::numeric_limits<unsigned int>::max();
   void reset_optimization_models();
   std::unique_ptr<double[]> temporary_buffer;

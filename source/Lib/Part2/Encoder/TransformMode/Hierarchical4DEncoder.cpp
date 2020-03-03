@@ -165,6 +165,10 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
 
   auto there_is_one = false;
   double accumulated_rate = 0.0;
+
+  int bit_mask = ONES_MASK << inferior_bit_plane;
+  int quantized_magnitude = magnitude & bit_mask;
+
   for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
        --bit_position) {
     int bit = (magnitude >> bit_position) & 01;
@@ -189,19 +193,15 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
             .update<0>();
     }
   }
-  if (there_is_one)
-    accumulated_rate += 1.0;
 
-  int bitMask = onesMask << inferior_bit_plane;
-  int quantized_magnitude = magnitude & bitMask;
   if (there_is_one) {
+    accumulated_rate += 1.0;
     quantized_magnitude += (1 << inferior_bit_plane) / 2;
   }
   double error = magnitude - quantized_magnitude;
+  error *= error;  //error squared
 
-  //return std::make_pair(error * error + lambda * accumulated_rate,
-  //  static_cast<double>(magnitude) * magnitude);
-  return RDCostResult(error * error + lambda * accumulated_rate, error * error,
+  return RDCostResult(error + lambda * accumulated_rate, error,
       accumulated_rate, static_cast<double>(magnitude) * magnitude);
 }
 
@@ -537,21 +537,19 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
   int optimum_bit_plane = 0;  //Irrelevant initial value
 
   double accumulatedRate = 0.0;
-  int onesMask = 0;
-  onesMask = ~onesMask;
 
   for (int bit_position = superior_bit_plane; bit_position >= 0;
        bit_position--) {
     double distortion = 0.0;
     auto signalRate = 0;
 
-    int bitMask = onesMask << bit_position;
+    int bit_mask = ONES_MASK << bit_position;
     int threshold = (1 << bit_position);
 
     for (auto data_ptr = mSubbandLF.mPixelData;
          data_ptr < mSubbandLF.mPixelData + subbandSize; ++data_ptr) {
       int magnitude = std::abs(*data_ptr);
-      int quantizedMagnitude = magnitude & bitMask;
+      int quantizedMagnitude = magnitude & bit_mask;
       if (quantizedMagnitude > 0) {
         ++signalRate;
         quantizedMagnitude += (threshold >> 1);
@@ -571,8 +569,10 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
     }
 
     //since accumulateRate is monotonically increasing, if lambda*accumulatedRate is > Jmin, no other case will be smaller...
-    if (lambda * (accumulatedRate) > Jmin)
+    if (lambda * (accumulatedRate) >
+        Jmin) {  //<! \todo check if this condition happens
       return optimum_bit_plane;
+    }
 
     double J = distortion +
                lambda * (accumulatedRate + static_cast<double>(signalRate));
