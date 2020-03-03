@@ -89,6 +89,11 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   virtual ~LightfieldDimension() = default;
 
 
+  bool has_unitary_area() const noexcept {
+    return this->get_number_of_pixels_per_lightfield() == 1;
+  }
+
+
   bool operator==(const LightfieldDimension<T>& other) const {
     return this->dimensions == other.dimensions;
   }
