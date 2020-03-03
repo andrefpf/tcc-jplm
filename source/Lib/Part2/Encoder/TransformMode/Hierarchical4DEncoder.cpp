@@ -211,21 +211,6 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   decltype(probability_models) currentProbabilityModel =
       optimization_probability_models;
 
-  std::vector<HexadecaTreeFlag> hexadecatree_flags_0;
-
-  auto min_range = position_coo + length;
-
-  const auto significance =
-      get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
-
-  auto segmentation_flags_j_cost =
-      lambda * optimization_probability_models.get_segmentation_rate(
-                   (bitplane << 1), significance);
-
-
-  std::pair<double, double> J_and_energy =
-      std::make_pair(segmentation_flags_j_cost, 0.0);
-
 
   auto rate_of_skip =
       optimization_probability_models[(bitplane << 1) +
@@ -239,6 +224,18 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   auto j_skip = rd_cost_of_skip.get_j_cost();
 
+
+  std::vector<HexadecaTreeFlag> hexadecatree_flags_0;
+
+  auto min_range = position_coo + length;
+
+  const auto significance =
+      get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
+
+  auto segmentation_flags_j_cost =
+      lambda * optimization_probability_models.get_segmentation_rate(
+                   (bitplane << 1), significance);
+
   if (bitplane > BITPLANE_BYPASS_FLAGS) {
     optimization_probability_models[(bitplane << 1) +
                                     SEGMENTATION_PROB_MODEL_INDEX]
@@ -247,6 +244,10 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                                     SEGMENTATION_PROB_MODEL_INDEX]
         .update(significance);
   }
+
+
+  std::pair<double, double> J_and_energy =
+      std::make_pair(segmentation_flags_j_cost, 0.0);
 
   //evaluate the cost J0 to encode this subblock
   if (!significance) {  //this means that there is no value larger than the threshold (1<<bitplane)/
