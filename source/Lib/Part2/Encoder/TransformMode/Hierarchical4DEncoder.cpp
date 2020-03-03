@@ -195,18 +195,16 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   }
 
   if (length.has_unitary_area()) {
-    const int magnitude = std::abs(mSubbandLF.get_pixel_at(
-        std::get<LF::T>(position), std::get<LF::S>(position),
-        std::get<LF::V>(position), std::get<LF::U>(position)));
+    const int magnitude = std::abs(mSubbandLF.get_pixel_at(position_coo));
 
     auto there_is_one = false;
-    double accumulatedRate = 0.0;
+    double accumulated_rate = 0.0;
     for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
          --bit_position) {
       int bit = (magnitude >> bit_position) & 01;
       if (bit) {
         there_is_one = true;
-        accumulatedRate +=
+        accumulated_rate +=
             optimization_probability_models[bit_position +
                                             SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<1>();
@@ -215,7 +213,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                                           SYMBOL_PROBABILITY_MODEL_INDEX]
               .update<1>();
       } else {
-        accumulatedRate +=
+        accumulated_rate +=
             optimization_probability_models[bit_position +
                                             SYMBOL_PROBABILITY_MODEL_INDEX]
                 .get_rate<0>();
@@ -226,19 +224,19 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
       }
     }
     if (there_is_one)
-      accumulatedRate += 1.0;
+      accumulated_rate += 1.0;
 
     int bitMask = onesMask << inferior_bit_plane;
-    int quantizedMagnitude = magnitude & bitMask;
+    int quantized_magnitude = magnitude & bitMask;
     if (there_is_one) {
-      quantizedMagnitude += (1 << inferior_bit_plane) / 2;
+      quantized_magnitude += (1 << inferior_bit_plane) / 2;
     }
-    double error = magnitude - quantizedMagnitude;
+    double error = magnitude - quantized_magnitude;
 
-    return std::make_pair(error * error + lambda * accumulatedRate,
+    return std::make_pair(error * error + lambda * accumulated_rate,
         static_cast<double>(magnitude) * magnitude);
-    // return RDCostResult(error * error + lambda * accumulatedRate, error * error,
-    //     accumulatedRate, static_cast<double>(magnitude) * magnitude);
+    // return RDCostResult(error * error + lambda * accumulated_rate, error * error,
+    //     accumulated_rate, static_cast<double>(magnitude) * magnitude);
   }
 
   decltype(probability_models) currentProbabilityModel =
