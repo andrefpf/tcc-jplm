@@ -149,6 +149,35 @@ void Hierarchical4DEncoder::create_temporary_buffer() {
 }
 
 
+RDCostResult
+Hierarchical4DEncoder::rd_optimize_hexadecatree_below_inferior_bit_plane(
+    const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& length) {
+  double signal_energy = 0.0;
+  auto temp = temporary_buffer.get();
+  for (auto t = 0; t < length.get_t(); ++t) {
+    for (auto s = 0; s < length.get_s(); ++s) {
+      for (auto v = 0; v < length.get_v(); ++v) {
+        // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
+        auto initial_ptr =
+            mSubbandLF.mPixelData +
+            mSubbandLF.get_linear_position(position.get_t() + t,
+                position.get_s() + s, position.get_v() + v, position.get_u());
+        auto final_ptr = initial_ptr + length.get_u();
+        std::transform(initial_ptr, final_ptr, temp, [](int value) -> double {
+          return static_cast<double>(value) * static_cast<double>(value);
+        });
+        signal_energy =
+            std::accumulate(temp, temp + length.get_u(), signal_energy);
+      }
+    }
+  }
+  //signal energy seems to be the error. As there is no rate (=0), lambda is not important and j is equal error
+  return RDCostResult(signal_energy, signal_energy, 0.0, signal_energy);
+  //return std::make_pair(signal_energy, signal_energy);
+}
+
+
 std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda,
@@ -156,28 +185,9 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   using LF = LightFieldDimension;
 
   if (bitplane < inferior_bit_plane) {
-    double signal_energy = 0.0;
-    auto temp = temporary_buffer.get();
-    for (auto t = 0; t < std::get<LF::T>(lengths); ++t) {
-      for (auto s = 0; s < std::get<LF::S>(lengths); ++s) {
-        for (auto v = 0; v < std::get<LF::V>(lengths); ++v) {
-          // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
-          auto initial_ptr =
-              mSubbandLF.mPixelData +
-              mSubbandLF.get_linear_position(std::get<LF::T>(position) + t,
-                  std::get<LF::S>(position) + s, std::get<LF::V>(position) + v,
-                  std::get<LF::U>(position));
-          auto final_ptr = initial_ptr + std::get<LF::U>(lengths);
-          std::transform(initial_ptr, final_ptr, temp, [](int value) -> double {
-            return static_cast<double>(value) * static_cast<double>(value);
-          });
-          signal_energy = std::accumulate(
-              temp, temp + std::get<LF::U>(lengths), signal_energy);
-        }
-      }
-    }
-    // return RDCostResult(signal_energy, 0.0, 0.0, signal_energy);
-    return std::make_pair(signal_energy, signal_energy);
+    auto rd_cost = rd_optimize_hexadecatree_below_inferior_bit_plane(
+        {position}, {lengths});
+    return std::make_pair(rd_cost.get_energy(), rd_cost.get_energy());
   }
 
   if (std::get<LF::T>(lengths) * std::get<LF::S>(lengths) *
