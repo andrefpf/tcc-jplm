@@ -249,8 +249,15 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     std::tuple<int, int, int, int> half_lengths = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
         lengths);
+
+    auto half_length = length.divided_by_half_in_all_possible_dimensions();
+
     auto number_of_subdivisions = std::apply(
         [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
+
+    auto number_of_subdivisions_in_each_dimension =
+        length.get_number_of_possible_divisions_by_half();
+
 
     for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); ++t) {
       int new_position_t =
@@ -309,8 +316,6 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   //Choose the lowest cost
   if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!significance))) {
-    std::vector<HexadecaTreeFlag> temp_hexadecatree_flags = hexadecatree_flags;
-
     if (significance) {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::splitBlock);
     } else {

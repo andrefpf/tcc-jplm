@@ -169,6 +169,13 @@ class LightfieldCoordinate {
   }
 
 
+  LightfieldCoordinate<T> operator/(const T& divisor) {
+    return LightfieldCoordinate<T>(this->get_t() / divisor,
+        this->get_s() / divisor, this->get_v() / divisor,
+        this->get_u() / divisor);
+  }
+
+
   LightfieldCoordinate<T> hadamard_product(
       const LightfieldCoordinate<T>& other) const {
     return LightfieldCoordinate<T>(this->get_t() * other.get_t(),
