@@ -99,7 +99,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       int position_u, int length_t, int length_s, int length_v, int length_u,
       uint8_t bitplane, int& flagIndex);
   void encode_sub_block(double lambda);
-  RDCostResult rd_optimize_hexadecatree(
+  std::pair<double, double> rd_optimize_hexadecatree(
       const std::tuple<int, int, int, int>& position,
       const std::tuple<int, int, int, int>& lengths, double lambda,
       uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);

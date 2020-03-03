@@ -68,6 +68,11 @@ class RDCostResult {
   }
 
 
+  void add_to_rate(double r) {
+    rate += r;
+  }
+
+
   /**
    * @brief      Gets the j cost.
    *
@@ -75,6 +80,11 @@ class RDCostResult {
    */
   double get_j_cost() const {
     return j_cost;
+  }
+
+
+  void add_to_j_cost(double j) {
+    j_cost += j;
   }
 
 
@@ -88,6 +98,11 @@ class RDCostResult {
   }
 
 
+  void add_to_error(double d) {
+    error += d;
+  }
+
+
   /**
    * @brief      Gets the energy.
    *
@@ -95,6 +110,11 @@ class RDCostResult {
    */
   double get_energy() const {
     return energy;
+  }
+
+
+  void add_to_energy(double d) {
+    energy += d;
   }
 
 

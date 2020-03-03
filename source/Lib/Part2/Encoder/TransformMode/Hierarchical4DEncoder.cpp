@@ -176,6 +176,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
         }
       }
     }
+    // return RDCostResult(signal_energy, 0.0, 0.0, signal_energy);
     return std::make_pair(signal_energy, signal_energy);
   }
 
@@ -224,6 +225,8 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
     return std::make_pair(error * error + lambda * accumulatedRate,
         static_cast<double>(magnitude) * magnitude);
+    // return RDCostResult(error * error + lambda * accumulatedRate, error * error,
+    //     accumulatedRate, static_cast<double>(magnitude) * magnitude);
   }
 
   decltype(probability_models) currentProbabilityModel =
