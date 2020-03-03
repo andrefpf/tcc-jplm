@@ -194,9 +194,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     return std::make_pair(rd_cost.get_energy(), rd_cost.get_energy());
   }
 
-  if (std::get<LF::T>(lengths) * std::get<LF::S>(lengths) *
-          std::get<LF::V>(lengths) * std::get<LF::U>(lengths) ==
-      1) {
+  if (length.has_unitary_area()) {
     const int magnitude = std::abs(mSubbandLF.get_pixel_at(
         std::get<LF::T>(position), std::get<LF::S>(position),
         std::get<LF::V>(position), std::get<LF::U>(position)));
