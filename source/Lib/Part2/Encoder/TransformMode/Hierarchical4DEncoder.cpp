@@ -184,9 +184,13 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
   using LF = LightFieldDimension;
 
+
+  auto length = LightfieldDimension<uint32_t>(lengths);
+  auto position_coo = LightfieldCoordinate<uint32_t>(position);
+
   if (bitplane < inferior_bit_plane) {
-    auto rd_cost = rd_optimize_hexadecatree_below_inferior_bit_plane(
-        {position}, {lengths});
+    auto rd_cost =
+        rd_optimize_hexadecatree_below_inferior_bit_plane(position_coo, length);
     return std::make_pair(rd_cost.get_energy(), rd_cost.get_energy());
   }
 
