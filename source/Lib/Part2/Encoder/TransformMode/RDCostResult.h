@@ -43,9 +43,72 @@
 
 
 class RDCostResult {
+ protected:
+  double j_cost;
+  double error;
+  double rate;
+  double energy;
+
  public:
-  RDCostResult();
+  RDCostResult(double j, double d, double r, double e)
+      : j_cost(j), error(d), rate(r), energy(e) {
+  }
+
+
   virtual ~RDCostResult() = default;
+
+
+  /**
+   * @brief      Gets the rate.
+   *
+   * @return     The rate.
+   */
+  double get_rate() const {
+    return rate;
+  }
+
+
+  /**
+   * @brief      Gets the j cost.
+   *
+   * @return     The j cost.
+   */
+  double get_j_cost() const {
+    return j_cost;
+  }
+
+
+  /**
+   * @brief      Gets the error.
+   *
+   * @return     The error.
+   */
+  double get_error() const {
+    return error;
+  }
+
+
+  /**
+   * @brief      Gets the energy.
+   *
+   * @return     The energy.
+   */
+  double get_energy() const {
+    return energy;
+  }
+
+
+  /**
+   * @brief      Addition operator.
+   *
+   * @param[in]  other  The other
+   *
+   * @return     The result of the addition
+   */
+  RDCostResult operator+(const RDCostResult& other) const {
+    return RDCostResult(this->j_cost + other.j_cost, this->error + other.error,
+        this->rate + other.rate, this->energy + other.energy);
+  }
 };
 
 

@@ -144,6 +144,9 @@ class JPLM4DTransformModeLightFieldEncoder
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
+  std::cout << "Energy: " << hierarchical_4d_encoder.get_total_energy_sum()
+            << std::endl;
+
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
   auto& first_codestream = *(codestreams.at(0));
   auto& first_codestream_as_part2 =

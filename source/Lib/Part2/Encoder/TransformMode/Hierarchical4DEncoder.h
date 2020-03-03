@@ -51,9 +51,10 @@
 #include <tuple>
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/RDCostResult.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 //#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
@@ -63,6 +64,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       std::numeric_limits<unsigned int>::max();
   void reset_optimization_models();
   std::unique_ptr<double[]> temporary_buffer;
+  double total_energy_sum = 0.0;
 
  public:
   ABACEncoder mEntropyCoder;
@@ -76,6 +78,11 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
 
 
   ~Hierarchical4DEncoder() = default;
+
+  double get_total_energy_sum() const {
+    return total_energy_sum;
+  }
+
   bool get_mSubbandLF_significance(uint8_t bitplane,
       const std::tuple<int, int, int, int>& position,
       const std::tuple<int, int, int, int>& range) const;
@@ -92,7 +99,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       int position_u, int length_t, int length_s, int length_v, int length_u,
       uint8_t bitplane, int& flagIndex);
   void encode_sub_block(double lambda);
-  std::pair<double, double> rd_optimize_hexadecatree(
+  RDCostResult rd_optimize_hexadecatree(
       const std::tuple<int, int, int, int>& position,
       const std::tuple<int, int, int, int>& lengths, double lambda,
       uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
@@ -102,12 +109,12 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       Hierarchical4DEncoder::number_of_probability_models>& model);
   void create_temporary_buffer();
 
-  
+
   void write_marker(Marker marker) {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
     auto bytes = Markers::get_bytes(marker);
-    for(const auto& byte: bytes) {
-       codestream_code.push_byte(byte);
+    for (const auto& byte : bytes) {
+      codestream_code.push_byte(byte);
     }
   }
 
@@ -118,8 +125,8 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
 
     auto bytes = lightfield_configuration_marker_segment.get_bytes();
-    for(const auto& byte: bytes) {
-       codestream_code.push_byte(byte);
+    for (const auto& byte : bytes) {
+      codestream_code.push_byte(byte);
     }
   }
 

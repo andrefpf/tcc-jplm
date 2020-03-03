@@ -72,8 +72,10 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-  rd_optimize_hexadecatree(
+  auto j_and_energy = rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
+  // std::cout << "Energy: " << std::get<1>(j_and_energy) << std::endl;
+  total_energy_sum += std::get<1>(j_and_energy);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
