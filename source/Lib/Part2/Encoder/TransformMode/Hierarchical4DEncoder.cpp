@@ -149,8 +149,7 @@ void Hierarchical4DEncoder::create_temporary_buffer() {
 }
 
 
-RDCostResult
-Hierarchical4DEncoder::rd_optimize_hexadecatree_below_inferior_bit_plane(
+RDCostResult Hierarchical4DEncoder::get_rd_for_below_inferior_bit_plane(
     const LightfieldCoordinate<uint32_t>& position,
     const LightfieldDimension<uint32_t>& length) {
   double signal_energy = 0.0;
@@ -178,6 +177,53 @@ Hierarchical4DEncoder::rd_optimize_hexadecatree_below_inferior_bit_plane(
 }
 
 
+RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
+    const LightfieldCoordinate<uint32_t>& position, double lambda,
+    uint8_t bitplane) {
+  const int magnitude = std::abs(mSubbandLF.get_pixel_at(position));
+
+  auto there_is_one = false;
+  double accumulated_rate = 0.0;
+  for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
+       --bit_position) {
+    int bit = (magnitude >> bit_position) & 01;
+    if (bit) {
+      there_is_one = true;
+      accumulated_rate +=
+          optimization_probability_models[bit_position +
+                                          SYMBOL_PROBABILITY_MODEL_INDEX]
+              .get_rate<1>();
+      if (bit_position > BITPLANE_BYPASS)
+        optimization_probability_models[bit_position +
+                                        SYMBOL_PROBABILITY_MODEL_INDEX]
+            .update<1>();
+    } else {
+      accumulated_rate +=
+          optimization_probability_models[bit_position +
+                                          SYMBOL_PROBABILITY_MODEL_INDEX]
+              .get_rate<0>();
+      if (bit_position > BITPLANE_BYPASS)
+        optimization_probability_models[bit_position +
+                                        SYMBOL_PROBABILITY_MODEL_INDEX]
+            .update<0>();
+    }
+  }
+  if (there_is_one)
+    accumulated_rate += 1.0;
+
+  int bitMask = onesMask << inferior_bit_plane;
+  int quantized_magnitude = magnitude & bitMask;
+  if (there_is_one) {
+    quantized_magnitude += (1 << inferior_bit_plane) / 2;
+  }
+  double error = magnitude - quantized_magnitude;
+
+  //return std::make_pair(error * error + lambda * accumulated_rate,
+  //  static_cast<double>(magnitude) * magnitude);
+  return RDCostResult(error * error + lambda * accumulated_rate, error * error,
+      accumulated_rate, static_cast<double>(magnitude) * magnitude);
+}
+
 std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda,
@@ -188,56 +234,18 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   auto length = LightfieldDimension<uint32_t>(lengths);
   auto position_coo = LightfieldCoordinate<uint32_t>(position);
 
+
   if (bitplane < inferior_bit_plane) {
-    auto rd_cost =
-        rd_optimize_hexadecatree_below_inferior_bit_plane(position_coo, length);
+    auto rd_cost = get_rd_for_below_inferior_bit_plane(position_coo, length);
     return std::make_pair(rd_cost.get_energy(), rd_cost.get_energy());
   }
 
+
   if (length.has_unitary_area()) {
-    const int magnitude = std::abs(mSubbandLF.get_pixel_at(position_coo));
-
-    auto there_is_one = false;
-    double accumulated_rate = 0.0;
-    for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
-         --bit_position) {
-      int bit = (magnitude >> bit_position) & 01;
-      if (bit) {
-        there_is_one = true;
-        accumulated_rate +=
-            optimization_probability_models[bit_position +
-                                            SYMBOL_PROBABILITY_MODEL_INDEX]
-                .get_rate<1>();
-        if (bit_position > BITPLANE_BYPASS)
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .update<1>();
-      } else {
-        accumulated_rate +=
-            optimization_probability_models[bit_position +
-                                            SYMBOL_PROBABILITY_MODEL_INDEX]
-                .get_rate<0>();
-        if (bit_position > BITPLANE_BYPASS)
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .update<0>();
-      }
-    }
-    if (there_is_one)
-      accumulated_rate += 1.0;
-
-    int bitMask = onesMask << inferior_bit_plane;
-    int quantized_magnitude = magnitude & bitMask;
-    if (there_is_one) {
-      quantized_magnitude += (1 << inferior_bit_plane) / 2;
-    }
-    double error = magnitude - quantized_magnitude;
-
-    return std::make_pair(error * error + lambda * accumulated_rate,
-        static_cast<double>(magnitude) * magnitude);
-    // return RDCostResult(error * error + lambda * accumulated_rate, error * error,
-    //     accumulated_rate, static_cast<double>(magnitude) * magnitude);
+    auto rd_cost = get_rd_for_unitary_block(position_coo, lambda, bitplane);
+    return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
+
 
   decltype(probability_models) currentProbabilityModel =
       optimization_probability_models;

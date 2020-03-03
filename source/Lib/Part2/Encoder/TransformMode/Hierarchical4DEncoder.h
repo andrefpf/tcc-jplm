@@ -101,9 +101,13 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
   void encode_sub_block(double lambda);
 
 
-  RDCostResult rd_optimize_hexadecatree_below_inferior_bit_plane(
+  RDCostResult get_rd_for_below_inferior_bit_plane(
       const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& lengths);
+
+  RDCostResult get_rd_for_unitary_block(
+      const LightfieldCoordinate<uint32_t>& position, double lambda,
+      uint8_t bitplane);
 
   std::pair<double, double> rd_optimize_hexadecatree(
       const std::tuple<int, int, int, int>& position,
