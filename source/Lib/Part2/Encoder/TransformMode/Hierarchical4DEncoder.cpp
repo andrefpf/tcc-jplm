@@ -219,9 +219,6 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
       RDCostResult(lambda * rate_of_skip, 0.0, rate_of_skip, 0.0);
   //j_cost error rate energy
 
-  auto j_skip = rd_cost_of_skip.get_j_cost();
-
-
   std::vector<HexadecaTreeFlag> hexadecatree_flags_0;
 
   auto min_range = position_coo + length;
@@ -295,16 +292,11 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     rd_cost_of_segmentation.add_to_energy(std::get<1>(temp_j_and_energy));
   }
 
-  double J0 = rd_cost_of_segmentation.get_j_cost();
-
-  j_skip += rd_cost_of_segmentation.get_energy();
   rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
   rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
 
-  assert(j_skip == rd_cost_of_skip.get_j_cost());
-
   //Choose the lowest cost
-  if ((J0 < j_skip) ||
+  if ((rd_cost_of_segmentation.get_j_cost() < rd_cost_of_skip.get_j_cost()) ||
       ((bitplane == inferior_bit_plane) && (!should_split_block))) {
     if (should_split_block) {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::splitBlock);
@@ -315,24 +307,21 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
         hexadecatree_flags.size() + hexadecatree_flags_0.size());
     hexadecatree_flags.insert(hexadecatree_flags.end(),
         hexadecatree_flags_0.begin(), hexadecatree_flags_0.end());
-  } else {
-    hexadecatree_flags.emplace_back(HexadecaTreeFlag::zeroBlock);
-    J0 = j_skip;
-
-    optimization_probability_models = currentProbabilityModel;
-
-    if (bitplane > BITPLANE_BYPASS_FLAGS)
-      optimization_probability_models[(bitplane << 1) +
-                                      SEGMENTATION_PROB_MODEL_INDEX]
-          .update<1>();
+    return std::make_pair(rd_cost_of_segmentation.get_j_cost(),
+        rd_cost_of_segmentation.get_energy());
   }
+  //else
+  hexadecatree_flags.emplace_back(HexadecaTreeFlag::zeroBlock);
 
-  rd_cost_of_segmentation.set_j_cost(J0);
+  optimization_probability_models = currentProbabilityModel;
 
-  return std::make_pair(rd_cost_of_segmentation.get_j_cost(),
-      rd_cost_of_segmentation.get_energy());
+  if (bitplane > BITPLANE_BYPASS_FLAGS)
+    optimization_probability_models[(bitplane << 1) +
+                                    SEGMENTATION_PROB_MODEL_INDEX]
+        .update<1>();
 
-  //return J_and_energy;
+  return std::make_pair(
+      rd_cost_of_skip.get_j_cost(), rd_cost_of_skip.get_energy());
 }
 
 
