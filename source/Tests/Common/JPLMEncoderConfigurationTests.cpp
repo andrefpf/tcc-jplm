@@ -50,7 +50,7 @@ using namespace std;
 
 std::string resources_path = "../resources/";
 
-std::string root_path = ".";
+std::string root_path = "..";
 
 
 TEST(JPLMEncoderConfiguration, SimpleTestWithInput) {
