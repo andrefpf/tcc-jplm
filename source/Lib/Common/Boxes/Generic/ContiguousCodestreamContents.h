@@ -47,28 +47,36 @@
 
 
 class ContiguousCodestreamContents : public SuperBoxDBox {
-  //not implemented yet...
  protected:
   std::unique_ptr<ContiguousCodestreamCode> code;
 
  public:
   ContiguousCodestreamContents(const ContiguousCodestreamCode& code)
       : code(std::unique_ptr<ContiguousCodestreamCode>(code.clone())) {
+    std::cout << "cllloooo" << std::endl;
   }
 
 
   ContiguousCodestreamContents(std::unique_ptr<ContiguousCodestreamCode>&& code)
       : code(std::move(code)) {
+    std::cout << "aaaaaa" << std::endl;
+  }
+
+
+  ContiguousCodestreamContents(ContiguousCodestreamContents&& other)
+      : code(std::move(other.code)) {
+    std::cout << "bbbbbbbbbbb" << std::endl;
   }
 
 
   ContiguousCodestreamContents(const ContiguousCodestreamContents& other)
-      : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())){}
+      : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())) {
+    std::cout << "cccccccccccccc" << std::endl;
+  }
 
 
-            //! \todo remove this method (it is not necessary to be defined as const in its name)
-            [[nodiscard]] const ContiguousCodestreamCode
-        & get_const_ref_to_code() const;
+  //<! \todo remove this method (it is not necessary to be defined as const in its name)
+  [[nodiscard]] const ContiguousCodestreamCode& get_const_ref_to_code() const;
 
 
   [[nodiscard]] const ContiguousCodestreamCode& get_ref_to_code() const;

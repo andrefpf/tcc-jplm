@@ -69,6 +69,8 @@ class GenericBox : public BaseBox {
    *             Otherwise the code won't compile.
    */
   GenericBox() : BaseBox(TBox(id), ContentsClass()) {
+    std::cout << "GenericBox() : BaseBox(TBox(id), ContentsClass())"
+              << std::endl;
   }
 
 
@@ -78,6 +80,9 @@ class GenericBox : public BaseBox {
    * \param[in]  contents  The contents
    */
   GenericBox(const ContentsClass& contents) : BaseBox(TBox(id), contents) {
+    std::cout << "GenericBox(const ContentsClass& contents) : "
+                 "BaseBox(TBox(id), contents)"
+              << std::endl;
   }
 
 
@@ -88,6 +93,7 @@ class GenericBox : public BaseBox {
    */
   GenericBox(ContentsClass&& contents)
       : BaseBox(TBox(id), std::move(contents)) {
+    std::cout << "GenericBox(ContentsClass&& contents)" << std::endl;
   }
 
 
@@ -98,6 +104,8 @@ class GenericBox : public BaseBox {
    */
   GenericBox(std::unique_ptr<ContentsClass>&& contents)
       : BaseBox(TBox(id), std::move(contents)) {
+    std::cout << "GenericBox(std::unique_ptr<ContentsClass>&& contents)"
+              << std::endl;
   }
 
 
@@ -107,6 +115,8 @@ class GenericBox : public BaseBox {
    * \param[in]  other  The other box that wil be copied to this box.
    */
   GenericBox(const GenericBox& other) : BaseBox(other) {
+    std::cout << "GenericBox(const GenericBox& other) : BaseBox(other)"
+              << std::endl;
   }
 
 
@@ -119,6 +129,8 @@ class GenericBox : public BaseBox {
    *             Thus, to use this constructor the BaseBox must provide a move constructor.
    */
   GenericBox(GenericBox&& other) : BaseBox(std::move(other)) {
+    std::cout << "GenericBox(GenericBox&& other) : BaseBox(std::move(other))"
+              << std::endl;
   }
 
 
@@ -210,6 +222,7 @@ class GenericBox : public BaseBox {
    * \return     A reference to this box containing the resources of the other box.
    */
   GenericBox& operator=(GenericBox&& other) {
+    std::cout << "move assigment" << std::endl;
     if (*this != other) {
       this->t_box = other.t_box;
       this->d_box = std::move(other.d_box);
