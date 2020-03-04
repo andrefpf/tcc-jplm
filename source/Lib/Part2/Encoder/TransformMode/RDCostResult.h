@@ -83,6 +83,11 @@ class RDCostResult {
   }
 
 
+  void set_j_cost(double j) {
+    j_cost = j;
+  }
+
+
   void add_to_j_cost(double j) {
     j_cost += j;
   }

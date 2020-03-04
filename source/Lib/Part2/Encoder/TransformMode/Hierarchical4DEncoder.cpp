@@ -195,7 +195,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   if (bitplane < inferior_bit_plane) {
     auto rd_cost = get_rd_for_below_inferior_bit_plane(position_coo, length);
-    return std::make_pair(rd_cost.get_energy(), rd_cost.get_energy());
+    return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
 
 
@@ -229,12 +229,12 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   const auto should_split_block =
       get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
-  auto segmentation_flags_j_cost =
-      lambda * optimization_probability_models.get_segmentation_rate(
-                   bitplane, should_split_block);
+  auto segmentation_flags_rate =
+      optimization_probability_models.get_segmentation_rate(
+          bitplane, should_split_block);
 
-  std::pair<double, double> J_and_energy =
-      std::make_pair(segmentation_flags_j_cost, 0.0);
+  auto rd_cost_of_segmentation = RDCostResult(
+      lambda * segmentation_flags_rate, 0.0, segmentation_flags_rate, 0.0);
 
   //evaluate the cost J0 to encode this subblock
   if (should_split_block) {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
@@ -272,8 +272,11 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                                              new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
                     lambda, bitplane, hexadecatree_flags_of_partition);
-            std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
-            std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
+            rd_cost_of_segmentation.add_to_j_cost(
+                std::get<0>(temp_j_and_energy));
+            rd_cost_of_segmentation.add_to_energy(
+                std::get<1>(temp_j_and_energy));
+
 
             hexadecatree_flags_0.reserve(
                 hexadecatree_flags_0.size() +
@@ -288,14 +291,17 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   } else {  //this means that there is no value larger than the threshold (1<<bitplane). this lower the bitplane
     auto temp_j_and_energy = rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
-    std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
-    std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
+    rd_cost_of_segmentation.add_to_j_cost(std::get<0>(temp_j_and_energy));
+    rd_cost_of_segmentation.add_to_energy(std::get<1>(temp_j_and_energy));
   }
 
-  double J0 = std::get<0>(J_and_energy);
-  double SignalEnergySum = std::get<1>(J_and_energy);
+  double J0 = rd_cost_of_segmentation.get_j_cost();
 
-  j_skip += SignalEnergySum;
+  j_skip += rd_cost_of_segmentation.get_energy();
+  rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
+  rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
+
+  assert(j_skip == rd_cost_of_skip.get_j_cost());
 
   //Choose the lowest cost
   if ((J0 < j_skip) ||
@@ -321,9 +327,12 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
           .update<1>();
   }
 
-  std::get<0>(J_and_energy) = J0;
+  rd_cost_of_segmentation.set_j_cost(J0);
 
-  return J_and_energy;
+  return std::make_pair(rd_cost_of_segmentation.get_j_cost(),
+      rd_cost_of_segmentation.get_energy());
+
+  //return J_and_energy;
 }
 
 
