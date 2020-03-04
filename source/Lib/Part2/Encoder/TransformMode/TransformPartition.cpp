@@ -151,13 +151,14 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
   hierarchical_4d_encoder.set_optimization_model(
       probability_model_for_transform);
 
-  double J0 =
-      lambda +
-      std::get<0>(hierarchical_4d_encoder.rd_optimize_hexadecatree({0, 0, 0, 0},
+  auto rd_cost_of_hexadecatree =
+      hierarchical_4d_encoder.rd_optimize_hexadecatree({0, 0, 0, 0},
           {block_0.mlength_t, block_0.mlength_s, block_0.mlength_v,
               block_0.mlength_u},
           lambda, hierarchical_4d_encoder.get_superior_bit_plane(),
-          hierarchical_4d_encoder.hexadecatree_flags));
+          hierarchical_4d_encoder.hexadecatree_flags);
+
+  double J0 = lambda + rd_cost_of_hexadecatree.get_j_cost();
 
   double bestJ = J0;
   auto partition_mode = PartitionFlag::transform;

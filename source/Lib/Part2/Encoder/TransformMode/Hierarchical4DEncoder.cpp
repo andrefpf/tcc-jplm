@@ -65,10 +65,10 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-  auto j_and_energy = rd_optimize_hexadecatree(
+  rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
   // std::cout << "Energy: " << std::get<1>(j_and_energy) << std::endl;
-  total_energy_sum += std::get<1>(j_and_energy);
+  // total_energy_sum += std::get<1>(j_and_energy);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
@@ -183,7 +183,7 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
 }
 
 
-std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
+RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda,
     uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
@@ -194,14 +194,14 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
 
   if (bitplane < inferior_bit_plane) {
-    auto rd_cost = get_rd_for_below_inferior_bit_plane(position_coo, length);
-    return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
+    return get_rd_for_below_inferior_bit_plane(position_coo, length);
+    // return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
 
 
   if (length.has_unitary_area()) {
-    auto rd_cost = get_rd_for_unitary_block(position_coo, lambda, bitplane);
-    return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
+    return get_rd_for_unitary_block(position_coo, lambda, bitplane);
+    // return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
 
 
@@ -264,15 +264,15 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
             std::vector<HexadecaTreeFlag> hexadecatree_flags_of_partition;
 
-            auto temp_j_and_energy =
+            rd_cost_of_segmentation +=
                 rd_optimize_hexadecatree({new_position_t, new_position_s,
                                              new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
                     lambda, bitplane, hexadecatree_flags_of_partition);
-            rd_cost_of_segmentation.add_to_j_cost(
-                std::get<0>(temp_j_and_energy));
-            rd_cost_of_segmentation.add_to_energy(
-                std::get<1>(temp_j_and_energy));
+            // rd_cost_of_segmentation.add_to_j_cost(
+            //     std::get<0>(temp_j_and_energy));
+            // rd_cost_of_segmentation.add_to_energy(
+            //     std::get<1>(temp_j_and_energy));
 
 
             hexadecatree_flags_0.reserve(
@@ -286,10 +286,10 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
       }
     }
   } else {  //this means that there is no value larger than the threshold (1<<bitplane). this lower the bitplane
-    auto temp_j_and_energy = rd_optimize_hexadecatree(
+    rd_cost_of_segmentation += rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
-    rd_cost_of_segmentation.add_to_j_cost(std::get<0>(temp_j_and_energy));
-    rd_cost_of_segmentation.add_to_energy(std::get<1>(temp_j_and_energy));
+    // rd_cost_of_segmentation.add_to_j_cost(std::get<0>(temp_j_and_energy));
+    // rd_cost_of_segmentation.add_to_energy(std::get<1>(temp_j_and_energy));
   }
 
   rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
@@ -307,8 +307,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
         hexadecatree_flags.size() + hexadecatree_flags_0.size());
     hexadecatree_flags.insert(hexadecatree_flags.end(),
         hexadecatree_flags_0.begin(), hexadecatree_flags_0.end());
-    return std::make_pair(rd_cost_of_segmentation.get_j_cost(),
-        rd_cost_of_segmentation.get_energy());
+    return rd_cost_of_segmentation;
   }
   //else
   hexadecatree_flags.emplace_back(HexadecaTreeFlag::zeroBlock);
@@ -320,8 +319,7 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
                                     SEGMENTATION_PROB_MODEL_INDEX]
         .update<1>();
 
-  return std::make_pair(
-      rd_cost_of_skip.get_j_cost(), rd_cost_of_skip.get_energy());
+  return rd_cost_of_skip;
 }
 
 

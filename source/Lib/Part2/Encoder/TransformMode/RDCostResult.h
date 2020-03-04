@@ -134,6 +134,15 @@ class RDCostResult {
     return RDCostResult(this->j_cost + other.j_cost, this->error + other.error,
         this->rate + other.rate, this->energy + other.energy);
   }
+
+
+  RDCostResult& operator+=(const RDCostResult& other) {
+    this->j_cost += other.j_cost;
+    this->error += other.error;
+    this->rate += other.rate;
+    this->energy += other.energy;
+    return *this;
+  }
 };
 
 
