@@ -38,6 +38,7 @@
  *  \date     2019-05-29
  */
 
+#include <exception>
 #include <iostream>
 #include <string>
 #include "Lib/Utils/Image/ImageIO.h"
@@ -48,10 +49,16 @@
 
 std::string resources_path = "../resources";
 
+
 void remove_if_exists(std::string filename) {
   namespace fs = std::filesystem;
-  if (fs::exists(filename))
-    fs::remove(filename);
+  if (fs::exists(filename)) {
+    try {
+      fs::remove(filename);
+    } catch (std::exception& e) {
+      // do nothing
+    }
+  }
 }
 
 
@@ -194,7 +201,7 @@ TEST_F(PPMBinaryWriteTests,
   remove_if_exists(output_filename);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
   if (argc > 1) {
