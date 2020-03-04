@@ -178,21 +178,14 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto& lightfield_box_contents =
       first_codestream_as_part2.get_ref_to_contents();
 
-  std::cout << "b move_codestream_code_out" << std::endl;
   auto codestream_code =
       std::move(hierarchical_4d_encoder.move_codestream_code_out());
-  std::cout << "a move_codestream_code_out" << std::endl;
-
+  auto contents = std::make_unique<ContiguousCodestreamContents>(
+      std::move(codestream_code));
   auto codestream_box =
-      std::make_unique<ContiguousCodestreamBox>(std::move(codestream_code));
-
-  std::cout << "a make_unique" << std::endl;
-
+      std::make_unique<ContiguousCodestreamBox>(std::move(contents));
   lightfield_box_contents.add_contiguous_codestream_box(
       std::move(codestream_box));
-  std::cout << "a add" << std::endl;
-  // lightfield_box_contents.add_contiguous_codestream_box(std::move(
-  //     std::make_unique<ContiguousCodestreamBox>(codestream_box.release())));
 
   std::cout << "bpp after encoding: "
             << (this->jpl_file->size() * 8.0) /

@@ -54,9 +54,7 @@ JpegPlenoLightFieldContents::get_ref_to_light_field_header_box() {
 
 void JpegPlenoLightFieldContents::add_contiguous_codestream_box(
     std::unique_ptr<ContiguousCodestreamBox> &&contiguous_codestream_box) {
-  std::cout << "aaa" << std::endl;
   this->contiguous_codestream_box = std::move(contiguous_codestream_box);
-  std::cout << "bbb" << std::endl;
 }
 
 
@@ -197,6 +195,7 @@ JpegPlenoLightFieldContents::JpegPlenoLightFieldContents(
           std::make_unique<JpegPlenoLightFieldHeaderBox>(
               jpeg_pleno_light_field_header_box)) {
 }
+
 
 JpegPlenoLightFieldContents::JpegPlenoLightFieldContents(
     const JpegPlenoLightFieldContents &other)
