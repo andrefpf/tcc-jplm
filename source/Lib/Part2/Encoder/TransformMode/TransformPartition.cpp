@@ -106,7 +106,7 @@ void scale_block(Block4D &transformed_block, double scaling_factor) {
 }
 
 
-double TransformPartition::rd_optimize_transform(Block4D &input_block,
+RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
     Block4D &transformed_block, const std::tuple<int, int, int, int> &position,
     const std::tuple<int, int, int, int> &lengths,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda,
@@ -181,53 +181,52 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
       (std::get<LF::V>(lengths) >= 2 * mlength_v_min)) {
     std::vector<PartitionFlag> partition_mode_s00;
     Block4D transformed_block_S00;
-    double j_of_s =
+    auto rd_cost_of_spatial_split =
         rd_optimize_transform(input_block, transformed_block_S00, position,
             {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
                 std::get<LF::V>(lengths) / 2, std::get<LF::U>(lengths) / 2},
             hierarchical_4d_encoder, lambda, partition_mode_s00);
-    auto rd_cost_of_spatial_split = RDCostResult(j_of_s, 0.0, 0.0, 0.0);
     rd_cost_of_spatial_split.add_to_j_cost(2.0 * lambda);
     rd_cost_of_spatial_split.add_to_rate(2.0);
 
     if (rd_cost_of_spatial_split.get_j_cost() < best_rd_cost.get_j_cost()) {
       std::vector<PartitionFlag> partition_mode_s01;
       Block4D transformed_block_S01;
-      j_of_s = rd_optimize_transform(input_block, transformed_block_S01,
-          {std::get<LF::T>(position), std::get<LF::S>(position),
-              std::get<LF::V>(position),
-              std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
-          {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
-              std::get<LF::V>(lengths) / 2,
-              std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
-          hierarchical_4d_encoder, lambda, partition_mode_s01);
-      rd_cost_of_spatial_split.add_to_j_cost(j_of_s);
+      rd_cost_of_spatial_split +=
+          rd_optimize_transform(input_block, transformed_block_S01,
+              {std::get<LF::T>(position), std::get<LF::S>(position),
+                  std::get<LF::V>(position),
+                  std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
+              {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
+                  std::get<LF::V>(lengths) / 2,
+                  std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
+              hierarchical_4d_encoder, lambda, partition_mode_s01);
 
       if (rd_cost_of_spatial_split.get_j_cost() < best_rd_cost.get_j_cost()) {
         std::vector<PartitionFlag> partition_mode_s11;
         Block4D transformed_block_S11;
-        j_of_s = rd_optimize_transform(input_block, transformed_block_S11,
-            {std::get<LF::T>(position), std::get<LF::S>(position),
-                std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
-                std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
-            {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
-                std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
-                std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
-            hierarchical_4d_encoder, lambda, partition_mode_s11);
-        rd_cost_of_spatial_split.add_to_j_cost(j_of_s);
+        rd_cost_of_spatial_split +=
+            rd_optimize_transform(input_block, transformed_block_S11,
+                {std::get<LF::T>(position), std::get<LF::S>(position),
+                    std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
+                    std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
+                {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
+                    std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
+                    std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
+                hierarchical_4d_encoder, lambda, partition_mode_s11);
 
         if (rd_cost_of_spatial_split.get_j_cost() < best_rd_cost.get_j_cost()) {
           std::vector<PartitionFlag> partition_mode_s10;
           Block4D transformed_block_S10;
-          j_of_s = rd_optimize_transform(input_block, transformed_block_S10,
-              {std::get<LF::T>(position), std::get<LF::S>(position),
-                  std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
-                  std::get<LF::U>(position)},
-              {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
-                  std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
-                  std::get<LF::U>(lengths) / 2},
-              hierarchical_4d_encoder, lambda, partition_mode_s10);
-          rd_cost_of_spatial_split.add_to_j_cost(j_of_s);
+          rd_cost_of_spatial_split +=
+              rd_optimize_transform(input_block, transformed_block_S10,
+                  {std::get<LF::T>(position), std::get<LF::S>(position),
+                      std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
+                      std::get<LF::U>(position)},
+                  {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
+                      std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
+                      std::get<LF::U>(lengths) / 2},
+                  hierarchical_4d_encoder, lambda, partition_mode_s10);
 
           if (rd_cost_of_spatial_split.get_j_cost() <
               best_rd_cost.get_j_cost()) {
@@ -279,53 +278,55 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
     //optimize partition for Block_V returning JV, the transformed Block_V, partitionCode_S and arithmetic_model_S
     std::vector<PartitionFlag> partition_mode_v00;
     Block4D transformed_block_V00;
-    double j_of_v =
+    auto rd_cost_of_view_split =
         rd_optimize_transform(input_block, transformed_block_V00, position,
             {std::get<LF::T>(lengths) / 2, std::get<LF::S>(lengths) / 2,
                 std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
             hierarchical_4d_encoder, lambda, partition_mode_v00);
-    auto rd_cost_of_view_split = RDCostResult(j_of_v, 0.0, 0.0, 0.0);
     rd_cost_of_view_split.add_to_j_cost(2.0 * lambda);
     rd_cost_of_view_split.add_to_rate(2.0);
 
     if (rd_cost_of_view_split.get_j_cost() < best_rd_cost.get_j_cost()) {
       std::vector<PartitionFlag> partition_mode_v01;
       Block4D transformed_block_V01;
-      j_of_v = rd_optimize_transform(input_block, transformed_block_V01,
-          {std::get<LF::T>(position),
-              std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
-              std::get<LF::V>(position), std::get<LF::U>(position)},
-          {std::get<LF::T>(lengths) / 2,
-              std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
-              std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
-          hierarchical_4d_encoder, lambda, partition_mode_v01);
-      rd_cost_of_view_split.add_to_j_cost(j_of_v);
+      rd_cost_of_view_split +=
+          rd_optimize_transform(input_block, transformed_block_V01,
+              {std::get<LF::T>(position),
+                  std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
+                  std::get<LF::V>(position), std::get<LF::U>(position)},
+              {std::get<LF::T>(lengths) / 2,
+                  std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
+                  std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
+              hierarchical_4d_encoder, lambda, partition_mode_v01);
+
 
       if (rd_cost_of_view_split.get_j_cost() < best_rd_cost.get_j_cost()) {
         std::vector<PartitionFlag> partition_mode_v11;
         Block4D transformed_block_V11;
-        j_of_v = rd_optimize_transform(input_block, transformed_block_V11,
-            {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
-                std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
-                std::get<LF::V>(position), std::get<LF::U>(position)},
-            {std::get<LF::T>(lengths) - std::get<LF::T>(lengths) / 2,
-                std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
-                std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
-            hierarchical_4d_encoder, lambda, partition_mode_v11);
-        rd_cost_of_view_split.add_to_j_cost(j_of_v);
+        rd_cost_of_view_split +=
+            rd_optimize_transform(input_block, transformed_block_V11,
+                {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
+                    std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
+                    std::get<LF::V>(position), std::get<LF::U>(position)},
+                {std::get<LF::T>(lengths) - std::get<LF::T>(lengths) / 2,
+                    std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
+                    std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
+                hierarchical_4d_encoder, lambda, partition_mode_v11);
+
 
         if (rd_cost_of_view_split.get_j_cost() < best_rd_cost.get_j_cost()) {
           std::vector<PartitionFlag> partition_mode_v10;
           Block4D transformed_block_V10;
-          j_of_v = rd_optimize_transform(input_block, transformed_block_V10,
-              {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
-                  std::get<LF::S>(position), std::get<LF::V>(position),
-                  std::get<LF::U>(position)},
-              {std::get<LF::T>(lengths) - std::get<LF::T>(lengths) / 2,
-                  std::get<LF::S>(lengths) / 2, std::get<LF::V>(lengths),
-                  std::get<LF::U>(lengths)},
-              hierarchical_4d_encoder, lambda, partition_mode_v10);
-          rd_cost_of_view_split.add_to_j_cost(j_of_v);
+          rd_cost_of_view_split +=
+              rd_optimize_transform(input_block, transformed_block_V10,
+                  {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
+                      std::get<LF::S>(position), std::get<LF::V>(position),
+                      std::get<LF::U>(position)},
+                  {std::get<LF::T>(lengths) - std::get<LF::T>(lengths) / 2,
+                      std::get<LF::S>(lengths) / 2, std::get<LF::V>(lengths),
+                      std::get<LF::U>(lengths)},
+                  hierarchical_4d_encoder, lambda, partition_mode_v10);
+
 
           if (rd_cost_of_view_split.get_j_cost() < best_rd_cost.get_j_cost()) {
             best_rd_cost = rd_cost_of_view_split;
@@ -400,7 +401,7 @@ double TransformPartition::rd_optimize_transform(Block4D &input_block,
     }
   }
 
-  return bestJ;
+  return best_rd_cost;
 }
 
 void TransformPartition::encode_partition(
