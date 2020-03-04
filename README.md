@@ -122,7 +122,7 @@ Fo that, one needs to call cmake as follows:
   ```
 or the alternative on Windows Powershell
 ```powershell
-Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList "/s" }
+Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList ".." }
 ```
 
 #### To run again only failed tests
