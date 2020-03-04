@@ -168,9 +168,6 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
     accumulated_rate +=
         optimization_probability_models.get_rate_of_model_and_update(
             bit, bit_position, SYMBOL_PROBABILITY_MODEL_INDEX);
-    // if (bit) {
-    //   there_is_one = true;
-    // }
     there_is_one |= bit;
   }
 
@@ -185,15 +182,15 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
       accumulated_rate, static_cast<double>(magnitude) * magnitude);
 }
 
+
 std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda,
     uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
-  using LF = LightFieldDimension;
-
-
   auto length = LightfieldDimension<uint32_t>(lengths);
   auto position_coo = LightfieldCoordinate<uint32_t>(position);
+  typedef decltype(length)::type lenght_t;
+  typedef decltype(position_coo)::type position_t;
 
 
   if (bitplane < inferior_bit_plane) {
@@ -229,70 +226,70 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   auto min_range = position_coo + length;
 
-  const auto significance =
+  const auto should_split_block =
       get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
   auto segmentation_flags_j_cost =
       lambda * optimization_probability_models.get_segmentation_rate(
-                   bitplane, significance);
+                   bitplane, should_split_block);
 
   std::pair<double, double> J_and_energy =
       std::make_pair(segmentation_flags_j_cost, 0.0);
 
   //evaluate the cost J0 to encode this subblock
-  if (!significance) {  //this means that there is no value larger than the threshold (1<<bitplane)/
-    auto temp_j_and_energy = rd_optimize_hexadecatree(
-        position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
-    std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
-    std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
-  } else {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
+  if (should_split_block) {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
     auto half_length = length.divided_by_half_in_all_possible_dimensions();
-    auto number_of_subdivisions_in_each_dimension =
-        length.get_number_of_possible_divisions_by_half();
 
-    for (int t = 0; t < number_of_subdivisions_in_each_dimension.get_t(); ++t) {
+    //number of divisions in each dimension
+    auto n_divisions = length.get_number_of_possible_divisions_by_half();
+
+    for (lenght_t t = 0; t < n_divisions.get_t(); ++t) {
       auto new_position_t = position_coo.get_t() + t * half_length.get_t();
       auto new_length_t = (t == 0) ? half_length.get_t()
                                    : (length.get_t() - half_length.get_t());
 
-      for (auto s = 0; s < number_of_subdivisions_in_each_dimension.get_s();
-           ++s) {
+      for (lenght_t s = 0; s < n_divisions.get_s(); ++s) {
         auto new_position_s = position_coo.get_s() + s * half_length.get_s();
         auto new_length_s = (s == 0) ? half_length.get_s()
                                      : (length.get_s() - half_length.get_s());
 
-        for (auto v = 0; v < number_of_subdivisions_in_each_dimension.get_v();
-             ++v) {
+        for (lenght_t v = 0; v < n_divisions.get_v(); ++v) {
           auto new_position_v = position_coo.get_v() + v * half_length.get_v();
           auto new_length_v = (v == 0) ? half_length.get_v()
                                        : (length.get_v() - half_length.get_v());
 
-          for (auto u = 0; u < number_of_subdivisions_in_each_dimension.get_u();
-               ++u) {
+          for (lenght_t u = 0; u < n_divisions.get_u(); ++u) {
             auto new_position_u =
                 position_coo.get_u() + u * half_length.get_u();
             auto new_length_u = (u == 0)
                                     ? half_length.get_u()
                                     : (length.get_u() - half_length.get_u());
 
-            std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
+            std::vector<HexadecaTreeFlag> hexadecatree_flags_of_partition;
 
             auto temp_j_and_energy =
                 rd_optimize_hexadecatree({new_position_t, new_position_s,
                                              new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
-                    lambda, bitplane, hexadecatree_flags_1);
+                    lambda, bitplane, hexadecatree_flags_of_partition);
             std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
             std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
 
             hexadecatree_flags_0.reserve(
-                hexadecatree_flags_0.size() + hexadecatree_flags_1.size());
+                hexadecatree_flags_0.size() +
+                hexadecatree_flags_of_partition.size());
             hexadecatree_flags_0.insert(hexadecatree_flags_0.end(),
-                hexadecatree_flags_1.begin(), hexadecatree_flags_1.end());
+                hexadecatree_flags_of_partition.begin(),
+                hexadecatree_flags_of_partition.end());
           }
         }
       }
     }
+  } else {  //this means that there is no value larger than the threshold (1<<bitplane). this lower the bitplane
+    auto temp_j_and_energy = rd_optimize_hexadecatree(
+        position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
+    std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
+    std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
   }
 
   double J0 = std::get<0>(J_and_energy);
@@ -301,8 +298,9 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
   j_skip += SignalEnergySum;
 
   //Choose the lowest cost
-  if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!significance))) {
-    if (significance) {
+  if ((J0 < j_skip) ||
+      ((bitplane == inferior_bit_plane) && (!should_split_block))) {
+    if (should_split_block) {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::splitBlock);
     } else {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::lowerBitPlane);

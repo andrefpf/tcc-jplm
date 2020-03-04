@@ -51,6 +51,8 @@ class LightfieldCoordinate {
   std::tuple<T, T, T, T> dimensions;
 
  public:
+  typedef T type;
+
   static_assert(std::is_integral<T>::value,
       "The type of the lightfield coordinates must be integral.");
 
