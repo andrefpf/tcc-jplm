@@ -161,14 +161,15 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto bpp = ref_to_lightfield.get_views_bpp();
 
   for (auto i = 0; i < number_of_channels; ++i) {
-    std::cout << "SSE of channel " << i << ": " << sse_per_channel.at(i)
-              << std::endl;
+    // std::cout << "SSE of channel " << i << ": " << sse_per_channel.at(i)
+    //           << std::endl;
     double mse = sse_per_channel.at(i) / number_of_pels;
-    std::cout << "MSE of channel " << i << ": " << mse << std::endl;
+    // std::cout << "MSE of channel " << i << ": " << mse << std::endl;
     std::cout << "PSNR of channel " << i << ": "
               << ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse)
               << std::endl;
   }
+
 
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
   auto& first_codestream = *(codestreams.at(0));
@@ -180,6 +181,11 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   lightfield_box_contents.add_contiguous_codestream_box(
       std::make_unique<ContiguousCodestreamBox>(
           std::move(hierarchical_4d_encoder.move_codestream_code_out())));
+
+  std::cout << "bpp after encoding: "
+            << (this->jpl_file->size() * 8.0) /
+                   static_cast<double>(number_of_pels)
+            << std::endl;
 }
 
 template<typename PelType>
@@ -198,6 +204,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
   const auto lambda = transform_mode_configuration->get_lambda();
   auto rd_cost =
       tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
+  //<! \todo check what happens to the metrics for shrink = 0;
 
   sse_per_channel.at(channel) += rd_cost.get_error();
 

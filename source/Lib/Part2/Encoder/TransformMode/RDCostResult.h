@@ -103,6 +103,11 @@ class RDCostResult {
   }
 
 
+  void set_error(double d) {
+    error = d;
+  }
+
+
   void add_to_error(double d) {
     error += d;
   }

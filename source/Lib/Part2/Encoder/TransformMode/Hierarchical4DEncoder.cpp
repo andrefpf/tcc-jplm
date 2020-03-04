@@ -67,8 +67,6 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
   rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
-  // std::cout << "Energy: " << std::get<1>(j_and_energy) << std::endl;
-  // total_energy_sum += std::get<1>(j_and_energy);
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
@@ -269,10 +267,6 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
                                              new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
                     lambda, bitplane, hexadecatree_flags_of_partition);
-            // rd_cost_of_segmentation.add_to_j_cost(
-            //     std::get<0>(temp_j_and_energy));
-            // rd_cost_of_segmentation.add_to_energy(
-            //     std::get<1>(temp_j_and_energy));
 
 
             hexadecatree_flags_0.reserve(
@@ -288,12 +282,11 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
   } else {  //this means that there is no value larger than the threshold (1<<bitplane). this lower the bitplane
     rd_cost_of_segmentation += rd_optimize_hexadecatree(
         position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
-    // rd_cost_of_segmentation.add_to_j_cost(std::get<0>(temp_j_and_energy));
-    // rd_cost_of_segmentation.add_to_energy(std::get<1>(temp_j_and_energy));
   }
 
   rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
   rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
+  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
 
   //Choose the lowest cost
   if ((rd_cost_of_segmentation.get_j_cost() < rd_cost_of_skip.get_j_cost()) ||

@@ -116,6 +116,9 @@ class JPLFile {
 
   FileTypeBox get_file_type_box() const noexcept;
 
+
+  std::size_t size() const noexcept;
+
   friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
 };
 

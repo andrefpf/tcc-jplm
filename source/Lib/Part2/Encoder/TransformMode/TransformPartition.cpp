@@ -166,6 +166,9 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
   best_rd_cost.add_to_j_cost(lambda);
   best_rd_cost.add_to_rate(1.0);
 
+  best_rd_cost.set_error((best_rd_cost.get_error()) /
+                         static_cast<double>(block_0.get_number_of_elements()));
+
   auto partition_mode = PartitionFlag::transform;
 
   //Restores the current arithmetic model using current_model.
