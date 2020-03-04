@@ -59,7 +59,7 @@ class TransformPartition {
   TransformPartition(
       const LightfieldDimension<uint32_t> &minimum_transform_dimensions);
   ~TransformPartition() = default;
-  void rd_optimize_transform(
+  RDCostResult rd_optimize_transform(
       Block4D &inputBlock, Hierarchical4DEncoder &entropyCoder, double lambda);
   RDCostResult rd_optimize_transform(Block4D &inputBlock,
       Block4D &transformedBlock, const std::tuple<int, int, int, int> &position,

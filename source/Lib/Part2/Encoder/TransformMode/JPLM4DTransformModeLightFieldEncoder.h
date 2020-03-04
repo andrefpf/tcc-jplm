@@ -49,6 +49,7 @@
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
 #include "Lib/Part2/Encoder/TransformMode/TransformPartition.h"
+#include "Lib/Utils/Image/ImageChannelUtils.h"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldEncoder
@@ -61,6 +62,8 @@ class JPLM4DTransformModeLightFieldEncoder
   TransformPartition tp;
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
+
+  std::vector<double> sse_per_channel;
 
  public:
   JPLM4DTransformModeLightFieldEncoder(
@@ -102,6 +105,14 @@ class JPLM4DTransformModeLightFieldEncoder
         lightfield_configuration_marker_segment);
 
     this->initialize_extension_lengths();
+
+
+    auto number_of_channels =
+        ref_to_lightfield.get_number_of_channels_in_view();
+
+    for (auto i = 0; i < number_of_channels; ++i) {
+      sse_per_channel.push_back(0.0);
+    }
   }
 
   bool is_truncated() {
@@ -144,8 +155,20 @@ class JPLM4DTransformModeLightFieldEncoder
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
-  std::cout << "Energy: " << hierarchical_4d_encoder.get_total_energy_sum()
-            << std::endl;
+  auto number_of_channels = ref_to_lightfield.get_number_of_channels_in_view();
+  auto number_of_pels =
+      ref_to_lightfield.get_total_number_of_pixels_per_channel();
+  auto bpp = ref_to_lightfield.get_views_bpp();
+
+  for (auto i = 0; i < number_of_channels; ++i) {
+    std::cout << "SSE of channel " << i << ": " << sse_per_channel.at(i)
+              << std::endl;
+    double mse = sse_per_channel.at(i) / number_of_pels;
+    std::cout << "MSE of channel " << i << ": " << mse << std::endl;
+    std::cout << "PSNR of channel " << i << ": "
+              << ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse)
+              << std::endl;
+  }
 
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
   auto& first_codestream = *(codestreams.at(0));
@@ -173,7 +196,12 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
 
   const auto lambda = transform_mode_configuration->get_lambda();
-  tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
+  auto rd_cost =
+      tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
+
+  sse_per_channel.at(channel) += rd_cost.get_error();
+
+
   tp.encode_partition(hierarchical_4d_encoder, lambda);
 
 

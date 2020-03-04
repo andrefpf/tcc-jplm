@@ -277,6 +277,12 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
   }
 
 
+  auto get_total_number_of_pixels_per_channel() const {
+    return this->get_number_of_pixels_per_view_channel() *
+           this->get_number_of_views();
+  }
+
+
   auto get_views_bpp() const {
     if (!this->elements) {
       //Throws
@@ -360,6 +366,11 @@ class Lightfield : public Generic2DStructure<std::unique_ptr<View<T>>> {
  */
   auto get_number_of_columns_s() const noexcept {
     return this->get_width();
+  }
+
+
+  auto get_number_of_views() const noexcept {
+    return this->get_number_of_rows_t() * this->get_number_of_columns_s();
   }
 };
 

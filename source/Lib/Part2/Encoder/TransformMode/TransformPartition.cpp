@@ -56,7 +56,7 @@ TransformPartition::TransformPartition(
 }
 
 /*! Evaluates the Lagrangian cost of the optimum multiscale transform for the input block as well as the transformed block */
-void TransformPartition::rd_optimize_transform(Block4D &input_block,
+RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
   // double scaled_lambda = lambda*input_block.get_number_of_elements();
   double scaled_lambda =
@@ -70,8 +70,9 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
 
   auto lengths = input_block.get_dimension();
   Block4D transformed_block;
-  rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0}, lengths,
-      hierarchical_4d_encoder, scaled_lambda, partition_code);
+  auto rd_cost =
+      rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0},
+          lengths, hierarchical_4d_encoder, scaled_lambda, partition_code);
 
   mPartitionData = std::move(transformed_block);
 
@@ -98,6 +99,8 @@ void TransformPartition::rd_optimize_transform(Block4D &input_block,
             << static_cast<uint32_t>(
                    hierarchical_4d_encoder.get_inferior_bit_plane())
             << "\n";
+
+  return rd_cost;
 }
 
 
@@ -163,10 +166,6 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
   best_rd_cost.add_to_j_cost(lambda);
   best_rd_cost.add_to_rate(1.0);
 
-  //is this assuming that rate equals 1?
-  double bestJ = best_rd_cost.get_j_cost();
-
-
   auto partition_mode = PartitionFlag::transform;
 
   //Restores the current arithmetic model using current_model.
@@ -231,7 +230,6 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
           if (rd_cost_of_spatial_split.get_j_cost() <
               best_rd_cost.get_j_cost()) {
             best_rd_cost = rd_cost_of_spatial_split;
-            bestJ = best_rd_cost.get_j_cost();
             partition_mode = PartitionFlag::spatialSplit;
             partition_code_viewSplit.reserve(
                 partition_code_spatialSplit.size() + partition_mode_s00.size() +
@@ -330,7 +328,6 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
 
           if (rd_cost_of_view_split.get_j_cost() < best_rd_cost.get_j_cost()) {
             best_rd_cost = rd_cost_of_view_split;
-            bestJ = best_rd_cost.get_j_cost();
             partition_mode = PartitionFlag::viewSplit;
             partition_code_viewSplit.reserve(
                 partition_code_viewSplit.size() + partition_mode_v00.size() +
