@@ -46,6 +46,9 @@
 
 
 class DCT4DBlock : public Transformed4DBlock {
+ protected:
+  double mult = 1.0;
+
  public:
   DCT4DBlock(const Block4D& block);
   DCT4DBlock(
@@ -55,6 +58,10 @@ class DCT4DBlock : public Transformed4DBlock {
   ~DCT4DBlock() = default;
 
   Block4D inverse();
+
+  auto get_coefficients_mult() {
+    return mult;
+  }
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DBLOCK_H__ */

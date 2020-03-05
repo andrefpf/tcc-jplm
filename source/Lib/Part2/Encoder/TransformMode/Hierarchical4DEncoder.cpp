@@ -71,6 +71,8 @@ void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
       flagSearchIndex);
+
+  //test if rd_optimize_hexadecatree and encode_hexadecatree gives the same result
 }
 
 
@@ -286,7 +288,8 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
   rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
-  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
+  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_error());
+  //rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
 
   //Choose the lowest cost
   if ((rd_cost_of_segmentation.get_j_cost() < rd_cost_of_skip.get_j_cost()) ||

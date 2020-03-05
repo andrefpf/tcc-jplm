@@ -130,6 +130,7 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
 
   //substituted the multiscale transform call for this new one
   DCT4DBlock dctblock(block_0);
+  auto mult = dctblock.get_coefficients_mult();
   dctblock.swap_data_with_block(block_0);
   scale_block(block_0, 1.0);  //should use the data from SCC marker segment
 
@@ -166,8 +167,10 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
   best_rd_cost.add_to_j_cost(lambda);
   best_rd_cost.add_to_rate(1.0);
 
-  best_rd_cost.set_error((best_rd_cost.get_error()) /
-                         static_cast<double>(block_0.get_number_of_elements()));
+  // best_rd_cost.set_error((best_rd_cost.get_error()) /
+  //                        static_cast<double>(block_0.get_number_of_elements()));
+
+  best_rd_cost.set_error((best_rd_cost.get_error()) / mult);
 
   auto partition_mode = PartitionFlag::transform;
 

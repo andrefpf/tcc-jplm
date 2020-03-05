@@ -138,6 +138,7 @@ void Transformed4DBlock::generic_4d_separable_transform_in_1d(
     const double* coefficients, std::size_t max_a, std::size_t max_b,
     std::size_t max_c, std::size_t max_d, std::size_t stride_a,
     std::size_t stride_b, std::size_t stride_c, std::size_t stride_d) {
+  // std::cout << "weight: " << weight << std::endl;
   auto temp_initial = temp.get();
   auto temp_end = temp_initial + max_d;
   auto total_a_stride = 0;
