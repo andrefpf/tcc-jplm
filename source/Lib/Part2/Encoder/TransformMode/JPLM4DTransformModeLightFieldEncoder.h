@@ -164,7 +164,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
     // std::cout << "SSE of channel " << i << ": " << sse_per_channel.at(i)
     //           << std::endl;
     double mse = sse_per_channel.at(i) / number_of_pels;
-    // std::cout << "MSE of channel " << i << ": " << mse << std::endl;
+    std::cout << "MSE of channel " << i << ": " << mse << std::endl;
     std::cout << "PSNR of channel " << i << ": "
               << ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse)
               << std::endl;
