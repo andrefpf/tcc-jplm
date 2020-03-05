@@ -130,7 +130,7 @@ std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_full_rgb_image() {
     if (!file) {
       std::cerr << "Expecting " << image->get_number_of_pixels() << " pixels."
                 << std::endl;
-      std::cerr << "Readed only " << file.gcount() << std::endl;
+      std::cerr << "Read only " << file.gcount() << std::endl;
     }
 
     if constexpr (std::is_same<T, uint16_t>()) {
