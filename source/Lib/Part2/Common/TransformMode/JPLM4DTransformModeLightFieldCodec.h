@@ -173,9 +173,6 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
               (boder_blocks_policy == BorderBlocksPolicy::truncate)
                   ? size_shrink
                   : size_padding;
-          std::cout << "Shrink? "
-                    << (boder_blocks_policy == BorderBlocksPolicy::truncate)
-                    << std::endl;
 
           for (auto color_channel_index = 0; color_channel_index < 3;
                ++color_channel_index) {

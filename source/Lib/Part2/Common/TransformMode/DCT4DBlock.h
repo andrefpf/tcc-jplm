@@ -57,7 +57,7 @@ class DCT4DBlock : public Transformed4DBlockDouble {
 
   DCT4DBlock(Block4D&& source) : Transformed4DBlockDouble(std::move(source)){};
 
-  ~DCT4DBlock() = default;
+  virtual ~DCT4DBlock() = default;
 
   Block4D inverse();
 
