@@ -230,11 +230,32 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value) {
   if (!std::filesystem::exists(filename)) {
-    std::fstream file(filename, std::ios::out);
+    std::fstream file;
+    file.open(filename, std::ios::out);
     if (file.is_open()) {
-      file << 'P' << type << std::endl;
-      file << width << " " << height << std::endl;
-      file << max_value << std::endl;
+      file << 'P' << type << std::flush;
+      file.close();
+      
+      file.open(filename, std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::app);
+      file << width << " " << height << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::app);
+      file << max_value << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
       auto raster_begin = file.tellg();
       file.flush();
       file.close();
@@ -257,7 +278,9 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
         case PixelMapType::P6:
           return std::make_unique<PPMBinaryFile>(
               filename, raster_begin, width, height, max_value);
-        default: { std::cerr << "Not supported yet..." << std::endl; }
+        default: {
+          std::cerr << "Not supported yet..." << std::endl;
+        }
       }
     } else {
       std::cerr << "Unable to open file " << filename << "." << std::endl;
