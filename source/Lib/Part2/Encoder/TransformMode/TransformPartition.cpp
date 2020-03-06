@@ -74,6 +74,9 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
       rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0},
           lengths, hierarchical_4d_encoder, scaled_lambda, partition_code);
 
+  std::cout << "TransformPartition::rd_optimize_transform error: "
+            << rd_cost.get_error() << std::endl;
+
   mPartitionData = std::move(transformed_block);
 
   //Restores state since the encoder will reevaluate it
@@ -417,11 +420,15 @@ void TransformPartition::encode_partition(
   // hierarchical_4d_encoder.encode_integer(hierarchical_4d_encoder.mInferiorBitPlane, MINIMUM_BITPLANE_PRECISION);
   hierarchical_4d_encoder.encode_inferior_bit_plane_value();
 
-  encode_partition({0, 0, 0, 0}, mPartitionData.get_dimension(),
+  auto rd_cost = encode_partition({0, 0, 0, 0}, mPartitionData.get_dimension(),
       hierarchical_4d_encoder, scaled_lambda);
+
+  // std::cout << "TransformPartition::encode_partition error: "
+  //           << rd_cost.get_error() << std::endl;
 }
 
-void TransformPartition::encode_partition(
+
+RDCostResult TransformPartition::encode_partition(
     const std::tuple<int, int, int, int> &position,
     const std::tuple<int, int, int, int> &lengths,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
@@ -432,18 +439,17 @@ void TransformPartition::encode_partition(
       hierarchical_4d_encoder.mSubbandLF.set_dimension(lengths);
       hierarchical_4d_encoder.mSubbandLF.copy_sub_block_from(
           mPartitionData, position);
-      hierarchical_4d_encoder.encode_sub_block(lambda);
-      return;
+
+      return hierarchical_4d_encoder.encode_sub_block(lambda);
     }
     case PartitionFlag::spatialSplit: {
       hierarchical_4d_encoder.encode_partition_spatialSplit_flag();
-
       //Encode four spatial subblocks
-      encode_partition(position,
+      auto rd_cost = encode_partition(position,
           {std::get<LF::T>(lengths), std::get<LF::S>(lengths),
               std::get<LF::V>(lengths) / 2, std::get<LF::U>(lengths) / 2},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position), std::get<LF::S>(position),
               std::get<LF::V>(position),
               std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
@@ -451,7 +457,7 @@ void TransformPartition::encode_partition(
               std::get<LF::V>(lengths) / 2,
               std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position), std::get<LF::S>(position),
               std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
               std::get<LF::U>(position) + std::get<LF::U>(lengths) / 2},
@@ -459,7 +465,7 @@ void TransformPartition::encode_partition(
               std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
               std::get<LF::U>(lengths) - std::get<LF::U>(lengths) / 2},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position), std::get<LF::S>(position),
               std::get<LF::V>(position) + std::get<LF::V>(lengths) / 2,
               std::get<LF::U>(position)},
@@ -467,17 +473,17 @@ void TransformPartition::encode_partition(
               std::get<LF::V>(lengths) - std::get<LF::V>(lengths) / 2,
               std::get<LF::U>(lengths) / 2},
           hierarchical_4d_encoder, lambda);
-      return;
+      return rd_cost;
     }
     case PartitionFlag::viewSplit: {
       hierarchical_4d_encoder.encode_partition_viewSplit_flag();
 
       //Encode four view subblocks
-      encode_partition(position,
+      auto rd_cost = encode_partition(position,
           {std::get<LF::T>(lengths) / 2, std::get<LF::S>(lengths) / 2,
               std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position),
               std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
               std::get<LF::V>(position), std::get<LF::U>(position)},
@@ -485,7 +491,7 @@ void TransformPartition::encode_partition(
               std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
               std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
               std::get<LF::S>(position) + std::get<LF::S>(lengths) / 2,
               std::get<LF::V>(position), std::get<LF::U>(position)},
@@ -493,7 +499,7 @@ void TransformPartition::encode_partition(
               std::get<LF::S>(lengths) - std::get<LF::S>(lengths) / 2,
               std::get<LF::V>(lengths), std::get<LF::U>(lengths)},
           hierarchical_4d_encoder, lambda);
-      encode_partition(
+      rd_cost += encode_partition(
           {std::get<LF::T>(position) + std::get<LF::T>(lengths) / 2,
               std::get<LF::S>(position), std::get<LF::V>(position),
               std::get<LF::U>(position)},
@@ -501,7 +507,7 @@ void TransformPartition::encode_partition(
               std::get<LF::S>(lengths) / 2, std::get<LF::V>(lengths),
               std::get<LF::U>(lengths)},
           hierarchical_4d_encoder, lambda);
-      return;
+      return rd_cost;
     }
   }
 }

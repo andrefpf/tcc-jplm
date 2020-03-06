@@ -96,7 +96,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
   void encode_hexadecatree(int position_t, int position_s, int position_v,
       int position_u, int length_t, int length_s, int length_v, int length_u,
       uint8_t bitplane, int& flagIndex);
-  void encode_sub_block(double lambda);
+  RDCostResult encode_sub_block(double lambda);
 
 
   RDCostResult get_rd_for_below_inferior_bit_plane(

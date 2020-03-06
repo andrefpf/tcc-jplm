@@ -67,7 +67,7 @@ class TransformPartition {
       Hierarchical4DEncoder &entropyCoder, double lambda,
       std::vector<PartitionFlag> &partition_code);
   void encode_partition(Hierarchical4DEncoder &entropyCoder, double lambda);
-  void encode_partition(const std::tuple<int, int, int, int> &position,
+  RDCostResult encode_partition(const std::tuple<int, int, int, int> &position,
       const std::tuple<int, int, int, int> &lengths,
       Hierarchical4DEncoder &entropyCoder, double lambda);
 };

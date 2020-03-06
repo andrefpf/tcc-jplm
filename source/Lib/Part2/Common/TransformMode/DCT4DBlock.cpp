@@ -64,9 +64,12 @@ DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
   auto n =
       block.mlength_t * block.mlength_s * block.mlength_v * block.mlength_u;
 
-  this->mult = std::get<0>(weights) * std::get<1>(weights) *
-               std::get<2>(weights) * std::get<3>(weights) *
-               static_cast<double>(n);
+  double gain = std::get<0>(weights) * std::get<0>(weights) *
+                std::get<1>(weights) * std::get<1>(weights) *
+                std::get<2>(weights) * std::get<2>(weights) *
+                std::get<3>(weights) * std::get<3>(weights);
+
+  this->mult = gain * static_cast<double>(n);
 
   do_4d_transform(data.get(), block.mPixelData, coefficients, weights);
 }

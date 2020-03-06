@@ -60,19 +60,20 @@ void Hierarchical4DEncoder::reset_probability_models() {
 }
 
 
-void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
+RDCostResult Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   hexadecatree_flags.clear();
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-  rd_optimize_hexadecatree(
+  auto rd_cost = rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
+
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
       flagSearchIndex);
 
-  //test if rd_optimize_hexadecatree and encode_hexadecatree gives the same result
+  return rd_cost;
 }
 
 
@@ -288,8 +289,8 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
 
   rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
   rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
-  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_error());
-  //rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
+  // rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_error());
+  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
 
   //Choose the lowest cost
   if ((rd_cost_of_segmentation.get_j_cost() < rd_cost_of_skip.get_j_cost()) ||
