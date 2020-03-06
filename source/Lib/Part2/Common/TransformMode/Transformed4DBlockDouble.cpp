@@ -31,17 +31,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     Transformed4DBlock.cpp
+/** \file     Transformed4DBlockDouble.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-03-19
  */
 
-#include "Transformed4DBlock.h"
+#include "Transformed4DBlockDouble.h"
 
 
-bool Transformed4DBlock::operator==(const Block4D& block) {
+bool Transformed4DBlockDouble::operator==(const Block4D& block) {
   if (block.mlength_t != mlength_t)
     return false;
   if (block.mlength_s != mlength_s)
@@ -67,7 +67,7 @@ bool Transformed4DBlock::operator==(const Block4D& block) {
  * @details [long description]
  * @return Returns a Block4D that contains a copy of the transformed values that the transformed4D block contains
  */
-Block4D Transformed4DBlock::generate_copy_in_block() const {
+Block4D Transformed4DBlockDouble::generate_copy_in_block() const {
   Block4D block;
   block.set_dimension(mlength_t, mlength_s, mlength_v, mlength_u);
 
@@ -82,7 +82,7 @@ Block4D Transformed4DBlock::generate_copy_in_block() const {
 }
 
 
-void Transformed4DBlock::swap_data_with_block(Block4D& block) {
+void Transformed4DBlockDouble::swap_data_with_block(Block4D& block) {
   auto data_ptr = data.release();
   std::swap(data_ptr, block.mPixelData);
   data.reset(data_ptr);
@@ -106,8 +106,9 @@ void Transformed4DBlock::swap_data_with_block(Block4D& block) {
  * @param ptr_forward_stride How many elements to skip until finding the next one to be copied
  * @param num_elements The total number of elements to be copied
  */
-void Transformed4DBlock::copy_values_to_temp(const block4DElementType* ptr,
-    std::size_t ptr_forward_stride, std::size_t num_elements) {
+void Transformed4DBlockDouble::copy_values_to_temp(
+    const block4DElementType* ptr, std::size_t ptr_forward_stride,
+    std::size_t num_elements) {
   if (ptr_forward_stride == 1) {
     //can't use memcpy because temp is double and ptr is block4DElementType
     std::copy(ptr, ptr + num_elements, temp.get());
@@ -121,7 +122,7 @@ void Transformed4DBlock::copy_values_to_temp(const block4DElementType* ptr,
 }
 
 
-std::size_t Transformed4DBlock::get_energy() const {
+std::size_t Transformed4DBlockDouble::get_energy() const {
   std::size_t energy = 0;
   auto data_ptr = data.get();
   for (std::size_t i = 0; i < number_of_elements; ++i) {
@@ -132,7 +133,7 @@ std::size_t Transformed4DBlock::get_energy() const {
 }
 
 
-void Transformed4DBlock::generic_4d_separable_transform_in_1d(
+void Transformed4DBlockDouble::generic_4d_separable_transform_in_1d(
     block4DElementType* dest, const block4DElementType* src,
     double weight,  //scale
     const double* coefficients, std::size_t max_a, std::size_t max_b,
@@ -185,7 +186,7 @@ void Transformed4DBlock::generic_4d_separable_transform_in_1d(
 }
 
 
-void Transformed4DBlock::do_4d_transform(block4DElementType* dest,
+void Transformed4DBlockDouble::do_4d_transform(block4DElementType* dest,
     const block4DElementType* src,
     const std::tuple<const double*, const double*, const double*, const double*>
         coefficients,
@@ -238,35 +239,35 @@ void Transformed4DBlock::do_4d_transform(block4DElementType* dest,
 }
 
 
-void Transformed4DBlock::alloc_temp() {
+void Transformed4DBlockDouble::alloc_temp() {
   temp = std::make_unique<block4DElementType[]>(
       std::max({mlength_u, mlength_v, mlength_s, mlength_t}));
 }
 
 
-void Transformed4DBlock::alloc_data() {
+void Transformed4DBlockDouble::alloc_data() {
   data = std::make_unique<block4DElementType[]>(number_of_elements);
 }
 
 
-void Transformed4DBlock::alloc_resources() {
+void Transformed4DBlockDouble::alloc_resources() {
   alloc_data();
   alloc_temp();
 }
 
 
-std::size_t Transformed4DBlock::get_number_of_elements() const {
+std::size_t Transformed4DBlockDouble::get_number_of_elements() const {
   return number_of_elements;
 }
 
 
-void Transformed4DBlock::set_number_of_elements() {
+void Transformed4DBlockDouble::set_number_of_elements() {
   number_of_elements = mlength_t * mlength_s * mlength_v * mlength_u;
 }
 
 
-void Transformed4DBlock::set_dimensions(uint32_t length_t, uint32_t length_s,
-    uint32_t length_v, uint32_t length_u) {
+void Transformed4DBlockDouble::set_dimensions(uint32_t length_t,
+    uint32_t length_s, uint32_t length_v, uint32_t length_u) {
   mlength_t = length_t;
   mlength_s = length_s;
   mlength_v = length_v;
@@ -276,24 +277,24 @@ void Transformed4DBlock::set_dimensions(uint32_t length_t, uint32_t length_s,
 
 
 //this constructor should only be visible to derived classes
-Transformed4DBlock::Transformed4DBlock(const Block4D& block) {
+Transformed4DBlockDouble::Transformed4DBlockDouble(const Block4D& block) {
   set_dimensions(
       block.mlength_t, block.mlength_s, block.mlength_v, block.mlength_u);
   alloc_resources();
 }
 
 
-Transformed4DBlock::Transformed4DBlock(const Block4D& block,
+Transformed4DBlockDouble::Transformed4DBlockDouble(const Block4D& block,
     const std::tuple<const double*, const double*, const double*, const double*>
         coefficients,
     const std::tuple<double, double, double, double> transform_gains =
         std::make_tuple(1.0, 1.0, 1.0, 1.0))
-    : Transformed4DBlock(block) {
+    : Transformed4DBlockDouble(block) {
   do_4d_transform(data.get(), block.mPixelData, coefficients, transform_gains);
 }
 
 
-Transformed4DBlock::Transformed4DBlock(
+Transformed4DBlockDouble::Transformed4DBlockDouble(
     const block4DElementType* transformed_values, uint32_t u, uint32_t v,
     uint32_t s, uint32_t t) {
   set_dimensions(t, s, v, u);
@@ -304,7 +305,7 @@ Transformed4DBlock::Transformed4DBlock(
 }
 
 
-Transformed4DBlock::Transformed4DBlock(Block4D&& source) {
+Transformed4DBlockDouble::Transformed4DBlockDouble(Block4D&& source) {
   set_dimensions(
       source.mlength_t, source.mlength_s, source.mlength_v, source.mlength_u);
   data = std::unique_ptr<block4DElementType[]>(source.mPixelData);
@@ -313,7 +314,8 @@ Transformed4DBlock::Transformed4DBlock(Block4D&& source) {
 }
 
 
-Transformed4DBlock::Transformed4DBlock(Transformed4DBlock&& other) {
+Transformed4DBlockDouble::Transformed4DBlockDouble(
+    Transformed4DBlockDouble&& other) {
   set_dimensions(
       other.mlength_t, other.mlength_s, other.mlength_v, other.mlength_u);
   data = std::move(other.data);
@@ -321,7 +323,7 @@ Transformed4DBlock::Transformed4DBlock(Transformed4DBlock&& other) {
 }
 
 
-Block4D Transformed4DBlock::inverse(
+Block4D Transformed4DBlockDouble::inverse(
     const std::tuple<const double*, const double*, const double*, const double*>
         coefficients,
     const std::tuple<double, double, double, double> transform_gains =
