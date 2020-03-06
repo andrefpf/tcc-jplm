@@ -74,12 +74,8 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
       rd_optimize_transform(input_block, transformed_block, {0, 0, 0, 0},
           lengths, hierarchical_4d_encoder, scaled_lambda, partition_code);
 
-  std::cout << "TransformPartition::rd_optimize_transform error: "
-            << rd_cost.get_error() << std::endl;
-
   mPartitionData = std::move(transformed_block);
 
-  //Restores state since the encoder will reevaluate it
   hierarchical_4d_encoder.load_optimizer_state();
 
   auto mPartitionCode = std::string("");

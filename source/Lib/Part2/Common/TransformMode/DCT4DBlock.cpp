@@ -41,7 +41,7 @@
 #include "DCT4DBlock.h"
 
 
-DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
+DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlockDouble(block) {
   DCT4DCoefficientsManager& manager(
       DCT4DCoefficientsManager::get_instance(true));
 
@@ -95,5 +95,5 @@ Block4D DCT4DBlock::inverse() {
           1.0 / manager.get_weight_for_size_in_dimension(
                     mlength_u, LightFieldDimensions::U));
 
-  return Transformed4DBlock::inverse(coefficients, weights);
+  return Transformed4DBlockDouble::inverse(coefficients, weights);
 }

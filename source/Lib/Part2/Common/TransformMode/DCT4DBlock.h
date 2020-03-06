@@ -42,10 +42,10 @@
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_DCT4DBLOCK_H__
 
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
-#include "Lib/Part2/Common/TransformMode/Transformed4DBlock.h"
+#include "Lib/Part2/Common/TransformMode/Transformed4DBlockDouble.h"
 
 
-class DCT4DBlock : public Transformed4DBlock {
+class DCT4DBlock : public Transformed4DBlockDouble {
  protected:
   double mult = 1.0;
 
@@ -53,8 +53,10 @@ class DCT4DBlock : public Transformed4DBlock {
   DCT4DBlock(const Block4D& block);
   DCT4DBlock(
       const block4DElementType* transformed_values, int u, int v, int s, int t)
-      : Transformed4DBlock(transformed_values, u, v, s, t){};
-  DCT4DBlock(Block4D&& source) : Transformed4DBlock(std::move(source)){};
+      : Transformed4DBlockDouble(transformed_values, u, v, s, t){};
+
+  DCT4DBlock(Block4D&& source) : Transformed4DBlockDouble(std::move(source)){};
+
   ~DCT4DBlock() = default;
 
   Block4D inverse();
