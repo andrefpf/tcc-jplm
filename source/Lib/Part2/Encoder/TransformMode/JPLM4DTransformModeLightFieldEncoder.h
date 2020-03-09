@@ -187,7 +187,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto bpp = ref_to_lightfield.get_views_bpp();
 
   if (transform_mode_encoder_configuration->show_error_estimate()) {
-    std::cout << "############### Estimated error ###############\n";
+    std::cout << "\n############### Estimated error ###############\n";
 
     auto table = get_console_table();
     table[0][0](samilton::Alignment::right) = "Channel: ";
