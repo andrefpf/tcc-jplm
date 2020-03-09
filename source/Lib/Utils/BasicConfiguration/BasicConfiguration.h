@@ -55,6 +55,7 @@
 class BasicConfiguration {
  private:
   bool help_mode_flag = false;
+  bool verbose_flag = false;
   static constexpr std::size_t current_hierarchy_level = 0;
   char **arg_vector;
 
@@ -92,6 +93,8 @@ class BasicConfiguration {
   virtual ~BasicConfiguration() = default;
 
   bool is_help_mode() const;
+
+  bool is_verbose() const;
 };
 
 #endif  // JPLM_LIB_UTILS_BASIC_CONFIGURATION_BASIC_CONFIGURATION_H

@@ -54,6 +54,11 @@ void BasicConfiguration::add_options() {
       },
       this->current_hierarchy_level});
 
+  this->add_cli_option(
+      {"--verbose", "-ve", "Shows verbose output of the execution.",
+          [this]([[maybe_unused]] std::any v) { this->verbose_flag = true; },
+          this->current_hierarchy_level});
+
   this->add_cli_option({"--config", "-c", "Path to configuration file in JSON.",
       [this](std::string arg) {
         if (!arg.empty()) {
@@ -170,6 +175,8 @@ bool BasicConfiguration::validate_value(
  *
  * @param[in]  argc  The count of arguments
  * @param      argv  The arguments array
+ * 
+ * \todo check what happens if a value is negative (the prefix of a param may be identified)
  */
 void BasicConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
@@ -299,4 +306,9 @@ void BasicConfiguration::add_json_option(const JSONOption &option) {
  */
 void BasicConfiguration::add_cli_json_option(const CLIAndJSONOption &option) {
   cli_json_options.push_back(option);
+}
+
+
+void BasicConfiguration::is_verbose() const {
+  return verbose_flag;
 }
