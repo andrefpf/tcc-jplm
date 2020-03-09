@@ -14,8 +14,7 @@ set(PART2_COMMON_TRANSFORM_MODE_SOURCES
     Markers.cpp
     ProbabilityModel.cpp
     ProbabilityModelsHandler.cpp
-    Transformed4DBlock.cpp
-    Transformed4DBlockDouble.cpp)
+    Transformed4DBlock.cpp)
 
 
 add_library(jplm_part2_common_transform_mode ${PART2_COMMON_TRANSFORM_MODE_SOURCES})
