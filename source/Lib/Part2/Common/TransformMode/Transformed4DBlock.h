@@ -110,7 +110,7 @@ class Transformed4DBlock {
           for (decltype(max_c) d = 0; d < max_d; ++d) {
             //when std::transform_reduce is available, it should be possible to
             //just swap std::inner_product by std::transform_reduce
-            *dest_ptr =
+            *dest_ptr = std::round(
                 weight *
                 std::inner_product(
                     temp_initial,  //initial position of the original array
@@ -118,7 +118,7 @@ class Transformed4DBlock {
                     coefficients +
                         d * max_d,  //initial position of the multiplication array (coefficients array)
                     0.0  //initial sum value
-                );
+                    ));
             dest_ptr += stride_d;
           }
           stride += stride_c;
