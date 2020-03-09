@@ -78,7 +78,6 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(
 
 void JPLMEncoderConfiguration::add_options() {
   JPLMConfiguration::add_options();
-  std::cout << "adding options of JPLMEncoderConfiguration" << std::endl;
   this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "
