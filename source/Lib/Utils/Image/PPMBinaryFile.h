@@ -83,10 +83,37 @@ class PPMBinaryFile : public PixelMapFileBinary {
       if (!std::filesystem::exists(filename)) {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);
         if (file.is_open()) {
+          /* Doing the equivalent to:
           file << 'P' << type << std::endl;
           file << width << " " << height << std::endl;
           file << max_value << std::endl;
           raster_begin = file.tellg();
+          on Windows */
+
+          file.close();
+          file.open(filename, std::ios::out);
+          file << 'P' << type << std::flush;
+          file.close();
+
+          file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+          file << static_cast<std::uint8_t>(10) << std::flush;
+          file.close();
+
+          file.open(filename, std::ios::out | std::ios::app);
+          file << width << " " << height << std::flush;
+          file.close();
+
+          file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+          file << static_cast<std::uint8_t>(10) << std::flush;
+          file.close();
+
+          file.open(filename, std::ios::out | std::ios::app);
+          file << max_value << std::flush;
+          file.close();
+
+          file.open(filename, std::ios::out |std::ios::app | std::ios::binary);
+          file << static_cast<std::uint8_t>(10) << std::flush;
+          auto raster_begin = file.tellg();
         }
       } else {
         file.open(filename, std::ios::out | std::ios::binary | std::ios::in);

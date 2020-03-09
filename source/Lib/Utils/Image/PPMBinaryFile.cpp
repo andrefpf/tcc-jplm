@@ -122,15 +122,28 @@ std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_full_rgb_image() {
   if (file.is_open()) {
     auto image = std::make_unique<RGBImage<T>>(
         width, height, this->get_number_of_bits_per_pixel());
-    std::vector<std::tuple<T, T, T>> rgb_vector(
-        image->get_number_of_pixels_per_channel());
+    std::vector<std::tuple<T, T, T>> rgb_vector(image->get_number_of_pixels_per_channel());
     file.seekg(raster_begin);
+    std::cerr << "1 raster_begin=" << raster_begin << std::endl;
+
+    /* Equivalent to */
     file.read(reinterpret_cast<char*>(rgb_vector.data()),
-        rgb_vector.capacity() * sizeof(std::tuple<T, T, T>));
+        rgb_vector.size() * sizeof(std::tuple<T, T, T>));
+     /*  in Windows */
+    /*for (unsigned INT i = 0; i < image->get_number_of_pixels_per_channel(); i++) {
+      std::tuple<T, T, T> buffer;
+      file.read(reinterpret_cast<char*> buffer, sizeof(std::tuple<T, T, T>));
+      rgb_vector[i] = buffer;
+    }*/
+
     if (!file) {
-      std::cerr << "Expecting " << image->get_number_of_pixels() << " pixels."
+      std::cerr << "Expecting "
+                << image->get_number_of_pixels_per_channel() *
+                       sizeof(std::tuple<T, T, T>)
+                << " bytes."
                 << std::endl;
       std::cerr << "Read only " << file.gcount() << std::endl;
+      std::cerr << "2 raster_begin=" << raster_begin << std::endl;
     }
 
     if constexpr (std::is_same<T, uint16_t>()) {
