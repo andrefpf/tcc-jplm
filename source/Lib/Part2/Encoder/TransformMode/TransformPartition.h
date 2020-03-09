@@ -70,6 +70,9 @@ class TransformPartition {
   RDCostResult encode_partition(const std::tuple<int, int, int, int> &position,
       const std::tuple<int, int, int, int> &lengths,
       Hierarchical4DEncoder &entropyCoder, double lambda);
+
+  const std::vector<PartitionFlag> &get_partition_code() const;
+  void show_partition_codes_and_inferior_bit_plane() const;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__ */

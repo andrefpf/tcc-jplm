@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
+
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
@@ -59,7 +60,7 @@ class JPLM4DTransformModeLightFieldEncoder
   std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
       transform_mode_encoder_configuration;
   Hierarchical4DEncoder hierarchical_4d_encoder;
-  TransformPartition tp;
+  TransformPartition transform_partition;
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
@@ -78,8 +79,8 @@ class JPLM4DTransformModeLightFieldEncoder
             {configuration->get_maximal_transform_sizes()}, *configuration),
         JPLMLightFieldEncoder<PelType>(*configuration),
         transform_mode_encoder_configuration(std::move(configuration)),
-        tp(transform_mode_encoder_configuration
-                ->get_minimal_transform_dimension()),
+        transform_partition(transform_mode_encoder_configuration
+                                ->get_minimal_transform_dimension()),
         //        hierarchical_4d_encoder(*transform_mode_encoder_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))),
@@ -93,8 +94,9 @@ class JPLM4DTransformModeLightFieldEncoder
                     ->get_maximal_transform_sizes()},  //block_dimension,
             {30, 30, 30},  //max_bitplane
             is_truncated()) {
-    tp.mPartitionData.set_dimension(transform_mode_encoder_configuration
-                                        ->get_maximal_transform_dimension());
+    transform_partition.mPartitionData.set_dimension(
+        transform_mode_encoder_configuration
+            ->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
 
     this->setup_transform_coefficients(true,
@@ -212,14 +214,19 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
 
   const auto lambda = transform_mode_encoder_configuration->get_lambda();
-  auto rd_cost =
-      tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
+  auto rd_cost = transform_partition.rd_optimize_transform(
+      block_4d, hierarchical_4d_encoder, lambda);
   //<! \todo check what happens to the metrics for shrink = 0;
 
   sse_per_channel.at(channel) += rd_cost.get_error();
 
+  if (transform_mode_encoder_configuration->is_verbose()) {
+    transform_partition.show_partition_codes_and_inferior_bit_plane();
+    hierarchical_4d_encoder.show_inferior_bit_plane();
+  }
 
-  tp.encode_partition(hierarchical_4d_encoder, lambda);
+
+  transform_partition.encode_partition(hierarchical_4d_encoder, lambda);
 
 
   //reset prob models here at the end to ensure no flush is called.

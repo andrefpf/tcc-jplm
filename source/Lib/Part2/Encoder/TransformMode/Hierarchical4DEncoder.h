@@ -117,6 +117,9 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
   void create_temporary_buffer();
 
 
+  void show_inferior_bit_plane() const;
+
+
   void write_marker(Marker marker) {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
     auto bytes = Markers::get_bytes(marker);

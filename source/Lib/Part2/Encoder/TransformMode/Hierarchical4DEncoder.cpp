@@ -41,6 +41,11 @@
 #include "Hierarchical4DEncoder.h"
 
 
+void Hierarchical4DEncoder::show_inferior_bit_plane() const {
+  std::cerr << "Inferior bit plane value: "
+            << static_cast<uint32_t>(this->get_inferior_bit_plane()) << "\n";
+}
+
 ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code()
     const {
   return mEntropyCoder.get_ref_to_codestream_code();

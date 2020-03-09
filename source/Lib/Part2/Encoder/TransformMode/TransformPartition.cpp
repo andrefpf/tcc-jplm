@@ -47,6 +47,13 @@ TransformPartition::TransformPartition(
       mlength_v_min(length_v_min), mlength_u_min(length_u_min) {
 }
 
+
+const std::vector<PartitionFlag> &TransformPartition::get_partition_code()
+    const {
+  return partition_code;
+}
+
+
 TransformPartition::TransformPartition(
     const LightfieldDimension<uint32_t> &minimum_transform_dimensions)
     : mlength_t_min(minimum_transform_dimensions.get_t()),
@@ -58,7 +65,6 @@ TransformPartition::TransformPartition(
 /*! Evaluates the Lagrangian cost of the optimum multiscale transform for the input block as well as the transformed block */
 RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
     Hierarchical4DEncoder &hierarchical_4d_encoder, double lambda) {
-  // double scaled_lambda = lambda*input_block.get_number_of_elements();
   double scaled_lambda =
       lambda * hierarchical_4d_encoder.get_number_of_elements_in_transform();
 
@@ -78,33 +84,31 @@ RDCostResult TransformPartition::rd_optimize_transform(Block4D &input_block,
 
   hierarchical_4d_encoder.load_optimizer_state();
 
-  auto mPartitionCode = std::string("");
-  for (const auto &flag : partition_code) {
-    switch (flag) {
-      case PartitionFlag::transform:
-        mPartitionCode += 'T';
-        break;
-      case PartitionFlag::spatialSplit:
-        mPartitionCode += 'S';
-        break;
-      case PartitionFlag::viewSplit:
-        mPartitionCode += 'V';
-        break;
-    }
-  }
-
-  std::cout << "Partition code: " << mPartitionCode << "\n";
-  std::cout << "Inferior bit plane value: "
-            << static_cast<uint32_t>(
-                   hierarchical_4d_encoder.get_inferior_bit_plane())
-            << "\n";
-
   return rd_cost;
 }
 
 
 void scale_block(Block4D &transformed_block, double scaling_factor) {
   transformed_block *= scaling_factor;
+}
+
+
+void TransformPartition::show_partition_codes_and_inferior_bit_plane() const {
+  std::cerr << "Partition code: ";
+  for (const auto &flag : partition_code) {
+    switch (flag) {
+      case PartitionFlag::transform:
+        std::cerr << 'T';
+        break;
+      case PartitionFlag::spatialSplit:
+        std::cerr << 'S';
+        break;
+      case PartitionFlag::viewSplit:
+        std::cerr << 'V';
+        break;
+    }
+  }
+  std::cerr << '\n';
 }
 
 
