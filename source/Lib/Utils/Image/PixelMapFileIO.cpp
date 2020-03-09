@@ -233,9 +233,16 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
     std::fstream file;
     file.open(filename, std::ios::out);
     if (file.is_open()) {
+      /* Doing the equivalent to:
+         file << 'P' << type << std::endl;
+         file << width << " " << height << std::endl;
+         file << max_value << std::endl;
+         raster_begin = file.tellg();
+         on Windows */
+
       file << 'P' << type << std::flush;
       file.close();
-      
+
       file.open(filename, std::ios::app | std::ios::binary);
       file << static_cast<std::uint8_t>(10) << std::flush;
       file.close();
@@ -254,8 +261,6 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
 
       file.open(filename, std::ios::app | std::ios::binary);
       file << static_cast<std::uint8_t>(10) << std::flush;
-      file.close();
-
       auto raster_begin = file.tellg();
       file.flush();
       file.close();
