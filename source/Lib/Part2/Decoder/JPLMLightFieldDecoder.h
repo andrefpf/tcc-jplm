@@ -41,12 +41,18 @@
 #ifndef JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER_H__
 #define JPLM_LIB_PART2_DECODER_JPLMLIGHTFIELDDECODER_H__
 
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 
 template<typename PelType = uint16_t>
 class JPLMLightFieldDecoder : public virtual JPLMLightFieldCodec<PelType> {
+ protected:
+  const JPLMDecoderConfiguration& decoder_configuration;
+
  public:
-  JPLMLightFieldDecoder() : JPLMLightFieldCodec<PelType>() {
+  JPLMLightFieldDecoder(const JPLMDecoderConfiguration& configuration)
+      : JPLMLightFieldCodec<PelType>(configuration),
+        decoder_configuration(configuration) {
   }
   virtual ~JPLMLightFieldDecoder() = default;
 };

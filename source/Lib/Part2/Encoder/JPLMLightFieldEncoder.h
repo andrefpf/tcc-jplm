@@ -90,7 +90,8 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
 
  public:
   JPLMLightFieldEncoder(const JPLMEncoderConfigurationLightField& configuration)
-      : light_field_encoder_configuration(configuration) {
+      : JPLMLightFieldCodec<PelType>(configuration),
+        light_field_encoder_configuration(configuration) {
     add_pleno_lf_box();
   }
 

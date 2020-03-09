@@ -58,15 +58,18 @@ class JPLM4DTransformModeLightFieldCodec
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> extensions;
   LightfieldDimension<uint32_t> lightfield_dimension;
   LightfieldDimension<uint32_t> block_4d_dimension;
+  const JPLMConfiguration& transform_mode_configuration;
 
 
  public:
   JPLM4DTransformModeLightFieldCodec(
       const LightfieldDimension<uint32_t>& lightfield_dimension,
-      const LightfieldDimension<uint32_t>& block_4d_dimension)
+      const LightfieldDimension<uint32_t>& block_4d_dimension,
+      const JPLMConfiguration& configuration)
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
-        block_4d_dimension(block_4d_dimension) {
+        block_4d_dimension(block_4d_dimension),
+        transform_mode_configuration(configuration) {
   }
 
 
@@ -114,13 +117,16 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::setup_transform_coefficients(
 template<typename PelType>
 void JPLM4DTransformModeLightFieldCodec<
     PelType>::initialize_extension_lengths() {
+  if (transform_mode_configuration.is_verbose()) {
+    std::cout << "Initializing extension lengths" << std::endl;
+  }
+
   const auto& [number_of_vertical_views, number_of_horizontal_views,
                   mNumberOfViewLines, mNumberOfViewColumns] =
       lightfield_dimension.as_tuple();
   const auto& [transform_length_t, transform_length_s, transform_length_v,
                   transform_length_u] = block_4d_dimension.as_tuple();
 
-  std::cout << "Initializing extension lengths" << std::endl;
 
   auto extension_length_t = number_of_vertical_views % transform_length_t;
   auto extension_length_s = number_of_horizontal_views % transform_length_s;
@@ -161,10 +167,9 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
           auto used_size_u =
               (u + BLOCK_SIZE_u > U) ? U % BLOCK_SIZE_u : BLOCK_SIZE_u;
 
-          // if (parameter_handler.verbose) {
-          printf("transforming the 4D block at position (%d %d %d %d)\n", t, s,
-              v, u);
-          // }
+          if (transform_mode_configuration.is_verbose()) {
+            printf("Transforming 4D at %d %d %d %d\n", t, s, v, u);
+          }
 
           auto size_shrink = LightfieldDimension<uint32_t>(
               used_size_t, used_size_s, used_size_v, used_size_u);
@@ -182,9 +187,10 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
       }
     }
   }
-  std::cout << "finished" << std::endl;
-  //up to now, this finalization step is required only in the encoder.
   finalization();
+  if (transform_mode_configuration.is_verbose()) {
+    std::cout << "DONE" << std::endl;
+  }
 }
 
 

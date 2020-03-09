@@ -54,6 +54,8 @@ int main(int argc, char const* argv[]) {
 
   auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
 
+  //<! \todo avoid the static cast as the get_encoder_configuration function
+  // should return an specialized encoder configuration
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));

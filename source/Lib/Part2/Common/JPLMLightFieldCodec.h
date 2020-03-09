@@ -44,27 +44,65 @@
 #include "Lib/Part1/Common/JPLMCodec.h"
 #include "Lib/Part2/Common/Lightfield.h"
 
-template<typename PelType>
+
+/**
+ * @brief      This class describes a jplm light field codec.
+ *
+ * @tparam     PelType  Underlying type for storing pixels in the lightfield.
+ */
+template<typename PelType = uint16_t>
 class JPLMLightFieldCodec : public JPLMCodec {
  protected:
-  std::unique_ptr<Lightfield<PelType>> light_field;
+  std::unique_ptr<Lightfield<PelType>> light_field;  //<! The light field object
+  const JPLMConfiguration& jplm_configuration;
 
  public:
+  /**
+   * @brief      Constructs a new instance, used in the decoder.
+   *
+   * @param[in]  jpl_file     The readed jpl file
+   * @param      light_field  The light field
+   */
   JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file,
-      std::unique_ptr<Lightfield<PelType>>&& light_field)
-      : JPLMCodec(jpl_file), light_field(std::move(light_field)) {
-    std::cout << "Using the shared_ptr constructor of JPLMLightFieldCodec"
-              << std::endl;
+      std::unique_ptr<Lightfield<PelType>>&& light_field,
+      const JPLMConfiguration& configuration)
+      : JPLMCodec(jpl_file), light_field(std::move(light_field)),
+        jplm_configuration(configuration) {
   }
 
 
-  JPLMLightFieldCodec(std::unique_ptr<Lightfield<PelType>>&& light_field)
-      : light_field(std::move(light_field)) {
+  /**
+   * @brief      Constructs a new instance, used in the encoder.
+   *
+   * @param      light_field  The light field
+   * 
+   * The jpl_file is created in the JPLCodec default constructor
+   */
+  JPLMLightFieldCodec(std::unique_ptr<Lightfield<PelType>>&& light_field,
+      const JPLMConfiguration& configuration)
+      : light_field(std::move(light_field)), jplm_configuration(configuration) {
   }
 
 
-  JPLMLightFieldCodec() = default;
+  /**
+   * @brief      Constructs a new instance passing the configuration.
+   *
+   * @param[in]  configuration  The configuration
+   */
+  JPLMLightFieldCodec(const JPLMConfiguration& configuration)
+      : jplm_configuration(configuration) {
+  }
 
+
+  /**
+   * @brief      Constructs a new instance.
+   */
+  // JPLMLightFieldCodec() = default;
+
+
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~JPLMLightFieldCodec() = default;
 };
 

@@ -67,11 +67,9 @@ class JPLMConfigurationFactory {
       int argc, char const* argv[]);
 
 
-  static std::unique_ptr<JPLMConfiguration> get_decoder_configuration(
-      [[maybe_unused]] int argc, [[maybe_unused]] char const* argv[]);
+  static std::shared_ptr<JPLMDecoderConfiguration> get_decoder_configuration(
+      int argc, char const* argv[]);
 };
-
-
 
 
 #endif /* end of include guard: JPLMCONFIGURATIONFACTORY_H__ */

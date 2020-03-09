@@ -41,7 +41,7 @@
 #include "Lib/Common/JPLMConfigurationFactory.h"
 
 
-// \todo: refactor this function and split it into specialized functions
+//<! \todo: refactor this function and split it into specialized functions
 std::unique_ptr<JPLMConfiguration>
 JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
@@ -116,16 +116,18 @@ JPLMConfigurationFactory::get_encoder_configuration(
   throw JPLMConfigurationExceptions::InvalidPartException();
 }
 
-std::unique_ptr<JPLMConfiguration>
+
+std::shared_ptr<JPLMDecoderConfiguration>
 JPLMConfigurationFactory::get_decoder_configuration(
     int argc, const char** argv) {
-  auto basic_config = std::make_unique<JPLMDecoderConfiguration>(
+  auto basic_config = std::make_shared<JPLMDecoderConfiguration>(
       argc, const_cast<char**>(argv));
   if (basic_config->is_help_mode()) {
     exit(0);
   }
   return basic_config;
 }
+
 
 void JPLMConfigurationFactory::show_invalid_part_common_message() {
   std::cerr

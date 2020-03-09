@@ -43,6 +43,7 @@
 
 #include <iostream>
 #include <tuple>
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
@@ -61,6 +62,10 @@ template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
+ protected:
+  std::shared_ptr<JPLMDecoderConfiguration>
+      transform_mode_decoder_configuration;
+
  private:
   PartitionDecoder partition_decoder;
   const ContiguousCodestreamCode& codestream_code;
@@ -77,28 +82,30 @@ class JPLM4DTransformModeLightFieldDecoder
       std::shared_ptr<JPLFile>
           jpl_file,  // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
-      const std::string& lightfield_path)
-      : JPLMLightFieldCodec<PelType>(
-            jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
-                          LightfieldIOConfiguration(lightfield_path,
-                              light_field_box.get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_light_field_dimension<std::size_t>()),
-                          light_field_box.get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_number_of_components(),
-                          light_field_box.get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_bits_per_component())),
+      const std::string& lightfield_path,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration)
+      : JPLMLightFieldCodec<PelType>(jpl_file,
+            std::make_unique<LightFieldTransformMode<PelType>>(
+                LightfieldIOConfiguration(lightfield_path,
+                    light_field_box.get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_light_field_dimension<std::size_t>()),
+                light_field_box.get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_number_of_components(),
+                light_field_box.get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_bits_per_component()),
+            *configuration),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -106,7 +113,10 @@ class JPLM4DTransformModeLightFieldDecoder
                 .get_ref_to_light_field_header_box()
                 .get_ref_to_contents()
                 .get_light_field_dimension(),
-            {9, 9, 64, 64}),  //temporary
+            {9, 9, 64, 64},
+            *configuration),  //temporary
+        JPLMLightFieldDecoder<PelType>(*configuration),
+        transform_mode_decoder_configuration(configuration),
         codestream_code(light_field_box.get_ref_to_contents()
                             .get_ref_to_contiguous_codestream_box()
                             .get_ref_to_contents()

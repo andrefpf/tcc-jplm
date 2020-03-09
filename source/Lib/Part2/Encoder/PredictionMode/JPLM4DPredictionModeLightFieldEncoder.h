@@ -58,7 +58,8 @@ class JPLM4DPredictionModeLightFieldEncoder
           configuration)
       : JPLMLightFieldCodec<PelType>(
             std::make_unique<LightfieldFromFile<PelType>>(
-                configuration->get_lightfield_io_configurations())),
+                configuration->get_lightfield_io_configurations()),
+            *configuration),
         JPLMLightFieldEncoder<PelType>(*configuration),
         prediction_mode_configuration(std::move(configuration)) {
   }

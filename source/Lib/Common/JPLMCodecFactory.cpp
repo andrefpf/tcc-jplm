@@ -59,8 +59,10 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_light_field_encoder(
             static_cast<JPLMEncoderConfigurationLightField4DTransformMode *>(
                 configuration.release())));
   }
+
   assert(configuration->get_compression_type() ==
          CompressionTypeLightField::prediction_mode);
+
   return std::make_unique<JPLM4DPredictionModeLightFieldEncoder<uint16_t>>(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>(
           static_cast<JPLMEncoderConfigurationLightField4DPredictionMode *>(
@@ -88,7 +90,8 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_encoder(
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_lightfield_decoder(
     std::shared_ptr<JPLFile> jpl_file,
     const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
-    const std::string &output_filename) {
+    const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   const auto &codestream_as_part2 =
       static_cast<JpegPlenoLightFieldBox &>(*codestream);
   // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
@@ -100,15 +103,17 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_lightfield_decoder(
                         .get_compression_type();
   if (mode == CompressionTypeLightField::transform_mode) {
     return std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(
-        jpl_file, codestream_as_part2, output_filename);
+        jpl_file, codestream_as_part2, output_filename, configuration);
   }
   //else
   throw JPLMConfigurationExceptions::UnsuportedPredictionMode();
 }
 
 std::vector<std::unique_ptr<JPLMCodec>> JPLMCodecFactory::get_decoders(
-    std::shared_ptr<JPLFile> jpl_file, const std::string &output_filename) {
+    std::shared_ptr<JPLFile> jpl_file, const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   if (!jpl_file->has_codestream()) {
+    //<! \todo throw
     std::cerr << "The input jpl file has no codestream" << std::endl;
   }
 
@@ -118,7 +123,7 @@ std::vector<std::unique_ptr<JPLMCodec>> JPLMCodecFactory::get_decoders(
     switch (codestream->get_type()) {
       case JpegPlenoCodestreamBoxTypes::LightField: {
         decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(
-            jpl_file, codestream, output_filename));
+            jpl_file, codestream, output_filename, configuration));
         break;
       }
       case JpegPlenoCodestreamBoxTypes::PointCloud: {

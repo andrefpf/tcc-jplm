@@ -41,6 +41,7 @@
 #ifndef JPLMCODECFACTORY_H__
 #define JPLMCODECFACTORY_H__
 
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
@@ -59,10 +60,12 @@ class JPLMCodecFactory {
   static std::unique_ptr<JPLMCodec> get_lightfield_decoder(
       std::shared_ptr<JPLFile> jpl_file,
       const std::unique_ptr<JpegPlenoCodestreamBox>& codestream,
-      const std::string& output_filename);
+      const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
 
   static std::vector<std::unique_ptr<JPLMCodec>> get_decoders(
-      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename);
+      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
 };
 
 #endif /* end of include guard: JPLMCODECFACTORY_H__ */

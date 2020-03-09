@@ -57,7 +57,7 @@ class JPLM4DTransformModeLightFieldEncoder
       public JPLMLightFieldEncoder<PelType> {
  protected:
   std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
-      transform_mode_configuration;
+      transform_mode_encoder_configuration;
   Hierarchical4DEncoder hierarchical_4d_encoder;
   TransformPartition tp;
   LightFieldTransformMode<PelType>& ref_to_lightfield;
@@ -71,32 +71,35 @@ class JPLM4DTransformModeLightFieldEncoder
           configuration)
       : JPLMLightFieldCodec<PelType>(
             std::make_unique<LightFieldTransformMode<PelType>>(
-                configuration->get_lightfield_io_configurations())),
+                configuration->get_lightfield_io_configurations()),
+            *configuration),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             {configuration->get_lightfield_io_configurations().get_size()},
-            {configuration->get_maximal_transform_sizes()}),
+            {configuration->get_maximal_transform_sizes()}, *configuration),
         JPLMLightFieldEncoder<PelType>(*configuration),
-        transform_mode_configuration(std::move(configuration)),
-        tp(transform_mode_configuration->get_minimal_transform_dimension()),
-        //        hierarchical_4d_encoder(*transform_mode_configuration),
+        transform_mode_encoder_configuration(std::move(configuration)),
+        tp(transform_mode_encoder_configuration
+                ->get_minimal_transform_dimension()),
+        //        hierarchical_4d_encoder(*transform_mode_encoder_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))),
         lightfield_configuration_marker_segment(
-            {transform_mode_configuration->get_lightfield_io_configurations()
+            {transform_mode_encoder_configuration
+                    ->get_lightfield_io_configurations()
                     .get_size()},  //lightfield_dimension,
             {ComponentSsizParameter(10), ComponentSsizParameter(10),
                 ComponentSsizParameter(10)},  //Ssiz
-            {transform_mode_configuration
+            {transform_mode_encoder_configuration
                     ->get_maximal_transform_sizes()},  //block_dimension,
             {30, 30, 30},  //max_bitplane
             is_truncated()) {
-    tp.mPartitionData.set_dimension(
-        transform_mode_configuration->get_maximal_transform_dimension());
+    tp.mPartitionData.set_dimension(transform_mode_encoder_configuration
+                                        ->get_maximal_transform_dimension());
     setup_hierarchical_4d_encoder();
 
     this->setup_transform_coefficients(true,
-        transform_mode_configuration->get_maximal_transform_sizes(),
-        transform_mode_configuration->get_transform_scalings());
+        transform_mode_encoder_configuration->get_maximal_transform_sizes(),
+        transform_mode_encoder_configuration->get_transform_scalings());
 
     // write_initial_data_to_encoded_file();
     hierarchical_4d_encoder.write_marker(
@@ -116,18 +119,20 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
   bool is_truncated() {
-    return transform_mode_configuration->get_border_blocks_policy() ==
+    return transform_mode_encoder_configuration->get_border_blocks_policy() ==
            BorderBlocksPolicy::truncate;
   }
 
   void setup_hierarchical_4d_encoder() {
     hierarchical_4d_encoder.set_transform_dimension(
-        transform_mode_configuration->get_maximal_transform_dimension());
+        transform_mode_encoder_configuration
+            ->get_maximal_transform_dimension());
 
     hierarchical_4d_encoder.create_temporary_buffer();
 
     hierarchical_4d_encoder.set_minimum_transform_dimension(
-        transform_mode_configuration->get_minimal_transform_dimension());
+        transform_mode_encoder_configuration
+            ->get_minimal_transform_dimension());
 
     hierarchical_4d_encoder.set_lightfield_dimension(
         this->light_field->template get_dimensions<uint32_t>());
@@ -138,7 +143,7 @@ class JPLM4DTransformModeLightFieldEncoder
 
 
   virtual BorderBlocksPolicy get_border_blocks_policy() const override {
-    return transform_mode_configuration->get_border_blocks_policy();
+    return transform_mode_encoder_configuration->get_border_blocks_policy();
   }
 
 
@@ -206,7 +211,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
   block_4d += level_shift;
 
 
-  const auto lambda = transform_mode_configuration->get_lambda();
+  const auto lambda = transform_mode_encoder_configuration->get_lambda();
   auto rd_cost =
       tp.rd_optimize_transform(block_4d, hierarchical_4d_encoder, lambda);
   //<! \todo check what happens to the metrics for shrink = 0;
