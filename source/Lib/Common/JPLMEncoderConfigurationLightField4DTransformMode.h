@@ -89,6 +89,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
+  bool show_estimated_error_flag = false;
 
  protected:
   virtual void add_options() override;
@@ -110,6 +111,10 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   uint32_t get_maximal_transform_size_inter_view_horizontal();
 
   BorderBlocksPolicy get_border_blocks_policy();
+
+  bool show_error_estimate() const {
+    return show_estimated_error_flag;
+  }
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_maximal_transform_sizes() const;

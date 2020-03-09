@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
-
+#include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
@@ -158,6 +158,25 @@ class JPLM4DTransformModeLightFieldEncoder
   void run_for_block_4d(const uint32_t channel,
       const LightfieldCoordinate<uint32_t>& position,
       const LightfieldDimension<uint32_t>& size) override;
+
+
+  samilton::ConsoleTable get_console_table() {
+    samilton::ConsoleTable table(1, 1, samilton::Alignment::centre);
+    samilton::ConsoleTable::TableChars chars;
+    chars.topDownSimple = '\0';
+    chars.leftSeparation = '\0';
+    chars.centreSeparation = '\0';
+    chars.downLeft = '\0';
+    chars.downRight = '\0';
+    chars.leftRightSimple = '\0';
+    chars.rightSeparation = '\0';
+    chars.topLeft = '\0';
+    chars.topRight = '\0';
+    chars.topSeparation = '\0';
+    chars.downSeparation = '\0';
+    table.setTableChars(chars);
+    return table;
+  }
 };
 
 template<typename PelType>
@@ -167,16 +186,26 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
       ref_to_lightfield.get_total_number_of_pixels_per_channel();
   auto bpp = ref_to_lightfield.get_views_bpp();
 
-  for (auto i = 0; i < number_of_channels; ++i) {
-    // std::cout << "SSE of channel " << i << ": " << sse_per_channel.at(i)
-    //           << std::endl;
-    double mse = sse_per_channel.at(i) / number_of_pels;
-    std::cout << "MSE of channel " << i << ": " << mse << std::endl;
-    std::cout << "PSNR of channel " << i << ": "
-              << ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse)
-              << std::endl;
-  }
+  if (transform_mode_encoder_configuration->show_error_estimate()) {
+    std::cout << "############### Estimated error ###############\n";
 
+    auto table = get_console_table();
+    table[0][0](samilton::Alignment::right) = "Channel: ";
+    table[1][0](samilton::Alignment::right) = "Est. MSE: ";
+    table[2][0](samilton::Alignment::right) = "Est. PSNR (dB): ";
+    for (auto i = 0; i < number_of_channels; ++i) {
+      double mse = sse_per_channel.at(i) / number_of_pels;
+      double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+
+      table[0][i + 1] = i;
+      table[1][i + 1] = mse;
+      table[2][i + 1] = psnr;
+    }
+
+    std::cout << table;
+    std::cout << "\n###############################################\n\n";
+    // std::cout << table[0].size() << std::endl;
+  }
 
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
   auto& first_codestream = *(codestreams.at(0));
@@ -194,10 +223,9 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   lightfield_box_contents.add_contiguous_codestream_box(
       std::move(codestream_box));
 
-  std::cout << "bpp after encoding: "
-            << (this->jpl_file->size() * 8.0) /
+  std::cout << (this->jpl_file->size() * 8.0) /
                    static_cast<double>(number_of_pels)
-            << std::endl;
+            << " bpp" << std::endl;
 }
 
 template<typename PelType>

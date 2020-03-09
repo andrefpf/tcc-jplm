@@ -254,6 +254,28 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "1000.0"; }}});
+
+  this->add_cli_json_option({"--show-error-estimate", "-see",
+      "Shows error estimates computed during RDO. Although close to the real "
+      "error figures, they are only estimates (do not account for rounding "
+      "errors in the inverse transform, for instance). For proper error "
+      "reports, please decode the generated file and use the provided external "
+      "tool.",
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("show-error-estimate")) {
+          return conf["show-error-estimate"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->show_estimated_error_flag = false;
+        } else {
+          this->show_estimated_error_flag = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
 }
 
 
