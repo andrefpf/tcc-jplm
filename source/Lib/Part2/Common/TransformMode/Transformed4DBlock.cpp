@@ -189,13 +189,11 @@ Transformed4DBlock::Transformed4DBlock(Block4D&& source) {
       source.mlength_t, source.mlength_s, source.mlength_v, source.mlength_u);
   data = std::unique_ptr<block4DElementType[]>(source.mPixelData);
   alloc_resources();
-  // std::cout << "consdtructed transdoermed block vbia move" << std::endl;
   source.mPixelData = nullptr;
 }
 
 
 Transformed4DBlock::Transformed4DBlock(Transformed4DBlock&& other) {
-  // std::cout << "Transformed4DBlock move constructor " << std::endl;
   set_dimensions(
       other.mlength_t, other.mlength_s, other.mlength_v, other.mlength_u);
   data = std::move(other.data);
