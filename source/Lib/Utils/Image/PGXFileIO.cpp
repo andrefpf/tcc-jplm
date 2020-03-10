@@ -170,15 +170,18 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
   file << std::to_string(width) << " ";
   file << std::to_string(height) << " ";
 
-  // The same as "file << std::endl", but in Windows
+
+#ifdef _WIN32
   file.close();
   file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
   file << static_cast<std::uint8_t>(10) << std::flush;
   file.close();
 
-  // The same as "file << std::endl", but in Windows
   file.open(filename, std::ios::in | std::ios::out);
   file.seekg(0, std::ios::end);
+#else
+  file << std::endl;
+#endif
   auto raster_begin = file.tellg();
 
   return std::make_unique<PGXFile>(filename, raster_begin, width, height, depth,
