@@ -61,6 +61,46 @@
 
 using Metric = ImageMetrics::Available;
 
+enum class ReportType : uint16_t {
+  NONE = 0,
+  VIEW_CHANNELS = 1,
+  VIEW_AVERAGE = 2,
+  CHANNEL_AVERAGE = 4,
+  AVERAGE = 8,
+};
+
+
+class ReportShowFlags {
+ protected:
+  uint16_t report_mask = magic_enum::enum_integer(ReportType::NONE);
+
+ public:
+  ReportShowFlags() = default;
+  virtual ~ReportShowFlags() = default;
+
+
+  template<ReportType type>
+  void include_report() {
+    constexpr uint16_t type_as_int = magic_enum::enum_integer(type);
+    report_mask |= type_as_int;
+  }
+
+
+  void set_all_reports() {
+    for (auto report : magic_enum::enum_values<ReportType>()) {
+      report_mask |= magic_enum::enum_integer(report);
+    }
+  }
+
+
+  template<ReportType type>
+  bool should_report() const {
+    constexpr uint16_t type_as_int = magic_enum::enum_integer(type);
+    return type_as_int & report_mask;
+  }
+};
+
+
 class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
@@ -70,11 +110,23 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   std::string input_test;
   Metric metric;
 
+  std::map<Metric, ReportShowFlags> reports;
+
+
   uint32_t number_of_rows_t;
   uint32_t number_of_columns_s;
   ComputeLightfieldQualityMetricsConfiguration(
       int argc, char **argv, std::size_t level)
       : BasicConfiguration(argc, argv, level) {
+    //       ReportShowFlags<Metric::PSNR> psnr_report;
+    // ReportShowFlags<Metric::MSE> mse_report;
+    // ReportShowFlags<Metric::SSE> sse_report;
+    // ReportShowFlags<Metric::MAX_ABS_ERROR> max_report;
+    for (auto metric : magic_enum::enum_values<Metric>()) {
+      std::cout << "Added metric: " << magic_enum::enum_name(metric)
+                << std::endl;
+      reports.emplace(std::make_pair(metric, ReportShowFlags()));
+    }
   }
 
 
@@ -153,6 +205,137 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
           }
         },
         this->current_hierarchy_level});
+
+
+    this->add_cli_json_option({"--show-report-view-channels", "-srvc",
+        "Shows a view-by-view report for each channel. "
+        "Metric parameter is optional. If not set, all metrics will be shown. "
+        "Available metrics: " +
+            available_metrics_string_stream.str(),
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("show-report-view-channels")) {
+            return conf["show-report-view-channels"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string v) {
+          if (v.empty()) {
+            set_report<ReportType::VIEW_CHANNELS>();
+          } else {
+            auto metric = magic_enum::enum_cast<Metric>(v);
+            if (metric) {
+              set_report<ReportType::VIEW_CHANNELS>(*metric);
+            } else {
+              //<! \todo throw error
+            }
+          }
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--show-report-view-average", "-srva",
+        "Shows a view-by-view report with the average of all channels. "
+        "Metric parameter is optional. If not set, all metrics will be shown. "
+        "Available metrics: " +
+            available_metrics_string_stream.str() +
+            "The average PSNR is obtained after the average MSE.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("show-report-view-average")) {
+            return conf["show-report-view-average"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string v) {
+          if (v.empty()) {
+            set_report<ReportType::VIEW_AVERAGE>();
+          } else {
+            auto metric = magic_enum::enum_cast<Metric>(v);
+            if (metric) {
+              set_report<ReportType::VIEW_AVERAGE>(*metric);
+            } else {
+              //<! \todo throw error
+            }
+          }
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--show-report-channel-average", "-srca",
+        "Shows a channel-by-channel report with the average of all views. "
+        "Metric parameter is optional. If not set, all metrics will be shown. "
+        "Available metrics: " +
+            available_metrics_string_stream.str() +
+            "The average PSNR is obtained after the average MSE.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("show-report-channel-average")) {
+            return conf["show-report-channel-average"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string v) {
+          if (v.empty()) {
+            set_report<ReportType::CHANNEL_AVERAGE>();
+          } else {
+            auto metric = magic_enum::enum_cast<Metric>(v);
+            if (metric) {
+              set_report<ReportType::CHANNEL_AVERAGE>(*metric);
+            } else {
+              //<! \todo throw error
+            }
+          }
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--show-report-average", "-avg",
+        "Summary. Shows a report with the average of all channels of all "
+        "views. "
+        "Metric parameter is optional. If not set, all metrics will be shown. "
+        "Available metrics: " +
+            available_metrics_string_stream.str() +
+            "The average PSNR is obtained after the average MSE.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("show-report-average")) {
+            return conf["show-report-average"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string v) {
+          if (v.empty()) {
+            set_report<ReportType::AVERAGE>();
+          } else {
+            auto metric = magic_enum::enum_cast<Metric>(v);
+            if (metric) {
+              set_report<ReportType::AVERAGE>(*metric);
+            } else {
+              //<! \todo throw error
+            }
+          }
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--show-report-all", "-all",
+        "Show all reports for the metric passed as parameter. "
+        "Metric parameter is optional. If not set, all metrics will be shown. "
+        "Available metrics: " +
+            available_metrics_string_stream.str() +
+            "The average PSNR is obtained after the average MSE.",
+        [this](const nlohmann::json &conf) -> std::optional<std::string> {
+          if (conf.contains("show-report-average")) {
+            return conf["show-report-average"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string v) {
+          if (v.empty()) {
+            set_all_reports();
+          } else {
+            auto metric = magic_enum::enum_cast<Metric>(v);
+            if (metric) {
+              set_all_reports(*metric);
+            } else {
+              //<! \todo throw error
+            }
+          }
+        },
+        this->current_hierarchy_level});
   }
 
  public:
@@ -161,6 +344,50 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
             ComputeLightfieldQualityMetricsConfiguration::
                 current_hierarchy_level) {
     this->init(argc, argv);
+  }
+
+
+  const ReportShowFlags &get_report(Metric metric) const {
+    auto iter = reports.find(metric);
+    if (iter != reports.end()) {
+      return iter->second;
+    } else {
+      throw std::runtime_error("Metric not found getting report");
+    }
+  }
+
+  template<ReportType type>
+  void set_report(Metric metric) {
+    auto iter = reports.find(metric);
+    if (iter != reports.end()) {
+      iter->second.include_report<type>();
+    } else {
+      throw std::runtime_error("Metric not found setting report");
+    }
+  }
+
+  template<ReportType type>
+  void set_report() {
+    for (auto metric : magic_enum::enum_values<Metric>()) {
+      set_report<type>(metric);
+    }
+  }
+
+
+  void set_all_reports() {
+    for (auto &it : reports) {
+      it.second.set_all_reports();
+    }
+  }
+
+
+  void set_all_reports(Metric metric) {
+    auto iter = reports.find(metric);
+    if (iter != reports.end()) {
+      iter->second.set_all_reports();
+    } else {
+      throw std::runtime_error("Metric not found setting all reports");
+    }
   }
 
 
@@ -258,6 +485,11 @@ void compute_metric(
 
   auto precision = 2;
 
+  const auto &report_psnr = configuration.get_report(Metric::PSNR);
+  const auto &report_mse = configuration.get_report(Metric::MSE);
+  const auto &report_sse = configuration.get_report(Metric::SSE);
+  const auto &report_max = configuration.get_report(Metric::MAX_ABS_ERROR);
+
   // auto printer = ImageMetrics::visitors::PSNRPrinter();
   for (auto t = decltype(t_max){0}; t < t_max; ++t) {
     for (auto s = decltype(s_max){0}; s < s_max; ++s) {
@@ -282,148 +514,237 @@ void compute_metric(
         sse_sum.at(i) += sse;
         view_average_mse += mse;
         view_average_sse += sse;
+
         if (max_abs_error > view_max_abs_error) {
           view_max_abs_error = max_abs_error;
           if (max_abs_error > max_error.at(i)) {
             max_error.at(i) = max_abs_error;
           }
         }
-        auto psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
-        psnr_sum += psnr;
-        {
+
+
+        if (report_psnr.should_report<ReportType::VIEW_CHANNELS>()) {
+          auto psnr =
+              ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+          {
+            std::ostringstream str;
+            str << std::fixed << std::setprecision(precision) << psnr;
+            channel_psnr_table.at(i)[t][s] = str.str();
+          }
+        }
+        if (report_mse.should_report<ReportType::VIEW_CHANNELS>()) {
           std::ostringstream str;
           str << std::fixed << std::setprecision(precision) << mse;
           channel_mse_table.at(i)[t][s] = str.str();
         }
-        {
+        if (report_sse.should_report<ReportType::VIEW_CHANNELS>()) {
           //this is set scientific as the number are too large
           std::ostringstream str;
           str << std::scientific << std::setprecision(precision) << sse;
           channel_sse_table.at(i)[t][s] = str.str();
         }
-
-        {
-          std::ostringstream str;
-          str << std::fixed << std::setprecision(precision) << psnr;
-          channel_psnr_table.at(i)[t][s] = str.str();
+        if (report_max.should_report<ReportType::VIEW_CHANNELS>()) {
+          channel_max_abs_error_table.at(i)[t][s] = max_abs_error;
         }
-        channel_max_abs_error_table.at(i)[t][s] = max_abs_error;
       }
+
+
       view_average_mse /= static_cast<double>(n_channels);
-      view_average_sse /= static_cast<double>(n_channels);
-      auto view_average_psnr =
-          ImageChannelUtils::get_peak_signal_to_noise_ratio(
-              bpp, view_average_mse);
-      {
+      if (report_psnr.should_report<ReportType::VIEW_AVERAGE>()) {
+        auto view_average_psnr =
+            ImageChannelUtils::get_peak_signal_to_noise_ratio(
+                bpp, view_average_mse);
+        std::ostringstream str;
+        str << std::fixed << std::setprecision(precision) << view_average_psnr;
+        average_psnr_table[t][s] = str.str();
+      }
+      if (report_mse.should_report<ReportType::VIEW_AVERAGE>()) {
         std::ostringstream str;
         str << std::fixed << std::setprecision(precision) << view_average_mse;
         average_mse_table[t][s] = str.str();
       }
-      {
+      if (report_sse.should_report<ReportType::VIEW_AVERAGE>()) {
+        view_average_sse /= static_cast<double>(n_channels);
         std::ostringstream str;
         str << std::scientific << std::setprecision(precision)
             << view_average_sse;
         average_sse_table[t][s] = str.str();
       }
-      {
-        std::ostringstream str;
-        str << std::fixed << std::setprecision(precision) << view_average_psnr;
-        average_psnr_table[t][s] = str.str();
+      if (report_max.should_report<ReportType::VIEW_AVERAGE>()) {
+        max_max_abs_error_table[t][s] = view_max_abs_error;
       }
-      max_max_abs_error_table[t][s] = view_max_abs_error;
     }
   }
 
-  std::cout << "\n############### Max Absolute Error views ###############\n";
+  if (report_max.should_report<ReportType::VIEW_CHANNELS>()) {
+    std::cout << "\n############### Max Absolute Error views ###############\n";
 
-  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-    std::cout << "Channel " << i << ": \n"
-              << channel_max_abs_error_table.at(i) << "\n";
-  }
-  std::cout << "Max all channels: \n" << max_max_abs_error_table;
-
-  std::cout << "\n################################################\n\n";
-
-
-  std::cout << "\n############### SSE views ###############\n";
-
-  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-    std::cout << "Channel " << i << ": \n" << channel_sse_table.at(i) << "\n";
-  }
-  std::cout << "Average: \n" << average_sse_table;
-
-  std::cout << "\n################################################\n\n";
-
-
-  std::cout << "\n############### MSE views ###############\n";
-
-  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-    std::cout << "Channel " << i << ": \n" << channel_mse_table.at(i) << "\n";
-  }
-  std::cout << "Average: \n" << average_mse_table;
-
-  std::cout << "\n################################################\n\n";
-
-
-  std::cout << "\n############### PSNR views ###############\n";
-
-  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-    std::cout << "Channel " << i << " (dB): \n"
-              << channel_psnr_table.at(i) << "\n";
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+      std::cout << "Channel " << i << ": \n"
+                << channel_max_abs_error_table.at(i) << "\n";
+    }
   }
 
-  std::cout << "Average: \n" << average_psnr_table;
+  if (report_max.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "Max all channels: \n" << max_max_abs_error_table;
+  }
+  if (report_max.should_report<ReportType::VIEW_CHANNELS>() ||
+      report_max.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "\n################################################\n\n";
+  }
 
-  std::cout << "\n################################################\n\n";
+  if (report_sse.should_report<ReportType::VIEW_CHANNELS>()) {
+    std::cout << "\n############### SSE views ###############\n";
+
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+      std::cout << "Channel " << i << ": \n" << channel_sse_table.at(i) << "\n";
+    }
+  }
+  if (report_sse.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "Average: \n" << average_sse_table;
+  }
+
+  if (report_sse.should_report<ReportType::VIEW_CHANNELS>() ||
+      report_sse.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "\n################################################\n\n";
+  }
+
+  if (report_mse.should_report<ReportType::VIEW_CHANNELS>()) {
+    std::cout << "\n############### MSE views ###############\n";
+
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+      std::cout << "Channel " << i << ": \n" << channel_mse_table.at(i) << "\n";
+    }
+  }
+  if (report_mse.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "Average: \n" << average_mse_table;
+  }
+  if (report_mse.should_report<ReportType::VIEW_CHANNELS>() ||
+      report_mse.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "\n################################################\n\n";
+  }
+  if (report_psnr.should_report<ReportType::VIEW_CHANNELS>()) {
+    std::cout << "\n############### PSNR views ###############\n";
+
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+      std::cout << "Channel " << i << " (dB): \n"
+                << channel_psnr_table.at(i) << "\n";
+    }
+  }
+  if (report_psnr.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "Average: \n" << average_psnr_table;
+  }
+  if (report_psnr.should_report<ReportType::VIEW_CHANNELS>() ||
+      report_psnr.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "\n################################################\n\n";
+  }
 
 
   double sum_of_mses = 0.0;
   double sum_of_sses = 0.0;
   std::size_t max_error_all = 0;
 
-  std::cout << "\n############### Channel averages ###############\n";
+  if ((report_max.should_report<ReportType::CHANNEL_AVERAGE>()) ||
+      (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
+      (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
+      (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>())) {
+    std::cout << "\n############### Channel averages ###############\n";
 
-  auto channel_estimates_table = configuration.get_console_table();
-  auto line = 0;
-  channel_estimates_table[line++][0](samilton::Alignment::right) = "Channel: ";
-  channel_estimates_table[line++][0](samilton::Alignment::right) =
-      "Max Abs Error: ";
-  channel_estimates_table[line++][0](samilton::Alignment::right) = "SSE: ";
-  channel_estimates_table[line++][0](samilton::Alignment::right) = "MSE: ";
-  channel_estimates_table[line++][0](samilton::Alignment::right) =
-      "PSNR (dB): ";
-  for (auto i = 0; i < n_channels; ++i) {
-    double mse = mse_sum.at(i) / n_views;
-    double sse = sse_sum.at(i) / n_views;
-    auto max_error_channel = max_error.at(i);
-    if (max_error_channel > max_error_all) {
-      max_error_all = max_error_channel;
+    auto channel_estimates_table = configuration.get_console_table();
+    auto line = 0;
+    channel_estimates_table[line++][0](samilton::Alignment::right) =
+        "Channel: ";
+
+    if (report_max.should_report<ReportType::CHANNEL_AVERAGE>()) {
+      channel_estimates_table[line++][0](samilton::Alignment::right) =
+          "Max Abs Error: ";
+    }
+    if (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) {
+      channel_estimates_table[line++][0](samilton::Alignment::right) = "SSE: ";
+    }
+    if (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) {
+      channel_estimates_table[line++][0](samilton::Alignment::right) = "MSE: ";
+    }
+    if (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>()) {
+      channel_estimates_table[line++][0](samilton::Alignment::right) =
+          "PSNR (dB): ";
     }
 
-    sum_of_mses += mse;
-    sum_of_sses += sse;
-    double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+    for (auto i = 0; i < n_channels; ++i) {
+      double mse = mse_sum.at(i) / n_views;
+      double sse = sse_sum.at(i) / n_views;
+      auto max_error_channel = max_error.at(i);
+      if (max_error_channel > max_error_all) {
+        max_error_all = max_error_channel;
+      }
 
-    line = 0;
-    channel_estimates_table[line++][i + 1] = i;
-    channel_estimates_table[line++][i + 1] = max_error_channel;
-    channel_estimates_table[line++][i + 1] = sse;
-    channel_estimates_table[line++][i + 1] = mse;
-    channel_estimates_table[line++][i + 1] = psnr;
+      sum_of_mses += mse;
+      sum_of_sses += sse;
+      double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+
+      line = 0;
+      channel_estimates_table[line++][i + 1] = i;
+
+
+      if (report_max.should_report<ReportType::CHANNEL_AVERAGE>()) {
+        channel_estimates_table[line++][i + 1] = max_error_channel;
+      }
+      if (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) {
+        channel_estimates_table[line++][i + 1] = sse;
+      }
+      if (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) {
+        channel_estimates_table[line++][i + 1] = mse;
+      }
+      if (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>()) {
+        channel_estimates_table[line++][i + 1] = psnr;
+      }
+    }
+
+    std::cout << channel_estimates_table;
+
+    std::cout << "\n################################################\n\n";
   }
 
-  std::cout << channel_estimates_table;
-  std::cout << "\n################################################\n\n";
 
   auto average_mse = sum_of_mses / static_cast<double>(n_channels);
   auto average_sse = sum_of_sses / static_cast<double>(n_channels);
-  std::cout << "Max abs error: " << max_error_all << '\n';
-  std::cout << "Average SSE: " << average_sse << '\n';
-  std::cout << "Average MSE: " << average_mse << '\n';
-  std::cout << "Average PSNR (dB): "
-            << ImageChannelUtils::get_peak_signal_to_noise_ratio(
-                   bpp, average_mse)
-            << '\n';
+
+
+  auto final_report_table = configuration.get_console_table();
+  auto line = 0;
+
+  if (report_max.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][0](samilton::Alignment::right) =
+        "Max Abs Error: ";
+  }
+  if (report_sse.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][0](samilton::Alignment::right) = "SSE: ";
+  }
+  if (report_mse.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][0](samilton::Alignment::right) = "MSE: ";
+  }
+  if (report_psnr.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][0](samilton::Alignment::right) =
+        "Average PSNR (dB): ";
+  }
+
+
+  line = 0;
+  if (report_max.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][1](samilton::Alignment::right) = max_error_all;
+  }
+  if (report_sse.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][1](samilton::Alignment::right) = average_sse;
+  }
+  if (report_mse.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][1](samilton::Alignment::right) = average_mse;
+  }
+  if (report_psnr.should_report<ReportType::AVERAGE>()) {
+    final_report_table[line++][1](samilton::Alignment::right) =
+        ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, average_mse);
+  }
+
+  std::cout << final_report_table << std::endl;
 }
 
 
