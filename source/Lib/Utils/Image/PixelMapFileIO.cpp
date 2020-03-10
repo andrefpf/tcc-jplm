@@ -39,7 +39,7 @@
  */
 
 
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 /**
  * \brief      Determines if a char is comment delimiter.
@@ -156,7 +156,7 @@ std::size_t get_next_size(std::ifstream& istream) {
 
 // namespace PixelMapFileIO {
 
-
+#ifdef _WIN32
 /**
  * \brief      Counts  the number of line breaks in a buffer.
  * \param[in]  buffer  buffer
@@ -170,7 +170,9 @@ size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
            (e != static_cast<std::uint8_t>(32));  // space (SPC)
   });
 }
+#endif
 
+#ifdef _WIN32
 /**
  * \brief      Counts the number of line breaks in the file.
  * \details    Counts the number of whitespace characters that
@@ -190,7 +192,7 @@ std::uint16_t PixelMapFileIO::count_line_breaks(
   }
   return counter;
 }
-
+#endif
 
 /**
  * \brief      opens a pixel map file from a filename.
@@ -235,10 +237,13 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
 
   read_pixel_map_stream_until_next_field(file);  //next field is the 'raster'
 
+#ifdef _WIN32
   std::streamoff end_of_header = file.tellg();
   std::uint16_t line_breaks = count_line_breaks(filename, end_of_header);
   std::streamoff raster_begin = end_of_header - line_breaks;
-
+#else 
+  auto raster_begin = file.tellg();
+#endif
 
   file.close();
 
@@ -276,13 +281,7 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
     std::fstream file;
     file.open(filename, std::ios::out);
     if (file.is_open()) {
-      /* Doing the equivalent to:
-         file << 'P' << type << std::endl;
-         file << width << " " << height << std::endl;
-         file << max_value << std::endl;
-         raster_begin = file.tellg();
-         on Windows */
-
+#ifdef _WIN32
       file << 'P' << type << std::flush;
       file.close();
 
@@ -308,6 +307,12 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
 
       file.open(filename, std::ios::in | std::ios::out);
       file.seekg(0, std::ios::end);
+#else
+      file << 'P' << type << std::endl;
+      file << width << " " << height << std::endl;
+      file << max_value << std::endl;
+#endif      
+
       auto raster_begin = file.tellg();
       std::cerr << "PixMapFileIO -> raster_begin=" << raster_begin << std::endl;
       file.flush();

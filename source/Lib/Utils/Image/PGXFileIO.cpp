@@ -137,10 +137,14 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
 
   advance_to_raster_begin(file);
 
+#ifdef _WIN32
   std::streamoff end_of_header = file.tellg();
   std::uint16_t line_breaks =
       PixelMapFileIO::count_line_breaks(filename, end_of_header);
   std::streamoff raster_begin = end_of_header - line_breaks;
+#else
+  std::streamoff raster_begin = file.tellg();
+#endif
 
   return std::make_unique<PGXFile>(
       filename, raster_begin, width, height, depth, is_signed, endianess);
