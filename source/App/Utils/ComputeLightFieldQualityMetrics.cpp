@@ -38,15 +38,15 @@
  *  \date     2019-11-05
  */
 
-
 #include <algorithm>
 #include <filesystem>
-#include <iomanip>  //std::setw and std::setfill
+#include <iomanip>  //std::setprecision, std::setw, and std::setfill
 #include <iostream>
 #include <magic_enum.hpp>
 #include <map>
 #include <sstream>
 #include <string>
+#include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/LightfieldFromFile.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
@@ -185,6 +185,25 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   auto get_s() const {
     return this->number_of_columns_s;
   }
+
+
+  samilton::ConsoleTable get_console_table() const {
+    samilton::ConsoleTable table(1, 1, samilton::Alignment::centre);
+    samilton::ConsoleTable::TableChars chars;
+    chars.topDownSimple = '\0';
+    chars.leftSeparation = '\0';
+    chars.centreSeparation = '\0';
+    chars.downLeft = '\0';
+    chars.downRight = '\0';
+    chars.leftRightSimple = '\0';
+    chars.rightSeparation = '\0';
+    chars.topLeft = '\0';
+    chars.topRight = '\0';
+    chars.topSeparation = '\0';
+    chars.downSeparation = '\0';
+    table.setTableChars(chars);
+    return table;
+  }
 };
 
 
@@ -214,38 +233,92 @@ void compute_metric(
   std::vector<double> mse_sum(n_channels, 0.0);
   double psnr_sum = 0.0;
 
+
+  // auto channel_mse_table = configuration.get_console_table();
+  // auto channel_psnr_table = configuration.get_console_table();
+
+  std::vector<samilton::ConsoleTable> channel_mse_table;
+  std::vector<samilton::ConsoleTable> channel_psnr_table;
+
+  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+    channel_mse_table.push_back(configuration.get_console_table());
+    channel_psnr_table.push_back(configuration.get_console_table());
+  }
+
+  auto average_psnr_table = configuration.get_console_table();
+  auto average_mse_table = configuration.get_console_table();
+
   // auto printer = ImageMetrics::visitors::PSNRPrinter();
   for (auto t = decltype(t_max){0}; t < t_max; ++t) {
     for (auto s = decltype(s_max){0}; s < s_max; ++s) {
-      // std::cout << "T: " << t << "   S: " << s << std::endl;
-      // const auto &baseline_image_ref =
-      //     baseline_lightfield->get_image_at({t, s});
-      // auto baseline_image =
-      //     std::make_unique<UndefinedImage<uint16_t>>(baseline_image_ref);
-      // const auto &test_image_ref = test_lightfield->get_image_at({t, s});
-      // auto test_image =
-      //     std::make_unique<UndefinedImage<uint16_t>>(test_image_ref);
-      // printer(baseline_image, test_image);
-
       auto mses =
           ImageMetrics::get_mse(baseline_lightfield->get_image_at({t, s}),
               test_lightfield->get_image_at({t, s}));
       for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
         auto mse = mses.at(i);
         mse_sum.at(i) += mse;
-        psnr_sum += ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+        auto psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+        psnr_sum += psnr;
+        {
+          std::ostringstream str;
+          str << std::fixed << std::setprecision(2) << mse;
+          channel_mse_table.at(i)[t][s] = str.str();
+        }
+        {
+          std::ostringstream str;
+          str << std::fixed << std::setprecision(2) << psnr;
+          channel_psnr_table.at(i)[t][s] = str.str();
+        }
       }
     }
   }
 
-  for (const auto &mse : mse_sum) {
-    auto mse_of_channel = mse / n_views;
-    std::cout << "MSE: " << mse_of_channel << std::endl;
-    std::cout << "PSNR: "
-              << ImageChannelUtils::get_peak_signal_to_noise_ratio(
-                     bpp, mse_of_channel)
-              << std::endl;
+  std::cout << "\n############### MSE views ###############\n";
+
+  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+    std::cout << "Channel " << i << ": \n" << channel_mse_table.at(i) << "\n";
   }
+
+  std::cout << "\n################################################\n\n";
+
+
+  std::cout << "\n############### PSNR views ###############\n";
+
+  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+    std::cout << "Channel " << i << " (dB): \n"
+              << channel_psnr_table.at(i) << "\n";
+  }
+
+  std::cout << "\n################################################\n\n";
+
+
+  double sum_of_mses = 0.0;
+
+  std::cout << "\n############### Channel averages ###############\n";
+
+  auto channel_estimates_table = configuration.get_console_table();
+  channel_estimates_table[0][0](samilton::Alignment::right) = "Channel: ";
+  channel_estimates_table[1][0](samilton::Alignment::right) = "MSE: ";
+  channel_estimates_table[2][0](samilton::Alignment::right) = "PSNR (dB): ";
+  for (auto i = 0; i < n_channels; ++i) {
+    double mse = mse_sum.at(i) / n_views;
+    sum_of_mses += mse;
+    double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+
+    channel_estimates_table[0][i + 1] = i;
+    channel_estimates_table[1][i + 1] = mse;
+    channel_estimates_table[2][i + 1] = psnr;
+  }
+
+  std::cout << channel_estimates_table;
+  std::cout << "\n################################################\n\n";
+
+  auto average_mse = sum_of_mses / static_cast<double>(n_channels);
+  std::cout << "Average MSE: " << average_mse << '\n';
+  std::cout << "Average PSNR (dB): "
+            << ImageChannelUtils::get_peak_signal_to_noise_ratio(
+                   bpp, average_mse)
+            << '\n';
 }
 
 

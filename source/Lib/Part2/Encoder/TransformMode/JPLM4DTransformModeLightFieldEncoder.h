@@ -179,6 +179,7 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 };
 
+
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto number_of_channels = ref_to_lightfield.get_number_of_channels_in_view();
