@@ -231,6 +231,8 @@ void compute_metric(
   auto n_views =
       static_cast<double>(baseline_lightfield->get_number_of_views());
   std::vector<double> mse_sum(n_channels, 0.0);
+  std::vector<double> sse_sum(n_channels, 0.0);
+  std::vector<std::size_t> max_error(n_channels, 0);
   double psnr_sum = 0.0;
 
 
@@ -239,14 +241,22 @@ void compute_metric(
 
   std::vector<samilton::ConsoleTable> channel_mse_table;
   std::vector<samilton::ConsoleTable> channel_psnr_table;
+  std::vector<samilton::ConsoleTable> channel_max_abs_error_table;
+  std::vector<samilton::ConsoleTable> channel_sse_table;
 
   for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
     channel_mse_table.push_back(configuration.get_console_table());
     channel_psnr_table.push_back(configuration.get_console_table());
+    channel_max_abs_error_table.push_back(configuration.get_console_table());
+    channel_sse_table.push_back(configuration.get_console_table());
   }
 
   auto average_psnr_table = configuration.get_console_table();
   auto average_mse_table = configuration.get_console_table();
+  auto max_max_abs_error_table = configuration.get_console_table();
+  auto average_sse_table = configuration.get_console_table();
+
+  auto precision = 2;
 
   // auto printer = ImageMetrics::visitors::PSNRPrinter();
   for (auto t = decltype(t_max){0}; t < t_max; ++t) {
@@ -254,30 +264,103 @@ void compute_metric(
       auto mses =
           ImageMetrics::get_mse(baseline_lightfield->get_image_at({t, s}),
               test_lightfield->get_image_at({t, s}));
+      auto sum_of_squared_errors = ImageMetrics::get_sum_of_squared_errors(
+          baseline_lightfield->get_image_at({t, s}),
+          test_lightfield->get_image_at({t, s}));
+      auto max_abs_errors = ImageMetrics::get_maximum_absolute_error(
+          baseline_lightfield->get_image_at({t, s}),
+          test_lightfield->get_image_at({t, s}));
+
+      double view_average_mse = 0.0;
+      double view_average_sse = 0.0;
+      std::size_t view_max_abs_error = 0;
       for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
         auto mse = mses.at(i);
+        auto max_abs_error = max_abs_errors.at(i);
+        auto sse = sum_of_squared_errors.at(i);
         mse_sum.at(i) += mse;
+        sse_sum.at(i) += sse;
+        view_average_mse += mse;
+        view_average_sse += sse;
+        if (max_abs_error > view_max_abs_error) {
+          view_max_abs_error = max_abs_error;
+          if (max_abs_error > max_error.at(i)) {
+            max_error.at(i) = max_abs_error;
+          }
+        }
         auto psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
         psnr_sum += psnr;
         {
           std::ostringstream str;
-          str << std::fixed << std::setprecision(2) << mse;
+          str << std::fixed << std::setprecision(precision) << mse;
           channel_mse_table.at(i)[t][s] = str.str();
         }
         {
+          //this is set scientific as the number are too large
           std::ostringstream str;
-          str << std::fixed << std::setprecision(2) << psnr;
+          str << std::scientific << std::setprecision(precision) << sse;
+          channel_sse_table.at(i)[t][s] = str.str();
+        }
+
+        {
+          std::ostringstream str;
+          str << std::fixed << std::setprecision(precision) << psnr;
           channel_psnr_table.at(i)[t][s] = str.str();
         }
+        channel_max_abs_error_table.at(i)[t][s] = max_abs_error;
       }
+      view_average_mse /= static_cast<double>(n_channels);
+      view_average_sse /= static_cast<double>(n_channels);
+      auto view_average_psnr =
+          ImageChannelUtils::get_peak_signal_to_noise_ratio(
+              bpp, view_average_mse);
+      {
+        std::ostringstream str;
+        str << std::fixed << std::setprecision(precision) << view_average_mse;
+        average_mse_table[t][s] = str.str();
+      }
+      {
+        std::ostringstream str;
+        str << std::scientific << std::setprecision(precision)
+            << view_average_sse;
+        average_sse_table[t][s] = str.str();
+      }
+      {
+        std::ostringstream str;
+        str << std::fixed << std::setprecision(precision) << view_average_psnr;
+        average_psnr_table[t][s] = str.str();
+      }
+      max_max_abs_error_table[t][s] = view_max_abs_error;
     }
   }
+
+  std::cout << "\n############### Max Absolute Error views ###############\n";
+
+  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+    std::cout << "Channel " << i << ": \n"
+              << channel_max_abs_error_table.at(i) << "\n";
+  }
+  std::cout << "Max all channels: \n" << max_max_abs_error_table;
+
+  std::cout << "\n################################################\n\n";
+
+
+  std::cout << "\n############### SSE views ###############\n";
+
+  for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+    std::cout << "Channel " << i << ": \n" << channel_sse_table.at(i) << "\n";
+  }
+  std::cout << "Average: \n" << average_sse_table;
+
+  std::cout << "\n################################################\n\n";
+
 
   std::cout << "\n############### MSE views ###############\n";
 
   for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
     std::cout << "Channel " << i << ": \n" << channel_mse_table.at(i) << "\n";
   }
+  std::cout << "Average: \n" << average_mse_table;
 
   std::cout << "\n################################################\n\n";
 
@@ -289,31 +372,53 @@ void compute_metric(
               << channel_psnr_table.at(i) << "\n";
   }
 
+  std::cout << "Average: \n" << average_psnr_table;
+
   std::cout << "\n################################################\n\n";
 
 
   double sum_of_mses = 0.0;
+  double sum_of_sses = 0.0;
+  std::size_t max_error_all = 0;
 
   std::cout << "\n############### Channel averages ###############\n";
 
   auto channel_estimates_table = configuration.get_console_table();
-  channel_estimates_table[0][0](samilton::Alignment::right) = "Channel: ";
-  channel_estimates_table[1][0](samilton::Alignment::right) = "MSE: ";
-  channel_estimates_table[2][0](samilton::Alignment::right) = "PSNR (dB): ";
+  auto line = 0;
+  channel_estimates_table[line++][0](samilton::Alignment::right) = "Channel: ";
+  channel_estimates_table[line++][0](samilton::Alignment::right) =
+      "Max Abs Error: ";
+  channel_estimates_table[line++][0](samilton::Alignment::right) = "SSE: ";
+  channel_estimates_table[line++][0](samilton::Alignment::right) = "MSE: ";
+  channel_estimates_table[line++][0](samilton::Alignment::right) =
+      "PSNR (dB): ";
   for (auto i = 0; i < n_channels; ++i) {
     double mse = mse_sum.at(i) / n_views;
+    double sse = sse_sum.at(i) / n_views;
+    auto max_error_channel = max_error.at(i);
+    if (max_error_channel > max_error_all) {
+      max_error_all = max_error_channel;
+    }
+
     sum_of_mses += mse;
+    sum_of_sses += sse;
     double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
 
-    channel_estimates_table[0][i + 1] = i;
-    channel_estimates_table[1][i + 1] = mse;
-    channel_estimates_table[2][i + 1] = psnr;
+    line = 0;
+    channel_estimates_table[line++][i + 1] = i;
+    channel_estimates_table[line++][i + 1] = max_error_channel;
+    channel_estimates_table[line++][i + 1] = sse;
+    channel_estimates_table[line++][i + 1] = mse;
+    channel_estimates_table[line++][i + 1] = psnr;
   }
 
   std::cout << channel_estimates_table;
   std::cout << "\n################################################\n\n";
 
   auto average_mse = sum_of_mses / static_cast<double>(n_channels);
+  auto average_sse = sum_of_sses / static_cast<double>(n_channels);
+  std::cout << "Max abs error: " << max_error_all << '\n';
+  std::cout << "Average SSE: " << average_sse << '\n';
   std::cout << "Average MSE: " << average_mse << '\n';
   std::cout << "Average PSNR (dB): "
             << ImageChannelUtils::get_peak_signal_to_noise_ratio(
