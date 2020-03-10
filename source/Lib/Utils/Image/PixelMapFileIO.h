@@ -55,6 +55,7 @@ std::unique_ptr<PixelMapFile> open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value);
 
+std::uint16_t count_line_breaks(std::string filename, std::streamoff end);
 
 struct VariantImageExtractorToUint16T {
   template<template<typename> class ImageT0, typename T0>

@@ -38,7 +38,8 @@
  *  \date     2019-12-05
  */
 
-#include "PGXFileIO.h"
+#include "Lib/Utils/Image/PGXFileIO.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 
 inline std::string get_header_id_string() noexcept {
@@ -133,16 +134,22 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
   const auto depth = get_value(file);
   const auto width = get_value(file);
   const auto height = get_value(file);
+
   advance_to_raster_begin(file);
 
+  std::streamoff end_of_header = file.tellg();
+  std::uint16_t line_breaks =
+      PixelMapFileIO::count_line_breaks(filename, end_of_header);
+  std::streamoff raster_begin = end_of_header - line_breaks;
+
   return std::make_unique<PGXFile>(
-      filename, file.tellg(), width, height, depth, is_signed, endianess);
+      filename, raster_begin, width, height, depth, is_signed, endianess);
 }
 
 
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     std::size_t width, std::size_t height, std::size_t depth, bool is_signed) {
-  std::ofstream file(filename, std::ios::out);
+  std::fstream file(filename, std::ios::out);
 
   file << get_header_id_string() << " ";
 
@@ -159,8 +166,17 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
   file << std::to_string(width) << " ";
   file << std::to_string(height) << " ";
 
-  file << std::endl;
+  // The same as "file << std::endl", but in Windows
+  file.close();
+  file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+  file << static_cast<std::uint8_t>(10) << std::flush;
+  file.close();
 
-  return std::make_unique<PGXFile>(filename, file.tellp(), width, height, depth,
+  // The same as "file << std::endl", but in Windows
+  file.open(filename, std::ios::in | std::ios::out);
+  file.seekg(0, std::ios::end);
+  auto raster_begin = file.tellg();
+
+  return std::make_unique<PGXFile>(filename, raster_begin, width, height, depth,
       is_signed, PGXEndianess::PGX_ML_BIG_ENDIAN);
 }

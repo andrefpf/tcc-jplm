@@ -179,7 +179,8 @@ size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
  * \param[in]  filename  The filename
   * \return    Number of line breaks.
  */
-std::uint16_t count_line_breaks(std::string filename, std::streamoff end) {
+std::uint16_t PixelMapFileIO::count_line_breaks(
+    std::string filename, std::streamoff end) {
   std::uint16_t counter = 0;
   std::ifstream file(filename, std::ios::in | std::ios::binary);
   std::vector<std::uint8_t> buffer(64, 0);
