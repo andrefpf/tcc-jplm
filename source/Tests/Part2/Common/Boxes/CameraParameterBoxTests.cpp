@@ -41,7 +41,7 @@
 
 #include "CameraParameterBoxTests.h"
 
-std::string resources_path = "../../resources";
+std::string resources_path = "../resources";
 
 // TEST(BasicTests, HasCorrectId) {
 // 	EXPECT_EQ(CameraParameterBox::id, 0x6c666370);

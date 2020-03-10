@@ -39,7 +39,7 @@
  */
 
 
-#include "PixelMapFileIO.h"
+#include "Lib/Utils/Image/PixelMapFileIO.h"
 
 /**
  * \brief      Determines if a char is comment delimiter.
@@ -156,6 +156,44 @@ std::size_t get_next_size(std::ifstream& istream) {
 
 // namespace PixelMapFileIO {
 
+#ifdef _WIN32
+/**
+ * \brief      Counts  the number of line breaks in a buffer.
+ * \param[in]  buffer  buffer
+  * \return    Number of line breaks.
+ */
+size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
+  return std::count_if(buffer.begin(), buffer.end(), [](std::uint8_t e) {
+    return isspace(e) &&
+           (e != static_cast<std::uint8_t>(9)) &&  // horizontal tab (TAB)
+           (e != static_cast<std::uint8_t>(11)) &&  // vertical tab (VT)
+           (e != static_cast<std::uint8_t>(32));  // space (SPC)
+  });
+}
+#endif
+
+#ifdef _WIN32
+/**
+ * \brief      Counts the number of line breaks in the file.
+ * \details    Counts the number of whitespace characters that
+ *             occurs in the header of file. It counts the
+ *             line breaks and is used to enable MSVC portability.
+ * \param[in]  filename  The filename
+  * \return    Number of line breaks.
+ */
+std::uint16_t PixelMapFileIO::count_line_breaks(
+    std::string filename, std::streamoff end) {
+  std::uint16_t counter = 0;
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
+  std::vector<std::uint8_t> buffer(64, 0);
+  while (file.tellg() <= end &&
+         file.read(reinterpret_cast<char*>(buffer.data()), buffer.size())) {
+    counter += count_line_breaks_in_block(buffer);
+  }
+  return counter;
+}
+#endif
+
 /**
  * \brief      opens a pixel map file from a filename.
  *
@@ -175,12 +213,17 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
   }
 
   auto type = get_file_type(file);
+
   auto width = get_next_size(file);
+
+
   if (width == 0) {
     throw PixelMapFileIOExceptions::WidthMustBeLargerThanZeroException();
   }
 
   auto height = get_next_size(file);
+
+
   if (height == 0) {
     throw PixelMapFileIOExceptions::HeightMustBeLargerThanZeroException();
   }
@@ -192,10 +235,15 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     throw PixelMapFileIOExceptions::BppMustBeSmallerOrEqualToSixteenException();
   }
 
-
   read_pixel_map_stream_until_next_field(file);  //next field is the 'raster'
 
+#ifdef _WIN32
+  std::streamoff end_of_header = file.tellg();
+  std::uint16_t line_breaks = count_line_breaks(filename, end_of_header);
+  std::streamoff raster_begin = end_of_header - line_breaks;
+#else 
   auto raster_begin = file.tellg();
+#endif
 
   file.close();
 
@@ -230,12 +278,43 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value) {
   if (!std::filesystem::exists(filename)) {
-    std::fstream file(filename, std::ios::out);
+    std::fstream file;
+    file.open(filename, std::ios::out);
     if (file.is_open()) {
+#ifdef _WIN32
+      file << 'P' << type << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::out | std::ios::app);
+      file << width << " " << height << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::out | std::ios::app);
+      file << max_value << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      file << static_cast<std::uint8_t>(10) << std::flush;
+      file.close();
+
+      file.open(filename, std::ios::in | std::ios::out);
+      file.seekg(0, std::ios::end);
+#else
       file << 'P' << type << std::endl;
       file << width << " " << height << std::endl;
       file << max_value << std::endl;
+#endif      
+
       auto raster_begin = file.tellg();
+      std::cerr << "PixMapFileIO -> raster_begin=" << raster_begin << std::endl;
       file.flush();
       file.close();
       switch (type) {
@@ -257,7 +336,9 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
         case PixelMapType::P6:
           return std::make_unique<PPMBinaryFile>(
               filename, raster_begin, width, height, max_value);
-        default: { std::cerr << "Not supported yet..." << std::endl; }
+        default: {
+          std::cerr << "Not supported yet..." << std::endl;
+        }
       }
     } else {
       std::cerr << "Unable to open file " << filename << "." << std::endl;

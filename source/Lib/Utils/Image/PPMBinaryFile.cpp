@@ -38,7 +38,7 @@
  *  \date     2019-05-07
  */
 
-#include "PPMBinaryFile.h"
+#include "Lib/Utils/Image/PPMBinaryFile.h"
 
 
 void correct_endianess(
@@ -125,12 +125,17 @@ std::unique_ptr<RGBImage<T>> PPMBinaryFile::read_full_rgb_image() {
     std::vector<std::tuple<T, T, T>> rgb_vector(
         image->get_number_of_pixels_per_channel());
     file.seekg(raster_begin);
+
+    /* Equivalent to */
     file.read(reinterpret_cast<char*>(rgb_vector.data()),
-        rgb_vector.capacity() * sizeof(std::tuple<T, T, T>));
+        rgb_vector.size() * sizeof(std::tuple<T, T, T>));
+
     if (!file) {
-      std::cerr << "Expecting " << image->get_number_of_pixels() << " pixels."
-                << std::endl;
-      std::cerr << "Readed only " << file.gcount() << std::endl;
+      std::cerr << "Expecting "
+                << image->get_number_of_pixels_per_channel() *
+                       sizeof(std::tuple<T, T, T>)
+                << " bytes." << std::endl;
+      std::cerr << "Read only " << file.gcount() << std::endl;
     }
 
     if constexpr (std::is_same<T, uint16_t>()) {

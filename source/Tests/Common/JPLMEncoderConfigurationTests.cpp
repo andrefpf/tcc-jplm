@@ -50,7 +50,7 @@ using namespace std;
 
 std::string resources_path = "../resources/";
 
-std::string root_path = ".";
+std::string root_path = "..";
 
 
 TEST(JPLMEncoderConfiguration, SimpleTestWithInput) {
@@ -120,7 +120,7 @@ TEST(JPLMEncoderConfiguration, TestRepeatedOptionWithSameParam) {
 }
 
 
-TEST(JPLMEncoderConfiguration, SimpleCLITest) {
+TEST(JPLMEncoderConfiguration, SimpleCLITest1) {
   string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};
@@ -132,7 +132,7 @@ TEST(JPLMEncoderConfiguration, SimpleCLITest) {
 }
 
 
-TEST(JPLMEncoderConfigurationLightField, SimpleCLITest) {
+TEST(JPLMEncoderConfigurationLightField, SimpleCLITest2) {
   string a(root_path + "/cfg/part2/4DTransformMode/Bikes/I01_Bikes_22016.json");
   const char* argv[] = {"", "-i", "../resources/small_greek/", "-c", a.c_str(),
       "-p", "2", "-t", "13", "-s", "13", "-v", "434", "-u", "626"};

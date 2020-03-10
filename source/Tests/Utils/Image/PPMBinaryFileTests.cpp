@@ -38,7 +38,9 @@
  *  \date     2019-05-29
  */
 
+#include <exception>
 #include <iostream>
+#include <string>
 #include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/PPMBinaryFile.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
@@ -46,6 +48,18 @@
 
 
 std::string resources_path = "../resources";
+
+
+void remove_if_exists(std::string filename) {
+  namespace fs = std::filesystem;
+  if (fs::exists(filename)) {
+    try {
+      fs::remove(filename);
+    } catch (std::exception& e) {
+      // do nothing
+    }
+  }
+}
 
 
 TEST(InitialTest, IsTypeP6) {
@@ -135,19 +149,14 @@ struct PPMBinaryWriteTests : public testing::Test {
   }
 
   ~PPMBinaryWriteTests() {
-    namespace fs = std::filesystem;
-    if (fs::exists(output_filename)) {
-      fs::remove(output_filename);
-    }
+    remove_if_exists(output_filename);
   }
 };
 
 
 TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFile) {
   namespace fs = std::filesystem;
-  if (fs::exists(output_filename)) {
-    fs::remove(output_filename);
-  }
+  remove_if_exists(output_filename);
   EXPECT_FALSE(fs::exists(output_filename));
   ImageIO::imwrite(*(image.get()), output_filename);
   EXPECT_TRUE(fs::exists(output_filename));
@@ -168,23 +177,19 @@ TEST_F(PPMBinaryWriteTests, ImageWriteOverExistingFileThrows) {
 
 TEST_F(PPMBinaryWriteTests, ImageWriteCreatesAFileThatCanBeOppened) {
   namespace fs = std::filesystem;
-  if (fs::exists(output_filename)) {
-    fs::remove(output_filename);
-  }
+  remove_if_exists(output_filename);
   EXPECT_FALSE(fs::exists(output_filename));
   ImageIO::imwrite(*(image.get()), output_filename);
   auto ppm_file = PixelMapFileIO::open(output_filename);
   EXPECT_EQ(ppm_file->get_type(), PixelMapType::P6);
-  fs::remove(output_filename);
+  remove_if_exists(output_filename);
 }
 
 
 TEST_F(PPMBinaryWriteTests,
     ImageWriteCreatesAFileThatContatinsSameDataAsTheWrittenImage) {
   namespace fs = std::filesystem;
-  if (fs::exists(output_filename)) {
-    fs::remove(output_filename);
-  }
+  remove_if_exists(output_filename);
   EXPECT_FALSE(fs::exists(output_filename));
   ImageIO::imwrite(*(image.get()), output_filename);
   auto ppm_file = PixelMapFileIO::open(output_filename);
@@ -193,10 +198,10 @@ TEST_F(PPMBinaryWriteTests,
   ASSERT_EQ(readed_image.index(), 1);
   auto readed_16bpp_image = std::move(std::get<1>(readed_image));
   EXPECT_EQ(*(readed_16bpp_image.get()), *(image.get()));
-  fs::remove(output_filename);
+  remove_if_exists(output_filename);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   testing::InitGoogleTest(&argc, argv);
   //this is to enable ctest to run the test passing the path to the resources
   if (argc > 1) {
