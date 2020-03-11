@@ -398,6 +398,11 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   }
 
 
+  const auto &get_reports_map() const {
+    return reports;
+  }
+
+
   auto get_t() const {
     return this->number_of_rows_t;
   }
@@ -613,6 +618,8 @@ void compute_metric(
   double sum_of_sses = 0.0;
   std::size_t max_error_all = 0;
 
+  const auto &reports = configuration.get_reports_map();
+
   if ((report_max.should_report<ReportType::CHANNEL_AVERAGE>()) ||
       (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
       (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
@@ -621,51 +628,49 @@ void compute_metric(
 
     auto channel_estimates_table = configuration.get_console_table();
     auto line = 0;
+
+
     channel_estimates_table[line++][0](samilton::Alignment::right) =
         "Channel: ";
 
-    if (report_max.should_report<ReportType::CHANNEL_AVERAGE>()) {
-      channel_estimates_table[line++][0](samilton::Alignment::right) =
-          "Max Abs Error: ";
-    }
-    if (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) {
-      channel_estimates_table[line++][0](samilton::Alignment::right) = "SSE: ";
-    }
-    if (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) {
-      channel_estimates_table[line++][0](samilton::Alignment::right) = "MSE: ";
-    }
-    if (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>()) {
-      channel_estimates_table[line++][0](samilton::Alignment::right) =
-          "PSNR (dB): ";
-    }
 
-    for (auto i = 0; i < n_channels; ++i) {
-      double mse = mse_sum.at(i) / n_views;
-      double sse = sse_sum.at(i) / n_views;
-      auto max_error_channel = max_error.at(i);
-      if (max_error_channel > max_error_all) {
-        max_error_all = max_error_channel;
+    for (auto &it : reports) {
+      if (it.second.should_report<ReportType::CHANNEL_AVERAGE>()) {
+        channel_estimates_table[line++][0] =
+            std::string(magic_enum::enum_name(it.first)) + std::string(": ");
       }
+    }
 
-      sum_of_mses += mse;
-      sum_of_sses += sse;
+    for (decltype(n_channels) i = 0; i < n_channels; ++i) {
+      std::map<Metric, double> channel_avgs;
+
+      auto max_error_channel = max_error.at(i);
+      channel_avgs.emplace(Metric::MAX_ABS_ERROR, max_error_channel);
+
+      double sse = sse_sum.at(i) / n_views;
+      channel_avgs.emplace(Metric::SSE, sse);
+
+      double mse = mse_sum.at(i) / static_cast<double>(n_views);
+      channel_avgs.emplace(Metric::MSE, mse);
+
+
       double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+      channel_avgs.emplace(Metric::PSNR, psnr);
 
       line = 0;
       channel_estimates_table[line++][i + 1] = i;
 
+      for (auto &it : reports) {
+        if (it.second.should_report<ReportType::CHANNEL_AVERAGE>()) {
+          channel_estimates_table[line++][i + 1] =
+              channel_avgs.find(it.first)->second;
+        }
+      }
 
-      if (report_max.should_report<ReportType::CHANNEL_AVERAGE>()) {
-        channel_estimates_table[line++][i + 1] = max_error_channel;
-      }
-      if (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) {
-        channel_estimates_table[line++][i + 1] = sse;
-      }
-      if (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) {
-        channel_estimates_table[line++][i + 1] = mse;
-      }
-      if (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>()) {
-        channel_estimates_table[line++][i + 1] = psnr;
+      sum_of_mses += mse;
+      sum_of_sses += sse;
+      if (max_error_channel > max_error_all) {
+        max_error_all = max_error_channel;
       }
     }
 
@@ -676,7 +681,7 @@ void compute_metric(
 
 
   if (sum_of_mses == 0.0) {
-    for (auto i = 0; i < n_channels; ++i) {
+    for (decltype(n_channels) i = 0; i < n_channels; ++i) {
       double mse = mse_sum.at(i) / n_views;
       double sse = sse_sum.at(i) / n_views;
       auto max_error_channel = max_error.at(i);
