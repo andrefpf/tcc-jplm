@@ -115,7 +115,8 @@ class JPLM4DTransformModeLightFieldEncoder
     auto number_of_channels =
         ref_to_lightfield.get_number_of_channels_in_view();
 
-    for (auto i = 0; i < number_of_channels; ++i) {
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
       sse_per_channel.push_back(0.0);
     }
   }
@@ -194,8 +195,9 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
     table[0][0](samilton::Alignment::right) = "Channel: ";
     table[1][0](samilton::Alignment::right) = "Est. MSE: ";
     table[2][0](samilton::Alignment::right) = "Est. PSNR (dB): ";
-    for (auto i = 0; i < number_of_channels; ++i) {
-      double mse = sse_per_channel.at(i) / number_of_pels;
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      double mse = sse_per_channel.at(i) / static_cast<double>(number_of_pels);
       double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
 
       table[0][i + 1] = i;
