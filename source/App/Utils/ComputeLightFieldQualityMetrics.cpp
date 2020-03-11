@@ -602,36 +602,11 @@ void compute_metric(
   show_view_channels_and_view_average_reports<Metric::SSE>(
       configuration, n_channels, channel_sse_table, average_sse_table);
 
+  show_view_channels_and_view_average_reports<Metric::MSE>(
+      configuration, n_channels, channel_mse_table, average_mse_table);
 
-  if (report_mse.should_report<ReportType::VIEW_CHANNELS>()) {
-    std::cout << "\n############### MSE views ###############\n";
-
-    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-      std::cout << "Channel " << i << ": \n" << channel_mse_table.at(i) << "\n";
-    }
-  }
-  if (report_mse.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "Average: \n" << average_mse_table;
-  }
-  if (report_mse.should_report<ReportType::VIEW_CHANNELS>() ||
-      report_mse.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "\n################################################\n\n";
-  }
-  if (report_psnr.should_report<ReportType::VIEW_CHANNELS>()) {
-    std::cout << "\n############### PSNR views ###############\n";
-
-    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-      std::cout << "Channel " << i << " (dB): \n"
-                << channel_psnr_table.at(i) << "\n";
-    }
-  }
-  if (report_psnr.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "Average: \n" << average_psnr_table;
-  }
-  if (report_psnr.should_report<ReportType::VIEW_CHANNELS>() ||
-      report_psnr.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "\n################################################\n\n";
-  }
+  show_view_channels_and_view_average_reports<Metric::PSNR>(
+      configuration, n_channels, channel_psnr_table, average_psnr_table);
 
 
   double sum_of_mses = 0.0;
