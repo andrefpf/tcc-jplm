@@ -428,6 +428,35 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
 };
 
 
+template<Metric metric>
+void show_view_channels_and_view_average_reports(
+    const ComputeLightfieldQualityMetricsConfiguration &configuration,
+    const std::size_t n_channels,
+    std::vector<samilton::ConsoleTable> &channels_table,
+    samilton::ConsoleTable &average_table, const std::string &detail_all = "") {
+  auto report = configuration.get_report(metric);
+
+  if (report.should_report<ReportType::VIEW_CHANNELS>()) {
+    constexpr auto metric_name = magic_enum::enum_name<metric>();
+    std::cout << "\n############### " << metric_name
+              << " views ###############\n";
+
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
+      std::cout << "Channel " << i << ": \n" << channels_table.at(i) << "\n";
+    }
+  }
+
+  if (report.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "All channels" << detail_all << ": \n" << average_table;
+  }
+
+  if (report.should_report<ReportType::VIEW_CHANNELS>() ||
+      report.should_report<ReportType::VIEW_AVERAGE>()) {
+    std::cout << "\n################################################\n\n";
+  }
+}
+
+
 void compute_metric(
     const ComputeLightfieldQualityMetricsConfiguration &configuration) {
   auto t_max = configuration.get_t();
@@ -454,11 +483,7 @@ void compute_metric(
   std::vector<double> mse_sum(n_channels, 0.0);
   std::vector<double> sse_sum(n_channels, 0.0);
   std::vector<std::size_t> max_error(n_channels, 0);
-  double psnr_sum = 0.0;
 
-
-  // auto channel_mse_table = configuration.get_console_table();
-  // auto channel_psnr_table = configuration.get_console_table();
 
   std::vector<samilton::ConsoleTable> channel_mse_table;
   std::vector<samilton::ConsoleTable> channel_psnr_table;
@@ -570,23 +595,10 @@ void compute_metric(
     }
   }
 
-  if (report_max.should_report<ReportType::VIEW_CHANNELS>()) {
-    std::cout << "\n############### Max Absolute Error views ###############\n";
+  show_view_channels_and_view_average_reports<Metric::MAX_ABS_ERROR>(
+      configuration, n_channels, channel_max_abs_error_table,
+      max_max_abs_error_table, " (Max)");
 
-    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-      std::cout << "Channel " << i << ": \n"
-                << channel_max_abs_error_table.at(i) << "\n";
-    }
-  }
-
-  if (report_max.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "Max all channels: \n" << max_max_abs_error_table;
-  }
-
-  if (report_max.should_report<ReportType::VIEW_CHANNELS>() ||
-      report_max.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "\n################################################\n\n";
-  }
 
   if (report_sse.should_report<ReportType::VIEW_CHANNELS>()) {
     std::cout << "\n############### SSE views ###############\n";
