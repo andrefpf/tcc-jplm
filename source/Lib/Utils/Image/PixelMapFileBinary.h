@@ -42,18 +42,9 @@
 #define JPLM_LIB_UTILS_IMAGE_PIXELMAPFILEBINARY_H__
 
 #include "Lib/Utils/Image/PixelMapFile.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 //TODO
-// \todo: It is the same function defined at BinaryTools.h
-constexpr bool using_little_endian() {
-#ifdef _WIN32
-  return true;
-#else
-  if (__BYTE_ORDER__ != __ORDER_BIG_ENDIAN__)
-    return true;
-  return false;
-#endif
-}
 
 //P4 to P6 stores images in binary
 class PixelMapFileBinary : public PixelMapFile {

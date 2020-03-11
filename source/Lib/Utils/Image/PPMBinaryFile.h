@@ -135,7 +135,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
           b_ptr++;
         }
 
-        if constexpr (sizeof(T) == 2 && using_little_endian()) {
+        if constexpr (sizeof(T) == 2 && BinaryTools::using_little_endian()) {
           for (auto& pixel : rgb_vector) {
             pixel = std::apply(
                 [](auto... x) {

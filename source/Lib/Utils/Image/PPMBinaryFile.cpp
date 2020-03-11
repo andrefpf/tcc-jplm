@@ -39,11 +39,12 @@
  */
 
 #include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
 void correct_endianess(
     std::vector<std::tuple<uint16_t, uint16_t, uint16_t>>& pixel_vector) {
-  if constexpr (using_little_endian()) {
+  if constexpr (BinaryTools::using_little_endian()) {
     for (auto& pixel : pixel_vector) {
       pixel = std::apply(
           [](auto... x) { return std::make_tuple((x << 8) | (x >> 8)...); },
