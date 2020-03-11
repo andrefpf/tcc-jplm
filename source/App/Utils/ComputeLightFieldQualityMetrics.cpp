@@ -375,6 +375,17 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   }
 
 
+  template<ReportType type>
+  bool has_report_of_type() const {
+    for (auto &it : reports) {
+      if (it.second.should_report<type>()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
   void set_all_reports(Metric metric) {
     auto iter = reports.find(metric);
     if (iter != reports.end()) {
@@ -620,10 +631,7 @@ void compute_metric(
 
   const auto &reports = configuration.get_reports_map();
 
-  if ((report_max.should_report<ReportType::CHANNEL_AVERAGE>()) ||
-      (report_sse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
-      (report_mse.should_report<ReportType::CHANNEL_AVERAGE>()) ||
-      (report_psnr.should_report<ReportType::CHANNEL_AVERAGE>())) {
+  if (configuration.has_report_of_type<ReportType::CHANNEL_AVERAGE>()) {
     std::cout << "\n############### Channel averages ###############\n";
 
     auto channel_estimates_table = configuration.get_console_table();
@@ -636,7 +644,7 @@ void compute_metric(
 
     for (auto &it : reports) {
       if (it.second.should_report<ReportType::CHANNEL_AVERAGE>()) {
-        channel_estimates_table[line++][0] =
+        channel_estimates_table[line++][0](samilton::Alignment::right) =
             std::string(magic_enum::enum_name(it.first)) + std::string(": ");
       }
     }
@@ -694,45 +702,42 @@ void compute_metric(
     }
   }
 
+  std::map<Metric, double> all_avgs;
+
+  all_avgs.emplace(Metric::MAX_ABS_ERROR, max_error_all);
+
   auto average_mse = sum_of_mses / static_cast<double>(n_channels);
+  all_avgs.emplace(Metric::MSE, average_mse);
+
   auto average_sse = sum_of_sses / static_cast<double>(n_channels);
+  all_avgs.emplace(Metric::SSE, average_sse);
+
+  auto psnr_of_average_mse =
+      ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, average_mse);
+  all_avgs.emplace(Metric::PSNR, psnr_of_average_mse);
 
 
-  auto final_report_table = configuration.get_console_table();
-  auto line = 0;
+  if (configuration.has_report_of_type<ReportType::AVERAGE>()) {
+    auto final_report_table = configuration.get_console_table();
+    auto line = 0;
 
-  if (report_max.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][0](samilton::Alignment::right) =
-        "Max Abs Error: ";
-  }
-  if (report_sse.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][0](samilton::Alignment::right) = "SSE: ";
-  }
-  if (report_mse.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][0](samilton::Alignment::right) = "MSE: ";
-  }
-  if (report_psnr.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][0](samilton::Alignment::right) =
-        "Average PSNR (dB): ";
-  }
+    for (auto &it : reports) {
+      if (it.second.should_report<ReportType::AVERAGE>()) {
+        final_report_table[line++][0](samilton::Alignment::right) =
+            std::string(magic_enum::enum_name(it.first)) + std::string(": ");
+      }
+    }
 
+    line = 0;
 
-  line = 0;
-  if (report_max.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][1](samilton::Alignment::right) = max_error_all;
-  }
-  if (report_sse.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][1](samilton::Alignment::right) = average_sse;
-  }
-  if (report_mse.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][1](samilton::Alignment::right) = average_mse;
-  }
-  if (report_psnr.should_report<ReportType::AVERAGE>()) {
-    final_report_table[line++][1](samilton::Alignment::right) =
-        ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, average_mse);
-  }
+    for (auto &it : reports) {
+      if (it.second.should_report<ReportType::AVERAGE>()) {
+        final_report_table[line++][1] = all_avgs.find(it.first)->second;
+      }
+    }
 
-  std::cout << final_report_table << std::endl;
+    std::cout << final_report_table << std::endl;
+  }
 }
 
 
