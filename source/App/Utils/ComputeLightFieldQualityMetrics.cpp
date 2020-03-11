@@ -599,22 +599,9 @@ void compute_metric(
       configuration, n_channels, channel_max_abs_error_table,
       max_max_abs_error_table, " (Max)");
 
+  show_view_channels_and_view_average_reports<Metric::SSE>(
+      configuration, n_channels, channel_sse_table, average_sse_table);
 
-  if (report_sse.should_report<ReportType::VIEW_CHANNELS>()) {
-    std::cout << "\n############### SSE views ###############\n";
-
-    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
-      std::cout << "Channel " << i << ": \n" << channel_sse_table.at(i) << "\n";
-    }
-  }
-  if (report_sse.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "Average: \n" << average_sse_table;
-  }
-
-  if (report_sse.should_report<ReportType::VIEW_CHANNELS>() ||
-      report_sse.should_report<ReportType::VIEW_AVERAGE>()) {
-    std::cout << "\n################################################\n\n";
-  }
 
   if (report_mse.should_report<ReportType::VIEW_CHANNELS>()) {
     std::cout << "\n############### MSE views ###############\n";
