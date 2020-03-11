@@ -1,4 +1,5 @@
 set(PART2_ENCODER_TRANSFORM_MODE_SOURCES
+	CommonExceptions.cpp
     ABACEncoder.cpp
     Hierarchical4DEncoder.cpp
     TransformPartition.cpp

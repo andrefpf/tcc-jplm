@@ -510,4 +510,5 @@ RDCostResult TransformPartition::encode_partition(
       return rd_cost;
     }
   }
+  throw JPLM4DTransformModeLightFieldEncoderExceptions::InvalidPartitionCode();
 }

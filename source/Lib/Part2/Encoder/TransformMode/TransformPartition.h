@@ -41,8 +41,11 @@
 #ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__
 #define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__
 
+
 #include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
+#include "Lib/Part2/Encoder/TransformMode/CommonExceptions.h"
 #include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
+
 
 class TransformPartition {
  private:
