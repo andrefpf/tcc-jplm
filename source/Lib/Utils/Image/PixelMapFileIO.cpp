@@ -168,11 +168,8 @@ std::size_t get_next_size(std::ifstream& istream) {
   * \return    Number of line breaks.
  */
 size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
-  return std::count_if(buffer.begin(), buffer.end(), [](std::uint8_t e) {
-    return isspace(e) &&
-           (e != static_cast<std::uint8_t>(9)) &&  // horizontal tab (TAB)
-           (e != static_cast<std::uint8_t>(11)) &&  // vertical tab (VT)
-           (e != static_cast<std::uint8_t>(32));  // space (SPC)
+  return std::count_if(buffer.begin(), buffer.end(), [](std::uint8_t e) { 
+      return e == static_cast<std::uint8_t>(10);
   });
 }
 #endif
