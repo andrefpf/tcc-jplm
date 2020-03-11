@@ -58,10 +58,11 @@ class JPLMLightFieldCodec : public JPLMCodec {
 
  public:
   /**
-   * @brief      Constructs a new instance, used in the decoder.
+   * @brief      Constructs a new instance.
    *
-   * @param[in]  jpl_file     The readed jpl file
-   * @param      light_field  The light field
+   * @param[in]  jpl_file       The jpl file
+   * @param      light_field    The light field
+   * @param[in]  configuration  The configuration
    */
   JPLMLightFieldCodec(std::shared_ptr<JPLFile> jpl_file,
       std::unique_ptr<Lightfield<PelType>>&& light_field,
@@ -75,6 +76,7 @@ class JPLMLightFieldCodec : public JPLMCodec {
    * @brief      Constructs a new instance, used in the encoder.
    *
    * @param      light_field  The light field
+   * @param[in]  configuration  The configuration
    * 
    * The jpl_file is created in the JPLCodec default constructor
    */
