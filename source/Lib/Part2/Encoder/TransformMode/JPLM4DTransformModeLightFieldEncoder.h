@@ -65,6 +65,8 @@ class JPLM4DTransformModeLightFieldEncoder
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
   std::vector<double> sse_per_channel;
+  std::vector<std::size_t>
+      bytes_per_channel;  //<! Accumulates the total number of encoded bytes of each channel. Does not include header information.
 
  public:
   JPLM4DTransformModeLightFieldEncoder(
@@ -81,7 +83,6 @@ class JPLM4DTransformModeLightFieldEncoder
         transform_mode_encoder_configuration(std::move(configuration)),
         transform_partition(transform_mode_encoder_configuration
                                 ->get_minimal_transform_dimension()),
-        //        hierarchical_4d_encoder(*transform_mode_encoder_configuration),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))),
         lightfield_configuration_marker_segment(
@@ -118,13 +119,16 @@ class JPLM4DTransformModeLightFieldEncoder
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
       sse_per_channel.push_back(0.0);
+      bytes_per_channel.push_back(0);
     }
   }
+
 
   bool is_truncated() {
     return transform_mode_encoder_configuration->get_border_blocks_policy() ==
            BorderBlocksPolicy::truncate;
   }
+
 
   void setup_hierarchical_4d_encoder() {
     hierarchical_4d_encoder.set_transform_dimension(
@@ -178,38 +182,60 @@ class JPLM4DTransformModeLightFieldEncoder
     table.setTableChars(chars);
     return table;
   }
+
+  void show_error_estimate();
 };
 
-
 template<typename PelType>
-void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
+void JPLM4DTransformModeLightFieldEncoder<PelType>::show_error_estimate() {
   auto number_of_channels = ref_to_lightfield.get_number_of_channels_in_view();
   auto number_of_pels =
       ref_to_lightfield.get_total_number_of_pixels_per_channel();
   auto bpp = ref_to_lightfield.get_views_bpp();
 
+
+  std::cout << (this->jpl_file->size() * 8.0) /
+                   static_cast<double>(number_of_pels)
+            << " bpp" << std::endl;
+
   if (transform_mode_encoder_configuration->show_error_estimate()) {
     std::cout << "\n############### Estimated error ###############\n";
 
     auto table = get_console_table();
-    table[0][0](samilton::Alignment::right) = "Channel: ";
-    table[1][0](samilton::Alignment::right) = "Est. MSE: ";
-    table[2][0](samilton::Alignment::right) = "Est. PSNR (dB): ";
+    auto line = 0;
+    table[line++][0](samilton::Alignment::right) = "Channel: ";
+    table[line++][0](samilton::Alignment::right) = "Est. MSE: ";
+    table[line++][0](samilton::Alignment::right) = "Est. PSNR (dB): ";
+    table[line++][0](samilton::Alignment::right) = "bpp: ";
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
       double mse = sse_per_channel.at(i) / static_cast<double>(number_of_pels);
       double psnr = ImageChannelUtils::get_peak_signal_to_noise_ratio(bpp, mse);
+      double bpp_per_channel_after_encoding =
+          (bytes_per_channel.at(i) * 8.0) / static_cast<double>(number_of_pels);
 
-      table[0][i + 1] = i;
-      table[1][i + 1] = mse;
-      table[2][i + 1] = psnr;
+      line = 0;
+      table[line++][i + 1] = i;
+      table[line++][i + 1] = mse;
+      table[line++][i + 1] = psnr;
+      table[line++][i + 1] = bpp_per_channel_after_encoding;
     }
 
     std::cout << table;
     std::cout << "\n###############################################\n\n";
+    if (!is_truncated()) {
+      std::cerr
+          << "WARNING: the error estimates are considering errors outside the "
+             "lightfield as the block dimensions are not truncated. "
+          << '\n';
+      std::cerr << "\n###############################################\n\n";
+    }
     // std::cout << table[0].size() << std::endl;
   }
+}
 
+template<typename PelType>
+void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
   auto& first_codestream = *(codestreams.at(0));
   auto& first_codestream_as_part2 =
@@ -226,15 +252,16 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   lightfield_box_contents.add_contiguous_codestream_box(
       std::move(codestream_box));
 
-  std::cout << (this->jpl_file->size() * 8.0) /
-                   static_cast<double>(number_of_pels)
-            << " bpp" << std::endl;
+  this->show_error_estimate();
 }
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
     const uint32_t channel, const LightfieldCoordinate<uint32_t>& position,
     const LightfieldDimension<uint32_t>& size) {
+  const auto number_of_bytes_in_codestream_before_encoding_block =
+      hierarchical_4d_encoder.get_ref_to_codestream_code().size();
+
   hierarchical_4d_encoder.write_marker(Marker::SOB);
 
   auto block_4d = ref_to_lightfield.get_block_4D_from(channel, position, size);
@@ -259,6 +286,11 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
   transform_partition.encode_partition(hierarchical_4d_encoder, lambda);
 
+  const auto increase_in_bytes =
+      hierarchical_4d_encoder.get_ref_to_codestream_code().size() -
+      number_of_bytes_in_codestream_before_encoding_block;
+
+  bytes_per_channel.at(channel) += increase_in_bytes;
 
   //reset prob models here at the end to ensure no flush is called.
   //assumes that the prob models are initialized in reset state...

@@ -74,12 +74,7 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
       : optimization_probability_models(probability_models) {
   }
 
-
-  ~Hierarchical4DEncoder() = default;
-
-  double get_total_energy_sum() const {
-    return total_energy_sum;
-  }
+  virtual ~Hierarchical4DEncoder() = default;
 
   bool get_mSubbandLF_significance(uint32_t threshold,
       const LightfieldCoordinate<uint32_t>& position,
