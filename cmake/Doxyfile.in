@@ -793,7 +793,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 #The README.md was included to be used in the main page of the generated html doc
-INPUT                  = @CMAKE_HOME_DIRECTORY@/README.md @CMAKE_HOME_DIRECTORY@/source/ @CMAKE_HOME_DIRECTORY@/doc/software-guidelines/GUIDELINES.md @CMAKE_HOME_DIRECTORY@/CONTRIBUTING.md @CMAKE_HOME_DIRECTORY@/CONTRIBUTORS.md @CMAKE_HOME_DIRECTORY@/NOTICES.md @CMAKE_HOME_DIRECTORY@/LICENSE.md
+INPUT                  = @CMAKE_HOME_DIRECTORY@/README.md @CMAKE_HOME_DIRECTORY@/source/ @CMAKE_HOME_DIRECTORY@/GUIDELINES.md @CMAKE_HOME_DIRECTORY@/CONTRIBUTING.md @CMAKE_HOME_DIRECTORY@/CONTRIBUTORS.md @CMAKE_HOME_DIRECTORY@/NOTICES.md @CMAKE_HOME_DIRECTORY@/LICENSE.md
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
