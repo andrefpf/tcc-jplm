@@ -46,6 +46,7 @@
 #include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/ImageUtils.h"
 #include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFile.h"
 
 
 namespace PixelMapFileIO {
