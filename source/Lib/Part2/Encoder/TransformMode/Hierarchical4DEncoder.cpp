@@ -99,12 +99,14 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint32_t threshold,
   const auto ptr_to_skip_after =
       size_of_remaing_block.hadamard_product(mSubbandLF.get_strides());
 
+  using elements_to_compute_t = decltype(elements_to_compute.get_t());
+
   auto data_ptr = mSubbandLF.mPixelData + ptr_to_skip_before.get_t();
-  for (auto t = 0; t < elements_to_compute.get_t(); ++t) {
+  for (elements_to_compute_t t = 0; t < elements_to_compute.get_t(); ++t) {
     data_ptr += ptr_to_skip_before.get_s();
-    for (auto s = 0; s < elements_to_compute.get_s(); ++s) {
+    for (elements_to_compute_t s = 0; s < elements_to_compute.get_s(); ++s) {
       data_ptr += ptr_to_skip_before.get_v();
-      for (auto v = 0; v < elements_to_compute.get_v(); ++v) {
+      for (elements_to_compute_t v = 0; v < elements_to_compute.get_v(); ++v) {
         data_ptr += ptr_to_skip_before.get_u();
         auto data_ptr_end = data_ptr + elements_to_compute.get_u();
         auto result = std::find_if(
@@ -134,9 +136,12 @@ RDCostResult Hierarchical4DEncoder::get_rd_for_below_inferior_bit_plane(
     const LightfieldDimension<uint32_t>& length) {
   double signal_energy = 0.0;
   auto temp = temporary_buffer.get();
-  for (auto t = 0; t < length.get_t(); ++t) {
-    for (auto s = 0; s < length.get_s(); ++s) {
-      for (auto v = 0; v < length.get_v(); ++v) {
+
+  using length_t = decltype(length.get_t());
+
+  for (length_t t = 0; t < length.get_t(); ++t) {
+    for (length_t s = 0; s < length.get_s(); ++s) {
+      for (length_t v = 0; v < length.get_v(); ++v) {
         // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
         auto initial_ptr =
             mSubbandLF.mPixelData +
@@ -195,8 +200,6 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
     uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
   auto length = LightfieldDimension<uint32_t>(lengths);
   auto position_coo = LightfieldCoordinate<uint32_t>(position);
-  typedef decltype(length)::type lenght_t;
-  typedef decltype(position_coo)::type position_t;
 
 
   if (bitplane < inferior_bit_plane) {
@@ -209,6 +212,9 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
     return get_rd_for_unitary_block(position_coo, lambda, bitplane);
     // return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
+
+
+  using length_t = decltype(length.get_t());
 
 
   decltype(probability_models) currentProbabilityModel =
@@ -240,28 +246,29 @@ RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
       lambda * segmentation_flags_rate, 0.0, segmentation_flags_rate, 0.0);
 
   //evaluate the cost J0 to encode this subblock
-  if (should_split_block) {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
+  if (should_split_block) {
+    //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
     auto half_length = length.divided_by_half_in_all_possible_dimensions();
 
     //number of divisions in each dimension
     auto n_divisions = length.get_number_of_possible_divisions_by_half();
 
-    for (lenght_t t = 0; t < n_divisions.get_t(); ++t) {
+    for (length_t t = 0; t < n_divisions.get_t(); ++t) {
       auto new_position_t = position_coo.get_t() + t * half_length.get_t();
       auto new_length_t = (t == 0) ? half_length.get_t()
                                    : (length.get_t() - half_length.get_t());
 
-      for (lenght_t s = 0; s < n_divisions.get_s(); ++s) {
+      for (length_t s = 0; s < n_divisions.get_s(); ++s) {
         auto new_position_s = position_coo.get_s() + s * half_length.get_s();
         auto new_length_s = (s == 0) ? half_length.get_s()
                                      : (length.get_s() - half_length.get_s());
 
-        for (lenght_t v = 0; v < n_divisions.get_v(); ++v) {
+        for (length_t v = 0; v < n_divisions.get_v(); ++v) {
           auto new_position_v = position_coo.get_v() + v * half_length.get_v();
           auto new_length_v = (v == 0) ? half_length.get_v()
                                        : (length.get_v() - half_length.get_v());
 
-          for (lenght_t u = 0; u < n_divisions.get_u(); ++u) {
+          for (length_t u = 0; u < n_divisions.get_u(); ++u) {
             auto new_position_u =
                 position_coo.get_u() + u * half_length.get_u();
             auto new_length_u = (u == 0)
