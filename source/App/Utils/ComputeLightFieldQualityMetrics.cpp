@@ -118,13 +118,7 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   ComputeLightfieldQualityMetricsConfiguration(
       int argc, char **argv, std::size_t level)
       : BasicConfiguration(argc, argv, level) {
-    //       ReportShowFlags<Metric::PSNR> psnr_report;
-    // ReportShowFlags<Metric::MSE> mse_report;
-    // ReportShowFlags<Metric::SSE> sse_report;
-    // ReportShowFlags<Metric::MAX_ABS_ERROR> max_report;
     for (auto metric : magic_enum::enum_values<Metric>()) {
-      std::cout << "Added metric: " << magic_enum::enum_name(metric)
-                << std::endl;
       reports.emplace(std::make_pair(metric, ReportShowFlags()));
     }
   }
@@ -588,6 +582,7 @@ void compute_metric(
   if (report_max.should_report<ReportType::VIEW_AVERAGE>()) {
     std::cout << "Max all channels: \n" << max_max_abs_error_table;
   }
+
   if (report_max.should_report<ReportType::VIEW_CHANNELS>() ||
       report_max.should_report<ReportType::VIEW_AVERAGE>()) {
     std::cout << "\n################################################\n\n";
@@ -705,6 +700,20 @@ void compute_metric(
     std::cout << "\n################################################\n\n";
   }
 
+
+  if (sum_of_mses == 0.0) {
+    for (auto i = 0; i < n_channels; ++i) {
+      double mse = mse_sum.at(i) / n_views;
+      double sse = sse_sum.at(i) / n_views;
+      auto max_error_channel = max_error.at(i);
+      if (max_error_channel > max_error_all) {
+        max_error_all = max_error_channel;
+      }
+
+      sum_of_mses += mse;
+      sum_of_sses += sse;
+    }
+  }
 
   auto average_mse = sum_of_mses / static_cast<double>(n_channels);
   auto average_sse = sum_of_sses / static_cast<double>(n_channels);
