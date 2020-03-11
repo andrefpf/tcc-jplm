@@ -129,8 +129,8 @@ class JPLM4DTransformModeLightFieldDecoder
         hierarchical_4d_decoder.get_transform_dimensions(),
         {1.0, 1.0, 1.0, 1.0});
 
-    //initializes possible extension lenghs
-    // initialize_extension_lengths();
+    //initializes possible extension lengths
+    this->initialize_extension_lengths();
 
     auto& view_io_policy = ref_to_lightfield.get_ref_to_view_io_policy();
     view_io_policy.set_save_image_when_release(true)
@@ -254,23 +254,25 @@ class JPLM4DTransformModeLightFieldDecoder
       border_blocks_policy = BorderBlocksPolicy::padding;
     }
 
-
-    std::cout << "superior_bit_plane: " << superior_bit_plane << "\n";
-    std::cout << "transform_length_t: " << transform_length_t << "\n";
-    std::cout << "transform_length_s: " << transform_length_s << "\n";
-    std::cout << "transform_length_v: " << transform_length_v << "\n";
-    std::cout << "transform_length_u: " << transform_length_u << "\n";
-    std::cout << "number_of_vertical_views: " << number_of_vertical_views
-              << "\n";
-    std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
-              << "\n";
-    std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
-    std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
-    std::cout << "level_shift: " << level_shift << "\n";
-    std::cout << "number of colour components: "
-              << lightfield_configuration_marker_segment
-                     .get_number_of_colour_components()
-              << std::endl;
+    if (transform_mode_decoder_configuration->is_verbose()) {
+      std::cout << "superior_bit_plane: "
+                << static_cast<uint32_t>(superior_bit_plane) << "\n";
+      std::cout << "transform_length_t: " << transform_length_t << "\n";
+      std::cout << "transform_length_s: " << transform_length_s << "\n";
+      std::cout << "transform_length_v: " << transform_length_v << "\n";
+      std::cout << "transform_length_u: " << transform_length_u << "\n";
+      std::cout << "number_of_vertical_views: " << number_of_vertical_views
+                << "\n";
+      std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
+                << "\n";
+      std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
+      std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
+      std::cout << "level_shift: " << level_shift << "\n";
+      std::cout << "number of colour components: "
+                << lightfield_configuration_marker_segment
+                       .get_number_of_colour_components()
+                << std::endl;
+    }
   }
 
 
