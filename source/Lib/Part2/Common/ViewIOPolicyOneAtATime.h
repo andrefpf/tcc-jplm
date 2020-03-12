@@ -50,8 +50,7 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
 
   void load_image_if_necessary(View<T>& view) {
     if (last != nullptr && last != &view) {
-      release_image_from_view(*last);
-      // last->release_image();
+      this->release_image_from_view(*last);
     }
     view.load_image();
     last = &view;
