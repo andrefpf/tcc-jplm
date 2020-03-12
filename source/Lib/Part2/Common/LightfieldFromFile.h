@@ -76,7 +76,6 @@ class LightfieldFromFile : public Lightfield<T> {
             .get_number_of_colour_channels();  //<! \todo check this out...
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
-      std::cout << "channel " << i << std::endl;
       auto channel_path = std::filesystem::path(
           configuration.get_path() + "/" + std::to_string(i));
       if (!std::filesystem::exists(channel_path)) {
