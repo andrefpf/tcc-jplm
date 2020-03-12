@@ -182,4 +182,21 @@ void JPLMEncoderConfiguration::add_options() {
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "bt601"; }}});
+
+
+  this->add_cli_json_option(
+      {"--number-of-colour-channels", "-nc", "Number of colour channels",
+          [this](const json &conf) -> std::optional<std::string> {
+            if (conf.contains("number-of-colour-channels")) {
+              return std::to_string(
+                  conf["number-of-colour-channels"].get<double>());
+            }
+            return std::nullopt;
+          },
+          [this](std::string arg) {
+            std::string::size_type sz;
+            this->number_of_colour_channels = std::stoi(arg, &sz);
+          },
+          this->current_hierarchy_level,
+          {[this]() -> std::string { return "3"; }}});
 }
