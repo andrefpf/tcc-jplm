@@ -44,6 +44,7 @@
 #include <tuple>
 #include "Lib/Utils/Image/ImageColorSpacesConversor.h"
 #include "Lib/Utils/Image/PixelMapFileBinary.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
 class PPMBinaryFile : public PixelMapFileBinary {
@@ -218,7 +219,7 @@ class PPMBinaryFile : public PixelMapFileBinary {
             g_ptr++;
             b_ptr++;
           }
-          if constexpr (sizeof(T) == 2 && using_little_endian()) {
+          if constexpr (sizeof(T) == 2 && BinaryTools::using_little_endian()) {
             for (auto& pixel : rgb_vector) {
               pixel = std::apply(
                   [](auto... x) {
