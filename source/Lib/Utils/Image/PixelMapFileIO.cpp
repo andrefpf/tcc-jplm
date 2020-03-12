@@ -72,14 +72,16 @@ void read_comment(std::ifstream& istream) {
  *
  * \param      istream  The input stream
  */
-void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
+void PixelMapFileIO::read_pixel_map_stream_until_next_field(
+    std::ifstream& istream) {
   char c;
   do {
     istream.get(c);
   } while (isspace(c));
   if (is_comment_delimiter(c)) {
     read_comment(istream);
-    read_pixel_map_stream_until_next_field(istream);  //recursive call
+    PixelMapFileIO::read_pixel_map_stream_until_next_field(
+        istream);  //recursive call
   } else {
     istream.unget();  //returns the last character to the stream;
   }
@@ -95,7 +97,7 @@ void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
  * \param[in,out]  size     The size
  */
 void fill_size_string(std::ifstream& istream, std::string& size) {
-  read_pixel_map_stream_until_next_field(istream);
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(istream);
   char c;
   istream.get(c);
   while (isdigit(c)) {
@@ -152,7 +154,7 @@ PixelMapType get_file_type(std::ifstream& istream) {
  *
  * \return     The next size.
  */
-std::size_t get_next_size(std::ifstream& istream) {
+std::size_t PixelMapFileIO::get_next_size(std::ifstream& istream) {
   std::string size("");
   fill_size_string(istream, size);
   return std::stoull(size);
@@ -183,7 +185,7 @@ size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
  * \param[in]  filename  The filename
   * \return    Number of line breaks.
  */
-std::uint16_t PixelMapFileIO::count_line_breaks(
+/*std::uint16_t PixelMapFileIO::count_line_breaks(
     std::string filename, std::streamoff end) {
   std::uint16_t counter = 0;
   std::ifstream file(filename, std::ios::in | std::ios::binary);
@@ -194,6 +196,7 @@ std::uint16_t PixelMapFileIO::count_line_breaks(
   }
   return counter;
 }
+*/
 #endif
 
 
@@ -238,7 +241,8 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     throw PixelMapFileIOExceptions::BppMustBeSmallerOrEqualToSixteenException();
   }
 
-  read_pixel_map_stream_until_next_field(file);  //next field is the 'raster'
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(
+      file);  //next field is the 'raster'
 
 #ifdef _WIN32
   //std::streamoff end_of_header = file.tellg();
