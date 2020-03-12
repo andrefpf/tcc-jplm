@@ -671,7 +671,7 @@ void compute_metric(
       }
     }
 
-    for (decltype(n_channels) i = 0; i < n_channels; ++i) {
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
       std::map<Metric, double> channel_avgs;
 
       auto max_error_channel = max_error.at(i);
@@ -711,7 +711,7 @@ void compute_metric(
 
 
   if (sum_of_mses == 0.0) {
-    for (decltype(n_channels) i = 0; i < n_channels; ++i) {
+    for (auto i = decltype(n_channels){0}; i < n_channels; ++i) {
       double mse = mse_sum.at(i) / n_views;
       double sse = sse_sum.at(i) / n_views;
       auto max_error_channel = max_error.at(i);
