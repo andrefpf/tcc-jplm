@@ -53,45 +53,99 @@ class LightfieldIOConfiguration {
   const std::string lightfield_path;
   const LightfieldDimension<std::size_t> lightfield_size;
   const LightfieldCoordinate<std::size_t> lightfield_initial_coordinate;
+  const uint16_t number_of_colour_channels = 3;
 
  public:
   LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldDimension<std::size_t>& lightfield_size,
-      const LightfieldCoordinate<std::size_t>& initial_coordinate = {
-          0, 0, 0, 0});
+      const LightfieldCoordinate<std::size_t>& initial_coordinate = {0, 0, 0,
+          0},
+      uint16_t number_of_colour_channels = 3);
 
 
   LightfieldIOConfiguration(const std::string& path_to_lightfield,
       const LightfieldCoordinate<std::size_t>& initial_coordinate,
-      const LightfieldCoordinate<std::size_t>& final_coordinate);
+      const LightfieldCoordinate<std::size_t>& final_coordinate,
+      uint16_t number_of_colour_channels = 3);
 
 
+  /**
+   * @brief      Checks if configuration is valid.
+   * 
+   * Basically checks if it contains a valid lightfield_path. Otherwise throws
+   * LightfieldIOConfigurationExceptions::InvalidLightfieldPath.
+   * 
+   * \exception LightfieldIOConfigurationExceptions::InvalidLightfieldPath if the light field path is invalid
+   */
   void check_configurations();
 
   // LightfieldIOConfiguration(const std::string& path_to_lightfield,
   //   const std::pair<std::size_t, std::size_t>& initial_st_coordinate)
 
-  ~LightfieldIOConfiguration() = default;
+  virtual ~LightfieldIOConfiguration() = default;
 
 
+  /**
+   * @brief      Gets the initial coordinate.
+   *
+   * @return     The initial coordinate.
+   */
   LightfieldCoordinate<std::size_t> get_initial_coordinate() const noexcept;
 
 
+  /**
+   * @brief      Gets the size.
+   *
+   * @return     The size.
+   */
   LightfieldDimension<std::size_t> get_size() const noexcept;
 
 
+  /**
+   * @brief      Gets the path.
+   *
+   * @return     The path.
+   */
   std::string get_path() const noexcept;
 
 
+  /**
+   * @brief      Gets the number of pixels per view.
+   *
+   * @return     The number of pixels per view.
+   */
   std::size_t get_number_of_pixels_per_view() const noexcept;
 
 
+  /**
+   * @brief      Gets the number of views per lightfield.
+   *
+   * @return     The number of views per lightfield.
+   */
   std::size_t get_number_of_views_per_lightfield() const noexcept;
 
 
+  /**
+   * @brief      Gets the number of pixels per lightfield.
+   *
+   * @return     The number of pixels per lightfield.
+   */
   std::size_t get_number_of_pixels_per_lightfield() const noexcept;
 
 
+  /**
+   * @brief      Gets the number of colour channels.
+   *
+   * @return     The number of colour channels.
+   */
+  uint16_t get_number_of_colour_channels() const noexcept;
+
+
+  /**
+   * @brief      Gets the raster view coordinates.
+   *
+   * @return     The raster view coordinates.
+   */
   std::vector<std::pair<std::size_t, std::size_t>> get_raster_view_coordinates()
       const noexcept;
 };
