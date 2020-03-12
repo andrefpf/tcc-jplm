@@ -65,6 +65,8 @@ class JPLM4DTransformModeLightFieldDecoder
  protected:
   std::shared_ptr<JPLMDecoderConfiguration>
       transform_mode_decoder_configuration;
+  std::unique_ptr<LightFieldConfigurationMarkerSegment>
+      lightfield_configuration_marker_segment = nullptr;
 
  private:
   PartitionDecoder partition_decoder;
@@ -207,6 +209,12 @@ class JPLM4DTransformModeLightFieldDecoder
   }
 
 
+  virtual uint16_t get_number_of_colour_components() const override {
+    return this->lightfield_configuration_marker_segment
+        ->get_number_of_colour_components();
+  }
+
+
   void read_light_field_configuration_marker_segment() {
     auto lightfield_configuration_marker_segment =
         LightFieldContigurationMarkerSegmentParser::
@@ -273,6 +281,10 @@ class JPLM4DTransformModeLightFieldDecoder
                        .get_number_of_colour_components()
                 << std::endl;
     }
+
+    this->lightfield_configuration_marker_segment =
+        std::make_unique<LightFieldConfigurationMarkerSegment>(
+            std::move(lightfield_configuration_marker_segment));
   }
 
 

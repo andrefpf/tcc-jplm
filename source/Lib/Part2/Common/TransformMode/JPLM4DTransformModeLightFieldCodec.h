@@ -57,12 +57,15 @@ class JPLM4DTransformModeLightFieldCodec
     : public virtual JPLMLightFieldCodec<PelType> {
  protected:
   bool needs_block_extension = false;
+  uint32_t number_of_colour_components = 3;
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> extensions;
   std::tuple<bool, bool, bool, bool> extends_in_direction = {
       false, false, false, false};
   LightfieldDimension<uint32_t> lightfield_dimension;
   LightfieldDimension<uint32_t> block_4d_dimension;
   const JPLMConfiguration& transform_mode_configuration;
+
+  virtual uint16_t get_number_of_colour_components() const = 0;
 
   std::vector<uint32_t> get_vector_of_positions_in_dimension(
       uint32_t total_size, uint32_t block_size) const {
@@ -241,7 +244,10 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
                 << u << std::endl;
     }
 
-    for (auto color_channel_index = 0; color_channel_index < 3;
+    const auto number_of_colour_channels =
+        this->get_number_of_colour_components();
+    for (auto color_channel_index = decltype(number_of_colour_channels){0};
+         color_channel_index < number_of_colour_channels;
          ++color_channel_index) {
       run_for_block_4d(color_channel_index, lf_coordinate, size);
     }

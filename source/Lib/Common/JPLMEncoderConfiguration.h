@@ -60,7 +60,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   std::string config;
   JpegPlenoPart part = JpegPlenoPart::Undefined;
   ColorSpaces::ColorSpace colorspace;
-  uint32_t number_of_colour_channels =
+  uint16_t number_of_colour_channels =
       3;  //<! \todo check the type of number of colour channels
 
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
@@ -71,6 +71,9 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
   JpegPlenoPart get_jpeg_pleno_part() const;
   const std::string &get_config() const;
   ColorSpaces::ColorSpace get_colorspace() const;
+  uint16_t get_number_of_colour_channels() const {
+    return number_of_colour_channels;
+  }
 
   JPLMEncoderConfiguration(int argc, char **argv);
 };

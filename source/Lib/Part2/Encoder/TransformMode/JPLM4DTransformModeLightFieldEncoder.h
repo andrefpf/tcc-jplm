@@ -68,6 +68,11 @@ class JPLM4DTransformModeLightFieldEncoder
   std::vector<std::size_t>
       bytes_per_channel;  //<! Accumulates the total number of encoded bytes of each channel. Does not include header information.
 
+  virtual uint16_t get_number_of_colour_components() const override {
+    return transform_mode_encoder_configuration
+        ->get_number_of_colour_channels();
+  }
+
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
