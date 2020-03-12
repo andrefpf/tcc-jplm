@@ -152,7 +152,8 @@ JPLMEncoderConfigurationLightField::get_lightfield_io_configurations() const {
   // \todo check this constants
   auto dimension = LightfieldDimension<std::size_t>(
       number_of_rows_t, number_of_columns_s, view_height_v, view_width_u);
-  auto config = LightfieldIOConfiguration(input, dimension);
+  auto config = LightfieldIOConfiguration(
+      input, dimension, {0, 0, 0, 0}, this->get_number_of_colour_channels());
   return config;
 }
 

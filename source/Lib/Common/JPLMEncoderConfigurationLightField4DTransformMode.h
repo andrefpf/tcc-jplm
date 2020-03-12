@@ -45,6 +45,7 @@
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
+#include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
 
 // \todo: Refactor and improve the redundancies in this class
 class JPLMEncoderConfigurationLightField4DTransformMode
@@ -127,6 +128,15 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   LightfieldDimension<uint32_t> get_minimal_transform_dimension() const;
 
   std::tuple<double, double, double, double> get_transform_scalings() const;
+
+  std::vector<ComponentSsizParameter> get_bitdepths() const {
+    return std::vector<ComponentSsizParameter>(
+        this->get_number_of_colour_channels(), ComponentSsizParameter(10));
+  }
+
+  std::vector<uint8_t> get_max_bitplanes() const {
+    return std::vector<uint8_t>(this->get_number_of_colour_channels(), 30);
+  }
 
   TransformSize transform_size;
 };

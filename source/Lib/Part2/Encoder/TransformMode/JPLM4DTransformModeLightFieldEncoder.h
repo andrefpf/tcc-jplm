@@ -94,11 +94,11 @@ class JPLM4DTransformModeLightFieldEncoder
             {transform_mode_encoder_configuration
                     ->get_lightfield_io_configurations()
                     .get_size()},  //lightfield_dimension,
-            {ComponentSsizParameter(10), ComponentSsizParameter(10),
-                ComponentSsizParameter(10)},  //Ssiz
+            transform_mode_encoder_configuration->get_bitdepths(),  //Ssiz
             {transform_mode_encoder_configuration
                     ->get_maximal_transform_sizes()},  //block_dimension,
-            {30, 30, 30},  //max_bitplane
+            transform_mode_encoder_configuration
+                ->get_max_bitplanes(),  //max_bitplane
             is_truncated()) {
     transform_partition.mPartitionData.set_dimension(
         transform_mode_encoder_configuration

@@ -172,7 +172,7 @@ class ViewFromPGXFile : public View<T> {
       auto images = ImageUtils::get_splitting_of(*(this->image_));
       auto number_of_channels = images.size();
       if (number_of_channels != pgx_files.size()) {
-        std::cerr << "Errorrrr" << std::endl;
+        std::cerr << "Should throw error" << std::endl;
         //throws
       } else {
         for (auto c = decltype(number_of_channels){0}; c < number_of_channels;

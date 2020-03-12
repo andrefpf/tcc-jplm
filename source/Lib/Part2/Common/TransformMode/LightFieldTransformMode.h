@@ -96,6 +96,8 @@ Block4D LightFieldTransformMode<T>::get_block_4D_from(const int channel,
   bool has_invalid_coordinates = false;
   for (auto t = t_initial; t < t_max; ++t) {
     for (auto s = s_initial; s < s_max; ++s) {
+      // std::cout << "getting block from " << t << ", " << s << ", channel "
+      //           << channel << std::endl;
       //! \todo Check this for errors
       if (this->is_coordinate_valid({t, s, v_initial, u_initial})) {
         const auto& image_channel =
@@ -107,7 +109,6 @@ Block4D LightFieldTransformMode<T>::get_block_4D_from(const int channel,
               block.mPixelData[c++] = image_channel[v][u];
             } else {
               has_invalid_coordinates = true;
-              // ++c;
               block.mPixelData[c++] = 0;
             }
           }

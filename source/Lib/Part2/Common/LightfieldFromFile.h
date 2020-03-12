@@ -71,14 +71,18 @@ class LightfieldFromFile : public Lightfield<T> {
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
     //number of channels
-    std::size_t number_of_channels = 3;  //<! \todo check this out...
+    std::size_t number_of_channels =
+        configuration
+            .get_number_of_colour_channels();  //<! \todo check this out...
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
          ++i) {
+      std::cout << "channel " << i << std::endl;
       auto channel_path = std::filesystem::path(
           configuration.get_path() + "/" + std::to_string(i));
       if (!std::filesystem::exists(channel_path)) {
         //<! \todo should throw error, as in the encoder the inputs should be present
         //throw
+        std::cout << "should throw error..." << std::endl;
       }
     }
 
@@ -97,9 +101,6 @@ class LightfieldFromFile : public Lightfield<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : Lightfield<T>(configuration.get_size().get_t_and_s(),
             std::move(view_io_policy), true) {
-    //<! \todo check the number of channels...
-
-    // std::size_t number_of_channels = 3;  //<! \todo check this out...
     // std::size_t bits_per_sample = 10;
 
     for (auto i = decltype(number_of_channels){0}; i < number_of_channels;

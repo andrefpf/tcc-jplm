@@ -263,8 +263,19 @@ class LightfieldCoordinate {
     std::cout << get_t() << ", " << get_s() << ", " << get_v() << ", "
               << get_u() << std::endl;
   }
+
+  template<class Type>
+  friend std::ostream& operator<<(
+      std::ostream& stream, const LightfieldCoordinate<Type>& coordinate);
 };
 
+template<typename T>
+std::ostream& operator<<(
+    std::ostream& o_stream, const LightfieldCoordinate<T>& coordinate) {
+  o_stream << coordinate.get_t() << ", " << coordinate.get_s() << ", "
+           << coordinate.get_v() << ", " << coordinate.get_u();
+  return o_stream;
+}
 
 //the lines below are used to access lf coordinate as tuples,
 //this also enables structured binding :)

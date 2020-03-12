@@ -183,7 +183,7 @@ void JPLMEncoderConfiguration::add_options() {
       this->current_hierarchy_level,
       {[this]() -> std::string { return "bt601"; }}});
 
-
+  //<! \todo check if this option should be moved to JPLMEncoderConfigurationLightfield
   this->add_cli_json_option(
       {"--number-of-colour-channels", "-nc", "Number of colour channels",
           [this](const json &conf) -> std::optional<std::string> {

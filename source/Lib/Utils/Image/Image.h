@@ -91,7 +91,8 @@ class Image {
       std::size_t number_of_channels, ImageType type)
       : type(type) {
     channels.reserve(number_of_channels);
-    for (decltype(number_of_channels) i = 0; i < number_of_channels; ++i) {
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
       channels.emplace_back(ImageChannel<T>(width, height, bpp));
     }
   }
@@ -352,7 +353,7 @@ class Image {
 
 
   ImageChannel<T>& get_channel(const int i) {
-    return channels[i];
+    return channels.at(i);
   }
 
 

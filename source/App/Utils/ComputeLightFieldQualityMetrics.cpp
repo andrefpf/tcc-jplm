@@ -109,6 +109,7 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
   std::string input_baseline;
   std::string input_test;
   Metric metric;
+  uint16_t number_of_colour_channels;
 
   std::map<Metric, ReportShowFlags> reports;
 
@@ -330,6 +331,22 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
           }
         },
         this->current_hierarchy_level});
+
+    this->add_cli_json_option(
+        {"--number-of-colour-channels", "-nc", "Number of colour channels",
+            [this](const nlohmann::json &conf) -> std::optional<std::string> {
+              if (conf.contains("number-of-colour-channels")) {
+                return std::to_string(
+                    conf["number-of-colour-channels"].get<double>());
+              }
+              return std::nullopt;
+            },
+            [this](std::string arg) {
+              std::string::size_type sz;
+              this->number_of_colour_channels = std::stoi(arg, &sz);
+            },
+            this->current_hierarchy_level,
+            {[this]() -> std::string { return "3"; }}});
   }
 
  public:
@@ -340,6 +357,9 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
     this->init(argc, argv);
   }
 
+  uint16_t get_number_of_colour_channels() const {
+    return number_of_colour_channels;
+  }
 
   const ReportShowFlags &get_report(Metric metric) const {
     auto iter = reports.find(metric);
@@ -477,12 +497,14 @@ void compute_metric(
     const ComputeLightfieldQualityMetricsConfiguration &configuration) {
   auto t_max = configuration.get_t();
   auto s_max = configuration.get_s();
+  auto n_channels = configuration.get_number_of_colour_channels();
   LightfieldDimension<std::size_t> size(t_max, s_max, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+
   LightfieldIOConfiguration baseline_lf_configuration(
-      configuration.get_input_baseline_filename(), initial, size);
+      configuration.get_input_baseline_filename(), initial, size, n_channels);
   LightfieldIOConfiguration test_lf_configuration(
-      configuration.get_input_test_filename(), initial, size);
+      configuration.get_input_test_filename(), initial, size, n_channels);
 
   auto baseline_lightfield =
       std::make_unique<LightfieldFromFile<uint16_t>>(baseline_lf_configuration);
@@ -493,7 +515,7 @@ void compute_metric(
   // ImageMetrics auto psnrs = get_peak_signal_to_noise_ratio(original, encoded);
 
   auto bpp = baseline_lightfield->get_views_bpp();
-  auto n_channels = baseline_lightfield->get_number_of_channels_in_view();
+  // auto n_channels = baseline_lightfield->get_number_of_channels_in_view();
   auto n_views =
       static_cast<double>(baseline_lightfield->get_number_of_views());
   std::vector<double> mse_sum(n_channels, 0.0);

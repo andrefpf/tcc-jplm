@@ -186,7 +186,7 @@ class Block4D {
   bool has_equal_size(const Block4D& other) const;
   void fill_with_zeros();
 
-  friend std::ostream& operator<<(std::ostream& stream, const Block4D& Box);
+  friend std::ostream& operator<<(std::ostream& stream, const Block4D& block);
 };
 
 std::ostream& operator<<(std::ostream& o_stream, const Block4D& block);

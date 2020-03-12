@@ -317,6 +317,7 @@ class JPLM4DTransformModeLightFieldDecoder
     auto decoded_block = partition_decoder.decode_partition(
         channel, hierarchical_4d_decoder, size);
 
+
     int level_shift = (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
     decoded_block += level_shift;
 
