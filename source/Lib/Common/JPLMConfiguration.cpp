@@ -71,6 +71,23 @@ void JPLMConfiguration::add_options() {
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "false"; }}});
+
+  this->add_cli_json_option({"--show-progress-bar", "-progress", help_message,
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("show-progress-bar")) {
+          return conf["show-progress-bar"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->show_progress_bar_flag = false;
+        } else {
+          this->show_progress_bar_flag = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
 }
 
 

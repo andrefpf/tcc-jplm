@@ -77,7 +77,7 @@ class JPLM4DTransformModeLightFieldCodec
   }
 
 
-  auto get_block_coordinates_and_sizes_to_iterate() const {
+  auto get_block_coordinates_and_sizes() const {
     const auto& [T, S, V, U] = lightfield_dimension;
     const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
         block_4d_dimension;
@@ -231,7 +231,8 @@ void JPLM4DTransformModeLightFieldCodec<
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
-  for (auto&& [position, size] : get_block_coordinates_and_sizes_to_iterate()) {
+  const auto& block_coordinates_and_sizes = get_block_coordinates_and_sizes();
+  for (auto&& [position, size] : block_coordinates_and_sizes) {
     auto lf_coordinate = LightfieldCoordinate<uint32_t>(position);
     const auto& [t, s, v, u] = lf_coordinate;
 
