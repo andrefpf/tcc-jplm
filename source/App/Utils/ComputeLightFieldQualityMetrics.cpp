@@ -495,22 +495,25 @@ void show_view_channels_and_view_average_reports(
 
 void compute_metric(
     const ComputeLightfieldQualityMetricsConfiguration &configuration) {
-  auto t_max = configuration.get_t();
-  auto s_max = configuration.get_s();
+  const auto t_max = configuration.get_t();
+  const auto s_max = configuration.get_s();
   auto n_channels = configuration.get_number_of_colour_channels();
   LightfieldDimension<std::size_t> size(t_max, s_max, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
+
+  std::cout << n_channels << std::endl;
 
   LightfieldIOConfiguration baseline_lf_configuration(
       configuration.get_input_baseline_filename(), initial, size, n_channels);
   LightfieldIOConfiguration test_lf_configuration(
       configuration.get_input_test_filename(), initial, size, n_channels);
 
-  auto baseline_lightfield =
-      std::make_unique<LightfieldFromFile<uint16_t>>(baseline_lf_configuration);
+  auto baseline_lightfield = std::make_unique<LightfieldFromFile<uint16_t>>(
+      baseline_lf_configuration, ViewIOPolicyOneAtATime<uint16_t>());
 
-  auto test_lightfield =
-      std::make_unique<LightfieldFromFile<uint16_t>>(test_lf_configuration);
+
+  auto test_lightfield = std::make_unique<LightfieldFromFile<uint16_t>>(
+      test_lf_configuration, ViewIOPolicyOneAtATime<uint16_t>());
 
   // ImageMetrics auto psnrs = get_peak_signal_to_noise_ratio(original, encoded);
 
@@ -550,15 +553,17 @@ void compute_metric(
   // auto printer = ImageMetrics::visitors::PSNRPrinter();
   for (auto t = decltype(t_max){0}; t < t_max; ++t) {
     for (auto s = decltype(s_max){0}; s < s_max; ++s) {
-      auto mses =
-          ImageMetrics::get_mse(baseline_lightfield->get_image_at({t, s}),
-              test_lightfield->get_image_at({t, s}));
-      auto sum_of_squared_errors = ImageMetrics::get_sum_of_squared_errors(
-          baseline_lightfield->get_image_at({t, s}),
-          test_lightfield->get_image_at({t, s}));
-      auto max_abs_errors = ImageMetrics::get_maximum_absolute_error(
-          baseline_lightfield->get_image_at({t, s}),
-          test_lightfield->get_image_at({t, s}));
+      std::cout << t << ", " << s << std::endl;
+      const auto &baseline_image = baseline_lightfield->get_image_at({t, s});
+      const auto &test_image = test_lightfield->get_image_at({t, s});
+
+      auto mses = ImageMetrics::get_mse(baseline_image, test_image);
+      std::cout << t << ", " << s << ", " << mses.at(0) << std::endl;
+      auto sum_of_squared_errors =
+          ImageMetrics::get_sum_of_squared_errors(baseline_image, test_image);
+      auto max_abs_errors =
+          ImageMetrics::get_maximum_absolute_error(baseline_image, test_image);
+
 
       double view_average_mse = 0.0;
       double view_average_sse = 0.0;

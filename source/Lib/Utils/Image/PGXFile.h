@@ -95,8 +95,13 @@ class PGXFile : public ImageFile {
   std::unique_ptr<UndefinedImage<T>> read_full_image() {
     if (!file.is_open()) {
       file.open(this->filename.c_str());
+      std::cout << this->filename.c_str() << std::endl;
+      if (file.fail()) {
+        std::cout << "It failed\n" << strerror(errno) << std::endl;
+      }
       if (!file.is_open()) {
         //error
+        std::cout << "Error, unable to open file" << std::endl;
       }
     }
 
@@ -110,13 +115,16 @@ class PGXFile : public ImageFile {
         number_of_samples * sizeof(T));
 
     if (!file) {
-      //error? less pixels than availabe in file file.gcount() (readed)
+      std::cerr
+          << "error? less pixels than availabe in file file.gcount() (readed)"
+          << std::endl;
     }
 
     if constexpr (sizeof(T) > 1) {
       if (is_different_endianess()) {
         for (auto& value : sample_vector) {
           value = change_endianess(value);
+          // std::cout << value << " ";
         }
       }
     }

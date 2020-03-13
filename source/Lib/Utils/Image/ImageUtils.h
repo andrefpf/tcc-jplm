@@ -139,7 +139,11 @@ std::unique_ptr<UndefinedImage<Tout>> get_undefined_images_as_undefined_image(
     std::cout << "Should throw" << std::endl;
   }
   for (auto i = decltype(number_of_channels){0}; i < number_of_channels; ++i) {
+    std::cout << "get_undefined_images_as_undefined_image channel " << i
+              << std::endl;
+    std::cout << (*(images[i]))[0][25][25] << std::endl;
     (*output_image)[i] = (*(images[i]))[0];
+    std::cout << (*output_image)[i][25][25] << std::endl;
   }
 
   return output_image;

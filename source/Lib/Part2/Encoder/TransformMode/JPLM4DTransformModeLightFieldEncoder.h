@@ -235,7 +235,6 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::show_error_estimate() {
           << '\n';
       std::cerr << "\n###############################################\n\n";
     }
-    // std::cout << table[0].size() << std::endl;
   }
 }
 
