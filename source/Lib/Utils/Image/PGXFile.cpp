@@ -68,5 +68,3 @@ std::size_t PGXFile::get_depth() const noexcept {
 PGXEndianess PGXFile::get_endianess() const noexcept {
   return endianess;
 }
-
-

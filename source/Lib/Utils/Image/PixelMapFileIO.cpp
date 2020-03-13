@@ -72,14 +72,16 @@ void read_comment(std::ifstream& istream) {
  *
  * \param      istream  The input stream
  */
-void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
+void PixelMapFileIO::read_pixel_map_stream_until_next_field(
+    std::ifstream& istream) {
   char c;
   do {
     istream.get(c);
   } while (isspace(c));
   if (is_comment_delimiter(c)) {
     read_comment(istream);
-    read_pixel_map_stream_until_next_field(istream);  //recursive call
+    PixelMapFileIO::read_pixel_map_stream_until_next_field(
+        istream);  //recursive call
   } else {
     istream.unget();  //returns the last character to the stream;
   }
@@ -95,7 +97,7 @@ void read_pixel_map_stream_until_next_field(std::ifstream& istream) {
  * \param[in,out]  size     The size
  */
 void fill_size_string(std::ifstream& istream, std::string& size) {
-  read_pixel_map_stream_until_next_field(istream);
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(istream);
   char c;
   istream.get(c);
   while (isdigit(c)) {
@@ -118,22 +120,27 @@ void fill_size_string(std::ifstream& istream, std::string& size) {
  * \return     The file type.
  */
 PixelMapType get_file_type(std::ifstream& istream) {
-  std::string type;
-  istream >> type;
-  if (type[0] != 'P') {
+  char type[] = {'0', '0', '\0'};
+  // Equivalent to istream >> type;
+  istream.read(type, 2);
+
+  // equivalent to if (type[0] != 'P')
+  if (type[0] != 80) {
     std::cerr << "Invalid file. Expecting P identifier. Got " << type[0]
               << std::endl;
     throw ImageIOExceptions::UnknownImageTypeException();
   }
 
-  auto int_type = std::stoi(type.substr(1, 1));
-  // std::cout << "readed a file type " << type << std::endl;
+  // auto int_type = std::stoi(type.substr(1, 1));
+  char c[] = {type[1], '\0'};
+  int int_type = std::atoi(c);
+  //std::cout << "readed a file type " << int_type << std::endl;
 
   if ((int_type > 0) && (int_type < 7)) {
     return static_cast<PixelMapType>(int_type);
   }
 
-  std::cerr << "Invalid PPM Type. Expecting P1 to P6. Got " << type
+  std::cerr << "Invalid PPM Type. Expecting P1 to P6. Got " << std::string(type)
             << std::endl;
   throw PixelMapFileIOExceptions::InvalidPixelMapIndexException();
 }
@@ -147,7 +154,7 @@ PixelMapType get_file_type(std::ifstream& istream) {
  *
  * \return     The next size.
  */
-std::size_t get_next_size(std::ifstream& istream) {
+std::size_t PixelMapFileIO::get_next_size(std::ifstream& istream) {
   std::string size("");
   fill_size_string(istream, size);
   return std::stoull(size);
@@ -163,11 +170,8 @@ std::size_t get_next_size(std::ifstream& istream) {
   * \return    Number of line breaks.
  */
 size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
-  return std::count_if(buffer.begin(), buffer.end(), [](std::uint8_t e) {
-    return isspace(e) &&
-           (e != static_cast<std::uint8_t>(9)) &&  // horizontal tab (TAB)
-           (e != static_cast<std::uint8_t>(11)) &&  // vertical tab (VT)
-           (e != static_cast<std::uint8_t>(32));  // space (SPC)
+  return std::count_if(buffer.begin(), buffer.end(), [](std::uint8_t e) { 
+      return e == static_cast<std::uint8_t>(10);
   });
 }
 #endif
@@ -181,7 +185,7 @@ size_t count_line_breaks_in_block(std::vector<std::uint8_t> buffer) {
  * \param[in]  filename  The filename
   * \return    Number of line breaks.
  */
-std::uint16_t PixelMapFileIO::count_line_breaks(
+/*std::uint16_t PixelMapFileIO::count_line_breaks(
     std::string filename, std::streamoff end) {
   std::uint16_t counter = 0;
   std::ifstream file(filename, std::ios::in | std::ios::binary);
@@ -192,7 +196,9 @@ std::uint16_t PixelMapFileIO::count_line_breaks(
   }
   return counter;
 }
+*/
 #endif
+
 
 /**
  * \brief      opens a pixel map file from a filename.
@@ -205,7 +211,7 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     const std::string& filename) {
   ImageFile::check(filename);
 
-  std::ifstream file(filename, std::ios::in);
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   if (!file.is_open()) {
     std::cerr << "Unable to open file " << filename << "." << std::endl;
@@ -235,13 +241,15 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
     throw PixelMapFileIOExceptions::BppMustBeSmallerOrEqualToSixteenException();
   }
 
-  read_pixel_map_stream_until_next_field(file);  //next field is the 'raster'
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(
+      file);  //next field is the 'raster'
 
 #ifdef _WIN32
-  std::streamoff end_of_header = file.tellg();
-  std::uint16_t line_breaks = count_line_breaks(filename, end_of_header);
-  std::streamoff raster_begin = end_of_header - line_breaks;
-#else 
+  //std::streamoff end_of_header = file.tellg();
+  //std::uint16_t line_breaks = count_line_breaks(filename, end_of_header);
+  //std::streamoff raster_begin = end_of_header - line_breaks;
+  auto raster_begin = file.tellg();
+#else
   auto raster_begin = file.tellg();
 #endif
 
@@ -274,47 +282,42 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(
 }
 
 
+void append_string_to_binary_stream(std::string s, std::fstream& istream) {
+  for (char c : s) {
+    istream << c << std::flush;
+  }
+}
+
 std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value) {
   if (!std::filesystem::exists(filename)) {
     std::fstream file;
-    file.open(filename, std::ios::out);
+    file.open(filename, std::ios::out | std::ios::binary);
     if (file.is_open()) {
 #ifdef _WIN32
-      file << 'P' << type << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      /* The following code is equivalent to :
+      file << 'P' << type << std::endl;
+      file << width << " " << height << std::endl;
+      file << max_value << std::endl;
+        */
+      file << static_cast<std::uint8_t>(80) << std::flush;  // append 'P'
+      append_string_to_binary_stream(std::to_string(type), file);
       file << static_cast<std::uint8_t>(10) << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::out | std::ios::app);
-      file << width << " " << height << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      append_string_to_binary_stream(std::to_string(width), file);
+      append_string_to_binary_stream(" ", file);
+      append_string_to_binary_stream(std::to_string(height), file);
       file << static_cast<std::uint8_t>(10) << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::out | std::ios::app);
-      file << max_value << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+      append_string_to_binary_stream(std::to_string(max_value), file);
       file << static_cast<std::uint8_t>(10) << std::flush;
-      file.close();
-
-      file.open(filename, std::ios::in | std::ios::out);
-      file.seekg(0, std::ios::end);
 #else
       file << 'P' << type << std::endl;
       file << width << " " << height << std::endl;
       file << max_value << std::endl;
-#endif      
+#endif
 
       auto raster_begin = file.tellg();
-      std::cerr << "PixMapFileIO -> raster_begin=" << raster_begin << std::endl;
+      std::cout << "PixMapFileIO -> raster_begin=" << raster_begin << std::endl;
       file.flush();
       file.close();
       switch (type) {

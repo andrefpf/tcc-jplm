@@ -67,18 +67,25 @@ inline char get_signed_char() noexcept {
 }
 
 
-void check_header(std::ifstream& ifstream) {
-  std::string id;
-  ifstream >> id;
+void check_header(std::ifstream& istream) {
+  // Equivalent to istream >> type;
+  char type[] = {'0', '0', '\0'};
+  istream.read(type, 2);
+  std::string id(type);
   if (id != get_header_id_string()) {
     throw PGXFileExceptions::InvalidIdException(id);
   }
 }
 
 
-auto get_endianess(std::ifstream& ifstream) {
-  std::string endianess;
-  ifstream >> endianess;
+auto get_endianess(std::ifstream& istream) {
+  // Equivalkent to std::string endianess;
+  // ifstream >> endianess;
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(istream);
+  char type[] = {'0', '0', '\0'};
+  istream.read(type, 2);
+  std::string endianess(type);
+
   if (endianess == get_big_endian_string()) {
     return PGXEndianess::PGX_ML_BIG_ENDIAN;
   }
@@ -89,25 +96,26 @@ auto get_endianess(std::ifstream& ifstream) {
 }
 
 
-auto get_is_signed(std::ifstream& ifstream) {
-  auto sign = ifstream.get();
-  if (sign == ' ') {
-    sign = ifstream.get();
+bool get_is_signed(std::ifstream& ifstream) {
+  char type[] = {'0', '\0'};
+  ifstream.read(type, 1);
+  std::string sign(type);
+  if (sign == " ") {
+    ifstream.read(type, 1);
+    sign.assign(type);
   }
-  if (sign == get_signed_char()) {
+  if (sign[0] == get_signed_char()) {
     return true;
   }
-  if (sign != get_unsigned_char()) {
-    throw PGXFileExceptions::InvalidSignFieldException(std::string(1, sign));
+  if (sign[0] != get_unsigned_char()) {
+    throw PGXFileExceptions::InvalidSignFieldException(sign);
   }
   return false;
 }
 
 
-auto get_value(std::ifstream& ifstream) {
-  std::size_t value;
-  ifstream >> value;
-  return value;
+std::size_t get_value(std::ifstream& ifstream) {
+  return PixelMapFileIO::get_next_size(ifstream);
 }
 
 
@@ -126,26 +134,17 @@ void advance_to_raster_begin(std::ifstream& ifstream) {
 
 
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
-  std::ifstream file(filename, std::ios::in);
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   check_header(file);
-  const auto endianess = get_endianess(file);
+  const PGXEndianess endianess = get_endianess(file);
   const auto is_signed = get_is_signed(file);
   const auto depth = get_value(file);
   const auto width = get_value(file);
   const auto height = get_value(file);
 
-  advance_to_raster_begin(file);
-
-#ifdef _WIN32
-  std::streamoff end_of_header = file.tellg();
-  std::uint16_t line_breaks =
-      PixelMapFileIO::count_line_breaks(filename, end_of_header);
-  std::streamoff raster_begin = end_of_header - line_breaks;
-#else
+  PixelMapFileIO::read_pixel_map_stream_until_next_field(file);
   std::streamoff raster_begin = file.tellg();
-#endif
-
   return std::make_unique<PGXFile>(
       filename, raster_begin, width, height, depth, is_signed, endianess);
 }
@@ -153,12 +152,12 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename) {
 
 std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     std::size_t width, std::size_t height, std::size_t depth, bool is_signed) {
-  std::fstream file(filename, std::ios::out);
+  std::fstream file(filename, std::ios::out | std::ios::binary);
 
-  file << get_header_id_string() << " ";
+  file << get_header_id_string() << static_cast<std::uint8_t>(32);
 
   //assuming that we are always going to write in big endian
-  file << get_big_endian_string() << " ";
+  file << get_big_endian_string() << static_cast<std::uint8_t>(80);
 
   if (is_signed) {
     file << get_signed_char();
@@ -166,19 +165,10 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     file << get_unsigned_char();
   }
 
-  file << std::to_string(depth) << " ";
-  file << std::to_string(width) << " ";
-  file << std::to_string(height) << " ";
-
-  // The same as "file << std::endl", but in Windows
-  file.close();
-  file.open(filename, std::ios::out | std::ios::app | std::ios::binary);
+  file << std::to_string(depth) << static_cast<std::uint8_t>(80);
+  file << std::to_string(width) << static_cast<std::uint8_t>(80);
+  file << std::to_string(height) << static_cast<std::uint8_t>(80);
   file << static_cast<std::uint8_t>(10) << std::flush;
-  file.close();
-
-  // The same as "file << std::endl", but in Windows
-  file.open(filename, std::ios::in | std::ios::out);
-  file.seekg(0, std::ios::end);
   auto raster_begin = file.tellg();
 
   return std::make_unique<PGXFile>(filename, raster_begin, width, height, depth,

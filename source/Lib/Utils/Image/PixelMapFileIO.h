@@ -46,6 +46,7 @@
 #include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/ImageUtils.h"
 #include "Lib/Utils/Image/PPMBinaryFile.h"
+#include "Lib/Utils/Image/PixelMapFile.h"
 
 
 namespace PixelMapFileIO {
@@ -54,10 +55,8 @@ std::unique_ptr<PixelMapFile> open(const std::string& filename);
 std::unique_ptr<PixelMapFile> open(const std::string& filename,
     PixelMapType type, std::size_t width, std::size_t height,
     std::size_t max_value);
-
-#ifdef _WIN32
-std::uint16_t count_line_breaks(std::string filename, std::streamoff end);
-#endif
+std::size_t get_next_size(std::ifstream& istream);
+void read_pixel_map_stream_until_next_field(std::ifstream& istream);
 
 struct VariantImageExtractorToUint16T {
   template<template<typename> class ImageT0, typename T0>
