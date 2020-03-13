@@ -1,7 +1,7 @@
 add_jplm_test(Metrics metrics_tests MetricsTests.cpp "gtest_main;image;stream")
 add_jplm_test(ImageChannel image_channel_tests ImageChannelTests.cpp "gtest_main;image;stream")
 add_jplm_test(Image image_tests ImageTests.cpp "gtest_main;image;stream")
-add_jplm_test(ColorSpace color_space_tests ColorSpacesTests.cpp "gtest_main;image;stream")
+# add_jplm_test(ColorSpace color_space_tests ColorSpacesTests.cpp "gtest_main;image;stream")
 add_jplm_test(ColorModelUtils color_model_utils_tests ColorModelUtilsTests.cpp "gtest_main;image;stream")
 add_jplm_test(ImageColorSpacesConversor image_color_spaces_conversor_tests ImageColorSpacesConversorTests.cpp "gtest_main;image;stream")
 add_jplm_test(ImageMetric image_metrics_tests ImageMetricTests.cpp "gtest_main;image;stream")
