@@ -97,12 +97,13 @@ class PGXFile : public ImageFile {
       file.open(this->filename.c_str());
       std::cout << this->filename.c_str() << std::endl;
       if (file.fail()) {
-        std::cout << "It failed\n" << strerror(errno) << std::endl;
+        auto error_code = errno;
+        throw PGXFileExceptions::FailedOppeningPGXFileException(
+            this->filename, error_code);
       }
-      if (!file.is_open()) {
-        //error
-        std::cout << "Error, unable to open file" << std::endl;
-      }
+      //<! \todo check if this next file open checking is necessary...
+      // if (!file.is_open()) {
+      // }
     }
 
     file.seekg(raster_begin);
@@ -124,7 +125,6 @@ class PGXFile : public ImageFile {
       if (is_different_endianess()) {
         for (auto& value : sample_vector) {
           value = change_endianess(value);
-          // std::cout << value << " ";
         }
       }
     }
@@ -136,6 +136,8 @@ class PGXFile : public ImageFile {
       *image_channel_ptr = *(vector_data++);
       ++image_channel_ptr;
     }
+
+    file.close();
 
     return image;
   }
@@ -190,8 +192,8 @@ T PGXFile::change_endianess(T value) {
 
 template<typename T>
 void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
-  if (image.get_number_of_channels() != 1) {
-    throw PGXFileExceptions::ImageHasMoreThanOneChannelException();
+  if (auto n_channels = image.get_number_of_channels(); n_channels != 1) {
+    throw PGXFileExceptions::ImageHasMoreThanOneChannelException(n_channels);
   }
 
   if (!file.is_open()) {
@@ -236,8 +238,8 @@ void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
       // std::cout << "values " << values.size() << std::endl;
       file.write(reinterpret_cast<const char*>(values.data()),
           image.get_number_of_pixels_per_channel() * sizeof(T));
-      // file.flush();
-      // file.close();
+      file.flush();
+      file.close();
       return;
     }
   }

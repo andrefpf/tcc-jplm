@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 #define JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 
+#include <cstring>  //for strerror
 #include <exception>
 #include <string>
 
@@ -387,6 +388,22 @@ class ImageHasMoreThanOneChannelException : public std::exception {
         "Trying to save a image with more than one channel in pgx format. PGX "
         "only supports 1 channel per file. The image has " +
         std::to_string(n_channels) + " channels.";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+class FailedOppeningPGXFileException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit FailedOppeningPGXFileException(
+      const std::string& filename, int& err) {
+    message_ = "Failed oppening PGX file. Filename is " + filename +
+               ". Error was: " + strerror(err) + ".";
   }
 
   virtual const char* what() const throw() {
