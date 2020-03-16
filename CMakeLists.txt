@@ -54,6 +54,7 @@ include(ExternalCppConsoleTable)
 include(ExternalCXXProperties)
 include(ExternalCPPItertools)
 include(ExternalNlohmannJSON)
+include(Externaltqdm-cpp)
 
 if (UNIX)
     option(VISUALIZATION_TOOL "Compiles the Light field Visualization tool" OFF)
