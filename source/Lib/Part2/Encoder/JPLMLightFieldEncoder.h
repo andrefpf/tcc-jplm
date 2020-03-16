@@ -73,7 +73,8 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
     auto colour_specification_boxes =
         std::vector<std::unique_ptr<ColourSpecificationBox>>();
     colour_specification_boxes.emplace_back(
-        std::make_unique<ColourSpecificationBox>());
+        std::make_unique<ColourSpecificationBox>(ColourSpecificationContents(
+            1, 1, 0, light_field_encoder_configuration.get_enum_cs())));
 
     auto jpeg_pleno_light_field_header_box =
         std::make_unique<JpegPlenoLightFieldHeaderBox>(

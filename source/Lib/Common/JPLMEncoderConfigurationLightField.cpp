@@ -119,6 +119,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
           this->enum_cs = *enum_cs;
         } else {
           //<! \todo throw error
+          std::cerr << "invalid enum cs value" << std::endl;
         }
       },
       this->current_hierarchy_level,
