@@ -182,12 +182,9 @@ std::unique_ptr<Image<T>> read(ImageFile& image_file) {
           image);
     }
     case ImageFileType::PGX: {
-      std::cout << "read(ImageFile& image_file) 1" << std::endl;
       auto variant_image = dynamic_cast<PGXFile&>(image_file).read_full_image();
-      std::cout << "read(ImageFile& image_file) 2" << std::endl;
       auto image =
           std::visit(PGXFileIO::UndefinedImageVisitor<T>(), variant_image);
-      std::cout << "read(ImageFile& image_file) 3" << std::endl;
       return image;
     }
     default: {

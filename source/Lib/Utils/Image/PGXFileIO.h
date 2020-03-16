@@ -58,12 +58,9 @@ struct UndefinedImageVisitor {
   std::unique_ptr<UndefinedImage<T>> operator()(
       std::unique_ptr<UndefinedImage<T0>>& image) {
     if constexpr (std::is_same<T0, T>::value) {
-      std::cout << "if constexpr (std::is_same<T0, T>::value)" << std::endl;
-      std::cout << (*(image))[0][25][25] << std::endl;
       return std::unique_ptr<UndefinedImage<T>>(
           static_cast<UndefinedImage<T>*>(image.release()));
     }
-    std::cout << "false;" << std::endl;
     auto output_image = std::make_unique<UndefinedImage<T>>(
         image->get_width(), image->get_height(), 1, image->get_bpp());
     auto output_image_iterator = output_image->begin();

@@ -174,7 +174,7 @@ class ImageChannel : public Generic2DStructure<T> {
   * \details [long description]
   * \return A vector with all values from the current channel.
   */
-  std::vector<T> as_raster_vector() {  
+  std::vector<T> as_raster_vector() {
     //! \todo  check if this method must exist
     //! \todo  check if this method may be const
     auto temp_ptr = this->elements.get();
@@ -240,16 +240,16 @@ class ImageChannel : public Generic2DStructure<T> {
    */
   void operator=(const ImageChannel<T>& other) {
     //check if this channel has exactly the same sizes, and thus memory size allocated
-    if (!this->has_equal_size(other)) { //if not the same size,
-      this->alloc_all_resources(); //needs to realloc
+    if (!this->has_equal_size(other)) {  //if not the same size,
+      this->alloc_all_resources();  //needs to realloc
     }
     //Copies the content (elements/values) of the other image to this image.
     std::memcpy(this->elements.get(), other.elements.get(),
         this->number_of_elements * sizeof(T));
   }
 
-  
-  typedef typename std::make_signed<T>::type signed_type; 
+
+  typedef typename std::make_signed<T>::type signed_type;
 
 
   ImageChannel<signed_type> operator-(const ImageChannel<T>& other) const {
@@ -265,7 +265,6 @@ class ImageChannel : public Generic2DStructure<T> {
       ++diff_ptr;
       ++this_ptr;
       ++other_ptr;
-      
     }
 
     return difference_image;

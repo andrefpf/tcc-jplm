@@ -50,12 +50,9 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
 
   void load_image_if_necessary(View<T>& view) {
     if (last != nullptr && last != &view) {
-      std::cout << "releasing view" << std::endl;
       this->release_image_from_view(*last);
     }
-    std::cout << "loading view" << std::endl;
     view.load_image();
-    std::cout << "loaded view" << std::endl;
     last = &view;
   }
 

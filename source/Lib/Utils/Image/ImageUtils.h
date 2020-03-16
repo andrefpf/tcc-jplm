@@ -113,7 +113,7 @@ std::unique_ptr<ImageOut<Tout>> get_undefined_images_as(
   if (number_of_channels != images.size()) {
     //! \todo throw exception if the number of channels in the returned image is different from the number of input images
     //throw expression
-    std::cout << "Should throw" << std::endl;
+    std::cerr << "Should throw" << std::endl;
   }
   for (auto i = decltype(number_of_channels){0}; i < number_of_channels; ++i) {
     (*output_image)[i] = (*(images[i]))[0];
@@ -133,17 +133,8 @@ std::unique_ptr<UndefinedImage<Tout>> get_undefined_images_as_undefined_image(
       width, height, images[0]->get_bpp(), images.size());
 
   auto number_of_channels = output_image->get_number_of_channels();
-  if (number_of_channels != images.size()) {
-    //! \todo throw exception if the number of channels in the returned image is different from the number of input images
-    //throw expression
-    std::cout << "Should throw" << std::endl;
-  }
   for (auto i = decltype(number_of_channels){0}; i < number_of_channels; ++i) {
-    std::cout << "get_undefined_images_as_undefined_image channel " << i
-              << std::endl;
-    std::cout << (*(images[i]))[0][25][25] << std::endl;
     (*output_image)[i] = (*(images[i]))[0];
-    std::cout << (*output_image)[i][25][25] << std::endl;
   }
 
   return output_image;

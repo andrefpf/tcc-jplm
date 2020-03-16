@@ -501,8 +501,6 @@ void compute_metric(
   LightfieldDimension<std::size_t> size(t_max, s_max, 32, 32);
   LightfieldCoordinate<std::size_t> initial(0, 0, 0, 0);
 
-  std::cout << n_channels << std::endl;
-
   LightfieldIOConfiguration baseline_lf_configuration(
       configuration.get_input_baseline_filename(), initial, size, n_channels);
   LightfieldIOConfiguration test_lf_configuration(

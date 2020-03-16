@@ -95,7 +95,6 @@ class PGXFile : public ImageFile {
   std::unique_ptr<UndefinedImage<T>> read_full_image() {
     if (!file.is_open()) {
       file.open(this->filename.c_str());
-      std::cout << this->filename.c_str() << std::endl;
       if (file.fail()) {
         auto error_code = errno;
         throw PGXFileExceptions::FailedOppeningPGXFileException(

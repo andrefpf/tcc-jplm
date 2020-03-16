@@ -91,7 +91,6 @@ std::vector<std::size_t> get_maximum_absolute_error(
   for (auto i = decltype(number_of_channels){0}; i < number_of_channels; ++i) {
     rect_vector.emplace_back(ImageChannelUtils::get_maximum_absolute_error(
         original_image.get_channel(i), encoded_image.get_channel(i)));
-    std::cout << "channel " << i << ": " << rect_vector.back() << std::endl;
   }
 
   return rect_vector;

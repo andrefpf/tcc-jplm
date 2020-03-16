@@ -154,17 +154,11 @@ class ViewFromPGXFile : public View<T> {
     if ((i == 0) && (j == 0) && (size == this->view_size)) {
       //needs to read all channels... std::vector<std::unique_ptr<PGXFile>> pgx_files;
       // std::unique_ptr<PGXFile> pgx_file;
-      std::cout << "load imagfe" << std::endl;
       std::vector<std::unique_ptr<UndefinedImage<T>>> images_from_file;
       for (auto& pgx_file : pgx_files) {
         images_from_file.push_back(
             ImageIO::read<UndefinedImage, uint16_t>(*pgx_file));
-        std::cout << (*(images_from_file.back()))[0][25][25] << std::endl;
-        std::cout << (*(images_from_file.back())).get_number_of_pixels()
-                  << std::endl;
-        std::cout << "read image " << std::endl;
       }
-      std::cout << "openning image from file" << std::endl;
       this->image_ =
           ImageUtils::get_undefined_images_as_undefined_image(images_from_file);
     } else {
