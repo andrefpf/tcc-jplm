@@ -115,10 +115,24 @@ class PGXFile : public ImageFile {
   T change_endianess(T value);
 
 
+  /**
+   * @brief      Writes an image to file.
+   *
+   * @param[in]  image  The image
+   *
+   * @tparam     T      { description }
+   */
   template<typename T>
   void write_image_to_file(const UndefinedImage<T>& image);
 
 
+  /**
+   * @brief      Reads a full image.
+   *
+   * @tparam     T     Type of the pixel in image
+   *
+   * @return     An undefined image containing data in file (or zero if file is empty)
+   */
   template<typename T>
   std::unique_ptr<UndefinedImage<T>> read_full_image() {
     if (!file.is_open()) {
@@ -171,6 +185,11 @@ class PGXFile : public ImageFile {
   }
 
 
+  /**
+   * @brief      Reads a full image.
+   *
+   * @return     A variant containing a image with the size (type) obtained from the file header.
+   */
   std::variant<std::unique_ptr<UndefinedImage<uint8_t>>,
       std::unique_ptr<UndefinedImage<int8_t>>,
       std::unique_ptr<UndefinedImage<uint16_t>>,
@@ -206,6 +225,15 @@ class PGXFile : public ImageFile {
 };
 
 
+/**
+ * @brief      Changes the endianess of value if the machine endianess is different from the file endianess
+ *
+ * @param[in]  value  The value
+ *
+ * @tparam     T      Type of the value
+ *
+ * @return     Value with changed endianess when required
+ */
 template<typename T>
 T PGXFile::change_endianess(T value) {
   if constexpr (std::is_signed<T>::value) {
@@ -218,6 +246,13 @@ T PGXFile::change_endianess(T value) {
 }
 
 
+/**
+ * @brief      Writes an image to file.
+ *
+ * @param[in]  image  The image
+ *
+ * @tparam     T      Type of the data in image
+ */
 template<typename T>
 void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
   if (auto n_channels = image.get_number_of_channels(); n_channels != 1) {
