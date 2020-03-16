@@ -553,12 +553,10 @@ void compute_metric(
   // auto printer = ImageMetrics::visitors::PSNRPrinter();
   for (auto t = decltype(t_max){0}; t < t_max; ++t) {
     for (auto s = decltype(s_max){0}; s < s_max; ++s) {
-      std::cout << t << ", " << s << std::endl;
       const auto &baseline_image = baseline_lightfield->get_image_at({t, s});
       const auto &test_image = test_lightfield->get_image_at({t, s});
 
       auto mses = ImageMetrics::get_mse(baseline_image, test_image);
-      std::cout << t << ", " << s << ", " << mses.at(0) << std::endl;
       auto sum_of_squared_errors =
           ImageMetrics::get_sum_of_squared_errors(baseline_image, test_image);
       auto max_abs_errors =
@@ -579,9 +577,10 @@ void compute_metric(
 
         if (max_abs_error > view_max_abs_error) {
           view_max_abs_error = max_abs_error;
-          if (max_abs_error > max_error.at(i)) {
-            max_error.at(i) = max_abs_error;
-          }
+        }
+
+        if (max_abs_error > max_error.at(i)) {
+          max_error.at(i) = max_abs_error;
         }
 
 
