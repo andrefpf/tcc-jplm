@@ -42,6 +42,7 @@
 #define JPLM_LIB_PART2_COMMON_COMMONEXCEPTIONS_H__
 
 #include <exception>
+#include <string>
 
 namespace LightfieldCoordinateExceptions {
 
@@ -116,6 +117,25 @@ class InvalidNumberOfChannelsException : public std::exception {
  public:
   const char* what() const noexcept override {
     return "The image contained in this view has a invalid number of channels.";
+  }
+};
+
+class WrongNumberOfChannelsException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit WrongNumberOfChannelsException(
+      std::size_t number_of_channels_in_image,
+      std::size_t number_of_pgx_files) {
+    message_ = "Wrong number of channels. Image has " +
+               std::to_string(number_of_channels_in_image) +
+               " channels and there are " +
+               std::to_string(number_of_pgx_files) + "pgx files.";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
   }
 };
 

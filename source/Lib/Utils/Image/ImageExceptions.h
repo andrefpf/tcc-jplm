@@ -412,6 +412,25 @@ class FailedOppeningPGXFileException : public std::exception {
 };
 
 
+class ReadLessPixelThenRequired : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit ReadLessPixelThenRequired(const std::string& filename,
+      std::size_t number_of_bytes_read, std::size_t number_of_bytes_required) {
+    message_ =
+        "Read wrong number of bytes than required for PGX file. Filename is " +
+        filename + ". Read " + std::to_string(number_of_bytes_read) +
+        "; required " + std::to_string(number_of_bytes_required) + ".";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
 }  // namespace PGXFileExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */

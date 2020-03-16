@@ -81,7 +81,7 @@ class LightfieldFromFile : public Lightfield<T> {
       if (!std::filesystem::exists(channel_path)) {
         //<! \todo should throw error, as in the encoder the inputs should be present
         //throw
-        std::cout << "should throw error..." << std::endl;
+        std::cout << "should throw error as in the encoder th..." << std::endl;
       }
     }
 

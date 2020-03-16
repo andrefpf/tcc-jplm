@@ -111,13 +111,13 @@ class PGXFile : public ImageFile {
         this->width, this->height, this->depth, 1);
     auto number_of_samples = this->width * this->height;
     std::vector<T> sample_vector(number_of_samples);
+    auto number_of_bytes_required = number_of_samples * sizeof(T);
     file.read(reinterpret_cast<char*>(sample_vector.data()),
-        number_of_samples * sizeof(T));
+        number_of_bytes_required);
 
     if (!file) {
-      std::cerr
-          << "error? less pixels than availabe in file file.gcount() (readed)"
-          << std::endl;
+      throw PGXFileExceptions::ReadLessPixelThenRequired(
+          this->filename, file.gcount(), number_of_bytes_required);
     }
 
     if constexpr (sizeof(T) > 1) {
