@@ -50,6 +50,7 @@
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
+#include "Lib/Part2/Common/Boxes/JpegPlenoProfileBrand.h"
 #include "Lib/Part2/Common/Lightfield.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
@@ -89,8 +90,42 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   virtual CompressionTypeLightField get_type() const;
   virtual CompressionTypeLightField get_compression_type() const;
 
-  EnumCS get_enum_cs();
+  EnumCS get_enum_cs() const;
   uint16_t get_number_of_colour_channels() const;
+
+  JpegPlenoProfileBrand get_profile() const {
+    if (this->get_type() == CompressionTypeLightField::transform_mode) {
+      return JpegPlenoProfileBrand::baseline_block_based_profile;
+    }
+    if (this->get_type() == CompressionTypeLightField::prediction_mode) {
+      return JpegPlenoProfileBrand::baseline_prediction_based_profile;
+    }
+    throw JPLMConfigurationExceptions::InvalidPartException();
+  }
+
+  virtual uint16_t get_level() const {
+    std::size_t total_samples = get_number_of_rows_t() *
+                                get_number_of_columns_s() *
+                                get_view_height_v() * get_view_width_u();
+
+    if (total_samples < 64000000) {
+      return 1;
+    }
+    if (total_samples < 256000000) {
+      return 2;
+    }
+    if (total_samples < 1024000000) {
+      return 3;
+    }
+    if (total_samples < 4096000000) {
+      return 4;
+    }
+    if (total_samples < 16384000000) {
+      return 5;
+    }
+    //\todo should throw
+    return 0;
+  }
 };
 
 

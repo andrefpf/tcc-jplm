@@ -139,6 +139,15 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   }
 
   TransformSize transform_size;
+
+
+  virtual uint16_t get_level() const override {
+    auto level_for_resolution = JPLMEncoderConfigurationLightField::get_level();
+
+    // auto max_transform_size = std::max(get_maximal_transform_sizes());
+
+    return 0;
+  }
 };
 
 
