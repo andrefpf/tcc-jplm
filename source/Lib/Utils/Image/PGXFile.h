@@ -191,9 +191,7 @@ T PGXFile::change_endianess(T value) {
 template<typename T>
 void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
   if (image.get_number_of_channels() != 1) {
-    //! \todo throw error if number of channels of the current undefined image is not 1
-    //throw error
-    std::cout << "there is more than one channel..." << std::endl;
+    throw PGXFileExceptions::ImageHasMoreThanOneChannelException();
   }
 
   if (!file.is_open()) {

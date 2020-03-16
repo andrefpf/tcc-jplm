@@ -377,6 +377,24 @@ class InvalidNewLine : public std::exception {
 };
 
 
+class ImageHasMoreThanOneChannelException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit ImageHasMoreThanOneChannelException(std::size_t n_channels) {
+    message_ =
+        "Trying to save a image with more than one channel in pgx format. PGX "
+        "only supports 1 channel per file. The image has " +
+        std::to_string(n_channels) + " channels.";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
 }  // namespace PGXFileExceptions
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__ */
