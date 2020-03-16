@@ -89,12 +89,8 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   virtual CompressionTypeLightField get_type() const;
   virtual CompressionTypeLightField get_compression_type() const;
 
-  EnumCS get_enum_cs() const {
-    return enum_cs;
-  }
-  uint16_t get_number_of_colour_channels() const {
-    return number_of_colour_channels;
-  }
+  EnumCS get_enum_cs();
+  uint16_t get_number_of_colour_channels() const;
 };
 
 

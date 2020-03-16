@@ -255,3 +255,13 @@ uint32_t JPLMEncoderConfigurationLightField::get_view_height_v() const {
 uint32_t JPLMEncoderConfigurationLightField::get_view_width_u() const {
   return view_width_u;
 }
+
+
+EnumCS JPLMEncoderConfigurationLightField::get_enum_cs() const {
+  return enum_cs;
+}
+
+uint16_t JPLMEncoderConfigurationLightField::get_number_of_colour_channels()
+    const {
+  return number_of_colour_channels;
+}
