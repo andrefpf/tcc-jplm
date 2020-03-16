@@ -48,7 +48,6 @@
 #include "Lib/Common/CommonExceptions.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "Lib/Utils/Image/ColorSpaces.h"
 #include "nlohmann/json.hpp"
 
 
@@ -59,9 +58,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
   std::string config;
   JpegPlenoPart part = JpegPlenoPart::Undefined;
-  ColorSpaces::ColorSpace colorspace;
-  uint16_t number_of_colour_channels =
-      3;  //<! \todo check the type of number of colour channels
+
 
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
   virtual void add_options() override;
@@ -70,10 +67,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;
   const std::string &get_config() const;
-  ColorSpaces::ColorSpace get_colorspace() const;
-  uint16_t get_number_of_colour_channels() const {
-    return number_of_colour_channels;
-  }
+
 
   JPLMEncoderConfiguration(int argc, char **argv);
 };

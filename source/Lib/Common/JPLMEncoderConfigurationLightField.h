@@ -43,8 +43,10 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <magic_enum.hpp>
 #include <optional>
 #include <tuple>
+#include "Lib/Common/Boxes/Generic/EnumCS.h"
 #include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
@@ -66,6 +68,10 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   uint32_t view_height_v;
   uint32_t view_width_u;
 
+  EnumCS enum_cs = EnumCS::YCbCr_2;
+  uint16_t number_of_colour_channels =
+      3;  //<! \todo check the type of number of colour channels
+
   JPLMEncoderConfigurationLightField(int argc, char **argv, std::size_t level);
   void parse_number_of_rows_t(const nlohmann::json &conf);
   void parse_number_of_columns_s(const nlohmann::json &conf);
@@ -82,6 +88,13 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
   uint32_t get_view_width_u() const;
   virtual CompressionTypeLightField get_type() const;
   virtual CompressionTypeLightField get_compression_type() const;
+
+  EnumCS get_enum_cs() const {
+    return enum_cs;
+  }
+  uint16_t get_number_of_colour_channels() const {
+    return number_of_colour_channels;
+  }
 };
 
 

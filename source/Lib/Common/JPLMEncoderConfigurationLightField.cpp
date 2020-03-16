@@ -95,6 +95,53 @@ void JPLMEncoderConfigurationLightField::add_options() {
       [this](std::string arg) { this->number_of_columns_s = std::stoi(arg); },
       this->current_hierarchy_level});
 
+
+  constexpr auto enum_cs_values = magic_enum::enum_names<EnumCS>();
+  std::stringstream available_enum_cs_values_string_stream;
+  for (const auto &enum_cs_value : enum_cs_values) {
+    available_enum_cs_values_string_stream << enum_cs_value << ", ";
+  }
+
+  this->add_cli_json_option({"--enum-cs", "-ecs",
+      "Enumerated colourspace to be used in the Colour Specification Box. "
+      "Currently other methods are not supported. "
+      "Available values for EnumCS field: " +
+          available_enum_cs_values_string_stream.str(),
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("enum-cs")) {
+          return conf["enum-cs"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string v) {
+        auto enum_cs = magic_enum::enum_cast<EnumCS>(v);
+        if (enum_cs) {
+          this->enum_cs = *enum_cs;
+        } else {
+          //<! \todo throw error
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "YCbCr_2"; }}});
+
+
+  //<! \todo check coherence of this with enum cs
+  this->add_cli_json_option(
+      {"--number-of-colour-channels", "-nc", "Number of colour channels",
+          [this](const json &conf) -> std::optional<std::string> {
+            if (conf.contains("number-of-colour-channels")) {
+              return std::to_string(
+                  conf["number-of-colour-channels"].get<double>());
+            }
+            return std::nullopt;
+          },
+          [this](std::string arg) {
+            std::string::size_type sz;
+            this->number_of_colour_channels = std::stoi(arg, &sz);
+          },
+          this->current_hierarchy_level,
+          {[this]() -> std::string { return "3"; }}});
+
   this->add_cli_json_option({"--type", "-T",
       "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
       "prediction_mode=1}",
