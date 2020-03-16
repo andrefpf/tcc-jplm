@@ -43,11 +43,23 @@
 
 #include "Lib/Part2/Common/ViewIOPolicy.h"
 
+
+/**
+ * @brief      This class describes a view i/o policy that opens one view at a time.
+ *
+ * @tparam     T     Type of the pixel in the view
+ */
 template<typename T>
 class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
  protected:
   View<T>* last = nullptr;
 
+
+  /**
+   * @brief      Loads an image if necessary.
+   *
+   * @param      view  The view
+   */
   void load_image_if_necessary(View<T>& view) {
     if (last != nullptr && last != &view) {
       this->release_image_from_view(*last);
@@ -57,6 +69,11 @@ class ViewIOPolicyOneAtATime : public ViewIOPolicy<T> {
   }
 
  public:
+  /**
+   * @brief      Creates a new instance of the object with same properties than original.
+   *
+   * @return     Copy of this object.
+   */
   virtual ViewIOPolicyOneAtATime<T>* clone() const override {
     return new ViewIOPolicyOneAtATime(*this);
   }
