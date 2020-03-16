@@ -56,7 +56,7 @@
 #include "Lib/Part2/Decoder/TransformMode/LightFieldContigurationMarkerSegmentParser.h"
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
-
+#include "magic_enum.hpp"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
@@ -279,6 +279,9 @@ class JPLM4DTransformModeLightFieldDecoder
       std::cout << "number of colour components: "
                 << lightfield_configuration_marker_segment
                        .get_number_of_colour_components()
+                << '\n';
+      std::cout << "Border policy: "
+                << magic_enum::enum_name(this->get_border_blocks_policy())
                 << std::endl;
     }
 

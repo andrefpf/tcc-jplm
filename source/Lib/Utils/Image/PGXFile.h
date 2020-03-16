@@ -58,6 +58,7 @@ class PGXFile : public ImageFile {
   std::size_t depth;
   bool _is_signed;
   const PGXEndianess endianess;
+  bool throw_if_missing_bytes = false;
 
   bool is_different_endianess() const;
 
@@ -71,18 +72,45 @@ class PGXFile : public ImageFile {
   }
 
 
+  /**
+   * @brief      Determines if signed.
+   *
+   * @return     True if signed, False otherwise.
+   */
   bool is_signed() const noexcept;
 
 
+  /**
+   * @brief      Gets the depth.
+   *
+   * @return     The depth.
+   */
   std::size_t get_depth() const noexcept;
 
 
+  /**
+   * @brief      Gets the endianess.
+   *
+   * @return     The endianess.
+   */
   PGXEndianess get_endianess() const noexcept;
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~PGXFile() = default;
 
 
+  /**
+   * @brief      Changes the endianess if needed
+   *
+   * @param[in]  value  The value
+   *
+   * @tparam     T      Type of the value
+   *
+   * @return     Value with changed endianess if required
+   */
   template<typename T>
   T change_endianess(T value);
 
@@ -115,7 +143,8 @@ class PGXFile : public ImageFile {
     file.read(reinterpret_cast<char*>(sample_vector.data()),
         number_of_bytes_required);
 
-    if (!file) {
+
+    if (throw_if_missing_bytes && (!file)) {
       throw PGXFileExceptions::ReadLessPixelThenRequired(
           this->filename, file.gcount(), number_of_bytes_required);
     }

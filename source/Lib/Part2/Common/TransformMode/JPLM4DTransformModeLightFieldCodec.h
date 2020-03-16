@@ -99,9 +99,6 @@ class JPLM4DTransformModeLightFieldCodec
 
     const auto& boder_blocks_policy = this->get_border_blocks_policy();
     if (boder_blocks_policy == BorderBlocksPolicy::truncate) {
-      if (transform_mode_configuration.is_verbose()) {
-        std::cout << "Border policy: truncate";
-      }
       if (std::get<0>(extends_in_direction)) {
         t_sizes.back() = T % BLOCK_SIZE_t;
       }
