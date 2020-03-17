@@ -117,6 +117,11 @@ class JPLM4DTransformModeLightFieldCodec
     auto u_sizes = std::vector<uint32_t>(u_coordinates.size(), BLOCK_SIZE_u);
 
 
+    auto channels_vector =
+        std::vector<uint16_t>(this->get_number_of_colour_components());
+    std::iota(channels_vector.begin(), channels_vector.end(), 0);
+
+
     const auto& boder_blocks_policy = this->get_border_blocks_policy();
     if (boder_blocks_policy == BorderBlocksPolicy::truncate) {
       if (std::get<0>(extends_in_direction)) {
@@ -147,17 +152,29 @@ class JPLM4DTransformModeLightFieldCodec
 
     auto&& zip_iter = iter::zip(coordinates_vector, sizes_vector);
 
-    std::vector<std::tuple<std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>,
-        std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>>>
-        ziped_vector(zip_iter.begin(), zip_iter.end());
 
-    return ziped_vector;
+    auto&& with_channel = iter::product(zip_iter, channels_vector);
+
+
+    std::vector<std::tuple<LightfieldCoordinate<uint32_t>,
+        LightfieldDimension<uint32_t>, uint16_t>>
+        ret_vect;
+
+    std::transform(with_channel.begin(), with_channel.end(),
+        std::back_inserter(ret_vect), [](const auto&& in) {
+          const auto& coordinate_and_size = std::get<0>(in);
+          const auto& coordinate =
+              LightfieldCoordinate<uint32_t>(std::get<0>(coordinate_and_size));
+          const auto& size =
+              LightfieldDimension<uint32_t>(std::get<1>(coordinate_and_size));
+          auto channel = std::get<1>(in);
+          return std::make_tuple(coordinate, size, channel);
+        });
+
+
+    return ret_vect;
   }
 
-
-  void run_for_all_block_channels(
-      const LightfieldCoordinate<uint32_t>& coordinate,
-      const LightfieldDimension<uint32_t>& position);
 
  public:
   JPLM4DTransformModeLightFieldCodec(
@@ -254,36 +271,20 @@ void JPLM4DTransformModeLightFieldCodec<
 
 
 template<typename PelType>
-void JPLM4DTransformModeLightFieldCodec<PelType>::run_for_all_block_channels(
-    const LightfieldCoordinate<uint32_t>& position,
-    const LightfieldDimension<uint32_t>& size) {
-  const auto& [t, s, v, u] = position;
-
-  if (transform_mode_configuration.is_verbose()) {
-    std::cout << "Transforming 4D at " << t << ", " << s << ", " << v << ", "
-              << u << std::endl;
-  }
-
-  const auto number_of_colour_channels =
-      this->get_number_of_colour_components();
-  for (auto color_channel_index = decltype(number_of_colour_channels){0};
-       color_channel_index < number_of_colour_channels; ++color_channel_index) {
-    run_for_block_4d(color_channel_index, position, size);
-  }
-}
-
-
-template<typename PelType>
 void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
   const auto& block_coordinates_and_sizes = get_block_coordinates_and_sizes();
 
   if (transform_mode_configuration.show_progress_bar()) {
-    for (auto&& [position, size] : tq::tqdm(block_coordinates_and_sizes)) {
-      run_for_all_block_channels(position, size);
+    for (auto&& [position, size, channel] :
+        tq::tqdm(block_coordinates_and_sizes)) {
+      run_for_block_4d(channel, position, size);
     }
   } else {
-    for (auto&& [position, size] : block_coordinates_and_sizes) {
-      run_for_all_block_channels(position, size);
+    for (auto&& [position, size, channel] : block_coordinates_and_sizes) {
+      if (transform_mode_configuration.is_verbose()) {
+        std::cout << "Transforming 4D at " << position << std::endl;
+      }
+      run_for_block_4d(channel, position, size);
     }
   }
 
