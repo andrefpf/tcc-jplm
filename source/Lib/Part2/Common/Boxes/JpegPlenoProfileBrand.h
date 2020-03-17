@@ -45,6 +45,11 @@
 using profile_brand_data = uint16_t;
 
 
+/**
+ * @brief      This class describes the available JPEG pleno profile brands.
+ * Currently the definition is on the WD 1.0 of Amendment 1 for JPEG Pleno part 2
+ * Information technology — Plenoptic image coding system (JPEG Pleno) — Part 2: Light field coding AMD1 - Profiles and Levels for JPEG Pleno Light Field Coding System
+ */
 enum class JpegPlenoProfileBrand : profile_brand_data {
   baseline_block_based_profile =
       1,  //!< Indicates that the 4D transform mode is used to encode the light field.
