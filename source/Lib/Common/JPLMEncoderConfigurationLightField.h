@@ -108,19 +108,19 @@ class JPLMEncoderConfigurationLightField : public JPLMEncoderConfiguration {
                                 get_number_of_columns_s() *
                                 get_view_height_v() * get_view_width_u();
 
-    if (total_samples < 64000000) {
+    if (total_samples <= 64000000) {
       return 1;
     }
-    if (total_samples < 256000000) {
+    if (total_samples <= 256000000) {
       return 2;
     }
-    if (total_samples < 1024000000) {
+    if (total_samples <= 1024000000) {
       return 3;
     }
-    if (total_samples < 4096000000) {
+    if (total_samples <= 4096000000) {
       return 4;
     }
-    if (total_samples < 16384000000) {
+    if (total_samples <= 16384000000) {
       return 5;
     }
     //\todo should throw
