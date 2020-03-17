@@ -44,16 +44,32 @@
 #include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Part2/Common/JPLMLightFieldCodec.h"
 
+/**
+ * @brief      This class describes a jplm light field decoder.
+ *
+ * @tparam     PelType  type used to store pixels of the decoded Lightfield.
+ */
 template<typename PelType = uint16_t>
 class JPLMLightFieldDecoder : public virtual JPLMLightFieldCodec<PelType> {
  protected:
-  const JPLMDecoderConfiguration& decoder_configuration;
+  const JPLMDecoderConfiguration&
+      decoder_configuration;  //<! the decoder configuration
 
  public:
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  configuration  The configuration
+   */
   JPLMLightFieldDecoder(const JPLMDecoderConfiguration& configuration)
       : JPLMLightFieldCodec<PelType>(configuration),
         decoder_configuration(configuration) {
   }
+
+
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~JPLMLightFieldDecoder() = default;
 };
 
