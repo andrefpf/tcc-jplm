@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
 #define JPLM_LIB_PART2_ENCODER_JPLMLIGHTFIELDENCODER_H__
 
+#include <magic_enum.hpp>
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
@@ -58,7 +59,12 @@ class JPLMLightFieldEncoder : public virtual JPLMLightFieldCodec<PelType> {
   const JPLMEncoderConfigurationLightField& light_field_encoder_configuration;
 
   void add_pleno_lf_box() {
-    auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>();
+    auto profile = magic_enum::enum_integer(
+        light_field_encoder_configuration.get_profile());
+    auto level = light_field_encoder_configuration.get_level();
+
+    auto profile_and_level_box = std::make_unique<ProfileAndLevelBox>(
+        ProfileAndLevelContents(profile, level));
 
 
     auto lf_header_contents = LightFieldHeaderContents(
