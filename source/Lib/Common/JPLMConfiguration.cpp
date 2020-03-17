@@ -44,6 +44,52 @@
 
 void JPLMConfiguration::add_options() {
   BasicConfiguration::add_options();
+
+  auto help_message = std::string(
+      "Shows the total elapsed time in seconds (wall time) measured by using "
+      "std::chronos. Notice that the actual execution time may be different.");
+#ifdef __unix__
+  help_message +=
+      " If UNIX, also includes user time (ms) and max memory usage (kbytes).";
+#endif
+  help_message +=
+      " This is the last report that will be shown after the execution.";
+
+  this->add_cli_json_option({"--show-runtime-statistics", "-time", help_message,
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("show-runtime-statistics")) {
+          return conf["show-runtime-statistics"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->show_runtime_statistics_flag = false;
+        } else {
+          this->show_runtime_statistics_flag = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
+
+  this->add_cli_json_option({"--show-progress-bar", "-progress",
+      "Enables the display of a progress bar showing the percentage of "
+      "completion, run time and expected finishing time.",
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("show-progress-bar")) {
+          return conf["show-progress-bar"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->show_progress_bar_flag = false;
+        } else {
+          this->show_progress_bar_flag = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
 }
 
 

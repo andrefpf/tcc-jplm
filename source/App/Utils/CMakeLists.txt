@@ -32,8 +32,8 @@ if (VISUALIZATION_TOOL)
 endif (VISUALIZATION_TOOL)
 
 add_jplm_util(
-    compute_lightfield_psnr ComputeLightFieldPSNR.cpp
-    "image;stream;jplm_part2_common")
+    compute_lightfield_quality_metrics ComputeLightFieldQualityMetrics.cpp
+    "image;stream;jplm_part2_common;basic_configuration")
 
 add_jplm_util(convert_ppm_to_pgx PPMToPGX.cpp
     "image;stream;basic_configuration")

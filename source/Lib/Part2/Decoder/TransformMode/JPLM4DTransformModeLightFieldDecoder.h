@@ -43,6 +43,7 @@
 
 #include <iostream>
 #include <tuple>
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Part2/Common/Boxes/JpegPlenoLightFieldBox.h"
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
@@ -55,12 +56,18 @@
 #include "Lib/Part2/Decoder/TransformMode/LightFieldContigurationMarkerSegmentParser.h"
 #include "Lib/Part2/Decoder/TransformMode/PartitionDecoder.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
-
+#include "magic_enum.hpp"
 
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
+ protected:
+  std::shared_ptr<JPLMDecoderConfiguration>
+      transform_mode_decoder_configuration;
+  std::unique_ptr<LightFieldConfigurationMarkerSegment>
+      lightfield_configuration_marker_segment = nullptr;
+
  private:
   PartitionDecoder partition_decoder;
   const ContiguousCodestreamCode& codestream_code;
@@ -77,28 +84,30 @@ class JPLM4DTransformModeLightFieldDecoder
       std::shared_ptr<JPLFile>
           jpl_file,  // ! \todo use this as the JPLCodec file
       const JpegPlenoLightFieldBox& light_field_box,
-      const std::string& lightfield_path)
-      : JPLMLightFieldCodec<PelType>(
-            jpl_file, std::make_unique<LightFieldTransformMode<PelType>>(
-                          LightfieldIOConfiguration(lightfield_path,
-                              light_field_box.get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_ref_to_light_field_header_box()
-                                  .get_ref_to_contents()
-                                  .get_light_field_dimension<std::size_t>()),
-                          light_field_box.get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_number_of_components(),
-                          light_field_box.get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_ref_to_light_field_header_box()
-                              .get_ref_to_contents()
-                              .get_bits_per_component())),
+      const std::string& lightfield_path,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration)
+      : JPLMLightFieldCodec<PelType>(jpl_file,
+            std::make_unique<LightFieldTransformMode<PelType>>(
+                LightfieldIOConfiguration(lightfield_path,
+                    light_field_box.get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_ref_to_light_field_header_box()
+                        .get_ref_to_contents()
+                        .get_light_field_dimension<std::size_t>()),
+                light_field_box.get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_number_of_components(),
+                light_field_box.get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_ref_to_light_field_header_box()
+                    .get_ref_to_contents()
+                    .get_bits_per_component()),
+            *configuration),
         JPLM4DTransformModeLightFieldCodec<PelType>(
             light_field_box.get_ref_to_contents()
                 .get_ref_to_light_field_header_box()
@@ -106,7 +115,10 @@ class JPLM4DTransformModeLightFieldDecoder
                 .get_ref_to_light_field_header_box()
                 .get_ref_to_contents()
                 .get_light_field_dimension(),
-            {9, 9, 64, 64}),  //temporary
+            {9, 9, 64, 64},
+            *configuration),  //temporary
+        JPLMLightFieldDecoder<PelType>(*configuration),
+        transform_mode_decoder_configuration(configuration),
         codestream_code(light_field_box.get_ref_to_contents()
                             .get_ref_to_contiguous_codestream_box()
                             .get_ref_to_contents()
@@ -119,8 +131,8 @@ class JPLM4DTransformModeLightFieldDecoder
         hierarchical_4d_decoder.get_transform_dimensions(),
         {1.0, 1.0, 1.0, 1.0});
 
-    //initializes possible extension lenghs
-    // initialize_extension_lengths();
+    //initializes possible extension lengths
+    this->initialize_extension_lengths();
 
     auto& view_io_policy = ref_to_lightfield.get_ref_to_view_io_policy();
     view_io_policy.set_save_image_when_release(true)
@@ -197,6 +209,12 @@ class JPLM4DTransformModeLightFieldDecoder
   }
 
 
+  virtual uint16_t get_number_of_colour_components() const override {
+    return this->lightfield_configuration_marker_segment
+        ->get_number_of_colour_components();
+  }
+
+
   void read_light_field_configuration_marker_segment() {
     auto lightfield_configuration_marker_segment =
         LightFieldContigurationMarkerSegmentParser::
@@ -244,23 +262,32 @@ class JPLM4DTransformModeLightFieldDecoder
       border_blocks_policy = BorderBlocksPolicy::padding;
     }
 
+    if (transform_mode_decoder_configuration->is_verbose()) {
+      std::cout << "superior_bit_plane: "
+                << static_cast<uint32_t>(superior_bit_plane) << "\n";
+      std::cout << "transform_length_t: " << transform_length_t << "\n";
+      std::cout << "transform_length_s: " << transform_length_s << "\n";
+      std::cout << "transform_length_v: " << transform_length_v << "\n";
+      std::cout << "transform_length_u: " << transform_length_u << "\n";
+      std::cout << "number_of_vertical_views: " << number_of_vertical_views
+                << "\n";
+      std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
+                << "\n";
+      std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
+      std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
+      std::cout << "level_shift: " << level_shift << "\n";
+      std::cout << "number of colour components: "
+                << lightfield_configuration_marker_segment
+                       .get_number_of_colour_components()
+                << '\n';
+      std::cout << "Border policy: "
+                << magic_enum::enum_name(this->get_border_blocks_policy())
+                << std::endl;
+    }
 
-    std::cout << "superior_bit_plane: " << superior_bit_plane << "\n";
-    std::cout << "transform_length_t: " << transform_length_t << "\n";
-    std::cout << "transform_length_s: " << transform_length_s << "\n";
-    std::cout << "transform_length_v: " << transform_length_v << "\n";
-    std::cout << "transform_length_u: " << transform_length_u << "\n";
-    std::cout << "number_of_vertical_views: " << number_of_vertical_views
-              << "\n";
-    std::cout << "number_of_horizontal_views: " << number_of_horizontal_views
-              << "\n";
-    std::cout << "mNumberOfViewLines (v): " << mNumberOfViewLines << "\n";
-    std::cout << "mNumberOfViewColumns (u): " << mNumberOfViewColumns << "\n";
-    std::cout << "level_shift: " << level_shift << "\n";
-    std::cout << "number of colour components: "
-              << lightfield_configuration_marker_segment
-                     .get_number_of_colour_components()
-              << std::endl;
+    this->lightfield_configuration_marker_segment =
+        std::make_unique<LightFieldConfigurationMarkerSegment>(
+            std::move(lightfield_configuration_marker_segment));
   }
 
 
@@ -292,6 +319,7 @@ class JPLM4DTransformModeLightFieldDecoder
 
     auto decoded_block = partition_decoder.decode_partition(
         channel, hierarchical_4d_decoder, size);
+
 
     int level_shift = (hierarchical_4d_decoder.get_level_shift() + 1) / 2;
     decoded_block += level_shift;

@@ -46,13 +46,13 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
-#include "Lib/Utils/Image/PGXFile.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
+#include "Lib/Utils/Image/PGXFile.h"
 
 
 namespace PGXFileIO {
 
-template<typename T>	
+template<typename T>
 struct UndefinedImageVisitor {
   template<typename T0>
   std::unique_ptr<UndefinedImage<T>> operator()(
@@ -61,7 +61,6 @@ struct UndefinedImageVisitor {
       return std::unique_ptr<UndefinedImage<T>>(
           static_cast<UndefinedImage<T>*>(image.release()));
     }
-
     auto output_image = std::make_unique<UndefinedImage<T>>(
         image->get_width(), image->get_height(), 1, image->get_bpp());
     auto output_image_iterator = output_image->begin();
@@ -83,9 +82,9 @@ struct UndefinedImageVisitor {
 std::unique_ptr<PGXFile> open(const std::string& filename);
 
 
-std::unique_ptr<PGXFile> open(const std::string& filename,
-    std::size_t width, std::size_t height, std::size_t depth, bool is_signed);
+std::unique_ptr<PGXFile> open(const std::string& filename, std::size_t width,
+    std::size_t height, std::size_t depth, bool is_signed);
 
-}
+}  // namespace PGXFileIO
 
 #endif /* end of include guard: JPLM_LIB_UTILS_IMAGE_PGXFILEIO_H__ */

@@ -41,6 +41,7 @@
 #ifndef JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 #define JPLM_LIB_UTILS_IMAGE_IMAGEEXCEPTIONS_H__
 
+#include <cstring>  //for strerror
 #include <exception>
 #include <string>
 
@@ -369,6 +370,59 @@ class InvalidNewLine : public std::exception {
  public:
   explicit InvalidNewLine(const std::string obtained_char) {
     message_ = "Obtained an invalid sign field: " + obtained_char + ". 0x0a";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class ImageHasMoreThanOneChannelException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit ImageHasMoreThanOneChannelException(std::size_t n_channels) {
+    message_ =
+        "Trying to save a image with more than one channel in pgx format. PGX "
+        "only supports 1 channel per file. The image has " +
+        std::to_string(n_channels) + " channels.";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+class FailedOppeningPGXFileException : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit FailedOppeningPGXFileException(
+      const std::string& filename, int& err) {
+    message_ = "Failed oppening PGX file. Filename is " + filename +
+               ". Error was: " + strerror(err) + ".";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class ReadLessPixelThenRequired : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit ReadLessPixelThenRequired(const std::string& filename,
+      std::size_t number_of_bytes_read, std::size_t number_of_bytes_required) {
+    message_ =
+        "Read wrong number of bytes than required for PGX file. Filename is " +
+        filename + ". Read " + std::to_string(number_of_bytes_read) +
+        "; required " + std::to_string(number_of_bytes_required) + ".";
   }
 
   virtual const char* what() const throw() {

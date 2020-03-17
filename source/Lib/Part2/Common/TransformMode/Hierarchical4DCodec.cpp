@@ -42,9 +42,7 @@
 
 
 void Hierarchical4DCodec::reset_probability_models() {
-  for (auto& probability_model : probability_models) {
-    probability_model.reset();
-  }
+  probability_models.reset();
 }
 
 

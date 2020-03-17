@@ -69,6 +69,36 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   return os;
 }
 
+std::size_t JPLFile::size() const noexcept {
+  std::size_t size = 0;
+  size += this->jpeg_pleno_signature_box->size();
+  size += this->file_type_box->size();
+  // if(this->xml_box_with_catalog) {
+  //    size+=this->xml_box_with_catalog->size();
+  // }
+  if (this->jpeg_pleno_thumbnail_box) {
+    size += this->jpeg_pleno_thumbnail_box->size();
+  }
+  for (const auto& codestream : this->jpeg_pleno_codestreams) {
+    size += codestream->size();
+  }
+  if (this->ipr_box) {
+    size += this->ipr_box->size();
+  }
+  if (this->uuid_boxes) {
+    const auto& uuid_boxes = *(this->uuid_boxes);
+    for (const auto& uuid_box : uuid_boxes) {
+      size += uuid_box->size();
+    }
+  }
+  if (this->uuid_info_boxes) {
+    const auto& uuid_info_boxes = *(this->uuid_info_boxes);
+    for (const auto& uuid_info_boxe : uuid_info_boxes) {
+      size += uuid_info_boxe->size();
+    }
+  }
+  return size;
+}
 
 JPLFile::JPLFile(const FileTypeBox& file_type_box)
     : jpeg_pleno_signature_box(std::make_unique<JpegPlenoSignatureBox>()),

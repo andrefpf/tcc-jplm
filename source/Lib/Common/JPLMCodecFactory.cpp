@@ -59,13 +59,16 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_light_field_encoder(
             static_cast<JPLMEncoderConfigurationLightField4DTransformMode *>(
                 configuration.release())));
   }
+
   assert(configuration->get_compression_type() ==
          CompressionTypeLightField::prediction_mode);
+
   return std::make_unique<JPLM4DPredictionModeLightFieldEncoder<uint16_t>>(
       std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>(
           static_cast<JPLMEncoderConfigurationLightField4DPredictionMode *>(
               configuration.release())));
 }
+
 
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_encoder(
     std::unique_ptr<JPLMEncoderConfiguration> &&configuration) {
@@ -85,10 +88,34 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_encoder(
   return nullptr;
 }
 
+
+std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_hologram_decoder(
+    std::shared_ptr<JPLFile> jpl_file,
+    const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
+    const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
+  throw JPLMCommonExceptions::NotImplementedException(
+      "JPLMCodecFactory::get_decoders(): "
+      "JpegPlenoCodestreamBoxTypes::Hologram");
+}
+
+
+std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_point_cloud_decoder(
+    std::shared_ptr<JPLFile> jpl_file,
+    const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
+    const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
+  throw JPLMCommonExceptions::NotImplementedException(
+      "JPLMCodecFactory::get_decoders(): "
+      "JpegPlenoCodestreamBoxTypes::PointCloud");
+}
+
+
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_lightfield_decoder(
     std::shared_ptr<JPLFile> jpl_file,
     const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
-    const std::string &output_filename) {
+    const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   const auto &codestream_as_part2 =
       static_cast<JpegPlenoLightFieldBox &>(*codestream);
   // const auto& contiguous = codestream_as_part2.get_ref_to_contents().get_ref_to_contiguous_codestream_box();
@@ -100,15 +127,18 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_lightfield_decoder(
                         .get_compression_type();
   if (mode == CompressionTypeLightField::transform_mode) {
     return std::make_unique<JPLM4DTransformModeLightFieldDecoder<uint16_t>>(
-        jpl_file, codestream_as_part2, output_filename);
+        jpl_file, codestream_as_part2, output_filename, configuration);
   }
   //else
   throw JPLMConfigurationExceptions::UnsuportedPredictionMode();
 }
 
+
 std::vector<std::unique_ptr<JPLMCodec>> JPLMCodecFactory::get_decoders(
-    std::shared_ptr<JPLFile> jpl_file, const std::string &output_filename) {
+    std::shared_ptr<JPLFile> jpl_file, const std::string &output_filename,
+    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   if (!jpl_file->has_codestream()) {
+    //<! \todo throw
     std::cerr << "The input jpl file has no codestream" << std::endl;
   }
 
@@ -117,26 +147,47 @@ std::vector<std::unique_ptr<JPLMCodec>> JPLMCodecFactory::get_decoders(
   for (const auto &codestream : codestreams) {
     switch (codestream->get_type()) {
       case JpegPlenoCodestreamBoxTypes::LightField: {
-        decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(
-            jpl_file, codestream, output_filename));
+        try {
+          decoders.push_back(JPLMCodecFactory::get_lightfield_decoder(
+              jpl_file, codestream, output_filename, configuration));
+        } catch (const std::exception &e) {
+          std::cerr
+              << "Found a lightfield codestream in the file, but an exception "
+                 "was thrown when creating the decoder. The exception was: "
+              << e.what() << std::endl;
+        }
         break;
       }
       case JpegPlenoCodestreamBoxTypes::PointCloud: {
-        throw JPLMCommonExceptions::NotImplementedException(
-            "JPLMCodecFactory::get_decoders(): "
-            "JpegPlenoCodestreamBoxTypes::PointCloud");
+        try {
+          decoders.push_back(JPLMCodecFactory::get_point_cloud_decoder(
+              jpl_file, codestream, output_filename, configuration));
+        } catch (const std::exception &e) {
+          std::cerr
+              << "Found a point cloud codestream in the file, but an exception "
+                 "was thrown when creating the decoder. The exception was: "
+              << e.what() << std::endl;
+        }
         break;
       }
       case JpegPlenoCodestreamBoxTypes::Hologram: {
-        throw JPLMCommonExceptions::NotImplementedException(
-            "JPLMCodecFactory::get_decoders(): "
-            "JpegPlenoCodestreamBoxTypes::Hologram");
+        try {
+          decoders.push_back(JPLMCodecFactory::get_hologram_decoder(
+              jpl_file, codestream, output_filename, configuration));
+        } catch (const std::exception &e) {
+          std::cerr
+              << "Found a hologram codestream in the file, but an exception "
+                 "was thrown when creating the decoder. The exception was: "
+              << e.what() << std::endl;
+        }
         break;
       }
       default: {
-        std::cerr << "Other type detected. Part 1 only defines 3 types"
+        std::cerr << "Other type detected. Part 1 only defines 3 types. The "
+                     "current codestream will be ignored and no "
+                     "encoder will be executed for such a part."
                   << std::endl;
-        throw JPLMConfigurationExceptions::UndefinedPartException();
+        // throw JPLMConfigurationExceptions::UndefinedPartException();
       }
     }
   }

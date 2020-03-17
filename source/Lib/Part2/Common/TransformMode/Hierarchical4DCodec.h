@@ -41,11 +41,11 @@
 #ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__
 #define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_HIERARCHICAL4DCODEC_H__
 
-#include <array>
+
 #include <vector>
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModelsHandler.h"
 
 
 enum class PartitionFlag {
@@ -69,8 +69,7 @@ class Hierarchical4DCodec {
   static constexpr auto BITPLANE_BYPASS_FLAGS = -1;
   static constexpr auto SYMBOL_PROBABILITY_MODEL_INDEX = 1;
   static constexpr auto SEGMENTATION_PROB_MODEL_INDEX = 32;
-  static constexpr auto number_of_probability_models = 161;
-  std::array<ProbabilityModel, number_of_probability_models> probability_models;
+  ProbabilityModelsHandler probability_models;
   int mPGMScale;
   uint8_t superior_bit_plane;
   uint8_t inferior_bit_plane;
@@ -112,6 +111,7 @@ class Hierarchical4DCodec {
 
   uint8_t get_inferior_bit_plane() const;
 
+
   void set_superior_bit_plane(uint8_t value);
 
 
@@ -128,6 +128,8 @@ class Hierarchical4DCodec {
 
 
   void set_transform_dimension(const LightfieldDimension<uint32_t>& dimension);
+
+
   void set_minimum_transform_dimension(
       const LightfieldDimension<uint32_t>& dimension);
 
@@ -136,6 +138,8 @@ class Hierarchical4DCodec {
 
 
   virtual ~Hierarchical4DCodec() = default;
+
+
   virtual void reset_probability_models();
 };
 

@@ -62,6 +62,9 @@ class UndefinedImage : public Image<T> {
   UndefinedImage(const UndefinedImage<T>& other) : Image<T>(other){};
 
 
+  UndefinedImage(const Image<T>& other) : Image<T>(other){};
+
+
   UndefinedImage& operator=(UndefinedImage<T>&& other) {
     Image<T>::operator=(std::move(other));
     return *this;
@@ -87,7 +90,13 @@ class UndefinedImage : public Image<T> {
 
 
   virtual std::vector<std::string> get_channel_names() const override {
-    return std::vector<std::string>(this->get_number_of_channels(), "Unnamed");
+    auto ret_vect = std::vector<std::string>();
+    auto number_of_channels = this->get_number_of_channels();
+    for (auto i = decltype(number_of_channels){0}; i < number_of_channels;
+         ++i) {
+      ret_vect.push_back("Channel " + std::to_string(i));
+    }
+    return ret_vect;
   }
 
   // void merge(const UndefinedImage& other) {

@@ -41,8 +41,11 @@
 #ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__
 #define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__
 
+
 #include "Lib/Part2/Common/TransformMode/DCT4DBlock.h"
+#include "Lib/Part2/Encoder/TransformMode/CommonExceptions.h"
 #include "Lib/Part2/Encoder/TransformMode/Hierarchical4DEncoder.h"
+
 
 class TransformPartition {
  private:
@@ -56,19 +59,23 @@ class TransformPartition {
   Block4D mPartitionData; /*!< DCT of all subblocks of the partition */
   TransformPartition(
       int length_t_min, int length_s_min, int length_v_min, int length_u_min);
-  TransformPartition(const LightfieldDimension<uint32_t>& minimum_transform_dimensions);
+  TransformPartition(
+      const LightfieldDimension<uint32_t> &minimum_transform_dimensions);
   ~TransformPartition() = default;
-  void rd_optimize_transform(
+  RDCostResult rd_optimize_transform(
       Block4D &inputBlock, Hierarchical4DEncoder &entropyCoder, double lambda);
-  double rd_optimize_transform(Block4D &inputBlock, Block4D &transformedBlock,
-      const std::tuple<int, int, int, int> &position,
+  RDCostResult rd_optimize_transform(Block4D &inputBlock,
+      Block4D &transformedBlock, const std::tuple<int, int, int, int> &position,
       const std::tuple<int, int, int, int> &lengths,
       Hierarchical4DEncoder &entropyCoder, double lambda,
       std::vector<PartitionFlag> &partition_code);
   void encode_partition(Hierarchical4DEncoder &entropyCoder, double lambda);
-  void encode_partition(const std::tuple<int, int, int, int> &position,
+  RDCostResult encode_partition(const std::tuple<int, int, int, int> &position,
       const std::tuple<int, int, int, int> &lengths,
       Hierarchical4DEncoder &entropyCoder, double lambda);
+
+  const std::vector<PartitionFlag> &get_partition_code() const;
+  void show_partition_codes_and_inferior_bit_plane() const;
 };
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_TRANSFORMPARTITION_H__ */

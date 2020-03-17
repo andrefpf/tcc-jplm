@@ -41,6 +41,11 @@
 #include "Hierarchical4DEncoder.h"
 
 
+void Hierarchical4DEncoder::show_inferior_bit_plane() const {
+  std::cerr << "Inferior bit plane value: "
+            << static_cast<uint32_t>(this->get_inferior_bit_plane()) << "\n";
+}
+
 ContiguousCodestreamCode& Hierarchical4DEncoder::get_ref_to_codestream_code()
     const {
   return mEntropyCoder.get_ref_to_codestream_code();
@@ -53,78 +58,57 @@ Hierarchical4DEncoder::move_codestream_code_out() {
 }
 
 
-void Hierarchical4DEncoder::reset_optimization_models() {
-  for (auto& probability_model : optimization_probability_models) {
-    probability_model.reset();
-  }
-}
-
-
 void Hierarchical4DEncoder::reset_probability_models() {
   Hierarchical4DCodec::reset_probability_models();
-  reset_optimization_models();
+  optimization_probability_models.reset();
   mEntropyCoder.flush_byte();
 }
 
 
-void Hierarchical4DEncoder ::encode_sub_block(double lambda) {
+RDCostResult Hierarchical4DEncoder ::encode_sub_block(double lambda) {
   hexadecatree_flags.clear();
   auto position = std::make_tuple(0, 0, 0, 0);
   auto lengths = std::make_tuple(mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u);
-  rd_optimize_hexadecatree(
+  auto rd_cost = rd_optimize_hexadecatree(
       position, lengths, lambda, superior_bit_plane, hexadecatree_flags);
+
   int flagSearchIndex = 0;
   encode_hexadecatree(0, 0, 0, 0, mSubbandLF.mlength_t, mSubbandLF.mlength_s,
       mSubbandLF.mlength_v, mSubbandLF.mlength_u, superior_bit_plane,
       flagSearchIndex);
+
+  return rd_cost;
 }
 
 
-bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
-    const std::tuple<int, int, int, int>& position,
-    const std::tuple<int, int, int, int>& range) const {
-  using LF = LightFieldDimension;
-  const auto threshold = 1 << bitplane;
+bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint32_t threshold,
+    const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& range) const {
+  const auto elements_to_compute = range - position;
 
-  const auto elements_to_compute_in_t =
-      std::get<LF::T>(range) - std::get<LF::T>(position);
-  const auto elements_to_skip_before_in_t =
-      std::get<LF::T>(position) * mSubbandLF.stride_t;
+  //addresses to skip before
+  const auto ptr_to_skip_before =
+      position.hadamard_product(mSubbandLF.get_strides());
 
-  const auto elements_to_compute_in_s =
-      std::get<LF::S>(range) - std::get<LF::S>(position);
-  const auto elements_to_skip_before_in_s =
-      std::get<LF::S>(position) * mSubbandLF.stride_s;
-  const auto elements_to_skip_after_in_s =
-      (mSubbandLF.mlength_s - elements_to_compute_in_s -
-          std::get<LF::S>(position)) *
-      mSubbandLF.stride_s;
+  //addresses to skip after
+  const auto size_of_remaing_block =
+      mSubbandLF.get_dimension() -
+      elements_to_compute.hadamard_product({1, 1, 1, 0}) - position;
 
-  const auto elements_to_compute_in_v =
-      std::get<LF::V>(range) - std::get<LF::V>(position);
-  const auto elements_to_skip_before_in_v =
-      std::get<LF::V>(position) * mSubbandLF.stride_v;
-  const auto elements_to_skip_after_in_v =
-      (mSubbandLF.mlength_v - elements_to_compute_in_v -
-          std::get<LF::V>(position)) *
-      mSubbandLF.stride_v;
+  const auto ptr_to_skip_after =
+      size_of_remaing_block.hadamard_product(mSubbandLF.get_strides());
 
-  const auto elements_to_compute_in_u =
-      std::get<LF::U>(range) - std::get<LF::U>(position);
-  const auto elements_to_skip_before_in_u = std::get<LF::U>(position);
-  const auto elements_to_skip_after_in_u =
-      mSubbandLF.mlength_u - std::get<LF::U>(position);
+  using elements_to_compute_t = decltype(elements_to_compute.get_t());
 
-
-  auto data_ptr = mSubbandLF.mPixelData + elements_to_skip_before_in_t;
-  for (auto t = 0; t < elements_to_compute_in_t; ++t) {
-    data_ptr += elements_to_skip_before_in_s;
-    for (auto s = 0; s < elements_to_compute_in_s; ++s) {
-      data_ptr += elements_to_skip_before_in_v;
-      for (auto v = 0; v < elements_to_compute_in_v; ++v) {
-        data_ptr += elements_to_skip_before_in_u;
-        auto data_ptr_end = data_ptr + elements_to_compute_in_u;
+  auto data_ptr = mSubbandLF.mPixelData + ptr_to_skip_before.get_t();
+  for (elements_to_compute_t t = 0; t < elements_to_compute.get_t(); ++t) {
+    data_ptr += ptr_to_skip_before.get_s();
+    for (elements_to_compute_t s = 0; s < elements_to_compute.get_s(); ++s) {
+      data_ptr += ptr_to_skip_before.get_v();
+      for (elements_to_compute_t v = 0; v < elements_to_compute.get_v(); ++v) {
+        data_ptr += ptr_to_skip_before.get_u();
+        auto data_ptr_end = data_ptr + elements_to_compute.get_u();
         auto result = std::find_if(
             data_ptr, data_ptr_end, [threshold](const auto& coefficient) {
               return std::abs(coefficient) >= threshold;
@@ -132,11 +116,11 @@ bool Hierarchical4DEncoder::get_mSubbandLF_significance(uint8_t bitplane,
         if (result != data_ptr_end) {
           return true;
         }
-        data_ptr += elements_to_skip_after_in_u;
+        data_ptr += ptr_to_skip_after.get_u();
       }
-      data_ptr += elements_to_skip_after_in_v;
+      data_ptr += ptr_to_skip_after.get_v();
     }
-    data_ptr += elements_to_skip_after_in_s;
+    data_ptr += ptr_to_skip_after.get_s();
   }
   return false;
 }
@@ -147,202 +131,183 @@ void Hierarchical4DEncoder::create_temporary_buffer() {
 }
 
 
-std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
+RDCostResult Hierarchical4DEncoder::get_rd_for_below_inferior_bit_plane(
+    const LightfieldCoordinate<uint32_t>& position,
+    const LightfieldDimension<uint32_t>& length) {
+  double signal_energy = 0.0;
+  auto temp = temporary_buffer.get();
+
+  using length_t = decltype(length.get_t());
+
+  for (length_t t = 0; t < length.get_t(); ++t) {
+    for (length_t s = 0; s < length.get_s(); ++s) {
+      for (length_t v = 0; v < length.get_v(); ++v) {
+        // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
+        auto initial_ptr =
+            mSubbandLF.mPixelData +
+            mSubbandLF.get_linear_position(position.get_t() + t,
+                position.get_s() + s, position.get_v() + v, position.get_u());
+        auto final_ptr = initial_ptr + length.get_u();
+        std::transform(initial_ptr, final_ptr, temp, [](int value) -> double {
+          return static_cast<double>(value) * static_cast<double>(value);
+        });
+        signal_energy =
+            std::accumulate(temp, temp + length.get_u(), signal_energy);
+      }
+    }
+  }
+  //signal energy seems to be the error. As there is no rate (=0), lambda is not important and j is equal error
+  return RDCostResult(signal_energy, signal_energy, 0.0, signal_energy);
+  //return std::make_pair(signal_energy, signal_energy);
+}
+
+
+RDCostResult Hierarchical4DEncoder::get_rd_for_unitary_block(
+    const LightfieldCoordinate<uint32_t>& position, double lambda,
+    uint8_t bitplane) {
+  const int magnitude = std::abs(mSubbandLF.get_pixel_at(position));
+
+  auto there_is_one = false;
+  double accumulated_rate = 0.0;
+
+  int bit_mask = ONES_MASK << inferior_bit_plane;
+  int quantized_magnitude = magnitude & bit_mask;
+
+  for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
+       --bit_position) {
+    int bit = (magnitude >> bit_position) & 01;
+    accumulated_rate +=
+        optimization_probability_models.get_rate_of_model_and_update(
+            bit, bit_position, SYMBOL_PROBABILITY_MODEL_INDEX);
+    there_is_one |= bit;
+  }
+
+  if (there_is_one) {
+    accumulated_rate += 1.0;
+    quantized_magnitude += (1 << inferior_bit_plane) / 2;
+  }
+  double error = magnitude - quantized_magnitude;
+  error *= error;  //error squared
+
+  return RDCostResult(error + lambda * accumulated_rate, error,
+      accumulated_rate, static_cast<double>(magnitude) * magnitude);
+}
+
+
+RDCostResult Hierarchical4DEncoder::rd_optimize_hexadecatree(
     const std::tuple<int, int, int, int>& position,
     const std::tuple<int, int, int, int>& lengths, double lambda,
     uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags) {
-  using LF = LightFieldDimension;
+  auto length = LightfieldDimension<uint32_t>(lengths);
+  auto position_coo = LightfieldCoordinate<uint32_t>(position);
+
 
   if (bitplane < inferior_bit_plane) {
-    double signal_energy = 0.0;
-    auto temp = temporary_buffer.get();
-    for (auto t = 0; t < std::get<LF::T>(lengths); ++t) {
-      for (auto s = 0; s < std::get<LF::S>(lengths); ++s) {
-        for (auto v = 0; v < std::get<LF::V>(lengths); ++v) {
-          // auto initial_ptr=&mSubbandLF.mPixel[std::get<LF::T>(position)+t][std::get<LF::S>(position)+s][std::get<LF::V>(position)+v][std::get<LF::U>(position)];
-          auto initial_ptr =
-              mSubbandLF.mPixelData +
-              mSubbandLF.get_linear_position(std::get<LF::T>(position) + t,
-                  std::get<LF::S>(position) + s, std::get<LF::V>(position) + v,
-                  std::get<LF::U>(position));
-          auto final_ptr = initial_ptr + std::get<LF::U>(lengths);
-          std::transform(initial_ptr, final_ptr, temp, [](int value) -> double {
-            return static_cast<double>(value) * static_cast<double>(value);
-          });
-          signal_energy = std::accumulate(
-              temp, temp + std::get<LF::U>(lengths), signal_energy);
-        }
-      }
-    }
-    return std::make_pair(signal_energy, signal_energy);
+    return get_rd_for_below_inferior_bit_plane(position_coo, length);
+    // return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
 
-  if (std::get<LF::T>(lengths) * std::get<LF::S>(lengths) *
-          std::get<LF::V>(lengths) * std::get<LF::U>(lengths) ==
-      1) {
-    const int magnitude = std::abs(mSubbandLF.get_pixel_at(
-        std::get<LF::T>(position), std::get<LF::S>(position),
-        std::get<LF::V>(position), std::get<LF::U>(position)));
 
-    auto there_is_one = false;
-    double accumulatedRate = 0.0;
-    for (int bit_position = bitplane; bit_position >= inferior_bit_plane;
-         --bit_position) {
-      int bit = (magnitude >> bit_position) & 01;
-      if (bit) {
-        there_is_one = true;
-        accumulatedRate +=
-            optimization_probability_models[bit_position +
-                                            SYMBOL_PROBABILITY_MODEL_INDEX]
-                .get_rate<1>();
-        if (bit_position > BITPLANE_BYPASS)
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .update<1>();
-      } else {
-        accumulatedRate +=
-            optimization_probability_models[bit_position +
-                                            SYMBOL_PROBABILITY_MODEL_INDEX]
-                .get_rate<0>();
-        if (bit_position > BITPLANE_BYPASS)
-          optimization_probability_models[bit_position +
-                                          SYMBOL_PROBABILITY_MODEL_INDEX]
-              .update<0>();
-      }
-    }
-    if (there_is_one)
-      accumulatedRate += 1.0;
-
-    int bitMask = onesMask << inferior_bit_plane;
-    int quantizedMagnitude = magnitude & bitMask;
-    if (there_is_one) {
-      quantizedMagnitude += (1 << inferior_bit_plane) / 2;
-    }
-    double error = magnitude - quantizedMagnitude;
-
-    return std::make_pair(error * error + lambda * accumulatedRate,
-        static_cast<double>(magnitude) * magnitude);
+  if (length.has_unitary_area()) {
+    return get_rd_for_unitary_block(position_coo, lambda, bitplane);
+    // return std::make_pair(rd_cost.get_j_cost(), rd_cost.get_energy());
   }
+
+
+  using length_t = decltype(length.get_t());
+
 
   decltype(probability_models) currentProbabilityModel =
       optimization_probability_models;
 
+
+  auto rate_of_skip =
+      optimization_probability_models[(bitplane << 1) +
+                                      SEGMENTATION_PROB_MODEL_INDEX]
+          .get_rate<1>();
+
+  //error and anergy will be obtained latter on
+  auto rd_cost_of_skip =
+      RDCostResult(lambda * rate_of_skip, 0.0, rate_of_skip, 0.0);
+  //j_cost error rate energy
+
   std::vector<HexadecaTreeFlag> hexadecatree_flags_0;
 
-  auto min_range_t =
-      std::min(std::get<LF::T>(position) + std::get<LF::T>(lengths),
-          (int) mSubbandLF.mlength_t);
-  auto min_range_s =
-      std::min(std::get<LF::S>(position) + std::get<LF::S>(lengths),
-          (int) mSubbandLF.mlength_s);
-  auto min_range_v =
-      std::min(std::get<LF::V>(position) + std::get<LF::V>(lengths),
-          (int) mSubbandLF.mlength_v);
-  auto min_range_u =
-      std::min(std::get<LF::U>(position) + std::get<LF::U>(lengths),
-          (int) mSubbandLF.mlength_u);
+  auto min_range = position_coo + length;
 
-  const auto Significance = get_mSubbandLF_significance(
-      bitplane, position, {min_range_t, min_range_s, min_range_v, min_range_u});
+  const auto should_split_block =
+      get_mSubbandLF_significance(1 << bitplane, position_coo, min_range);
 
+  auto segmentation_flags_rate =
+      optimization_probability_models.get_segmentation_rate(
+          bitplane, should_split_block);
 
-  auto segmentation_flags_j_cost =
-      lambda * optimization_probability_models[(bitplane << 1) +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate<0>() +
-      lambda * optimization_probability_models[(bitplane << 1) + 1 +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate(Significance);
-
-  std::pair<double, double> J_and_energy =
-      std::make_pair(segmentation_flags_j_cost, 0.0);
-  auto j_skip =
-      lambda * optimization_probability_models[(bitplane << 1) +
-                                               SEGMENTATION_PROB_MODEL_INDEX]
-                   .get_rate<1>();
-
-  if (bitplane > BITPLANE_BYPASS_FLAGS) {
-    optimization_probability_models[(bitplane << 1) +
-                                    SEGMENTATION_PROB_MODEL_INDEX]
-        .update<0>();
-    optimization_probability_models[(bitplane << 1) + 1 +
-                                    SEGMENTATION_PROB_MODEL_INDEX]
-        .update(Significance);
-  }
+  auto rd_cost_of_segmentation = RDCostResult(
+      lambda * segmentation_flags_rate, 0.0, segmentation_flags_rate, 0.0);
 
   //evaluate the cost J0 to encode this subblock
-  if (!Significance) {  //this means that there is no value larger than the threshold (1<<bitplane)
-    auto temp_j_and_energy = rd_optimize_hexadecatree(
-        position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
-    std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
-    std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
-  } else {  //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
-    std::tuple<int, int, int, int> half_lengths = std::apply(
-        [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
-        lengths);
-    auto number_of_subdivisions = std::apply(
-        [](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); }, lengths);
+  if (should_split_block) {
+    //there was at least one value larger than the threshold (1<<bitplane), it will break the planes by half
+    auto half_length = length.divided_by_half_in_all_possible_dimensions();
 
-    for (int t = 0; t < std::get<LF::T>(number_of_subdivisions); ++t) {
-      int new_position_t =
-          std::get<LF::T>(position) + t * std::get<LF::T>(half_lengths);
-      int new_length_t =
-          (t == 0) ? std::get<LF::T>(half_lengths)
-                   : (std::get<LF::T>(lengths) - std::get<LF::T>(half_lengths));
+    //number of divisions in each dimension
+    auto n_divisions = length.get_number_of_possible_divisions_by_half();
 
-      for (int s = 0; s < std::get<LF::S>(number_of_subdivisions); ++s) {
-        int new_position_s =
-            std::get<LF::S>(position) + s * std::get<LF::S>(half_lengths);
-        int new_length_s =
-            (s == 0)
-                ? std::get<LF::S>(half_lengths)
-                : (std::get<LF::S>(lengths) - std::get<LF::S>(half_lengths));
+    for (length_t t = 0; t < n_divisions.get_t(); ++t) {
+      auto new_position_t = position_coo.get_t() + t * half_length.get_t();
+      auto new_length_t = (t == 0) ? half_length.get_t()
+                                   : (length.get_t() - half_length.get_t());
 
-        for (int v = 0; v < std::get<LF::V>(number_of_subdivisions); ++v) {
-          int new_position_v =
-              std::get<LF::V>(position) + v * std::get<LF::V>(half_lengths);
-          int new_length_v =
-              (v == 0)
-                  ? std::get<LF::V>(half_lengths)
-                  : (std::get<LF::V>(lengths) - std::get<LF::V>(half_lengths));
+      for (length_t s = 0; s < n_divisions.get_s(); ++s) {
+        auto new_position_s = position_coo.get_s() + s * half_length.get_s();
+        auto new_length_s = (s == 0) ? half_length.get_s()
+                                     : (length.get_s() - half_length.get_s());
 
-          for (int u = 0; u < std::get<LF::U>(number_of_subdivisions); ++u) {
-            int new_position_u =
-                std::get<LF::U>(position) + u * std::get<LF::U>(half_lengths);
-            int new_length_u = (u == 0) ? std::get<LF::U>(half_lengths)
-                                        : (std::get<LF::U>(lengths) -
-                                              std::get<LF::U>(half_lengths));
+        for (length_t v = 0; v < n_divisions.get_v(); ++v) {
+          auto new_position_v = position_coo.get_v() + v * half_length.get_v();
+          auto new_length_v = (v == 0) ? half_length.get_v()
+                                       : (length.get_v() - half_length.get_v());
 
-            std::vector<HexadecaTreeFlag> hexadecatree_flags_1;
+          for (length_t u = 0; u < n_divisions.get_u(); ++u) {
+            auto new_position_u =
+                position_coo.get_u() + u * half_length.get_u();
+            auto new_length_u = (u == 0)
+                                    ? half_length.get_u()
+                                    : (length.get_u() - half_length.get_u());
 
-            auto temp_j_and_energy =
+            std::vector<HexadecaTreeFlag> hexadecatree_flags_of_partition;
+
+            rd_cost_of_segmentation +=
                 rd_optimize_hexadecatree({new_position_t, new_position_s,
                                              new_position_v, new_position_u},
                     {new_length_t, new_length_s, new_length_v, new_length_u},
-                    lambda, bitplane, hexadecatree_flags_1);
-            std::get<0>(J_and_energy) += std::get<0>(temp_j_and_energy);
-            std::get<1>(J_and_energy) += std::get<1>(temp_j_and_energy);
+                    lambda, bitplane, hexadecatree_flags_of_partition);
+
 
             hexadecatree_flags_0.reserve(
-                hexadecatree_flags_0.size() + hexadecatree_flags_1.size());
+                hexadecatree_flags_0.size() +
+                hexadecatree_flags_of_partition.size());
             hexadecatree_flags_0.insert(hexadecatree_flags_0.end(),
-                hexadecatree_flags_1.begin(), hexadecatree_flags_1.end());
+                hexadecatree_flags_of_partition.begin(),
+                hexadecatree_flags_of_partition.end());
           }
         }
       }
     }
+  } else {  //this means that there is no value larger than the threshold (1<<bitplane). this lower the bitplane
+    rd_cost_of_segmentation += rd_optimize_hexadecatree(
+        position, lengths, lambda, bitplane - 1, hexadecatree_flags_0);
   }
 
-  double J0 = std::get<0>(J_and_energy);
-  double SignalEnergySum = std::get<1>(J_and_energy);
-
-  j_skip += SignalEnergySum;
+  rd_cost_of_skip.add_to_energy(rd_cost_of_segmentation.get_energy());
+  rd_cost_of_skip.add_to_j_cost(rd_cost_of_segmentation.get_energy());
+  // rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_error());
+  rd_cost_of_skip.add_to_error(rd_cost_of_segmentation.get_energy());
 
   //Choose the lowest cost
-  if ((J0 < j_skip) || ((bitplane == inferior_bit_plane) && (!Significance))) {
-    std::vector<HexadecaTreeFlag> temp_hexadecatree_flags = hexadecatree_flags;
-
-    if (Significance) {
+  if ((rd_cost_of_segmentation.get_j_cost() < rd_cost_of_skip.get_j_cost()) ||
+      ((bitplane == inferior_bit_plane) && (!should_split_block))) {
+    if (should_split_block) {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::splitBlock);
     } else {
       hexadecatree_flags.emplace_back(HexadecaTreeFlag::lowerBitPlane);
@@ -351,21 +316,19 @@ std::pair<double, double> Hierarchical4DEncoder::rd_optimize_hexadecatree(
         hexadecatree_flags.size() + hexadecatree_flags_0.size());
     hexadecatree_flags.insert(hexadecatree_flags.end(),
         hexadecatree_flags_0.begin(), hexadecatree_flags_0.end());
-  } else {
-    hexadecatree_flags.emplace_back(HexadecaTreeFlag::zeroBlock);
-    J0 = j_skip;
-
-    optimization_probability_models = currentProbabilityModel;
-
-    if (bitplane > BITPLANE_BYPASS_FLAGS)
-      optimization_probability_models[(bitplane << 1) +
-                                      SEGMENTATION_PROB_MODEL_INDEX]
-          .update<1>();
+    return rd_cost_of_segmentation;
   }
+  //else
+  hexadecatree_flags.emplace_back(HexadecaTreeFlag::zeroBlock);
 
-  std::get<0>(J_and_energy) = J0;
+  optimization_probability_models = currentProbabilityModel;
 
-  return J_and_energy;
+  if (bitplane > BITPLANE_BYPASS_FLAGS)
+    optimization_probability_models[(bitplane << 1) +
+                                    SEGMENTATION_PROB_MODEL_INDEX]
+        .update<1>();
+
+  return rd_cost_of_skip;
 }
 
 
@@ -545,21 +508,19 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
   int optimum_bit_plane = 0;  //Irrelevant initial value
 
   double accumulatedRate = 0.0;
-  int onesMask = 0;
-  onesMask = ~onesMask;
 
   for (int bit_position = superior_bit_plane; bit_position >= 0;
        bit_position--) {
     double distortion = 0.0;
     auto signalRate = 0;
 
-    int bitMask = onesMask << bit_position;
+    int bit_mask = ONES_MASK << bit_position;
     int threshold = (1 << bit_position);
 
     for (auto data_ptr = mSubbandLF.mPixelData;
          data_ptr < mSubbandLF.mPixelData + subbandSize; ++data_ptr) {
       int magnitude = std::abs(*data_ptr);
-      int quantizedMagnitude = magnitude & bitMask;
+      int quantizedMagnitude = magnitude & bit_mask;
       if (quantizedMagnitude > 0) {
         ++signalRate;
         quantizedMagnitude += (threshold >> 1);
@@ -579,8 +540,10 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
     }
 
     //since accumulateRate is monotonically increasing, if lambda*accumulatedRate is > Jmin, no other case will be smaller...
-    if (lambda * (accumulatedRate) > Jmin)
+    if (lambda * (accumulatedRate) >
+        Jmin) {  //<! \todo check if this condition happens
       return optimum_bit_plane;
+    }
 
     double J = distortion +
                lambda * (accumulatedRate + static_cast<double>(signalRate));
@@ -596,8 +559,8 @@ int Hierarchical4DEncoder::get_optimum_bit_plane(double lambda) {
 }
 
 
-void Hierarchical4DEncoder::set_optimization_model(std::array<ProbabilityModel,
-    Hierarchical4DEncoder::number_of_probability_models>& model) {
+void Hierarchical4DEncoder::set_optimization_model(
+    const ProbabilityModelsHandler& model) {
   optimization_probability_models = model;
 }
 

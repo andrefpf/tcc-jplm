@@ -52,8 +52,16 @@ int main(int argc, char const* argv[]) {
   std::ofstream of_stream(configuration->get_output_filename(),
       std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
 
+  if (configuration->is_verbose()) {
+    std::cerr << "JPEG Pleno Model (JPLM) Encoder. \nVerbose mode \"on\"\n";
+  }
+
+  //<! needed to check here because configuration is unique ptr that will be moved...
+  auto show_statistics = configuration->show_runtime_statistics();
   auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
 
+  //<! \todo avoid the static cast as the get_encoder_configuration function
+  // should return an specialized encoder configuration
   auto encoder = JPLMCodecFactory::get_encoder(
       std::move(std::unique_ptr<JPLMEncoderConfiguration>(
           static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
@@ -62,7 +70,9 @@ int main(int argc, char const* argv[]) {
 
   of_stream << encoder->get_ref_to_jpl_file();
 
-  run_time_statistics.show_statistics();
+  if (show_statistics) {
+    run_time_statistics.show_statistics();
+  }
 
   of_stream.close();
 

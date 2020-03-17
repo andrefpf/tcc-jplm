@@ -127,13 +127,21 @@ class Block4D {
     return std::make_tuple(mlength_t, mlength_s, mlength_v, mlength_u);
   }
   LightfieldDimension<uint32_t> get_dimension() const {
-    return {static_cast<uint32_t>(mlength_t), static_cast<uint32_t>(mlength_s),
-        static_cast<uint32_t>(mlength_v), static_cast<uint32_t>(mlength_u)};
+    return {mlength_t, mlength_s, mlength_v, mlength_u};
   }
+
+  LightfieldDimension<std::size_t> get_strides() const {
+    return {stride_t, stride_s, stride_v, 1};
+  }
+
+  std::size_t get_linear_position(
+      const LightfieldCoordinate<uint32_t>& position) const;
   std::size_t get_linear_position(uint32_t position_t, uint32_t position_s,
       uint32_t position_v, uint32_t position_u) const;
   void set_pixel_at(block4DElementType pixel_value, uint32_t position_t,
       uint32_t position_s, uint32_t position_v, uint32_t position_u);
+  block4DElementType get_pixel_at(
+      const LightfieldCoordinate<uint32_t>& position) const;
   block4DElementType get_pixel_at(uint32_t position_t, uint32_t position_s,
       uint32_t position_v, uint32_t position_u) const;
   std::size_t get_number_of_elements() const;
@@ -178,7 +186,7 @@ class Block4D {
   bool has_equal_size(const Block4D& other) const;
   void fill_with_zeros();
 
-  friend std::ostream& operator<<(std::ostream& stream, const Block4D& Box);
+  friend std::ostream& operator<<(std::ostream& stream, const Block4D& block);
 };
 
 std::ostream& operator<<(std::ostream& o_stream, const Block4D& block);

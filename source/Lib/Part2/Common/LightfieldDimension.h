@@ -89,6 +89,11 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   virtual ~LightfieldDimension() = default;
 
 
+  bool has_unitary_area() const noexcept {
+    return this->get_number_of_pixels_per_lightfield() == 1;
+  }
+
+
   bool operator==(const LightfieldDimension<T>& other) const {
     return this->dimensions == other.dimensions;
   }
@@ -112,6 +117,21 @@ class LightfieldDimension : public LightfieldCoordinate<T> {
   std::size_t get_number_of_pixels_per_lightfield() const noexcept {
     return get_number_of_pixels_per_view() *
            get_number_of_views_per_lightfield();
+  }
+
+
+  LightfieldDimension<T> divided_by_half_in_all_possible_dimensions() const {
+    //this divides every dimension by half if the dimension is not one.
+    return LightfieldDimension<T>(std::apply(
+        [](auto... x) { return std::make_tuple(x > 1 ? x / 2 : 1 ...); },
+        this->dimensions));
+  }
+
+
+  LightfieldDimension<T> get_number_of_possible_divisions_by_half() const {
+    return LightfieldDimension<T>(
+        std::apply([](auto... x) { return std::make_tuple(x > 1 ? 2 : 1 ...); },
+            this->dimensions));
   }
 };
 

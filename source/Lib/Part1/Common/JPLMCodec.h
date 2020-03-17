@@ -42,6 +42,7 @@
 #define JPLM_LIB_PART1_COMMON_JPLMCODEC_H__
 
 #include <memory>  //std::shared_ptr
+#include "Lib/Common/JPLMConfiguration.h"
 #include "Lib/Part1/Common/JPLFile.h"
 
 /**
@@ -50,6 +51,7 @@
 class JPLMCodec {
  protected:
   std::shared_ptr<JPLFile> jpl_file;
+  // std::shared_ptr<JPLMConfiguration> jplm_configuration;
 
  public:
   JPLMCodec() : jpl_file(std::make_shared<JPLFile>()) {

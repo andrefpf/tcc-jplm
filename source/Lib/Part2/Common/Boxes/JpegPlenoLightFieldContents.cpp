@@ -54,7 +54,6 @@ JpegPlenoLightFieldContents::get_ref_to_light_field_header_box() {
 
 void JpegPlenoLightFieldContents::add_contiguous_codestream_box(
     std::unique_ptr<ContiguousCodestreamBox> &&contiguous_codestream_box) {
-  std::cout << "added contiguous codestream box" << std::endl;
   this->contiguous_codestream_box = std::move(contiguous_codestream_box);
 }
 
@@ -63,7 +62,7 @@ ContiguousCodestreamBox &
 JpegPlenoLightFieldContents::get_ref_to_contiguous_codestream_box() {
   if (!contiguous_codestream_box) {
     throw JpegPlenoLightFieldBoxExceptions::
-    UninitializedContigousCodestreamException();
+        UninitializedContigousCodestreamException();
   }
   return *contiguous_codestream_box;
 }
@@ -73,30 +72,33 @@ const ContiguousCodestreamBox &
 JpegPlenoLightFieldContents::get_ref_to_contiguous_codestream_box() const {
   if (!contiguous_codestream_box) {
     throw JpegPlenoLightFieldBoxExceptions::
-    UninitializedContigousCodestreamException();
+        UninitializedContigousCodestreamException();
   }
   return *contiguous_codestream_box;
 }
 
 
 void JpegPlenoLightFieldContents::add_jpeg_pleno_light_field_reference_view_box(
-    std::unique_ptr<JpegPlenoLightFieldReferenceViewBox> &&jpeg_pleno_lf_reference_view_box) {
+    std::unique_ptr<JpegPlenoLightFieldReferenceViewBox>
+        &&jpeg_pleno_lf_reference_view_box) {
   this->jpeg_pleno_lf_reference_view_box =
       std::move(jpeg_pleno_lf_reference_view_box);
 }
 
 
-void
-JpegPlenoLightFieldContents::add_jpeg_pleno_light_field_normalized_disparity_view_box(
-    std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox> &&jpeg_pleno_lf_normalized_disparity_view_box) {
+void JpegPlenoLightFieldContents::
+    add_jpeg_pleno_light_field_normalized_disparity_view_box(
+        std::unique_ptr<JpegPlenoLightFieldNormalizedDisparityViewBox>
+            &&jpeg_pleno_lf_normalized_disparity_view_box) {
   this->jpeg_pleno_lf_normalized_disparity_view_box =
       std::move(jpeg_pleno_lf_normalized_disparity_view_box);
 }
 
 
-void
-JpegPlenoLightFieldContents::add_jpeg_pleno_light_field_intermediate_view_box(
-    std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox> &&jpeg_pleno_lf_intermediate_view_box) {
+void JpegPlenoLightFieldContents::
+    add_jpeg_pleno_light_field_intermediate_view_box(
+        std::unique_ptr<JpegPlenoLightFieldIntermediateViewBox>
+            &&jpeg_pleno_lf_intermediate_view_box) {
   this->jpeg_pleno_lf_intermediate_view_box =
       std::move(jpeg_pleno_lf_intermediate_view_box);
 }
@@ -108,8 +110,8 @@ JpegPlenoLightFieldContents *JpegPlenoLightFieldContents::clone() const {
 
 
 uint64_t JpegPlenoLightFieldContents::size() const noexcept {
-  uint64_t size = profile_and_level_box->size() +
-                  jpeg_pleno_light_field_header_box->size();
+  uint64_t size =
+      profile_and_level_box->size() + jpeg_pleno_light_field_header_box->size();
   if (jpeg_pleno_thumbnail_box) {
     size += jpeg_pleno_thumbnail_box->size();
   }
@@ -132,8 +134,8 @@ uint64_t JpegPlenoLightFieldContents::size() const noexcept {
 bool JpegPlenoLightFieldContents::is_equal(const DBox &other) const {
   if (typeid(*this) != typeid(other))
     return false;
-  const auto& cast_other =
-      dynamic_cast<const JpegPlenoLightFieldContents&>(other);
+  const auto &cast_other =
+      dynamic_cast<const JpegPlenoLightFieldContents &>(other);
   return *this == cast_other;
 }
 
@@ -151,7 +153,8 @@ bool JpegPlenoLightFieldContents::operator!=(
 }
 
 
-std::ostream &JpegPlenoLightFieldContents::write_to(std::ostream &stream) const {
+std::ostream &JpegPlenoLightFieldContents::write_to(
+    std::ostream &stream) const {
   stream << *profile_and_level_box;  //required
   if (jpeg_pleno_thumbnail_box) {
     stream << *jpeg_pleno_thumbnail_box;
@@ -175,7 +178,8 @@ std::ostream &JpegPlenoLightFieldContents::write_to(std::ostream &stream) const 
 
 JpegPlenoLightFieldContents::JpegPlenoLightFieldContents(
     std::unique_ptr<ProfileAndLevelBox> &&profile_and_level_box,
-    std::unique_ptr<JpegPlenoLightFieldHeaderBox> &&jpeg_pleno_light_field_header_box)
+    std::unique_ptr<JpegPlenoLightFieldHeaderBox>
+        &&jpeg_pleno_light_field_header_box)
     : profile_and_level_box(std::move(profile_and_level_box)),
       jpeg_pleno_light_field_header_box(
           std::move(jpeg_pleno_light_field_header_box)) {
@@ -186,22 +190,22 @@ JpegPlenoLightFieldContents::JpegPlenoLightFieldContents(
     const ProfileAndLevelBox &profile_and_level_box,
     const JpegPlenoLightFieldHeaderBox &jpeg_pleno_light_field_header_box)
     : profile_and_level_box(
-    std::make_unique<ProfileAndLevelBox>(profile_and_level_box)),
+          std::make_unique<ProfileAndLevelBox>(profile_and_level_box)),
       jpeg_pleno_light_field_header_box(
           std::make_unique<JpegPlenoLightFieldHeaderBox>(
               jpeg_pleno_light_field_header_box)) {
 }
 
+
 JpegPlenoLightFieldContents::JpegPlenoLightFieldContents(
     const JpegPlenoLightFieldContents &other)
-    : profile_and_level_box(std::make_unique<ProfileAndLevelBox>(
-    *(other.profile_and_level_box))),
+    : profile_and_level_box(
+          std::make_unique<ProfileAndLevelBox>(*(other.profile_and_level_box))),
       jpeg_pleno_light_field_header_box(
           std::make_unique<JpegPlenoLightFieldHeaderBox>(
               *(other.jpeg_pleno_light_field_header_box))),
-      contiguous_codestream_box(
-          other.contiguous_codestream_box
-          ? std::make_unique<ContiguousCodestreamBox>(
-              *(other.contiguous_codestream_box))
-          : nullptr) {
+      contiguous_codestream_box(other.contiguous_codestream_box
+                                    ? std::make_unique<ContiguousCodestreamBox>(
+                                          *(other.contiguous_codestream_box))
+                                    : nullptr) {
 }

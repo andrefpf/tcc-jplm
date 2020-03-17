@@ -31,46 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfiguration.h
+/** \file     JpegPlenoProfileBrand.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-03-16
  */
 
-#ifndef JPLMENCODERCONFIGURATION_H__
-#define JPLMENCODERCONFIGURATION_H__
-
-#include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include <optional>
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "nlohmann/json.hpp"
-
-
-class JPLMEncoderConfiguration : public JPLMConfiguration {
- private:
-  static constexpr std::size_t current_hierarchy_level = 0;
-
- protected:
-  std::string config;
-  JpegPlenoPart part = JpegPlenoPart::Undefined;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-  virtual void add_options() override;
-
-
- public:
-  JpegPlenoPart get_jpeg_pleno_part() const;
-  const std::string &get_config() const;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv);
-};
-
-
-#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
+#include "Lib/Part2/Common/Boxes/JpegPlenoProfileBrand.h"

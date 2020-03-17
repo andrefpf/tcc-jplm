@@ -48,6 +48,9 @@
 #include "Lib/Part2/Common/TransformMode/DCT4DCoefficientsManager.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldTransformMode.h"
 #include "Lib/Utils/Image/ColorSpaces.h"
+#include "cppitertools/product.hpp"
+#include "cppitertools/zip.hpp"
+#include "tqdm-cpp/tqdm.hpp"
 
 
 template<typename PelType = uint16_t>
@@ -55,18 +58,133 @@ class JPLM4DTransformModeLightFieldCodec
     : public virtual JPLMLightFieldCodec<PelType> {
  protected:
   bool needs_block_extension = false;
+  uint32_t number_of_colour_components = 3;
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t> extensions;
+  std::tuple<bool, bool, bool, bool> extends_in_direction = {
+      false, false, false, false};
   LightfieldDimension<uint32_t> lightfield_dimension;
   LightfieldDimension<uint32_t> block_4d_dimension;
+  const JPLMConfiguration& transform_mode_configuration;
+
+  /**
+   * @brief      Gets the number of colour components.
+   *
+   * @return     The number of colour components.
+   */
+  virtual uint16_t get_number_of_colour_components() const = 0;
+
+
+  /**
+   * @brief      Gets the vector of positions in dimension.
+   *
+   * @param[in]  total_size  The total size of the lightfield in the dimension.
+   * @param[in]  block_size  The 4D block size in the dimension.
+   *
+   * @return     The vector of positions in dimension.
+   */
+  std::vector<uint32_t> get_vector_of_positions_in_dimension(
+      uint32_t total_size, uint32_t block_size) const {
+    auto number_of_positions = static_cast<int>(
+        std::ceil(total_size / static_cast<double>(block_size)));
+    std::vector<uint32_t> positions(number_of_positions);
+    positions.at(0) = 0;
+    auto value = 0;
+    std::generate(positions.begin() + 1, positions.end(),
+        [&value, block_size] { return value += block_size; });
+    return positions;
+  }
+
+
+  /**
+   * @brief      Gets the block coordinates and sizes used to iterate over.
+   *
+   * @return     The block coordinates and sizes.
+   */
+  auto get_block_coordinates_and_sizes() const {
+    const auto& [T, S, V, U] = lightfield_dimension;
+    const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
+        block_4d_dimension;
+
+    auto t_coordinates = get_vector_of_positions_in_dimension(T, BLOCK_SIZE_t);
+    auto s_coordinates = get_vector_of_positions_in_dimension(S, BLOCK_SIZE_s);
+    auto v_coordinates = get_vector_of_positions_in_dimension(V, BLOCK_SIZE_v);
+    auto u_coordinates = get_vector_of_positions_in_dimension(U, BLOCK_SIZE_u);
+
+
+    auto t_sizes = std::vector<uint32_t>(t_coordinates.size(), BLOCK_SIZE_t);
+    auto s_sizes = std::vector<uint32_t>(s_coordinates.size(), BLOCK_SIZE_s);
+    auto v_sizes = std::vector<uint32_t>(v_coordinates.size(), BLOCK_SIZE_v);
+    auto u_sizes = std::vector<uint32_t>(u_coordinates.size(), BLOCK_SIZE_u);
+
+
+    auto channels_vector =
+        std::vector<uint16_t>(this->get_number_of_colour_components());
+    std::iota(channels_vector.begin(), channels_vector.end(), 0);
+
+
+    const auto& boder_blocks_policy = this->get_border_blocks_policy();
+    if (boder_blocks_policy == BorderBlocksPolicy::truncate) {
+      if (std::get<0>(extends_in_direction)) {
+        t_sizes.back() = T % BLOCK_SIZE_t;
+      }
+      if (std::get<1>(extends_in_direction)) {
+        s_sizes.back() = S % BLOCK_SIZE_s;
+      }
+      if (std::get<2>(extends_in_direction)) {
+        v_sizes.back() = V % BLOCK_SIZE_v;
+      }
+      if (std::get<3>(extends_in_direction)) {
+        u_sizes.back() = U % BLOCK_SIZE_u;
+      }
+    }
+
+    auto&& coordinates_iter = iter::product(
+        t_coordinates, s_coordinates, v_coordinates, u_coordinates);
+
+    auto&& sizes_iter = iter::product(t_sizes, s_sizes, v_sizes, u_sizes);
+
+    auto coordinates_vector =
+        std::vector<std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>>(
+            coordinates_iter.begin(), coordinates_iter.end());
+    auto sizes_vector =
+        std::vector<std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>>(
+            sizes_iter.begin(), sizes_iter.end());
+
+    auto&& zip_iter = iter::zip(coordinates_vector, sizes_vector);
+
+
+    auto&& with_channel = iter::product(zip_iter, channels_vector);
+
+
+    std::vector<std::tuple<LightfieldCoordinate<uint32_t>,
+        LightfieldDimension<uint32_t>, uint16_t>>
+        ret_vect;
+
+    std::transform(with_channel.begin(), with_channel.end(),
+        std::back_inserter(ret_vect), [](const auto&& in) {
+          const auto& coordinate_and_size = std::get<0>(in);
+          const auto& coordinate =
+              LightfieldCoordinate<uint32_t>(std::get<0>(coordinate_and_size));
+          const auto& size =
+              LightfieldDimension<uint32_t>(std::get<1>(coordinate_and_size));
+          auto channel = std::get<1>(in);
+          return std::make_tuple(coordinate, size, channel);
+        });
+
+
+    return ret_vect;
+  }
 
 
  public:
   JPLM4DTransformModeLightFieldCodec(
       const LightfieldDimension<uint32_t>& lightfield_dimension,
-      const LightfieldDimension<uint32_t>& block_4d_dimension)
+      const LightfieldDimension<uint32_t>& block_4d_dimension,
+      const JPLMConfiguration& configuration)
       : JPLMLightFieldCodec<PelType>(nullptr),
         lightfield_dimension(lightfield_dimension),
-        block_4d_dimension(block_4d_dimension) {
+        block_4d_dimension(block_4d_dimension),
+        transform_mode_configuration(configuration) {
   }
 
 
@@ -114,24 +232,37 @@ void JPLM4DTransformModeLightFieldCodec<PelType>::setup_transform_coefficients(
 template<typename PelType>
 void JPLM4DTransformModeLightFieldCodec<
     PelType>::initialize_extension_lengths() {
+  if (transform_mode_configuration.is_verbose()) {
+    std::cout << "Initializing extension lengths" << std::endl;
+  }
+
   const auto& [number_of_vertical_views, number_of_horizontal_views,
                   mNumberOfViewLines, mNumberOfViewColumns] =
       lightfield_dimension.as_tuple();
   const auto& [transform_length_t, transform_length_s, transform_length_v,
                   transform_length_u] = block_4d_dimension.as_tuple();
 
-  std::cout << "Initializing extension lengths" << std::endl;
 
   auto extension_length_t = number_of_vertical_views % transform_length_t;
   auto extension_length_s = number_of_horizontal_views % transform_length_s;
   auto extension_length_v = mNumberOfViewLines % transform_length_v;
   auto extension_length_u = mNumberOfViewColumns % transform_length_u;
 
-
-  if (extension_length_t + extension_length_s + extension_length_v +
-          extension_length_u >
-      0) {
+  if (extension_length_t != 0) {
     needs_block_extension = true;
+    std::get<0>(extends_in_direction) = true;
+  }
+  if (extension_length_s != 0) {
+    needs_block_extension = true;
+    std::get<1>(extends_in_direction) = true;
+  }
+  if (extension_length_v != 0) {
+    needs_block_extension = true;
+    std::get<2>(extends_in_direction) = true;
+  }
+  if (extension_length_u != 0) {
+    needs_block_extension = true;
+    std::get<3>(extends_in_direction) = true;
   }
 
   extensions = {extension_length_t, extension_length_s, extension_length_v,
@@ -141,53 +272,27 @@ void JPLM4DTransformModeLightFieldCodec<
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldCodec<PelType>::run() {
-  const auto& [T, S, V, U] = lightfield_dimension;
-  const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
-      block_4d_dimension;
-  const auto& boder_blocks_policy = this->get_border_blocks_policy();
+  const auto& block_coordinates_and_sizes = get_block_coordinates_and_sizes();
 
-  auto size_padding = LightfieldDimension<uint32_t>(
-      BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u);
-  /* \todo Remove so many nested for. Use cppitertools/product.hpp instead */
-  for (auto t = decltype(T){0}; t < T; t += BLOCK_SIZE_t) {
-    auto used_size_t = (t + BLOCK_SIZE_t > T) ? T % BLOCK_SIZE_t : BLOCK_SIZE_t;
-    for (auto s = decltype(S){0}; s < S; s += BLOCK_SIZE_s) {
-      auto used_size_s =
-          (s + BLOCK_SIZE_s > S) ? S % BLOCK_SIZE_s : BLOCK_SIZE_s;
-      for (auto v = decltype(V){0}; v < V; v += BLOCK_SIZE_v) {
-        auto used_size_v =
-            (v + BLOCK_SIZE_v > V) ? V % BLOCK_SIZE_v : BLOCK_SIZE_v;
-        for (auto u = decltype(U){0}; u < U; u += BLOCK_SIZE_u) {
-          auto used_size_u =
-              (u + BLOCK_SIZE_u > U) ? U % BLOCK_SIZE_u : BLOCK_SIZE_u;
-
-          // if (parameter_handler.verbose) {
-          printf("transforming the 4D block at position (%d %d %d %d)\n", t, s,
-              v, u);
-          // }
-
-          auto size_shrink = LightfieldDimension<uint32_t>(
-              used_size_t, used_size_s, used_size_v, used_size_u);
-
-          const auto& size =
-              (boder_blocks_policy == BorderBlocksPolicy::truncate)
-                  ? size_shrink
-                  : size_padding;
-          std::cout << "Shrink? "
-                    << (boder_blocks_policy == BorderBlocksPolicy::truncate)
-                    << std::endl;
-
-          for (auto color_channel_index = 0; color_channel_index < 3;
-               ++color_channel_index) {
-            run_for_block_4d(color_channel_index, {t, s, v, u}, size);
-          }
-        }
+  if (transform_mode_configuration.show_progress_bar()) {
+    for (auto&& [position, size, channel] :
+        tq::tqdm(block_coordinates_and_sizes)) {
+      run_for_block_4d(channel, position, size);
+    }
+  } else {
+    for (auto&& [position, size, channel] : block_coordinates_and_sizes) {
+      if (transform_mode_configuration.is_verbose()) {
+        std::cout << "Transforming 4D at " << position << std::endl;
       }
+      run_for_block_4d(channel, position, size);
     }
   }
-  std::cout << "finished" << std::endl;
-  //up to now, this finalization step is required only in the encoder.
+
+
   finalization();
+  if (transform_mode_configuration.is_verbose()) {
+    std::cout << "DONE" << std::endl;
+  }
 }
 
 

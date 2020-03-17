@@ -47,7 +47,6 @@
 
 
 class ContiguousCodestreamContents : public SuperBoxDBox {
-  //not implemented yet...
  protected:
   std::unique_ptr<ContiguousCodestreamCode> code;
 
@@ -62,11 +61,16 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
   }
 
 
+  ContiguousCodestreamContents(ContiguousCodestreamContents&& other)
+      : code(std::move(other.code)) {
+  }
+
+
   ContiguousCodestreamContents(const ContiguousCodestreamContents& other)
       : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())){}
 
 
-            //! \todo remove this method (it is not necessary to be defined as const in its name)
+            //<! \todo remove this method (it is not necessary to be defined as const in its name)
             [[nodiscard]] const ContiguousCodestreamCode
         & get_const_ref_to_code() const;
 

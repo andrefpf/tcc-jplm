@@ -51,6 +51,8 @@ class LightfieldCoordinate {
   std::tuple<T, T, T, T> dimensions;
 
  public:
+  typedef T type;
+
   static_assert(std::is_integral<T>::value,
       "The type of the lightfield coordinates must be integral.");
 
@@ -169,6 +171,21 @@ class LightfieldCoordinate {
   }
 
 
+  LightfieldCoordinate<T> operator/(const T& divisor) {
+    return LightfieldCoordinate<T>(this->get_t() / divisor,
+        this->get_s() / divisor, this->get_v() / divisor,
+        this->get_u() / divisor);
+  }
+
+
+  LightfieldCoordinate<T> hadamard_product(
+      const LightfieldCoordinate<T>& other) const {
+    return LightfieldCoordinate<T>(this->get_t() * other.get_t(),
+        this->get_s() * other.get_s(), this->get_v() * other.get_v(),
+        this->get_u() * other.get_u());
+  }
+
+
   T get_t() const noexcept {
     return std::get<0>(dimensions);
   }
@@ -246,8 +263,19 @@ class LightfieldCoordinate {
     std::cout << get_t() << ", " << get_s() << ", " << get_v() << ", "
               << get_u() << std::endl;
   }
+
+  template<class Type>
+  friend std::ostream& operator<<(
+      std::ostream& stream, const LightfieldCoordinate<Type>& coordinate);
 };
 
+template<typename T>
+std::ostream& operator<<(
+    std::ostream& o_stream, const LightfieldCoordinate<T>& coordinate) {
+  o_stream << coordinate.get_t() << ", " << coordinate.get_s() << ", "
+           << coordinate.get_v() << ", " << coordinate.get_u();
+  return o_stream;
+}
 
 //the lines below are used to access lf coordinate as tuples,
 //this also enables structured binding :)

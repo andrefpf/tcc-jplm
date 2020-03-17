@@ -58,6 +58,7 @@ class PGXFile : public ImageFile {
   std::size_t depth;
   bool _is_signed;
   const PGXEndianess endianess;
+  bool throw_if_missing_bytes = false;
 
   bool is_different_endianess() const;
 
@@ -71,33 +72,79 @@ class PGXFile : public ImageFile {
   }
 
 
+  /**
+   * @brief      Determines if signed.
+   *
+   * @return     True if signed, False otherwise.
+   */
   bool is_signed() const noexcept;
 
 
+  /**
+   * @brief      Gets the depth.
+   *
+   * @return     The depth.
+   */
   std::size_t get_depth() const noexcept;
 
 
+  /**
+   * @brief      Gets the endianess.
+   *
+   * @return     The endianess.
+   */
   PGXEndianess get_endianess() const noexcept;
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~PGXFile() = default;
 
 
+  /**
+   * @brief      Changes the endianess if needed
+   *
+   * @param[in]  value  The value
+   *
+   * @tparam     T      Type of the value
+   *
+   * @return     Value with changed endianess if required
+   */
   template<typename T>
   T change_endianess(T value);
 
 
+  /**
+   * @brief      Writes an image to file.
+   *
+   * @param[in]  image  The image
+   *
+   * @tparam     T      { description }
+   */
   template<typename T>
   void write_image_to_file(const UndefinedImage<T>& image);
 
 
+  /**
+   * @brief      Reads a full image.
+   *
+   * @tparam     T     Type of the pixel in image
+   *
+   * @return     An undefined image containing data in file (or zero if file is empty)
+   */
   template<typename T>
   std::unique_ptr<UndefinedImage<T>> read_full_image() {
     if (!file.is_open()) {
       file.open(this->filename.c_str());
-      if (!file.is_open()) {
-        //error
+      if (file.fail()) {
+        auto error_code = errno;
+        throw PGXFileExceptions::FailedOppeningPGXFileException(
+            this->filename, error_code);
       }
+      //<! \todo check if this next file open checking is necessary...
+      // if (!file.is_open()) {
+      // }
     }
 
     file.seekg(raster_begin);
@@ -106,11 +153,14 @@ class PGXFile : public ImageFile {
         this->width, this->height, this->depth, 1);
     auto number_of_samples = this->width * this->height;
     std::vector<T> sample_vector(number_of_samples);
+    auto number_of_bytes_required = number_of_samples * sizeof(T);
     file.read(reinterpret_cast<char*>(sample_vector.data()),
-        number_of_samples * sizeof(T));
+        number_of_bytes_required);
 
-    if (!file) {
-      //error? less pixels than availabe in file file.gcount() (readed)
+
+    if (throw_if_missing_bytes && (!file)) {
+      throw PGXFileExceptions::ReadLessPixelThenRequired(
+          this->filename, file.gcount(), number_of_bytes_required);
     }
 
     if constexpr (sizeof(T) > 1) {
@@ -129,10 +179,17 @@ class PGXFile : public ImageFile {
       ++image_channel_ptr;
     }
 
+    file.close();
+
     return image;
   }
 
 
+  /**
+   * @brief      Reads a full image.
+   *
+   * @return     A variant containing a image with the size (type) obtained from the file header.
+   */
   std::variant<std::unique_ptr<UndefinedImage<uint8_t>>,
       std::unique_ptr<UndefinedImage<int8_t>>,
       std::unique_ptr<UndefinedImage<uint16_t>>,
@@ -168,6 +225,15 @@ class PGXFile : public ImageFile {
 };
 
 
+/**
+ * @brief      Changes the endianess of value if the machine endianess is different from the file endianess
+ *
+ * @param[in]  value  The value
+ *
+ * @tparam     T      Type of the value
+ *
+ * @return     Value with changed endianess when required
+ */
 template<typename T>
 T PGXFile::change_endianess(T value) {
   if constexpr (std::is_signed<T>::value) {
@@ -180,12 +246,17 @@ T PGXFile::change_endianess(T value) {
 }
 
 
+/**
+ * @brief      Writes an image to file.
+ *
+ * @param[in]  image  The image
+ *
+ * @tparam     T      Type of the data in image
+ */
 template<typename T>
 void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
-  if (image.get_number_of_channels() != 1) {
-    //! \todo throw error if number of channels of the current undefined image is not 1
-    //throw error
-    std::cout << "there is more than one channel..." << std::endl;
+  if (auto n_channels = image.get_number_of_channels(); n_channels != 1) {
+    throw PGXFileExceptions::ImageHasMoreThanOneChannelException(n_channels);
   }
 
   if (!file.is_open()) {
@@ -230,8 +301,8 @@ void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
       // std::cout << "values " << values.size() << std::endl;
       file.write(reinterpret_cast<const char*>(values.data()),
           image.get_number_of_pixels_per_channel() * sizeof(T));
-      // file.flush();
-      // file.close();
+      file.flush();
+      file.close();
       return;
     }
   }

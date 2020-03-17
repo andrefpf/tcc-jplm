@@ -41,28 +41,103 @@
 #ifndef JPLMCODECFACTORY_H__
 #define JPLMCODECFACTORY_H__
 
+#include "Lib/Common/JPLMDecoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfiguration.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "Lib/Part1/Common/JPLMCodec.h"
 
+
+/**
+ * @brief      Front-end to create jplm codec objects.
+ */
 class JPLMCodecFactory {
  protected:
+  /**
+   * @brief      Gets the light field encoder.
+   *
+   * @param      configuration  The configuration
+   *
+   * @return     The light field encoder.
+   */
   static std::unique_ptr<JPLMCodec> get_light_field_encoder(
       std::unique_ptr<JPLMEncoderConfigurationLightField>&& configuration);
 
  public:
+  /**
+   * @brief      Gets the encoder.
+   *
+   * @param      configuration  The configuration
+   *
+   * @return     The encoder given the desired configuration.
+   */
   static std::unique_ptr<JPLMCodec> get_encoder(
       std::unique_ptr<JPLMEncoderConfiguration>&& configuration);
 
 
+  /**
+   * @brief      Gets the hologram decoder.
+   *
+   * @param[in]  jpl_file         The jpl file
+   * @param[in]  codestream       The codestream
+   * @param[in]  output_filename  The output filename
+   * @param[in]  configuration    The configuration
+   *
+   * @return     The hologram decoder.
+   */
+  static std::unique_ptr<JPLMCodec> get_hologram_decoder(
+      std::shared_ptr<JPLFile> jpl_file,
+      const std::unique_ptr<JpegPlenoCodestreamBox>& codestream,
+      const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
+
+
+  /**
+   * @brief      Gets the point cloud decoder.
+   *
+   * @param[in]  jpl_file         The jpl file
+   * @param[in]  codestream       The codestream
+   * @param[in]  output_filename  The output filename
+   * @param[in]  configuration    The configuration
+   *
+   * @return     The point cloud decoder.
+   */
+  static std::unique_ptr<JPLMCodec> get_point_cloud_decoder(
+      std::shared_ptr<JPLFile> jpl_file,
+      const std::unique_ptr<JpegPlenoCodestreamBox>& codestream,
+      const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
+
+
+  /**
+   * @brief      Gets the lightfield decoder.
+   *
+   * @param[in]  jpl_file         The jpl file
+   * @param[in]  codestream       The codestream
+   * @param[in]  output_filename  The output filename
+   * @param[in]  configuration    The configuration
+   *
+   * @return     The lightfield decoder.
+   */
   static std::unique_ptr<JPLMCodec> get_lightfield_decoder(
       std::shared_ptr<JPLFile> jpl_file,
       const std::unique_ptr<JpegPlenoCodestreamBox>& codestream,
-      const std::string& output_filename);
+      const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
 
+
+  /**
+   * @brief      Gets the all the decoders available to decode codestreams in the jpl file.
+   *
+   * @param[in]  jpl_file         The jpl file
+   * @param[in]  output_filename  The output filename
+   * @param[in]  configuration    The configuration
+   *
+   * @return     The decoders.
+   */
   static std::vector<std::unique_ptr<JPLMCodec>> get_decoders(
-      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename);
+      std::shared_ptr<JPLFile> jpl_file, const std::string& output_filename,
+      std::shared_ptr<JPLMDecoderConfiguration> configuration);
 };
 
 #endif /* end of include guard: JPLMCODECFACTORY_H__ */

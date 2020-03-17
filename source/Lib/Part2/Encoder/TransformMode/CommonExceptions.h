@@ -31,46 +31,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfiguration.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-03-11
  */
 
-#ifndef JPLMENCODERCONFIGURATION_H__
-#define JPLMENCODERCONFIGURATION_H__
+#ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
 
-#include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include <optional>
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "nlohmann/json.hpp"
+#include <exception>
+#include <string>
 
-
-class JPLMEncoderConfiguration : public JPLMConfiguration {
- private:
-  static constexpr std::size_t current_hierarchy_level = 0;
-
+namespace JPLM4DTransformModeLightFieldEncoderExceptions {
+class InvalidPartitionCode : public std::exception {
  protected:
-  std::string config;
-  JpegPlenoPart part = JpegPlenoPart::Undefined;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-  virtual void add_options() override;
-
+  std::string message;
 
  public:
-  JpegPlenoPart get_jpeg_pleno_part() const;
-  const std::string &get_config() const;
+  InvalidPartitionCode() : message("Invalid partition code") {
+  }
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};  // namespace JPLM4DTransformModeLightFieldEncoderExceptions
+}  // namespace JPLM4DTransformModeLightFieldEncoderExceptions
 
-
-  JPLMEncoderConfiguration(int argc, char **argv);
-};
-
-
-#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
+#endif  // JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H

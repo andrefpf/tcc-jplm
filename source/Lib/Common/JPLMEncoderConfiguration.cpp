@@ -42,7 +42,6 @@
 
 using namespace std;
 
-using json = nlohmann::json;
 using Type = CompressionTypeLightField;
 namespace fs = std::filesystem;
 
@@ -64,10 +63,6 @@ const string &JPLMEncoderConfiguration::get_config() const {
 }
 
 
-ColorSpaces::ColorSpace JPLMEncoderConfiguration::get_colorspace() const {
-  return colorspace;
-}
-
 JPLMEncoderConfiguration::JPLMEncoderConfiguration(
     int argc, char **argv, std::size_t level)
     : JPLMConfiguration(argc, argv, level) {
@@ -78,14 +73,13 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(
 
 void JPLMEncoderConfiguration::add_options() {
   JPLMConfiguration::add_options();
-  std::cout << "adding options of JPLMEncoderConfiguration" << std::endl;
   this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "
       "\n\tFor Part 2, light field, the input is a directory containing a "
       "set of directories (one for each color channel). Each one of those "
       "directories contains a set of views in PGX format.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("input")) {
           return conf["input"].get<string>();
         }
@@ -99,7 +93,7 @@ void JPLMEncoderConfiguration::add_options() {
 
   this->add_cli_json_option({"--output", "-o",
       "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("output")) {
           return conf["output"].get<string>();
         }
@@ -127,7 +121,7 @@ void JPLMEncoderConfiguration::add_options() {
 
   this->add_cli_json_option({"--part", "-p",
       "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("part")) {
           return conf["part"].get<string>();
         }
@@ -146,41 +140,4 @@ void JPLMEncoderConfiguration::add_options() {
         }
       },
       this->current_hierarchy_level});
-
-  //<! \todo the colorspace is a part of the jpl encoder? Or it depends on the part?
-  //<! \todo include options to input the EnumCS for the ColourDefinitionBox
-  this->add_cli_json_option({"--colourspace", "-cs",
-      "Colour space to be signalized in EnumCS. It shall be the colour space "
-      "of the inputs.",
-      [this](const json &conf) -> std::optional<std::string> {
-        if (conf.contains("colourspace")) {
-          return conf["colourspace"].get<string>();
-        }
-        if (conf.contains("colorspace")) {
-          return conf["colorspace"].get<string>();
-        }
-        return std::nullopt;
-      },
-
-      //<! \todo use one option from EnumCS
-      [this](std::string arg) {
-        auto colourspace = std::string(arg.size(), ' ');
-        std::transform(arg.begin(), arg.end(), colourspace.begin(),
-            [](unsigned char c) { return std::tolower(c); });
-        if (colourspace == "ycbcr" || colourspace == "bt601")
-          this->colorspace = ColorSpaces::ColorSpace::BT601;
-        else if (colourspace == "rgb")
-          this->colorspace = ColorSpaces::ColorSpace::RGB;
-        else if (colourspace == "bt709")
-          this->colorspace = ColorSpaces::ColorSpace::BT709;
-        else if (colourspace == "bt2020")
-          this->colorspace = ColorSpaces::ColorSpace::BT2020;
-        else if (colourspace == "ycocg")
-          this->colorspace = ColorSpaces::ColorSpace::YCoCg;
-        else
-          throw JPLMConfigurationExceptions::
-              NotImplementedYetInputTypeParseException(arg);
-      },
-      this->current_hierarchy_level,
-      {[this]() -> std::string { return "bt601"; }}});
 }

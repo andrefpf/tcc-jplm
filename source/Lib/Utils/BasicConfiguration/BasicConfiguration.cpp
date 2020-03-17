@@ -54,6 +54,24 @@ void BasicConfiguration::add_options() {
       },
       this->current_hierarchy_level});
 
+  this->add_cli_json_option(
+      {"--verbose", "-ve", "Shows verbose output during execution.",
+          [this](const nlohmann::json &conf) -> std::optional<std::string> {
+            if (conf.contains("verbose")) {
+              return conf["verbose"].get<std::string>();
+            }
+            return std::nullopt;
+          },
+          [this](std::string arg) {
+            if (arg == "false") {
+              this->verbose_flag = false;
+            } else {
+              this->verbose_flag = true;
+            }
+          },
+          this->current_hierarchy_level,
+          {[this]() -> std::string { return "false"; }}});
+
   this->add_cli_option({"--config", "-c", "Path to configuration file in JSON.",
       [this](std::string arg) {
         if (!arg.empty()) {
@@ -170,6 +188,8 @@ bool BasicConfiguration::validate_value(
  *
  * @param[in]  argc  The count of arguments
  * @param      argv  The arguments array
+ * 
+ * \todo check what happens if a value is negative (the prefix of a param may be identified)
  */
 void BasicConfiguration::parse_cli(int argc, char **argv) {
   for (int n = 1; n < argc; n++) {
@@ -276,9 +296,12 @@ void BasicConfiguration::parse_json(const std::string &path) {
  * @brief      Adds a cli option to the list of options.
  *
  * @param[in]  option  The option
+ * 
+ * 
  */
 void BasicConfiguration::add_cli_option(const CLIOption &option) {
   cli_options.push_back(option);
+  //<! \todo check if option already exists in its long or short form.
 }
 
 
@@ -299,4 +322,9 @@ void BasicConfiguration::add_json_option(const JSONOption &option) {
  */
 void BasicConfiguration::add_cli_json_option(const CLIAndJSONOption &option) {
   cli_json_options.push_back(option);
+}
+
+
+bool BasicConfiguration::is_verbose() const {
+  return verbose_flag;
 }

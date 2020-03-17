@@ -51,16 +51,22 @@ int main(int argc, char const* argv[]) {
   auto configuration =
       JPLMConfigurationFactory::get_decoder_configuration(argc, argv);
 
+  if (configuration->is_verbose()) {
+    std::cerr << "JPEG Pleno Model (JPLM) Decoder. \nVerbose mode \"on\"\n";
+  }
+
   auto jpl_file =
       std::make_shared<JPLFileFromStream>(configuration->get_input_filename());
 
   auto decoders = JPLMCodecFactory::get_decoders(
-      jpl_file, configuration->get_output_filename());
+      jpl_file, configuration->get_output_filename(), configuration);
   for (auto& decoder : decoders) {
     decoder->run();
   }
 
-  run_time_statistics.show_statistics();
+  if (configuration->show_runtime_statistics()) {
+    run_time_statistics.show_statistics();
+  }
 
   exit(EXIT_SUCCESS);
 }

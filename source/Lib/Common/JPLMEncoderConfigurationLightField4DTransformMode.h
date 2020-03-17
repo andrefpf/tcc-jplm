@@ -45,6 +45,7 @@
 #include "Lib/Common/JPLMEncoderConfigurationLightField.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
+#include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
 
 // \todo: Refactor and improve the redundancies in this class
 class JPLMEncoderConfigurationLightField4DTransformMode
@@ -89,6 +90,7 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   double transform_scale_v = 1.0;
   double transform_scale_u = 1.0;
 
+  bool show_estimated_error_flag = false;
 
  protected:
   virtual void add_options() override;
@@ -111,6 +113,10 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 
   BorderBlocksPolicy get_border_blocks_policy();
 
+  bool show_error_estimate() const {
+    return show_estimated_error_flag;
+  }
+
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
   get_maximal_transform_sizes() const;
 
@@ -123,7 +129,45 @@ class JPLMEncoderConfigurationLightField4DTransformMode
 
   std::tuple<double, double, double, double> get_transform_scalings() const;
 
+  std::vector<ComponentSsizParameter> get_bitdepths() const {
+    return std::vector<ComponentSsizParameter>(
+        this->get_number_of_colour_channels(), ComponentSsizParameter(10));
+  }
+
+  std::vector<uint8_t> get_max_bitplanes() const {
+    return std::vector<uint8_t>(this->get_number_of_colour_channels(), 30);
+  }
+
   TransformSize transform_size;
+
+
+  virtual uint16_t get_level() const override {
+    const auto &level_for_resolution =
+        JPLMEncoderConfigurationLightField::get_level();
+    const auto &[t, s, v, u] = get_maximal_transform_dimension();
+
+    const auto max_transform_size = std::max(std::max(t, s), std::max(v, u));
+
+    if (max_transform_size > 256) {
+      // error
+    }
+
+    auto level_for_transform_size = uint16_t{5};
+    if (max_transform_size <= 192) {
+      level_for_transform_size = 4;
+    }
+    if (max_transform_size <= 128) {
+      level_for_transform_size = 3;
+    }
+    if (max_transform_size <= 96) {
+      level_for_transform_size = 2;
+    }
+    if (max_transform_size <= 64) {
+      level_for_transform_size = 1;
+    }
+
+    return std::max(level_for_resolution, level_for_transform_size);
+  }
 };
 
 

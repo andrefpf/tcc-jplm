@@ -82,13 +82,18 @@ double get_mse(const ImageChannel<T>& original_channel,
   return sse / static_cast<double>(size);
 }
 
+
+double get_peak_signal_to_noise_ratio(std::size_t bpp, double mse) {
+  auto max_value = std::pow(2.0, static_cast<double>(bpp)) - 1;
+  return 10.0 * std::log10((max_value * max_value) / mse);
+}
+
+
 template<typename T>
 double get_peak_signal_to_noise_ratio(const ImageChannel<T>& original_channel,
     const ImageChannel<T>& encoded_channel) {
-  auto max_value =
-      std::pow(2.0, static_cast<double>(original_channel.get_bpp())) - 1;
-  return 10.0 * std::log10((max_value * max_value) /
-                           get_mse(original_channel, encoded_channel));
+  return get_peak_signal_to_noise_ratio(
+      original_channel.get_bpp(), get_mse(original_channel, encoded_channel));
 }
 
 

@@ -61,6 +61,16 @@ DCT4DBlock::DCT4DBlock(const Block4D& block) : Transformed4DBlock(block) {
           manager.get_weight_for_size_in_dimension(
               block.mlength_u, LightFieldDimensions::U));
 
+  auto n =
+      block.mlength_t * block.mlength_s * block.mlength_v * block.mlength_u;
+
+  double gain = std::get<0>(weights) * std::get<0>(weights) *
+                std::get<1>(weights) * std::get<1>(weights) *
+                std::get<2>(weights) * std::get<2>(weights) *
+                std::get<3>(weights) * std::get<3>(weights);
+
+  this->mult = gain * static_cast<double>(n);
+
   do_4d_transform(data.get(), block.mPixelData, coefficients, weights);
 }
 

@@ -31,46 +31,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfiguration.h
+/** \file     JpegPlenoProfileBrand.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-03-16
  */
 
-#ifndef JPLMENCODERCONFIGURATION_H__
-#define JPLMENCODERCONFIGURATION_H__
+#ifndef JPLM_LIB_PART2_COMMON_BOXES_JPEG_PLENO_PROFILE_BRAND_H
+#define JPLM_LIB_PART2_COMMON_BOXES_JPEG_PLENO_PROFILE_BRAND_H
 
 #include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include <optional>
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "nlohmann/json.hpp"
+using profile_brand_data = uint16_t;
 
 
-class JPLMEncoderConfiguration : public JPLMConfiguration {
- private:
-  static constexpr std::size_t current_hierarchy_level = 0;
-
- protected:
-  std::string config;
-  JpegPlenoPart part = JpegPlenoPart::Undefined;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-  virtual void add_options() override;
-
-
- public:
-  JpegPlenoPart get_jpeg_pleno_part() const;
-  const std::string &get_config() const;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv);
+/**
+ * @brief      This class describes the available JPEG pleno profile brands.
+ * Currently the definition is on the WD 1.0 of Amendment 1 for JPEG Pleno part 2
+ * Information technology — Plenoptic image coding system (JPEG Pleno) — Part 2: Light field coding AMD1 - Profiles and Levels for JPEG Pleno Light Field Coding System
+ */
+enum class JpegPlenoProfileBrand : profile_brand_data {
+  baseline_block_based_profile =
+      1,  //!< Indicates that the 4D transform mode is used to encode the light field.
+  baseline_prediction_based_profile =
+      2,  //!< Indicates that the 4D prediction mode is used to encode the light field.
 };
 
-
-#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
+#endif  // JPLM_LIB_PART2_COMMON_BOXES_JPEG_PLENO_PROFILE_BRAND_H

@@ -69,8 +69,11 @@ class JPLMConfiguration : public BasicConfiguration {
   static constexpr std::size_t current_hierarchy_level = 0;
 
  protected:
-  std::string input;
-  std::string output;
+  std::string input = "";
+  std::string output = "";
+  bool show_runtime_statistics_flag = false;
+  bool show_progress_bar_flag = false;
+
   JPLMConfiguration(int argc, char **argv, std::size_t level);
   virtual void add_options() override;
 
@@ -81,6 +84,12 @@ class JPLMConfiguration : public BasicConfiguration {
 
   const std::string &get_input_filename() const;
   const std::string &get_output_filename() const;
+  bool show_runtime_statistics() const {
+    return show_runtime_statistics_flag;
+  }
+  bool show_progress_bar() const {
+    return show_progress_bar_flag;
+  }
 };
 
 

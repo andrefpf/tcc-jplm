@@ -13,6 +13,7 @@ set(PART2_COMMON_TRANSFORM_MODE_SOURCES
     LightFieldTransformMode.cpp
     Markers.cpp
     ProbabilityModel.cpp
+    ProbabilityModelsHandler.cpp
     Transformed4DBlock.cpp)
 
 

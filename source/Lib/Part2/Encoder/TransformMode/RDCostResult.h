@@ -31,46 +31,124 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLMEncoderConfiguration.h
+/** \file     RDCostResult.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-11
+ *  \date     2020-03-02
  */
 
-#ifndef JPLMENCODERCONFIGURATION_H__
-#define JPLMENCODERCONFIGURATION_H__
-
-#include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include <optional>
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Common/JPLMConfiguration.h"
-#include "Lib/Part2/Common/Boxes/CompressionTypeLightField.h"
-#include "nlohmann/json.hpp"
+#ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_RD_COST_RESULT_H
+#define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_RD_COST_RESULT_H
 
 
-class JPLMEncoderConfiguration : public JPLMConfiguration {
- private:
-  static constexpr std::size_t current_hierarchy_level = 0;
-
+class RDCostResult {
  protected:
-  std::string config;
-  JpegPlenoPart part = JpegPlenoPart::Undefined;
-
-
-  JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
-  virtual void add_options() override;
-
+  double j_cost;
+  double error;
+  double rate;
+  double energy;
 
  public:
-  JpegPlenoPart get_jpeg_pleno_part() const;
-  const std::string &get_config() const;
+  RDCostResult(double j, double d, double r, double e)
+      : j_cost(j), error(d), rate(r), energy(e) {
+  }
 
 
-  JPLMEncoderConfiguration(int argc, char **argv);
+  virtual ~RDCostResult() = default;
+
+
+  /**
+   * @brief      Gets the rate.
+   *
+   * @return     The rate.
+   */
+  double get_rate() const {
+    return rate;
+  }
+
+
+  void add_to_rate(double r) {
+    rate += r;
+  }
+
+
+  /**
+   * @brief      Gets the j cost.
+   *
+   * @return     The j cost.
+   */
+  double get_j_cost() const {
+    return j_cost;
+  }
+
+
+  void set_j_cost(double j) {
+    j_cost = j;
+  }
+
+
+  void add_to_j_cost(double j) {
+    j_cost += j;
+  }
+
+
+  /**
+   * @brief      Gets the error.
+   *
+   * @return     The error.
+   */
+  double get_error() const {
+    return error;
+  }
+
+
+  void set_error(double d) {
+    error = d;
+  }
+
+
+  void add_to_error(double d) {
+    error += d;
+  }
+
+
+  /**
+   * @brief      Gets the energy.
+   *
+   * @return     The energy.
+   */
+  double get_energy() const {
+    return energy;
+  }
+
+
+  void add_to_energy(double d) {
+    energy += d;
+  }
+
+
+  /**
+   * @brief      Addition operator.
+   *
+   * @param[in]  other  The other
+   *
+   * @return     The result of the addition
+   */
+  RDCostResult operator+(const RDCostResult& other) const {
+    return RDCostResult(this->j_cost + other.j_cost, this->error + other.error,
+        this->rate + other.rate, this->energy + other.energy);
+  }
+
+
+  RDCostResult& operator+=(const RDCostResult& other) {
+    this->j_cost += other.j_cost;
+    this->error += other.error;
+    this->rate += other.rate;
+    this->energy += other.energy;
+    return *this;
+  }
 };
 
 
-#endif /* end of include guard: JPLMENCODERCONFIGURATION_H__ */
+#endif  // JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_RD_COST_RESULT_H

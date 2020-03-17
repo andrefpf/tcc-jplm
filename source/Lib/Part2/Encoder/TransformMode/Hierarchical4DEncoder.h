@@ -51,34 +51,34 @@
 #include <tuple>
 #include "Lib/Part2/Common/TransformMode/Block4D.h"
 #include "Lib/Part2/Common/TransformMode/Hierarchical4DCodec.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModelsHandler.h"
 #include "Lib/Part2/Encoder/TransformMode/ABACEncoder.h"
+#include "Lib/Part2/Encoder/TransformMode/RDCostResult.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 //#include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 
 class Hierarchical4DEncoder : public Hierarchical4DCodec {
  private:
-  static constexpr unsigned int onesMask =
+  static constexpr unsigned int ONES_MASK =
       std::numeric_limits<unsigned int>::max();
-  void reset_optimization_models();
   std::unique_ptr<double[]> temporary_buffer;
+  double total_energy_sum = 0.0;
 
  public:
   ABACEncoder mEntropyCoder;
-  std::array<ProbabilityModel, number_of_probability_models>
-      optimization_probability_models;
+  ProbabilityModelsHandler optimization_probability_models;
   std::vector<HexadecaTreeFlag> hexadecatree_flags;
 
   Hierarchical4DEncoder()
       : optimization_probability_models(probability_models) {
   }
 
+  virtual ~Hierarchical4DEncoder() = default;
 
-  ~Hierarchical4DEncoder() = default;
-  bool get_mSubbandLF_significance(uint8_t bitplane,
-      const std::tuple<int, int, int, int>& position,
-      const std::tuple<int, int, int, int>& range) const;
+  bool get_mSubbandLF_significance(uint32_t threshold,
+      const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& range) const;
   void reset_probability_models() override;
   void encode_coefficient(int coefficient, uint8_t bitplane);
   void encode_segmentation_lowerBitPlane_flag(uint8_t bitplane);
@@ -91,23 +91,35 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
   void encode_hexadecatree(int position_t, int position_s, int position_v,
       int position_u, int length_t, int length_s, int length_v, int length_u,
       uint8_t bitplane, int& flagIndex);
-  void encode_sub_block(double lambda);
-  std::pair<double, double> rd_optimize_hexadecatree(
+  RDCostResult encode_sub_block(double lambda);
+
+
+  RDCostResult get_rd_for_below_inferior_bit_plane(
+      const LightfieldCoordinate<uint32_t>& position,
+      const LightfieldDimension<uint32_t>& lengths);
+
+  RDCostResult get_rd_for_unitary_block(
+      const LightfieldCoordinate<uint32_t>& position, double lambda,
+      uint8_t bitplane);
+
+  RDCostResult rd_optimize_hexadecatree(
       const std::tuple<int, int, int, int>& position,
       const std::tuple<int, int, int, int>& lengths, double lambda,
       uint8_t bitplane, std::vector<HexadecaTreeFlag>& hexadecatree_flags);
   int get_optimum_bit_plane(double lambda);
   void load_optimizer_state();
-  void set_optimization_model(std::array<ProbabilityModel,
-      Hierarchical4DEncoder::number_of_probability_models>& model);
+  void set_optimization_model(const ProbabilityModelsHandler& model);
   void create_temporary_buffer();
 
-  
+
+  void show_inferior_bit_plane() const;
+
+
   void write_marker(Marker marker) {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
     auto bytes = Markers::get_bytes(marker);
-    for(const auto& byte: bytes) {
-       codestream_code.push_byte(byte);
+    for (const auto& byte : bytes) {
+      codestream_code.push_byte(byte);
     }
   }
 
@@ -118,8 +130,8 @@ class Hierarchical4DEncoder : public Hierarchical4DCodec {
     auto& codestream_code = mEntropyCoder.get_ref_to_codestream_code();
 
     auto bytes = lightfield_configuration_marker_segment.get_bytes();
-    for(const auto& byte: bytes) {
-       codestream_code.push_byte(byte);
+    for (const auto& byte : bytes) {
+      codestream_code.push_byte(byte);
     }
   }
 
