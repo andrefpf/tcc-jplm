@@ -106,7 +106,7 @@ JPLFileFromStream::JPLFileFromStream(const std::string& filename)
   }
 
   // this->managed_stream.seek(12 + 20);
-  decoded_boxes += decode_boxes();
+  number_of_decoded_boxes += decode_boxes();
   check_boxes_constraints();
   populate_jpl_fields();
   // std::move(*(this->parser.parse<XMLBoxWithCatalog>()));
@@ -114,5 +114,5 @@ JPLFileFromStream::JPLFileFromStream(const std::string& filename)
 
 
 uint64_t JPLFileFromStream::get_number_of_decoded_boxes() {
-  return decoded_boxes;
+  return number_of_decoded_boxes;
 }

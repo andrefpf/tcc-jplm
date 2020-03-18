@@ -53,8 +53,7 @@
 
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
  protected:
-  uint64_t decoded_boxes =
-      2;  //it has at least decoded the signature and file type...
+  uint64_t number_of_decoded_boxes = 0;
 
   void check_boxes_constraints();
 

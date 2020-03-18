@@ -54,6 +54,7 @@ class JPLFileParser {
   ManagedStream managed_stream;
   std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
   std::unique_ptr<FileTypeBox> temp_file_type;
+  uint64_t decoded_boxes = 0;
   std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
 
 
