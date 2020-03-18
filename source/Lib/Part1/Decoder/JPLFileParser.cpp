@@ -45,7 +45,8 @@
 uint64_t JPLFileParser::decode_boxes() {
   uint64_t decoded_boxes = 0;
   while (this->managed_stream.is_valid()) {
-    // std::cout << "have " << this->managed_stream.get_length() << " bytes to decode" << std::endl;
+    // std::cout << "have " << this->managed_stream.get_length()
+    //           << " bytes to decode" << std::endl;
     // auto managed_substream = managed_stream.get_sub_managed_stream(
     //     file_size - managed_stream.tell());
     // auto decoded_box = parser.parse(std::move(managed_substream));
@@ -83,10 +84,10 @@ JPLFileParser::JPLFileParser(const std::string& filename)
   }
   // temp_signature = parser.parse<JpegPlenoSignatureBox>(
   //     managed_stream.get_remaining_sub_managed_stream());
+
   temp_signature = parser.parse<JpegPlenoSignatureBox, false>(
       managed_stream
           .get_remaining_sub_managed_stream());  //optional, may be nullptr
-
 
   //parser parse until
 

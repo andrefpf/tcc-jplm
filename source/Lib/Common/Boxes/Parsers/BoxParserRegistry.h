@@ -111,8 +111,8 @@ void BoxParserRegistry::register_parser() {
 
 
 template<class ParsingBox, bool required>
-std::unique_ptr<ParsingBox>
-BoxParserRegistry::parse(ManagedStream &&managed_stream) const {
+std::unique_ptr<ParsingBox> BoxParserRegistry::parse(
+    ManagedStream&& managed_stream) const {
   // std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
   // std::cout << "ManagedStream is limited to: " << managed_stream.get_length() << std::endl;
   // std::cout << typeid(ParsingBox).name() << std::endl;

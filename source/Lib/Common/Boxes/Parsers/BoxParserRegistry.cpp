@@ -103,5 +103,3 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<CameraParameterBoxParser>();
   // register_parser<...>();
 }
-
-
