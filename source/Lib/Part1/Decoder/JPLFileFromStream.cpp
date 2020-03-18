@@ -43,10 +43,42 @@
 
 
 void JPLFileFromStream::check_boxes_constraints() {
+  //restriction 0, no more than one file type box shall exist
   if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
       it != temp_decoded_boxes.end()) {
     throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
   }
+
+  // From A.2.3 File organization
+
+  // restriction 1: The JPEG Pleno Signature box shall be the
+  // first box in a JPL file and the File Type box
+  //(defined in ISO/IEC 15444-1) shall immediately follow the
+  // JPEG Pleno Signature box.
+  //
+  // This restriction will not be tested so as the decoder can decode
+  // any file that contains a type type box with the jpl signature in
+  // its compatility list
+
+
+  // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
+  // before the JPEG Pleno Light Field, JPEG Pleno
+  // Point Cloud, and JPEG Pleno Hologram superboxes.
+
+
+  // restriction 3: A JPL file can contain an optional XML box
+  // signalling catalog information (see A.5.8). An XML box
+  // containing catalog information should be signalled after
+  // the File Type box and before the first
+
+
+  // restriction 4: The JPEG Pleno Light Field, JPEG Pleno Point Cloud,
+  // and JPEG Pleno Hologram superboxes signalling plenoptic data, shall
+  // be signalled as one monolithic block with no preferred ordering,
+  // and no other boxes shall be signalled in between.
+
+
+  // other restrictions may be tested here
 }
 
 
@@ -76,10 +108,11 @@ void JPLFileFromStream::populate_point_cloud_codestreams() {
   // }
 }
 
+
 void JPLFileFromStream::populate_hologram_codestreams() {
   // if (auto it = temp_decoded_boxes.find(JpegPlenoHologramBox::id);
   //     it != temp_decoded_boxes.end()) {
-  //   //! \todo Implement for Point Cloud Boxes...
+  //   //! \todo Implement for Hologram Boxes...
   // }
 }
 
