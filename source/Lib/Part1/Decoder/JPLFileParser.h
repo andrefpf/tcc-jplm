@@ -56,7 +56,9 @@ class JPLFileParser {
   std::unique_ptr<FileTypeBox> temp_file_type;
   uint64_t decoded_boxes = 0;
   uint64_t file_type_box_index = 0;
-  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
+  std::map<uint32_t, std::vector<std::pair<uint64_t, std::unique_ptr<Box>>>>
+      temp_decoded_boxes;
+  //pair<position of box in the bitstream and box>
 
 
   std::unique_ptr<FileTypeBox> decode_boxes_until_a_file_type_box_is_found();

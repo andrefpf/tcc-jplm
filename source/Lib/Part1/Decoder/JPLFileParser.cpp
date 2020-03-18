@@ -68,14 +68,15 @@ uint64_t JPLFileParser::decode_boxes() {
     // auto decoded_box = parser.parse(std::move(managed_substream));
     auto decoded_box =
         parser.parse(managed_stream.get_remaining_sub_managed_stream());
-    ++decoded_boxes;
     auto id = decoded_box->get_tbox().get_value();
     if (auto it = temp_decoded_boxes.find(id); it == temp_decoded_boxes.end()) {
       //temp dececoded boxes map does not contain a box with the decoded box id yet
-      temp_decoded_boxes[id] =
-          std::vector<std::unique_ptr<Box>>();  //std::move(decoded_box)
+      temp_decoded_boxes[id] = std::vector<std::pair<uint64_t,
+          std::unique_ptr<Box>>>();  //std::move(decoded_box)
+      //created an empty vector of boxes
     }
-    temp_decoded_boxes[id].emplace_back(std::move(decoded_box));
+    temp_decoded_boxes[id].emplace_back(
+        std::make_pair(decoded_boxes++, std::move(decoded_box)));
     // std::cout << "decoded box with id: " << id << std::endl;
   }
   return decoded_boxes;
@@ -107,6 +108,7 @@ JPLFileParser::JPLFileParser(const std::string& filename)
       managed_stream
           .get_remaining_sub_managed_stream());  //optional, may be nullptr
   if (temp_signature) {
+    //if a JPEG Pleno Signature box is found it counts...
     ++decoded_boxes;
   }
 
@@ -121,7 +123,8 @@ JPLFileParser::JPLFileParser(const std::string& filename)
 JPLFileParser::~JPLFileParser() {
   //! \todo check why it is needed to release the remaining ptrs in the map
   for (auto& something : temp_decoded_boxes) {
-    for (auto& ptr : something.second) {
+    for (auto& pair : something.second) {
+      auto& ptr = std::get<1>(pair);
       ptr.release();
     }
   }

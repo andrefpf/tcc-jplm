@@ -53,15 +53,18 @@ void JPLFileFromStream::check_boxes_constraints() {
 void JPLFileFromStream::populate_light_field_codestreams() {
   if (auto it = temp_decoded_boxes.find(JpegPlenoLightFieldBox::id);
       it != temp_decoded_boxes.end()) {
-    auto& jpeg_pleno_light_field_boxes = it->second;
-    for (auto& jpeg_pleno_light_field_box : jpeg_pleno_light_field_boxes) {
+    auto& jpeg_pleno_light_field_boxes_pairs = it->second;
+    for (auto& jpeg_pleno_light_field_box_pair :
+        jpeg_pleno_light_field_boxes_pairs) {
+      auto& jpeg_pleno_light_field_box =
+          std::get<1>(jpeg_pleno_light_field_box_pair);
       jpeg_pleno_codestreams.emplace_back(
           std::unique_ptr<JpegPlenoCodestreamBox>(
               static_cast<JpegPlenoCodestreamBox*>(
                   jpeg_pleno_light_field_box.release())));
     }
-    jpeg_pleno_light_field_boxes.clear();
-    jpeg_pleno_light_field_boxes.shrink_to_fit();
+    jpeg_pleno_light_field_boxes_pairs.clear();
+    jpeg_pleno_light_field_boxes_pairs.shrink_to_fit();
   }
 }
 
