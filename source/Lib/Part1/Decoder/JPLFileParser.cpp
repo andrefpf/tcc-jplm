@@ -81,8 +81,15 @@ JPLFileParser::JPLFileParser(const std::string& filename)
   if (file_size < 20) {
     throw JPLFileFromStreamExceptions::InvalidTooSmallFileException(file_size);
   }
-  temp_signature = parser.parse<JpegPlenoSignatureBox>(
-      managed_stream.get_remaining_sub_managed_stream());
+  // temp_signature = parser.parse<JpegPlenoSignatureBox>(
+  //     managed_stream.get_remaining_sub_managed_stream());
+  temp_signature = parser.parse<JpegPlenoSignatureBox, false>(
+      managed_stream
+          .get_remaining_sub_managed_stream());  //optional, may be nullptr
+
+
+  //parser parse until
+
   temp_file_type = parser.parse<FileTypeBox>(
       managed_stream.get_remaining_sub_managed_stream());
 }

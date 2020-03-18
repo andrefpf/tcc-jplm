@@ -116,12 +116,12 @@ class PGXFile : public ImageFile {
 
 
   /**
-   * @brief      Writes an image to file.
-   *
-   * @param[in]  image  The image
-   *
-   * @tparam     T      { description }
-   */
+ * @brief      Writes an image to file.
+ *
+ * @param[in]  image  The image
+ *
+ * @tparam     T      Type of the data in image
+ */
   template<typename T>
   void write_image_to_file(const UndefinedImage<T>& image);
 
@@ -246,13 +246,6 @@ T PGXFile::change_endianess(T value) {
 }
 
 
-/**
- * @brief      Writes an image to file.
- *
- * @param[in]  image  The image
- *
- * @tparam     T      Type of the data in image
- */
 template<typename T>
 void PGXFile::write_image_to_file(const UndefinedImage<T>& image) {
   if (auto n_channels = image.get_number_of_channels(); n_channels != 1) {
