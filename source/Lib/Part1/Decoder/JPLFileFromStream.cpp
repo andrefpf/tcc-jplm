@@ -65,6 +65,7 @@ void JPLFileFromStream::check_boxes_constraints() {
   // before the JPEG Pleno Light Field, JPEG Pleno
   // Point Cloud, and JPEG Pleno Hologram superboxes.
 
+  //throw
 
   // restriction 3: A JPL file can contain an optional XML box
   // signalling catalog information (see A.5.8). An XML box
