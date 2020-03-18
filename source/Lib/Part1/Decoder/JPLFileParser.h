@@ -57,6 +57,8 @@ class JPLFileParser {
   std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
 
 
+  std::unique_ptr<FileTypeBox> decode_boxes_until_a_file_type_box_is_found();
+
   uint64_t decode_boxes();
 
 

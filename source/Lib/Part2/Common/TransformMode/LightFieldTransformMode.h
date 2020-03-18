@@ -54,7 +54,7 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
 
 
   /**
-   * @brief      Constructs a new instance.
+   * @brief      Constructs a new instance (decoder side).
    *
    * @param[in]  configuration       The configuration
    * @param[in]  number_of_channels  The number of channels
@@ -69,7 +69,6 @@ class LightFieldTransformMode : public LightfieldFromFile<T> {
       ViewIOPolicy<T>&& view_io_policy = ViewIOPolicyLimitlessMemory<T>())
       : LightfieldFromFile<T>(configuration, number_of_channels,
             bits_per_sample, std::move(view_io_policy)) {
-    std::cout << "created LF tranbaform mode in the decoder" << std::endl;
   }
 
 

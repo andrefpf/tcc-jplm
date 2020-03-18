@@ -63,16 +63,16 @@ TEST(BasicTest, ThrowsIfFileIsSmallerThan20Bytes) {
 
 
 TEST(BasicTest, ThrowsIfNotBegginingWithJSignatureBox) {
-  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
-                   resources_path + "/boxes/file_type_and_signature.bin"),
-      BoxParserExceptions::WrongTBoxValueException);
+  EXPECT_NO_THROW(auto jpl_file = JPLFileFromStream(
+                      resources_path + "/boxes/file_type_and_signature.bin"));
+  // history: modified from throw to no throw as a codestream without the signature may be valid...
 }
 
 
 TEST(BasicTest, ThrowsIfMoreThanOneFileTypeBox) {
-  EXPECT_THROW(auto jpl_file = JPLFileFromStream(
-                   resources_path +
-                   "/boxes/signature_and_two_file_type_boxes.bin"),
+  EXPECT_THROW(
+      auto jpl_file = JPLFileFromStream(
+          resources_path + "/boxes/signature_and_two_file_type_boxes.bin"),
       JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException);
 }
 

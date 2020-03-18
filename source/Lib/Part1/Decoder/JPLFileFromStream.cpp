@@ -105,7 +105,7 @@ JPLFileFromStream::JPLFileFromStream(const std::string& filename)
         JpegPlenoNotInCompatibilityListException();
   }
 
-  this->managed_stream.seek(12 + 20);
+  // this->managed_stream.seek(12 + 20);
   decoded_boxes += decode_boxes();
   check_boxes_constraints();
   populate_jpl_fields();

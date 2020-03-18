@@ -154,10 +154,12 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     std::size_t width, std::size_t height, std::size_t depth, bool is_signed) {
   std::fstream file(filename, std::ios::out | std::ios::binary);
 
-  file << get_header_id_string() << static_cast<std::uint8_t>(32);
+  constexpr auto space_char = uint8_t{0x20};
+
+  file << get_header_id_string() << space_char;
 
   //assuming that we are always going to write in big endian
-  file << get_big_endian_string() << static_cast<std::uint8_t>(80);
+  file << get_big_endian_string() << space_char;
 
   if (is_signed) {
     file << get_signed_char();
@@ -165,9 +167,9 @@ std::unique_ptr<PGXFile> PGXFileIO::open(const std::string& filename,
     file << get_unsigned_char();
   }
 
-  file << std::to_string(depth) << static_cast<std::uint8_t>(80);
-  file << std::to_string(width) << static_cast<std::uint8_t>(80);
-  file << std::to_string(height) << static_cast<std::uint8_t>(80);
+  file << std::to_string(depth) << space_char;
+  file << std::to_string(width) << space_char;
+  file << std::to_string(height) << space_char;
   file << static_cast<std::uint8_t>(10) << std::flush;
   auto raster_begin = file.tellg();
 

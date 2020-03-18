@@ -95,7 +95,7 @@ ManagedStream& ManagedStream::rewind() {
 // if (ref_to_stream.eof()) {
 //   throw ManagedStreamExceptions::TryingToAccessBeyondEOFException();
 // }
-// 
+//
 
 ManagedStream& ManagedStream::forward() {
   ref_to_stream.seekg(static_cast<int64_t>(final_pos), std::ios_base::beg);
@@ -158,8 +158,7 @@ std::size_t ManagedStream::get_final_pos() const noexcept {
 
 void ManagedStream::dynamic_assert_access_bounds(const uint64_t n) const {
   auto current_position = static_cast<uint64_t>(ref_to_stream.tellg());
-  if ((current_position < initial_pos) ||
-      (current_position + n > final_pos)) {
+  if ((current_position < initial_pos) || (current_position + n > final_pos)) {
     throw ManagedStreamExceptions::OutOfBoundsException(
         n, initial_pos, final_pos, current_position);
   }
