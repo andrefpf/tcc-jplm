@@ -79,6 +79,32 @@ class ThumbnailShallBeSignalledBeforePlenopticDataException
   }
 };
 
+
+class
+    ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException
+    : public std::exception {
+ protected:
+  std::string message_;
+
+ public:
+  ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException(
+      const uint64_t xml_box_position, const uint64_t file_type_box_position,
+      const uint64_t fist_plenoptic_box_position)
+      : message_(std::string("An XML box containing catalog information should "
+                             "be signalled after the File Type box and before "
+                             "the first superbox containing plenoptic data."
+                             "XML box position in the codestream is ") +
+                 std::to_string(xml_box_position) +
+                 ". File type box position in the codestream is " +
+                 std::to_string(file_type_box_position) +
+                 std::string(". The first plenoptic box position is ") +
+                 std::to_string(fist_plenoptic_box_position)) {
+  }
+  const char* what() const noexcept override {
+    return message_.c_str();
+  }
+};
+
 }  // namespace FileOrganizationExceptions
 
 
