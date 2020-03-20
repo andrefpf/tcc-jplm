@@ -47,7 +47,7 @@ XMLContents *XMLContents::clone() const {
 
 
 uint64_t XMLContents::size() const noexcept {
-  return 4 + loc.size() + 1;
+  return contents.size();
   //4 for ver and location + the size of the string + the null termination char
 }
 

@@ -41,7 +41,7 @@
 #ifndef JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
 #define JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
 
-
+#include <algorithm>  //for std::transform
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
 
@@ -71,6 +71,27 @@ class XMLContents : public InMemoryDBox {
   bool operator!=(const XMLContents& other) const;
 
   const std::string& get_string_with_contents() const noexcept;
+
+
+  virtual std::vector<std::byte> get_bytes() const noexcept override {
+    auto bytes = std::vector<std::byte>();
+    bytes.reserve(this->size());
+
+    std::transform(contents.begin(), contents.end(), bytes.begin(),
+        [](const auto& character) { return std::byte(character); });
+
+    return bytes;
+  }
+
+
+  void set_contents(const std::string& new_content) {
+    contents = new_content;
+  }
+
+
+  void set_contents(std::string&& new_content) {
+    contents = std::move(new_content);
+  }
 };
 
 #endif  // JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H

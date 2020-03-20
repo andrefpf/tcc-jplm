@@ -100,9 +100,9 @@ JPLFileFromStream::get_constrained_box_index() const {
     }
 
 
-    if (id ==)
+    // if (id ==)
 
-      index.file_type_box_position = this->file_type_box_index;
+    index.file_type_box_position = this->file_type_box_index;
   }
   return index;
 }
