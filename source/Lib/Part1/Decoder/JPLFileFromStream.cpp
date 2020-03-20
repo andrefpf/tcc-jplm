@@ -39,8 +39,73 @@
  */
 
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
-#include "Lib/Part1/Common/JPLFile.h"
 
+
+// thumbnail_box_position
+// fist_plenoptic_box_position
+// xml_box_position
+// file_type_box_position
+// last_plenoptic_box_position
+
+
+bool is_plenoptic(const int id) {
+  if ((id != static_cast<t_box_id_type>(
+                 JpegPlenoCodestreamBoxTypes::LightField)) &&
+      (id != static_cast<t_box_id_type>(
+                 JpegPlenoCodestreamBoxTypes::PointCloud)) &&
+      (id !=
+          static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::Hologram))) {
+    return false;
+  }
+  return true;
+}
+
+
+uint64_t get_max_position(
+    const std::vector<std::pair<uint64_t, std::unique_ptr<Box>>>& boxes) {
+  auto max_pair = std::max_element(
+      boxes.begin(), boxes.end(), [](const auto& pair_a, const auto& pair_b) {
+        return (std::get<0>(pair_a) > std::get<0>(pair_b));
+      });
+  return std::get<0>(*max_pair);
+}
+
+
+JPLFileFromStream::ConstrainedBoxIndex
+JPLFileFromStream::get_constrained_box_index() const {
+  auto index = ConstrainedBoxIndex();
+  for (const auto& [id, boxes] : temp_decoded_boxes) {
+    auto max_position = get_max_position(boxes);
+
+    if (is_plenoptic(id)) {
+      auto min_pair = std::min_element(boxes.begin(), boxes.end(),
+          [](const auto& pair_a, const auto& pair_b) {
+            return (std::get<0>(pair_a) < std::get<0>(pair_b));
+          });
+      auto min_position = std::get<0>(*min_pair);
+      if (min_position < index.fist_plenoptic_box_position) {
+        index.fist_plenoptic_box_position = min_position;
+      }
+
+      if (max_position > index.last_plenoptic_box_position) {
+        index.last_plenoptic_box_position = max_position;
+      }
+    }
+    // FileTypeBox::id
+
+    if (id == JpegPlenoThumbnailBox::id) {
+      if (max_position > index.thumbnail_box_position) {
+        index.thumbnail_box_position = max_position;
+      }
+    }
+
+
+    if (id ==)
+
+      index.file_type_box_position = this->file_type_box_index;
+  }
+  return index;
+}
 
 void JPLFileFromStream::check_boxes_constraints() {
   //restriction 0, no more than one file type box shall exist
@@ -57,27 +122,60 @@ void JPLFileFromStream::check_boxes_constraints() {
   // JPEG Pleno Signature box.
   //
   // This restriction will not be tested so as the decoder can decode
-  // any file that contains a type type box with the jpl signature in
+  // any file that contains a file type box with the jpl signature in
   // its compatility list
 
+  auto constrained_box_index = get_constrained_box_index();
+  std::cout << "thumbnail_box_position "
+            << constrained_box_index.thumbnail_box_position << std::endl;
+  std::cout << "xml_box_position " << constrained_box_index.xml_box_position
+            << std::endl;
+  std::cout << "file_type_box_position "
+            << constrained_box_index.file_type_box_position << std::endl;
+  std::cout << "fist_plenoptic_box_position "
+            << constrained_box_index.fist_plenoptic_box_position << std::endl;
+  std::cout << "last_plenoptic_box_position "
+            << constrained_box_index.last_plenoptic_box_position << std::endl;
 
   // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
   // before the JPEG Pleno Light Field, JPEG Pleno
   // Point Cloud, and JPEG Pleno Hologram superboxes.
+  if (constrained_box_index.thumbnail_box_position >
+      constrained_box_index.fist_plenoptic_box_position) {
+    throw FileOrganizationExceptions::
+        ThumbnailShallBeSignalledBeforePlenopticDataException(
+            constrained_box_index.thumbnail_box_position,
+            constrained_box_index.fist_plenoptic_box_position);
+  }
+
 
   //throw
 
   // restriction 3: A JPL file can contain an optional XML box
   // signalling catalog information (see A.5.8). An XML box
   // containing catalog information should be signalled after
-  // the File Type box and before the first
+  // the File Type box and before the first superbox containing plenoptic data.
+  if ((constrained_box_index.xml_box_position <
+          constrained_box_index.file_type_box_position) ||
+      (constrained_box_index.xml_box_position >
+          constrained_box_index.fist_plenoptic_box_position)) {
+    throw FileOrganizationExceptions::
+        ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException(
+            constrained_box_index.xml_box_position,
+            constrained_box_index.file_type_box_position,
+            constrained_box_index.fist_plenoptic_box_position);
+  }
 
 
   // restriction 4: The JPEG Pleno Light Field, JPEG Pleno Point Cloud,
   // and JPEG Pleno Hologram superboxes signalling plenoptic data, shall
   // be signalled as one monolithic block with no preferred ordering,
   // and no other boxes shall be signalled in between.
-
+  if (false) {
+    throw FileOrganizationExceptions::InvalidBoxBetweenPlenopticBoxesException(
+        constrained_box_index.fist_plenoptic_box_position,
+        constrained_box_index.last_plenoptic_box_position);
+  }
 
   // other restrictions may be tested here
 }

@@ -41,17 +41,30 @@
 #ifndef JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
 #define JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <magic_enum.hpp>
 #include <string>
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part1/Common/JPLFile.h"
+#include "Lib/Part1/Decoder/CommonExceptions.h"
 #include "Lib/Part1/Decoder/JPLFileParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
-
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
+ private:
+  struct ConstrainedBoxIndex {
+    uint64_t thumbnail_box_position = 0;
+    uint64_t xml_box_position = 0;
+    uint64_t file_type_box_position = 0;
+    uint64_t fist_plenoptic_box_position = std::numeric_limits<uint64_t>::max();
+    uint64_t last_plenoptic_box_position = 0;
+  };
+
+  ConstrainedBoxIndex get_constrained_box_index() const;
+
  protected:
   uint64_t number_of_decoded_boxes = 0;
 

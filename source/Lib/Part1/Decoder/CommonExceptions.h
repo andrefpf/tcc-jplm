@@ -117,20 +117,18 @@ class InvalidBoxBetweenPlenopticBoxesException : public std::exception {
  public:
   InvalidBoxBetweenPlenopticBoxesException(
       const uint64_t fist_plenoptic_box_position,
-      const uint64_t last_plenoptic_box_position,
-      const uint64_t invalid_box_position)
+      const uint64_t last_plenoptic_box_position)
       : message_(
             std::string(
                 "The JPEG Pleno Light Field, JPEG Pleno Point Cloud, and JPEG "
                 "Pleno Hologram superboxes signalling plenoptic data, shall be "
                 "signalled as one monolithic block with no preferred ordering, "
                 "and no other boxes shall be signalled in between. Found "
-                "invalid box in position ") +
-            std::to_string(thumbnail_box_position) +
-            std::string(". The first plenoptic box position is ") +
+                "invalid box between plenoptic boxes. The first plenoptic box "
+                "position is ") +
             std::to_string(fist_plenoptic_box_position) +
             std::string(". The last plenoptic box position is ") +
-            std::to_string(last_plenoptic_box_position)) {
+            std::to_string(last_plenoptic_box_position) + ". ") {
   }
 
 
