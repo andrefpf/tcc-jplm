@@ -46,6 +46,7 @@
 #include "Lib/Common/Boxes/Generic/UUIDBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDInfoBox.h"
 #include "Lib/Common/Boxes/Generic/UUIDListBox.h"
+#include "Lib/Common/Boxes/Generic/XMLBox.h"
 #include "Lib/Part1/Common/Boxes/FileTypeBox.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
@@ -57,7 +58,7 @@ class JPLFile {
  protected:
   std::unique_ptr<JpegPlenoSignatureBox> jpeg_pleno_signature_box;
   std::unique_ptr<FileTypeBox> file_type_box;  //this is the FileTypeBox
-  // std::optional<XMLBoxWithCatalog> xml_box_with_catalog;
+  std::unique_ptr<XMLBox> xml_box_with_catalog;
   std::unique_ptr<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
   std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>
       jpeg_pleno_codestreams;  //optional

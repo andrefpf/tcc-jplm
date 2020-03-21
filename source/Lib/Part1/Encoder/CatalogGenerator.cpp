@@ -31,76 +31,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     XMLContents.h
+/** \file     CatalogGenerator.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2020-03-20
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
-#define JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
-
-#include <algorithm>  //for std::transform
-#include "Lib/Common/Boxes/InMemoryDBox.h"
-#include "Lib/Utils/Stream/BinaryTools.h"
-
-class XMLContents : public InMemoryDBox {
- protected:
-  std::string contents;
-
- public:
-  XMLContents() = default;
+#include "Lib/Part1/Encoder/CatalogGenerator.h"
 
 
-  XMLContents(const std::string& contents) : contents(contents) {
-  }
-
-
-  XMLContents(std::string&& contents) : contents(std::move(contents)) {
-  }
-
-
-  XMLContents* clone() const override;
-
-
-  virtual ~XMLContents() = default;
-
-
-  uint64_t size() const noexcept override;
-
-
-  bool is_equal(const DBox& other) const override;
-
-
-  bool operator==(const XMLContents& other) const;
-
-
-  bool operator!=(const XMLContents& other) const;
-
-
-  const std::string& get_string_with_contents() const noexcept;
-
-
-  virtual std::vector<std::byte> get_bytes() const noexcept override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
-
-    std::transform(contents.begin(), contents.end(), bytes.begin(),
-        [](const auto& character) { return std::byte(character); });
-
-    return bytes;
-  }
-
-
-  void set_contents(const std::string& new_content) {
-    contents = new_content;
-  }
-
-
-  void set_contents(std::string&& new_content) {
-    contents = std::move(new_content);
-  }
-};
-
-#endif  // JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
+std::unique_ptr<XMLBox> CatalogGenerator::get_xml_box_with_catalog() {
+  return nullptr;
+}

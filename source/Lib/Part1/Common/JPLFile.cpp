@@ -40,11 +40,12 @@
 
 #include "Lib/Part1/Common/JPLFile.h"
 
+
 std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
-  // if(xml_box_with_catalog) {
-  //   os << xml_box_with_catalog;
-  // }
+  if (jpl_file.xml_box_with_catalog) {
+    os << (*jpl_file.xml_box_with_catalog);
+  }
   if (jpl_file.jpeg_pleno_thumbnail_box) {
     os << (*jpl_file.jpeg_pleno_thumbnail_box);
   }
@@ -68,6 +69,7 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   }
   return os;
 }
+
 
 std::size_t JPLFile::size() const noexcept {
   std::size_t size = 0;
