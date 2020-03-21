@@ -32,7 +32,7 @@
  */
 
 /** \file     JpegPlenoSignatureContents.h
- *  \brief    
+ *  \brief    This files contains the JPEG Pleno Signature Contents class
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-02
@@ -47,39 +47,97 @@
 #include "Lib/Common/Boxes/GenericBox.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
+
+/**
+ * @brief      This class describes JPEG Pleno Signature Box contents.
+ */
 class JpegPlenoSignatureContents : public InMemoryDBox {
  protected:
   const std::array<std::byte, 4> signature = {
       std::byte{0x0d}, std::byte{0x0a}, std::byte{0x87}, std::byte{0x0a}};
 
  public:
+  /**
+   * @brief      Constructs a new instance.
+   */
   JpegPlenoSignatureContents() = default;
 
 
-  ~JpegPlenoSignatureContents() = default;
+  /**
+   * @brief      Destroys the object.
+   */
+  virtual ~JpegPlenoSignatureContents() = default;
 
 
+  /**
+   * @brief      Creates a new instance of the object with same properties than original.
+   *
+   * @return     Copy of this object.
+   */
   virtual JpegPlenoSignatureContents* clone() const override;
 
 
+  /**
+   * @brief      Gets the size (in bytes) of the contents of this JPEG Pleno Signature box
+   *
+   * @return     Size in bytes
+   */
   virtual uint64_t size() const noexcept override;
 
 
+  /**
+   * @brief      Determines whether the specified other is equal.
+   *
+   * @param[in]  other  The other
+   *
+   * @return     True if the specified other is equal, False otherwise.
+   */
   virtual bool is_equal(const DBox& other) const override;
 
 
+  /**
+   * @brief      Equality operator.
+   *
+   * @param[in]  other  The other
+   *
+   * @return     The result of the equality
+   */
   bool operator==(const JpegPlenoSignatureContents& other) const;
 
 
+  /**
+   * @brief      Inequality operator.
+   *
+   * @param[in]  other  The other
+   *
+   * @return     The result of the inequality
+   */
   bool operator!=(const JpegPlenoSignatureContents& other) const;
 
 
+  /**
+   * @brief      Determines whether the specified bytes is valid.
+   *
+   * @param[in]  bytes  The bytes
+   *
+   * @return     True if the specified bytes is valid, False otherwise.
+   */
   bool is_valid(const std::vector<std::byte>& bytes);
 
 
+  /**
+   * @brief      Gets the reference to signature.
+   *
+   * @return     The reference to signature.
+   */
   const std::array<std::byte, 4>& get_ref_to_signature() const noexcept;
 
 
+  /**
+   * @brief      Gets the bytes with the contents of JPEG Pleno Signature Box.
+   *
+   * @return     The bytes.
+   */
   virtual std::vector<std::byte> get_bytes() const override;
 };
 

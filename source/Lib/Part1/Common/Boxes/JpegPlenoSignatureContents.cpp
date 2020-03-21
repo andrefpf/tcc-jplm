@@ -34,19 +34,23 @@
 /** \file     JpegPlenoSignatureContents.cpp
  *  \brief    Brief description
  *  \details  Detailed description
+ *  \author   Ismael Seidel <i.seidel@samsung.com> 
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-07
  */
 
 #include "Lib/Part1/Common/Boxes/JpegPlenoSignatureContents.h"
 
+
 JpegPlenoSignatureContents *JpegPlenoSignatureContents::clone() const {
   return new JpegPlenoSignatureContents(*this);
 }
 
+
 uint64_t JpegPlenoSignatureContents::size() const noexcept {
   return 4;
 }
+
 
 bool JpegPlenoSignatureContents::is_equal(const DBox &other) const {
   if (typeid(*this) != typeid(other))
@@ -56,15 +60,18 @@ bool JpegPlenoSignatureContents::is_equal(const DBox &other) const {
   return *this == cast_other;
 }
 
+
 bool JpegPlenoSignatureContents::operator==(
     const JpegPlenoSignatureContents &other) const {
   return (this->signature == other.signature);
 }
 
+
 bool JpegPlenoSignatureContents::operator!=(
     const JpegPlenoSignatureContents &other) const {
   return !this->operator==(other);
 }
+
 
 bool JpegPlenoSignatureContents::is_valid(const std::vector<std::byte> &bytes) {
   if (bytes.size() == 4) {
@@ -76,10 +83,12 @@ bool JpegPlenoSignatureContents::is_valid(const std::vector<std::byte> &bytes) {
   return false;
 }
 
+
 const std::array<std::byte, 4>
     &JpegPlenoSignatureContents::get_ref_to_signature() const noexcept {
   return signature;
 }
+
 
 std::vector<std::byte> JpegPlenoSignatureContents::get_bytes() const {
   return std::vector<std::byte>(signature.begin(), signature.end());
