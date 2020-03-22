@@ -68,31 +68,64 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
  protected:
   uint64_t number_of_decoded_boxes = 0;
 
+
+  /**
+   * @brief      Checks if the parsed codestream is well formed according to JPEG Pleno Part 1.
+   */
   void check_boxes_constraints();
 
 
+  /**
+   * @brief      Populates the lightfield codestreams list within the JPLFile
+   */
   void populate_light_field_codestreams();
 
 
-  //! \todo Implement for Point Cloud Boxes...
+  /**
+   * @brief      Populates the point clouds codestreams list within the JPLFile
+   * 
+   * \todo Implement for Point Cloud Boxes...
+   */
   void populate_point_cloud_codestreams();
 
 
+  /**
+   * @brief      Populates the hologram codestreams list within the JPLFile
+   */
   void populate_hologram_codestreams();
 
 
+  /**
+   * @brief      Populates the list of codestreams within the JPLFile with Lightfield, Point Clouds or Hologram codestream boxes
+   */
   void populate_codestreams_list();
 
 
+  /**
+   * @brief      Populates the files of the JPLFile with the ones readed from the stream
+   */
   void populate_jpl_fields();
 
  public:
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  filename  The filename
+   */
   JPLFileFromStream(const std::string& filename);
 
 
+  /**
+   * @brief      Gets the number of decoded boxes.
+   *
+   * @return     The number of decoded boxes.
+   */
   uint64_t get_number_of_decoded_boxes();
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~JPLFileFromStream() = default;
 };
 
