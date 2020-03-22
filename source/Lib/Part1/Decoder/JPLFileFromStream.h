@@ -56,8 +56,8 @@
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
  private:
   struct ConstrainedBoxIndex {
-    uint64_t thumbnail_box_position = 0;
-    uint64_t xml_box_position = 0;
+    std::optional<uint64_t> thumbnail_box_position = std::nullopt;
+    std::optional<uint64_t> xml_box_with_catalog_position = std::nullopt;
     uint64_t file_type_box_position = 0;
     uint64_t fist_plenoptic_box_position = std::numeric_limits<uint64_t>::max();
     uint64_t last_plenoptic_box_position = 0;

@@ -126,10 +126,15 @@ void JPLFileFromStream::check_boxes_constraints() {
   // its compatility list
 
   auto constrained_box_index = get_constrained_box_index();
-  std::cout << "thumbnail_box_position "
-            << constrained_box_index.thumbnail_box_position << std::endl;
-  std::cout << "xml_box_position " << constrained_box_index.xml_box_position
-            << std::endl;
+  if (constrained_box_index.thumbnail_box_position) {
+    std::cout << "thumbnail_box_position "
+              << *(constrained_box_index.thumbnail_box_position) << std::endl;
+  }
+  if (constrained_box_index.xml_box_with_catalog_position) {
+    std::cout << "xml_box_with_catalog_position "
+              << *(constrained_box_index.xml_box_with_catalog_position)
+              << std::endl;
+  }
   std::cout << "file_type_box_position "
             << constrained_box_index.file_type_box_position << std::endl;
   std::cout << "fist_plenoptic_box_position "
@@ -140,12 +145,15 @@ void JPLFileFromStream::check_boxes_constraints() {
   // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
   // before the JPEG Pleno Light Field, JPEG Pleno
   // Point Cloud, and JPEG Pleno Hologram superboxes.
-  if (constrained_box_index.thumbnail_box_position >
-      constrained_box_index.fist_plenoptic_box_position) {
-    throw FileOrganizationExceptions::
-        ThumbnailShallBeSignalledBeforePlenopticDataException(
-            constrained_box_index.thumbnail_box_position,
-            constrained_box_index.fist_plenoptic_box_position);
+  if (constrained_box_index.thumbnail_box_position) {
+    //a thumbnail box was detected in the codestream
+    if (*(constrained_box_index.thumbnail_box_position) >
+        constrained_box_index.fist_plenoptic_box_position) {
+      throw FileOrganizationExceptions::
+          ThumbnailShallBeSignalledBeforePlenopticDataException(
+              *(constrained_box_index.thumbnail_box_position),
+              constrained_box_index.fist_plenoptic_box_position);
+    }
   }
 
 
@@ -155,15 +163,18 @@ void JPLFileFromStream::check_boxes_constraints() {
   // signalling catalog information (see A.5.8). An XML box
   // containing catalog information should be signalled after
   // the File Type box and before the first superbox containing plenoptic data.
-  if ((constrained_box_index.xml_box_position <
-          constrained_box_index.file_type_box_position) ||
-      (constrained_box_index.xml_box_position >
-          constrained_box_index.fist_plenoptic_box_position)) {
-    throw FileOrganizationExceptions::
-        ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException(
-            constrained_box_index.xml_box_position,
-            constrained_box_index.file_type_box_position,
-            constrained_box_index.fist_plenoptic_box_position);
+  if (constrained_box_index.xml_box_with_catalog_position) {
+    //a xml box with catalog was detected in the codestream
+    if ((*(constrained_box_index.xml_box_with_catalog_position) <
+            constrained_box_index.file_type_box_position) ||
+        (*(constrained_box_index.xml_box_with_catalog_position) >
+            constrained_box_index.fist_plenoptic_box_position)) {
+      throw FileOrganizationExceptions::
+          ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException(
+              *(constrained_box_index.xml_box_with_catalog_position),
+              constrained_box_index.file_type_box_position,
+              constrained_box_index.fist_plenoptic_box_position);
+    }
   }
 
 
