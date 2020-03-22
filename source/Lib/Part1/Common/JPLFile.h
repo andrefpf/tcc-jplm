@@ -58,7 +58,8 @@ class JPLFile {
  protected:
   std::unique_ptr<JpegPlenoSignatureBox> jpeg_pleno_signature_box;
   std::unique_ptr<FileTypeBox> file_type_box;  //this is the FileTypeBox
-  std::unique_ptr<XMLBox> xml_box_with_catalog;
+  //the xml_box_with_catalog is mutable as it need to be updated before any operation involving it
+  mutable std::unique_ptr<XMLBox> xml_box_with_catalog;
   std::unique_ptr<JpegPlenoThumbnailBox> jpeg_pleno_thumbnail_box;
   std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>
       jpeg_pleno_codestreams;  //optional

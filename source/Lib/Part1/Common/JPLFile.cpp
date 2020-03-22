@@ -44,10 +44,10 @@
 std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
   if (jpl_file.xml_box_with_catalog) {
-    auto updated_xml_box_with_catalog =
+    jpl_file.xml_box_with_catalog =
         CatalogGenerator::get_xml_box_with_updated_catalog(
             jpl_file.jpeg_pleno_codestreams);
-    os << (*updated_xml_box_with_catalog);
+    os << (*jpl_file.xml_box_with_catalog);
   }
   if (jpl_file.jpeg_pleno_thumbnail_box) {
     os << (*jpl_file.jpeg_pleno_thumbnail_box);
@@ -78,9 +78,14 @@ std::size_t JPLFile::size() const noexcept {
   std::size_t size = 0;
   size += this->jpeg_pleno_signature_box->size();
   size += this->file_type_box->size();
-  // if(this->xml_box_with_catalog) {
-  //    size+=this->xml_box_with_catalog->size();
-  // }
+  if (this->xml_box_with_catalog) {
+    //first updates the xml box with catalog if it already exists
+    this->xml_box_with_catalog =
+        CatalogGenerator::get_xml_box_with_updated_catalog(
+            this->jpeg_pleno_codestreams);
+    //only then gets the size of the xml box with catalog
+    size += this->xml_box_with_catalog->size();
+  }
   if (this->jpeg_pleno_thumbnail_box) {
     size += this->jpeg_pleno_thumbnail_box->size();
   }

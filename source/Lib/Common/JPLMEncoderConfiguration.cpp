@@ -53,6 +53,11 @@ JPLMEncoderConfiguration::JPLMEncoderConfiguration(int argc, char **argv)
 }
 
 
+bool JPLMEncoderConfiguration::must_generate_xml_box_with_catalog() const {
+  return generate_xml_box_with_catalog;
+}
+
+
 JpegPlenoPart JPLMEncoderConfiguration::get_jpeg_pleno_part() const {
   return part;
 }
@@ -81,7 +86,7 @@ void JPLMEncoderConfiguration::add_options() {
       "directories contains a set of views in PGX format.",
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("input")) {
-          return conf["input"].get<string>();
+          return conf["input"].get<std::string>();
         }
         return std::nullopt;
       },
@@ -95,7 +100,7 @@ void JPLMEncoderConfiguration::add_options() {
       "Output, i.e., the compressed JPEG Pleno bitstream (filename.jpl).",
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("output")) {
-          return conf["output"].get<string>();
+          return conf["output"].get<std::string>();
         }
         return std::nullopt;
       },
@@ -123,7 +128,7 @@ void JPLMEncoderConfiguration::add_options() {
       "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("part")) {
-          return conf["part"].get<string>();
+          return conf["part"].get<std::string>();
         }
         return std::nullopt;
       },
