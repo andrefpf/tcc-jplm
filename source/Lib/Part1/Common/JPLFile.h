@@ -69,56 +69,136 @@ class JPLFile {
   std::optional<std::vector<std::unique_ptr<UUIDInfoBox>>> uuid_info_boxes;
 
  public:
+  /**
+   * @brief      Constructs a new instance of JPLFile.
+   *
+   * @param[in]  file_type_box  The file type box
+   */
   JPLFile(const FileTypeBox& file_type_box);
 
 
+  /**
+   * @brief      Constructs a new instance of JPLFile.
+   *
+   * @param[in]  jpeg_pleno_signature_box  The jpeg pleno signature box
+   * @param[in]  file_type_box             The file type box
+   */
   JPLFile(const JpegPlenoSignatureBox& jpeg_pleno_signature_box =
               JpegPlenoSignatureBox(),
       const FileTypeBox& file_type_box = FileTypeBox(
           JpegPlenoFileTypeContents()));
 
 
+  /**
+   * @brief      Constructs a new instance of JPLFile.
+   *
+   * @param      jpeg_pleno_signature_box  The jpeg pleno signature box
+   * @param      file_type_box             The file type box
+   */
   JPLFile(JpegPlenoSignatureBox&& jpeg_pleno_signature_box,
       FileTypeBox&& file_type_box);
 
 
+  /**
+   * @brief      Constructs a new instance of JPLFile.
+   *
+   * @param      jpeg_pleno_signature_box  The jpeg pleno signature box
+   * @param      file_type_box             The file type box
+   */
   JPLFile(std::unique_ptr<JpegPlenoSignatureBox>&& jpeg_pleno_signature_box,
       std::unique_ptr<FileTypeBox>&& file_type_box);
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~JPLFile() = default;
 
 
+  /**
+   * @brief      Adds a codestream box to this JPLFile.
+   *
+   * @param      codestream_box  The codestream box
+   *
+   * @return     A reference to this object
+   */
   JPLFile& add_codestream_box(
       std::unique_ptr<JpegPlenoCodestreamBox>&& codestream_box);
 
 
+  /**
+   * @brief      Adds a thumbnail box to this JPLFile.
+   *
+   * @param[in]  thumbnail_box  The thumbnail box
+   *
+   * @return     A reference to this object
+   */
   JPLFile& add_thumbnail_box(const JpegPlenoThumbnailBox& thumbnail_box);
 
 
+  /**
+   * @brief      Determines if the file contains a thumbnail box.
+   *
+   * @return     True if thumbnail, False otherwise.
+   */
   bool has_thumbnail() const noexcept;
 
 
+  /**
+   * @brief      Determines if the file contains at least one codestream.
+   *
+   * @return     True if codestream, False otherwise.
+   */
   bool has_codestream() const noexcept;
 
 
+  /**
+   * @brief      Gets the number of codestreams in the JPLFile
+   *
+   * @return     The number of codestreams
+   */
   std::size_t number_of_codestreams() const noexcept;
 
 
+  /**
+   * @brief      Gets the reference to codestreams.
+   *
+   * @return     The reference to codestreams.
+   */
   std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
   get_reference_to_codestreams() noexcept;
 
 
+  /**
+   * @brief      Gets the reference to codestreams.
+   *
+   * @return     The reference to codestreams.
+   */
   const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
   get_reference_to_codestreams() const noexcept;
 
 
+  /**
+   * @brief      Gets the jpeg pleno signature box.
+   *
+   * @return     The jpeg pleno signature box.
+   */
   JpegPlenoSignatureBox get_jpeg_pleno_signature_box() const noexcept;
 
 
+  /**
+   * @brief      Gets the file type box.
+   *
+   * @return     The file type box.
+   */
   FileTypeBox get_file_type_box() const noexcept;
 
 
+  /**
+   * @brief      Gets the size (in bytes) of the JPLFile
+   *
+   * @return     Size in bytes
+   */
   std::size_t size() const noexcept;
 
   friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
