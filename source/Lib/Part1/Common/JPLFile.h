@@ -64,7 +64,7 @@ class JPLFile {
   std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>
       jpeg_pleno_codestreams;  //optional
   std::optional<IntellectualPropertyBox> ipr_box;
-  // std::optional<std::vector<XMLBox>> xml_boxes; //boxes??
+  std::optional<std::vector<std::unique_ptr<XMLBox>>> xml_boxes;
   std::optional<std::vector<std::unique_ptr<UUIDBox>>> uuid_boxes;
   std::optional<std::vector<std::unique_ptr<UUIDInfoBox>>> uuid_info_boxes;
 

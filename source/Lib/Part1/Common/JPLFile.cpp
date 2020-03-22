@@ -58,6 +58,12 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   if (jpl_file.ipr_box) {
     os << (*jpl_file.ipr_box);
   }
+  if (jpl_file.xml_boxes) {
+    const auto& xml_boxes = *(jpl_file.xml_boxes);
+    for (const auto& xml_box : xml_boxes) {
+      os << *xml_box;
+    }
+  }
   if (jpl_file.uuid_boxes) {
     const auto& uuid_boxes = *(jpl_file.uuid_boxes);
     for (const auto& uuid_box : uuid_boxes) {
@@ -94,6 +100,12 @@ std::size_t JPLFile::size() const noexcept {
   }
   if (this->ipr_box) {
     size += this->ipr_box->size();
+  }
+  if (this->xml_boxes) {
+    const auto& xml_boxes = *(this->xml_boxes);
+    for (const auto& xml_box : xml_boxes) {
+      size += xml_box->size();
+    }
   }
   if (this->uuid_boxes) {
     const auto& uuid_boxes = *(this->uuid_boxes);
