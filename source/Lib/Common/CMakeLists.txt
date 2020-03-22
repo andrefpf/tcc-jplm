@@ -8,7 +8,8 @@ set(COMMON_SOURCES JPLMCodecFactory.cpp
     Boxes/Box.cpp)
 
 set(PART1_SOURCES
-    ../Part1/Common/JPLFile.cpp)
+    ../Part1/Common/JPLFile.cpp
+    ../Part1/Common/CatalogGenerator.cpp)
 
 set(PART2_SOURCES
     ../Part2/Encoder/TransformMode/Hierarchical4DEncoder.cpp

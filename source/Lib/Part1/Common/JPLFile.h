@@ -52,7 +52,7 @@
 #include "Lib/Part1/Common/Boxes/JpegPlenoFileTypeContents.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoSignatureBox.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
-
+#include "Lib/Part1/Common/CatalogGenerator.h"
 
 class JPLFile {
  protected:

@@ -37,8 +37,8 @@
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
-#ifndef JPLM_LIB_PART1_JPLFILEPARSER_H
-#define JPLM_LIB_PART1_JPLFILEPARSER_H
+#ifndef JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H
+#define JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H
 
 
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
@@ -82,4 +82,4 @@ class JPLFileParser {
 };
 
 
-#endif  //JPLM_LIB_PART1_JPLFILEPARSER_H
+#endif  //JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H

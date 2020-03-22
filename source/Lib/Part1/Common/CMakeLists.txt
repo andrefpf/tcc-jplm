@@ -1,5 +1,6 @@
 set(PART1_COMMON_SOURCES
     CommonExceptions.cpp
+    CatalogGenerator.cpp
     JPLFile.cpp
     JPLMCodec.cpp
     ../../Common/Boxes/Box.cpp

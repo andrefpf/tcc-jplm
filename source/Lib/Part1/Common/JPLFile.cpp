@@ -44,7 +44,10 @@
 std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
   if (jpl_file.xml_box_with_catalog) {
-    os << (*jpl_file.xml_box_with_catalog);
+    auto updated_xml_box_with_catalog =
+        CatalogGenerator::get_xml_box_with_updated_catalog(
+            jpl_file.jpeg_pleno_codestreams);
+    os << (*updated_xml_box_with_catalog);
   }
   if (jpl_file.jpeg_pleno_thumbnail_box) {
     os << (*jpl_file.jpeg_pleno_thumbnail_box);

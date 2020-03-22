@@ -38,10 +38,15 @@
  *  \date     2020-03-20
  */
 
-#ifndef JPLM_LIB_PART1_ENCODER_CATALOG_GENERATOR_H
-#define JPLM_LIB_PART1_ENCODER_CATALOG_GENERATOR_H
+#ifndef JPLM_LIB_PART1_COMMON_CATALOG_GENERATOR_H
+#define JPLM_LIB_PART1_COMMON_CATALOG_GENERATOR_H
 
+#include <algorithm>  //std::transform
+#include <locale>  //std::tolower
+#include <magic_enum.hpp>
+#include <sstream>  //std::stringstream
 #include "Lib/Common/Boxes/Generic/XMLBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 
 class CatalogGenerator {
  public:
@@ -51,7 +56,12 @@ class CatalogGenerator {
   virtual ~CatalogGenerator() = default;
 
 
-  std::unique_ptr<XMLBox> get_xml_box_with_catalog();
+  static std::unique_ptr<XMLBox> get_xml_box_with_catalog();
+
+
+  static std::unique_ptr<XMLBox> get_xml_box_with_updated_catalog(
+      const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+          jpeg_pleno_codestreams);
 };
 
-#endif  // JPLM_LIB_PART1_ENCODER_CATALOG_GENERATOR_H
+#endif  // JPLM_LIB_PART1COMMON__CATALOG_GENERATOR_H

@@ -38,9 +38,59 @@
  *  \date     2020-03-20
  */
 
-#include "Lib/Part1/Encoder/CatalogGenerator.h"
-
+#include "Lib/Part1/Common/CatalogGenerator.h"
 
 std::unique_ptr<XMLBox> CatalogGenerator::get_xml_box_with_catalog() {
-  return nullptr;
+  return std::make_unique<XMLBox>();
+}
+
+
+std::unique_ptr<XMLBox> CatalogGenerator::get_xml_box_with_updated_catalog(
+    const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+        jpeg_pleno_codestreams) {
+  auto sstream = std::stringstream();
+
+  sstream << "<?xml version=\" 1.0 \" encoding=\" utf - 8 \"?>";
+  sstream << "<jpeg-pleno-file version=\" 1.0 \">";
+  sstream << "<pleno-elements>";
+
+  auto offset = uint64_t(0);
+  auto counter = std::size_t(0);
+  for (const auto& pleno_element : jpeg_pleno_codestreams) {
+    sstream << "<pleno-element>";
+    sstream << "<type>";
+    auto pleno_element_type = pleno_element->get_type();
+    switch (pleno_element_type) {
+      case JpegPlenoCodestreamBoxTypes::LightField: {
+        sstream << "lightfield";
+        break;
+      }
+      case JpegPlenoCodestreamBoxTypes::PointCloud: {
+        sstream << "pointcloud";
+        break;
+      }
+      case JpegPlenoCodestreamBoxTypes::Hologram: {
+        sstream << "hologram";
+        break;
+      }
+      default: { break; }
+    }
+    sstream << "</type>";
+    // magic_enum has limits on the size of enum type (INT_16_MAX)
+    //
+    // auto pleno_element_type_name = magic_enum::enum_name(pleno_element_type);
+    // std::transform(pleno_element_type_name.begin(),
+    //     pleno_element_type_name.end(), pleno_element_type_name.begin(),
+    //     [](auto c) { return std::tolower(c); });
+    // sstream << "<type>" << pleno_element_type_name << "</type>";
+    sstream << "<label> A plenoptic element with id " << counter++
+            << "</label>";
+    sstream << "<offset>" << offset << "</offset>";
+    offset += pleno_element->size();
+    sstream << "</pleno-element>";
+  }
+  sstream << "</pleno-elements>";
+  sstream << "</jpeg-pleno-file>";
+
+  return std::make_unique<XMLBox>(std::move(XMLContents(sstream.str())));
 }
