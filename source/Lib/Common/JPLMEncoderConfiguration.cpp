@@ -123,6 +123,24 @@ void JPLMEncoderConfiguration::add_options() {
       },
       this->current_hierarchy_level});
 
+  this->add_cli_json_option({"--insert-xml-catalog", "-xmlcat",
+      "Inserts a xml box with catalog in the generated JPL file.",
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("insert-xml-catalog")) {
+          return conf["insert-xml-catalog"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->generate_xml_box_with_catalog = false;
+        } else {
+          this->generate_xml_box_with_catalog = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
+
 
   this->add_cli_json_option({"--part", "-p",
       "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
