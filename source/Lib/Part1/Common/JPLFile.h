@@ -201,6 +201,10 @@ class JPLFile {
    */
   std::size_t size() const noexcept;
 
+
+  void enable_catalog() const noexcept;
+
+
   friend std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file);
 };
 

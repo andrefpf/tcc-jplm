@@ -62,9 +62,7 @@ int main(int argc, char const* argv[]) {
 
   //<! \todo avoid the static cast as the get_encoder_configuration function
   // should return an specialized encoder configuration
-  auto encoder = JPLMCodecFactory::get_encoder(
-      std::move(std::unique_ptr<JPLMEncoderConfiguration>(
-          static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
+  auto encoder = JPLMCodecFactory::get_encoder(configuration);
 
   encoder->run();
 

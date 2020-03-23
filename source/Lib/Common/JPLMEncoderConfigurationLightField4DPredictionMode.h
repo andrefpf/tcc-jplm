@@ -61,6 +61,8 @@ class JPLMEncoderConfigurationLightField4DPredictionMode
   virtual CompressionTypeLightField get_compression_type() const override;
 
   JPLMEncoderConfigurationLightField4DPredictionMode(int argc, char **argv);
+
+  virtual ~JPLMEncoderConfigurationLightField4DPredictionMode() = default;
 };
 
 

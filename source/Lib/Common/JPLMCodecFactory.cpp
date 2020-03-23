@@ -51,33 +51,30 @@
 
 
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_light_field_encoder(
-    std::unique_ptr<JPLMEncoderConfigurationLightField> &&configuration) {
+    std::shared_ptr<JPLMEncoderConfigurationLightField> configuration) {
   if (configuration->get_compression_type() ==
       CompressionTypeLightField::transform_mode) {
     return std::make_unique<JPLM4DTransformModeLightFieldEncoder<uint16_t>>(
-        std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>(
-            static_cast<JPLMEncoderConfigurationLightField4DTransformMode *>(
-                configuration.release())));
+        std::dynamic_pointer_cast<
+            JPLMEncoderConfigurationLightField4DTransformMode>(configuration));
   }
 
   assert(configuration->get_compression_type() ==
          CompressionTypeLightField::prediction_mode);
 
   return std::make_unique<JPLM4DPredictionModeLightFieldEncoder<uint16_t>>(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>(
-          static_cast<JPLMEncoderConfigurationLightField4DPredictionMode *>(
-              configuration.release())));
+      std::dynamic_pointer_cast<
+          JPLMEncoderConfigurationLightField4DPredictionMode>(configuration));
 }
 
 
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_encoder(
-    std::unique_ptr<JPLMEncoderConfiguration> &&configuration) {
+    std::shared_ptr<JPLMEncoderConfiguration> configuration) {
   switch (configuration->get_jpeg_pleno_part()) {
     case JpegPlenoPart::LightField: {
       return get_light_field_encoder(
-          std::move(std::unique_ptr<JPLMEncoderConfigurationLightField>(
-              static_cast<JPLMEncoderConfigurationLightField *>(
-                  configuration.release()))));
+          std::dynamic_pointer_cast<JPLMEncoderConfigurationLightField>(
+              configuration));
     }
     default: {
       std::cerr << "Unknown part" << std::endl;

@@ -57,7 +57,7 @@ class JPLM4DTransformModeLightFieldEncoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldEncoder<PelType> {
  protected:
-  std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
+  std::shared_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
       transform_mode_encoder_configuration;
   Hierarchical4DEncoder hierarchical_4d_encoder;
   TransformPartition transform_partition;
@@ -75,7 +75,7 @@ class JPLM4DTransformModeLightFieldEncoder
 
  public:
   JPLM4DTransformModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DTransformMode>&&
+      std::shared_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
           configuration)
       : JPLMLightFieldCodec<PelType>(
             std::make_unique<LightFieldTransformMode<PelType>>(
@@ -85,7 +85,7 @@ class JPLM4DTransformModeLightFieldEncoder
             {configuration->get_lightfield_io_configurations().get_size()},
             {configuration->get_maximal_transform_sizes()}, *configuration),
         JPLMLightFieldEncoder<PelType>(*configuration),
-        transform_mode_encoder_configuration(std::move(configuration)),
+        transform_mode_encoder_configuration(configuration),
         transform_partition(transform_mode_encoder_configuration
                                 ->get_minimal_transform_dimension()),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(

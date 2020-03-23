@@ -49,19 +49,19 @@ template<typename PelType = uint16_t>
 class JPLM4DPredictionModeLightFieldEncoder
     : public JPLMLightFieldEncoder<PelType> {
  protected:
-  std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
+  std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
       prediction_mode_configuration;
 
  public:
   JPLM4DPredictionModeLightFieldEncoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>&&
+      std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
           configuration)
       : JPLMLightFieldCodec<PelType>(
             std::make_unique<LightfieldFromFile<PelType>>(
                 configuration->get_lightfield_io_configurations()),
             *configuration),
         JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(std::move(configuration)) {
+        prediction_mode_configuration(configuration) {
   }
 
   virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;

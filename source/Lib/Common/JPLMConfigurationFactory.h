@@ -63,7 +63,7 @@ class JPLMConfigurationFactory {
 
 
  public:
-  static std::unique_ptr<JPLMConfiguration> get_encoder_configuration(
+  static std::shared_ptr<JPLMEncoderConfiguration> get_encoder_configuration(
       int argc, char const* argv[]);
 
 

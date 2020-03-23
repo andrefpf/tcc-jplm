@@ -80,6 +80,13 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
 }
 
 
+void JPLFile::enable_catalog() const noexcept {
+  this->xml_box_with_catalog =
+      CatalogGenerator::get_xml_box_with_updated_catalog(
+          this->jpeg_pleno_codestreams);
+}
+
+
 std::size_t JPLFile::size() const noexcept {
   std::size_t size = 0;
   size += this->jpeg_pleno_signature_box->size();
