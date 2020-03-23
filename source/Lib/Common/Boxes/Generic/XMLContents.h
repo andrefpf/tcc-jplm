@@ -83,11 +83,17 @@ class XMLContents : public InMemoryDBox {
 
 
   virtual std::vector<std::byte> get_bytes() const noexcept override {
-    auto bytes = std::vector<std::byte>();
-    bytes.reserve(this->size());
+    auto bytes = std::vector<std::byte>(this->size());
+    // bytes.reserve(this->size());
+
+    std::cout << "contents.size() = " << contents.size() << std::endl;
+    std::cout << "contents = " << contents << std::endl;
+    std::cout << "bytes size = " << bytes.size() << std::endl;
 
     std::transform(contents.begin(), contents.end(), bytes.begin(),
         [](const auto& character) { return std::byte(character); });
+
+    std::cout << "bytes size = " << bytes.size() << std::endl;
 
     return bytes;
   }

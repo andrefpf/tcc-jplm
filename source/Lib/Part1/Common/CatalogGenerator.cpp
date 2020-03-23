@@ -50,8 +50,8 @@ std::unique_ptr<XMLBox> CatalogGenerator::get_xml_box_with_updated_catalog(
         jpeg_pleno_codestreams) {
   auto sstream = std::stringstream();
 
-  sstream << "<?xml version=\" 1.0 \" encoding=\" utf - 8 \"?>";
-  sstream << "<jpeg-pleno-file version=\" 1.0 \">";
+  sstream << "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+  sstream << "<jpeg-pleno-file version=\"1.0\">";
   sstream << "<pleno-elements>";
 
   auto offset = uint64_t(0);
@@ -83,8 +83,7 @@ std::unique_ptr<XMLBox> CatalogGenerator::get_xml_box_with_updated_catalog(
     //     pleno_element_type_name.end(), pleno_element_type_name.begin(),
     //     [](auto c) { return std::tolower(c); });
     // sstream << "<type>" << pleno_element_type_name << "</type>";
-    sstream << "<label> A plenoptic element with id " << counter++
-            << "</label>";
+    sstream << "<label>A plenoptic element with id " << counter++ << "</label>";
     sstream << "<offset>" << offset << "</offset>";
     offset += pleno_element->size();
     sstream << "</pleno-element>";

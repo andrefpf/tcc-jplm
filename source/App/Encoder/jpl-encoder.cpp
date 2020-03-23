@@ -66,7 +66,13 @@ int main(int argc, char const* argv[]) {
 
   encoder->run();
 
-  of_stream << encoder->get_ref_to_jpl_file();
+  auto& jpl_file = encoder->get_ref_to_jpl_file();
+
+  if (configuration->must_generate_xml_box_with_catalog()) {
+    jpl_file.enable_catalog();
+  }
+
+  of_stream << jpl_file;
 
   if (show_statistics) {
     run_time_statistics.show_statistics();
