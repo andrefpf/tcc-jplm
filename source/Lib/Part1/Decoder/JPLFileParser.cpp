@@ -47,11 +47,13 @@ JPLFileParser::decode_boxes_until_a_file_type_box_is_found() {
   while (this->managed_stream.is_valid()) {
     auto decoded_box =
         parser.parse(managed_stream.get_remaining_sub_managed_stream());
-    if (decoded_box->get_tbox().get_value() == FileTypeBox::id) {
-      file_type_box_index = decoded_boxes;
-      ++decoded_boxes;
-      return std::unique_ptr<FileTypeBox>(
-          static_cast<FileTypeBox*>(decoded_box.release()));
+    if (decoded_box) {
+      if (decoded_box->get_tbox().get_value() == FileTypeBox::id) {
+        file_type_box_index = decoded_boxes;
+        ++decoded_boxes;
+        return std::unique_ptr<FileTypeBox>(
+            static_cast<FileTypeBox*>(decoded_box.release()));
+      }
     }
     ++decoded_boxes;
   }
