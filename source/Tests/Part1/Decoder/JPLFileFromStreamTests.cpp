@@ -55,17 +55,17 @@ TEST(BasicTest, TwoBoxesDecodedInSimplestFile) {
 }
 
 
+TEST(BasicTest, DoesNotThrowEvenIfNotBegginingWithJSignatureBox) {
+  EXPECT_NO_THROW(auto jpl_file = JPLFileFromStream(
+                      resources_path + "/boxes/file_type_and_signature.bin"));
+  // history: modified from throw to no throw as a codestream without the signature may be valid...
+}
+
+
 TEST(BasicTest, ThrowsIfFileIsSmallerThan20Bytes) {
   EXPECT_THROW(auto jpl_file = JPLFileFromStream(
                    resources_path + "/boxes/signature_box.bin"),
       JPLFileFromStreamExceptions::InvalidTooSmallFileException);
-}
-
-
-TEST(BasicTest, ThrowsIfNotBegginingWithJSignatureBox) {
-  EXPECT_NO_THROW(auto jpl_file = JPLFileFromStream(
-                      resources_path + "/boxes/file_type_and_signature.bin"));
-  // history: modified from throw to no throw as a codestream without the signature may be valid...
 }
 
 
@@ -82,6 +82,34 @@ TEST(BasicTest, ThrowsIfNotCompatibleWithPleno) {
                    resources_path +
                    "/boxes/signature_and_incompatible_file_type_box.bin"),
       JPLFileFromStreamExceptions::JpegPlenoNotInCompatibilityListException);
+}
+
+
+TEST(CodestreamRestrictionTest, ThumbnailRestriction) {
+  EXPECT_THROW(
+      auto jpl_file = JPLFileFromStream(
+          resources_path + "/boxes/invalid/wrong_thumbnail_position.bin"),
+      FileOrganizationExceptions::
+          ThumbnailShallBeSignalledBeforePlenopticDataException);
+}
+
+
+TEST(CodestreamRestrictionTest, XMLCatalogRestriction) {
+  EXPECT_THROW(
+      auto jpl_file = JPLFileFromStream(
+          resources_path + "/boxes/invalid/wrong_xml_catalog_position.bin"),
+      FileOrganizationExceptions::
+          ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException);
+}
+
+
+TEST(CodestreamRestrictionTest,
+    NonPlenopticBoxBetweenPlenopticBoxesRestriction) {
+  EXPECT_THROW(
+      auto jpl_file = JPLFileFromStream(
+          resources_path +
+          "/boxes/invalid/non_plenoptic_box_between_plenoptic_boxes.bin"),
+      FileOrganizationExceptions::InvalidBoxBetweenPlenopticBoxesException);
 }
 
 
