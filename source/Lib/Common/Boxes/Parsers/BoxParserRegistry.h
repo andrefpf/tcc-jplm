@@ -51,6 +51,7 @@
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Common/Boxes/Parsers/ContiguousCodestreamBoxParser.h"
+#include "Lib/Common/Boxes/Parsers/XMLBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
 //! [Include the parser header]
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
