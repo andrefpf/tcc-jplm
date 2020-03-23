@@ -61,6 +61,7 @@ class JPLFileFromStream : public JPLFileParser, public JPLFile {
     uint64_t file_type_box_position = 0;
     uint64_t fist_plenoptic_box_position = std::numeric_limits<uint64_t>::max();
     uint64_t last_plenoptic_box_position = 0;
+    uint64_t number_of_plenoptic_elements = 0;
   };
 
   ConstrainedBoxIndex get_constrained_box_index() const;

@@ -61,13 +61,26 @@ bool is_plenoptic(const int id) {
 }
 
 
-uint64_t get_max_position(
+bool xml_box_has_catalog(const XMLBox& xml_box) {
+  const auto& contents =
+      xml_box.get_ref_to_contents().get_string_with_contents();
+  if (contents.find("<pleno-elements>") == std::string::npos) {
+    return false;
+  }
+  return true;
+}
+
+
+std::pair<uint64_t, uint64_t> get_min_max_positions(
     const std::vector<std::pair<uint64_t, std::unique_ptr<Box>>>& boxes) {
-  auto max_pair = std::max_element(
-      boxes.begin(), boxes.end(), [](const auto& pair_a, const auto& pair_b) {
-        return (std::get<0>(pair_a) > std::get<0>(pair_b));
-      });
-  return std::get<0>(*max_pair);
+  auto compare = [](const auto& pair_a, const auto& pair_b) {
+    return (std::get<0>(pair_a) < std::get<0>(pair_b));
+  };
+
+  auto min_pair = std::min_element(boxes.begin(), boxes.end(), compare);
+  auto max_pair = std::max_element(boxes.begin(), boxes.end(), compare);
+
+  return std::make_pair(std::get<0>(*min_pair), std::get<0>(*max_pair));
 }
 
 
@@ -75,35 +88,50 @@ JPLFileFromStream::ConstrainedBoxIndex
 JPLFileFromStream::get_constrained_box_index() const {
   auto index = ConstrainedBoxIndex();
   for (const auto& [id, boxes] : temp_decoded_boxes) {
-    auto max_position = get_max_position(boxes);
+    const auto& [min_position, max_position] = get_min_max_positions(boxes);
 
     if (is_plenoptic(id)) {
-      auto min_pair = std::min_element(boxes.begin(), boxes.end(),
-          [](const auto& pair_a, const auto& pair_b) {
-            return (std::get<0>(pair_a) < std::get<0>(pair_b));
-          });
-      auto min_position = std::get<0>(*min_pair);
+      std::cout << "Found plenoptic id" << std::endl;
+      std::cout << "boxes size: " << boxes.size() << std::endl;
+      std::cout << "min position " << min_position;
+      std::cout << "max position " << max_position;
+      index.number_of_plenoptic_elements += boxes.size();
+
+      for (const auto& [position, xml_box] : boxes) {
+        std::cout << "Position: " << position << std::endl;
+      }
+
       if (min_position < index.fist_plenoptic_box_position) {
         index.fist_plenoptic_box_position = min_position;
       }
-
       if (max_position > index.last_plenoptic_box_position) {
         index.last_plenoptic_box_position = max_position;
       }
+      continue;
     }
-    // FileTypeBox::id
 
     if (id == JpegPlenoThumbnailBox::id) {
       if (max_position > index.thumbnail_box_position) {
         index.thumbnail_box_position = max_position;
       }
+      continue;
     }
 
-
-    // if (id ==)
-
-    index.file_type_box_position = this->file_type_box_index;
+    if (id == XMLBox::id) {
+      for (const auto& [position, xml_box] : boxes) {
+        if (xml_box_has_catalog(static_cast<const XMLBox&>(*xml_box))) {
+          if (index.xml_box_with_catalog_position) {
+            //already have a xml box with catalog detected... what to do in this case?
+          }
+          index.xml_box_with_catalog_position = position;
+        }
+      }
+    }
   }
+  // if (id ==)
+
+  index.file_type_box_position = this->file_type_box_index;
+
   return index;
 }
 
@@ -141,6 +169,8 @@ void JPLFileFromStream::check_boxes_constraints() {
             << constrained_box_index.fist_plenoptic_box_position << std::endl;
   std::cout << "last_plenoptic_box_position "
             << constrained_box_index.last_plenoptic_box_position << std::endl;
+  std::cout << "number_of_plenoptic_elements "
+            << constrained_box_index.number_of_plenoptic_elements << std::endl;
 
   // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
   // before the JPEG Pleno Light Field, JPEG Pleno
@@ -182,7 +212,13 @@ void JPLFileFromStream::check_boxes_constraints() {
   // and JPEG Pleno Hologram superboxes signalling plenoptic data, shall
   // be signalled as one monolithic block with no preferred ordering,
   // and no other boxes shall be signalled in between.
-  if (false) {
+  //
+  // The comparison with max is to check if a plenoptic box was detected in the file
+  if ((constrained_box_index.fist_plenoptic_box_position !=
+          std::numeric_limits<uint64_t>::max()) &&
+      ((constrained_box_index.last_plenoptic_box_position -
+           constrained_box_index.fist_plenoptic_box_position + 1) !=
+          constrained_box_index.number_of_plenoptic_elements)) {
     throw FileOrganizationExceptions::InvalidBoxBetweenPlenopticBoxesException(
         constrained_box_index.fist_plenoptic_box_position,
         constrained_box_index.last_plenoptic_box_position);
@@ -250,12 +286,9 @@ JPLFileFromStream::JPLFileFromStream(const std::string& filename)
     throw JPLFileFromStreamExceptions::
         JpegPlenoNotInCompatibilityListException();
   }
-
-  // this->managed_stream.seek(12 + 20);
   number_of_decoded_boxes += decode_boxes();
   check_boxes_constraints();
   populate_jpl_fields();
-  // std::move(*(this->parser.parse<XMLBoxWithCatalog>()));
 }
 
 
