@@ -58,7 +58,7 @@ BoxParserRegistry::get_ref_to_parser_map() {
 BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     ManagedStream&& managed_stream) const {
   auto box_parser_helper = BoxParserHelperBase(managed_stream);
-  // std::cout << "called parser " << std::endl;
+  std::cout << "called parser " << std::endl;
   return parse(box_parser_helper);
 }
 
@@ -68,9 +68,9 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
   auto& map = BoxParserRegistry::get_ref_to_parser_map();
   if (auto it = map.find(box_parser_helper.get_t_box_value());
       it != map.end()) {
-    // std::cout << "found parsing method for id 0x" << std::hex
-    //           << std::setfill('0') << std::setw(8)
-    //           << box_parser_helper.get_t_box_value() << std::dec << std::endl;
+    std::cout << "found parsing method for id 0x" << std::hex
+              << std::setfill('0') << std::setw(8)
+              << box_parser_helper.get_t_box_value() << std::dec << std::endl;
     // std::cout << "Before parsing: " << box_parser_helper.
     // here i need to limit the access
     auto box_parser_helper_with_protected_range =
@@ -78,8 +78,12 @@ BoxParserRegistry::ParsedBox BoxParserRegistry::parse(
     return it->second(box_parser_helper_with_protected_range);
   }
   //not found a parser... should go to the end of the managed stream
+  std::cout
+      << "not found a parser... should go to the end of the managed stream"
+      << std::endl;
   box_parser_helper.get_data_stream()
       .forward();  //a compliant decoder should ignore unknown boxes
+  std::cout << "got to the end of stream" << std::endl;
   return nullptr;
 }
 

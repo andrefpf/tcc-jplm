@@ -113,12 +113,13 @@ void BoxParserRegistry::register_parser() {
 template<class ParsingBox, bool required>
 std::unique_ptr<ParsingBox> BoxParserRegistry::parse(
     ManagedStream&& managed_stream) const {
-  // std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
-  // std::cout << "ManagedStream is limited to: " << managed_stream.get_length() << std::endl;
-  // std::cout << typeid(ParsingBox).name() << std::endl;
+  std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
+  std::cout << "ManagedStream is limited to: " << managed_stream.get_length()
+            << std::endl;
+  std::cout << typeid(ParsingBox).name() << std::endl;
   auto box_parser_helper =
       BoxParserHelper<ParsingBox, required>(managed_stream);
-  // std::cout << "created helper here <>" << std::endl;
+  std::cout << "created helper here <>" << std::endl;
   if constexpr (!required) {
     if (!box_parser_helper.is_a_box_with_id(ParsingBox::id)) {
       //this means that the current box being read is not of the type ParsingBox

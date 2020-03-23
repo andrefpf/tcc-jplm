@@ -68,16 +68,19 @@ uint64_t JPLFileParser::decode_boxes() {
     // auto decoded_box = parser.parse(std::move(managed_substream));
     auto decoded_box =
         parser.parse(managed_stream.get_remaining_sub_managed_stream());
-    auto id = decoded_box->get_tbox().get_value();
-    if (auto it = temp_decoded_boxes.find(id); it == temp_decoded_boxes.end()) {
-      //temp dececoded boxes map does not contain a box with the decoded box id yet
-      temp_decoded_boxes[id] = std::vector<std::pair<uint64_t,
-          std::unique_ptr<Box>>>();  //std::move(decoded_box)
-      //created an empty vector of boxes
+    if (decoded_box) {
+      auto id = decoded_box->get_tbox().get_value();
+      if (auto it = temp_decoded_boxes.find(id);
+          it == temp_decoded_boxes.end()) {
+        //temp dececoded boxes map does not contain a box with the decoded box id yet
+        temp_decoded_boxes[id] = std::vector<std::pair<uint64_t,
+            std::unique_ptr<Box>>>();  //std::move(decoded_box)
+        //created an empty vector of boxes
+      }
+      temp_decoded_boxes[id].emplace_back(
+          std::make_pair(decoded_boxes++, std::move(decoded_box)));
+      // std::cout << "decoded box with id: " << id << std::endl;
     }
-    temp_decoded_boxes[id].emplace_back(
-        std::make_pair(decoded_boxes++, std::move(decoded_box)));
-    // std::cout << "decoded box with id: " << id << std::endl;
   }
   return decoded_boxes;
 }
