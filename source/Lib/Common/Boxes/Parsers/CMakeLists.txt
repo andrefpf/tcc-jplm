@@ -2,6 +2,7 @@ set(COMMON_BOXES_PARSERS_SOURCES
     ColourSpecificationBoxParser.cpp
     ContiguousCodestreamBoxParser.cpp
     XMLBoxParser.cpp
+    ImageHeaderBoxParser.cpp
     BoxParserRegistry.cpp
     BoxParserHelperBase.cpp
     BoxParserHelper.cpp

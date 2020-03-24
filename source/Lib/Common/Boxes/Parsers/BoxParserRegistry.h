@@ -51,6 +51,7 @@
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Common/Boxes/Parsers/ContiguousCodestreamBoxParser.h"
+#include "Lib/Common/Boxes/Parsers/ImageHeaderBoxParser.h"
 #include "Lib/Common/Boxes/Parsers/XMLBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoThumbnailBoxParser.h"
@@ -135,7 +136,9 @@ std::unique_ptr<ParsingBox> BoxParserRegistry::parse(
     return std::unique_ptr<ParsingBox>(
         static_cast<ParsingBox*>(parsed_box.release()));
   }
-  return nullptr;
+  throw BoxParserExceptions::ParserOfRequiredBoxIsNotImplemented(
+      ParsingBox::id);
+  // return nullptr;
 }
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__ */

@@ -93,6 +93,8 @@ void BoxParserRegistry::register_known_parsers() {
   using namespace JPLMBoxParser;
   // Common:
   register_parser<ColourSpecificationBoxParser>();
+  register_parser<ImageHeaderBoxParser>();
+  register_parser<XMLBoxParser>();
   // Part 1:
   //! [Registering the parser]
   register_parser<JpegPlenoSignatureBoxParser>();
@@ -106,6 +108,5 @@ void BoxParserRegistry::register_known_parsers() {
   register_parser<JpegPlenoLightFieldBoxParser>();
   register_parser<ContiguousCodestreamBoxParser>();
   register_parser<CameraParameterBoxParser>();
-  register_parser<XMLBoxParser>();
   // register_parser<...>();
 }

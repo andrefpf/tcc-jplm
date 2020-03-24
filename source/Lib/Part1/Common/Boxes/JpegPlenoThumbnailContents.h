@@ -66,7 +66,7 @@ class JpegPlenoThumbnailContents : public InMemoryDBox {
       const std::vector<ColourSpecificationBox>& colr,
       const std::optional<ChannelDefinitionBox>& cdef,
       const std::optional<ContiguousCodestreamBox>& jpc2)
-      : ihdr(ihdr), bpcc(bpcc), colr(colr), cdef(cdef), jpc2(std::nullopt) {
+      : ihdr(ihdr), bpcc(bpcc), colr(colr), cdef(cdef), jpc2(jpc2) {
   }
 
 
