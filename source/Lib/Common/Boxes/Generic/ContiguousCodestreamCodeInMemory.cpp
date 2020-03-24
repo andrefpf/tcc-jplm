@@ -111,6 +111,7 @@ void ContiguousCodestreamCodeInMemory::rewind(
 
 ContiguousCodestreamCodeInMemory *ContiguousCodestreamCodeInMemory::clone()
     const {
+  std::cout << "ContiguousCodestreamCodeInMemory::clone" << std::endl;
   return new ContiguousCodestreamCodeInMemory(*this);
 }
 

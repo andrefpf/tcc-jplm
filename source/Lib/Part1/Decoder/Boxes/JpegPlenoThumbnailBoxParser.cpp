@@ -94,14 +94,29 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
 
   std::cout << "already parsed the codestram" << std::endl;
 
-  auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
-      bits_per_component_box ? std::make_optional(*bits_per_component_box)
-                             : std::nullopt,
-      colr,  //should be moved...
-      channel_definition_box ? std::make_optional(*channel_definition_box)
-                             : std::nullopt,
-      contigous_codestream_box ? std::make_optional(*contigous_codestream_box)
-                               : std::nullopt);
+  if (!image_header_box) {
+    std::cout << "nuuuuuuuuuuuuuuuuuuuuuulllll" << std::endl;
+  }
 
-  return std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
+  auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
+      bits_per_component_box ? std::nullopt : std::nullopt,
+      colr,  //should be moved...
+      channel_definition_box ? std::nullopt : std::nullopt,
+      contigous_codestream_box ? std::nullopt : std::nullopt);
+
+  std::cout << "creation of thumbnail_contents was ok" << std::endl;
+
+  // auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
+  //     bits_per_component_box ? std::make_optional(*bits_per_component_box)
+  //                            : std::nullopt,
+  //     colr,  //should be moved...
+  //     channel_definition_box ? std::make_optional(*channel_definition_box)
+  //                            : std::nullopt,
+  //     contigous_codestream_box ? std::make_optional(*contigous_codestream_box)
+  //                              : std::nullopt);
+
+  // auto ret =
+  //     std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
+  // std::cout << "creation of box was ok" << std::endl;
+  return nullptr;
 }

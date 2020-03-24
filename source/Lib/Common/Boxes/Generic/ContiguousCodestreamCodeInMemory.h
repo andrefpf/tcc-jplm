@@ -74,6 +74,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   ContiguousCodestreamCodeInMemory(
       const ContiguousCodestreamCodeInMemory& other)
       : bytes(other.bytes), current_pos(other.current_pos) {
+    std::cout << "copy of ContiguousCodestreamCodeInMemory " << std::endl;
   }
 
 
