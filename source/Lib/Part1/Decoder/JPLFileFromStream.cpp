@@ -34,18 +34,12 @@
 /** \file     JPLFileFromStream.cpp
  *  \brief    Brief description
  *  \details  Detailed description
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
 
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
-
-
-// thumbnail_box_position
-// fist_plenoptic_box_position
-// xml_box_position
-// file_type_box_position
-// last_plenoptic_box_position
 
 
 bool is_plenoptic(const int id) {
@@ -91,15 +85,7 @@ JPLFileFromStream::get_constrained_box_index() const {
     const auto& [min_position, max_position] = get_min_max_positions(boxes);
 
     if (is_plenoptic(id)) {
-      std::cout << "Found plenoptic id" << std::endl;
-      std::cout << "boxes size: " << boxes.size() << std::endl;
-      std::cout << "min position " << min_position;
-      std::cout << "max position " << max_position;
       index.number_of_plenoptic_elements += boxes.size();
-
-      for (const auto& [position, xml_box] : boxes) {
-        std::cout << "Position: " << position << std::endl;
-      }
 
       if (min_position < index.fist_plenoptic_box_position) {
         index.fist_plenoptic_box_position = min_position;
@@ -111,7 +97,6 @@ JPLFileFromStream::get_constrained_box_index() const {
     }
 
     if (id == JpegPlenoThumbnailBox::id) {
-      std::cout << "found a thumbnail box" << std::endl;
       if (max_position > index.thumbnail_box_position) {
         index.thumbnail_box_position = max_position;
       }
@@ -123,13 +108,13 @@ JPLFileFromStream::get_constrained_box_index() const {
         if (xml_box_has_catalog(static_cast<const XMLBox&>(*xml_box))) {
           if (index.xml_box_with_catalog_position) {
             //already have a xml box with catalog detected... what to do in this case?
+            // \todo define what happens when more than one xml box with catalog is found
           }
           index.xml_box_with_catalog_position = position;
         }
       }
     }
   }
-  // if (id ==)
 
   index.file_type_box_position = this->file_type_box_index;
 
@@ -155,23 +140,6 @@ void JPLFileFromStream::check_boxes_constraints() {
   // its compatility list
 
   auto constrained_box_index = get_constrained_box_index();
-  if (constrained_box_index.thumbnail_box_position) {
-    std::cout << "thumbnail_box_position "
-              << *(constrained_box_index.thumbnail_box_position) << std::endl;
-  }
-  if (constrained_box_index.xml_box_with_catalog_position) {
-    std::cout << "xml_box_with_catalog_position "
-              << *(constrained_box_index.xml_box_with_catalog_position)
-              << std::endl;
-  }
-  std::cout << "file_type_box_position "
-            << constrained_box_index.file_type_box_position << std::endl;
-  std::cout << "fist_plenoptic_box_position "
-            << constrained_box_index.fist_plenoptic_box_position << std::endl;
-  std::cout << "last_plenoptic_box_position "
-            << constrained_box_index.last_plenoptic_box_position << std::endl;
-  std::cout << "number_of_plenoptic_elements "
-            << constrained_box_index.number_of_plenoptic_elements << std::endl;
 
   // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
   // before the JPEG Pleno Light Field, JPEG Pleno
@@ -187,8 +155,6 @@ void JPLFileFromStream::check_boxes_constraints() {
     }
   }
 
-
-  //throw
 
   // restriction 3: A JPL file can contain an optional XML box
   // signalling catalog information (see A.5.8). An XML box

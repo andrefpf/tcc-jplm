@@ -63,11 +63,6 @@ JPLFileParser::decode_boxes_until_a_file_type_box_is_found() {
 
 uint64_t JPLFileParser::decode_boxes() {
   while (this->managed_stream.is_valid()) {
-    // std::cout << "have " << this->managed_stream.get_length()
-    //           << " bytes to decode" << std::endl;
-    // auto managed_substream = managed_stream.get_sub_managed_stream(
-    //     file_size - managed_stream.tell());
-    // auto decoded_box = parser.parse(std::move(managed_substream));
     auto decoded_box =
         parser.parse(managed_stream.get_remaining_sub_managed_stream());
     if (decoded_box) {
@@ -106,8 +101,6 @@ JPLFileParser::JPLFileParser(const std::string& filename)
     //the file should have at least the file type box
     throw JPLFileFromStreamExceptions::InvalidTooSmallFileException(file_size);
   }
-  // temp_signature = parser.parse<JpegPlenoSignatureBox>(
-  //     managed_stream.get_remaining_sub_managed_stream());
 
   temp_signature = parser.parse<JpegPlenoSignatureBox, false>(
       managed_stream

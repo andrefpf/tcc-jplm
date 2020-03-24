@@ -101,11 +101,5 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
       contigous_codestream_box ? std::make_optional(*contigous_codestream_box)
                                : std::nullopt);
 
-  std::cout << "creation of thumbnail_contents was ok" << std::endl;
-
-
-  // auto ret =
-  //     std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
-  // std::cout << "creation of box was ok" << std::endl;
   return std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
 }
