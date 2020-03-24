@@ -92,21 +92,7 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
           : nullptr;
 
 
-  // auto thumbnail_contents = JpegPlenoThumbnailContents();
-  // thumbnail_contents.add_image_header_box(*image_header_box);
-  // if (bits_per_component_box) {
-  //   thumbnail_contents.add_bits_per_component_box(*bits_per_component_box);
-  // }
-  // thumbnail_contents.add_colour_specification_boxes(std::move(colr));
-  // if (channel_definition_box) {
-  //   thumbnail_contents.add_channel_definition_box(*channel_definition_box);
-  // }
-  // if (contigous_codestream_box) {
-  //   auto& contigous_codestream_box_ref = *contigous_codestream_box;
-  //   contigous_codestream_box.release();
-  //   thumbnail_contents.add_contiguous_codestream_box(
-  //       std::move(contigous_codestream_box_ref));
-  // }
+  std::cout << "already parsed the codestram" << std::endl;
 
   auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
       bits_per_component_box ? std::make_optional(*bits_per_component_box)

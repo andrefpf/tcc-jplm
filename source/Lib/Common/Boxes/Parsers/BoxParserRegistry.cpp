@@ -97,6 +97,7 @@ void BoxParserRegistry::register_known_parsers() {
   //! [Registering the parser]
   register_parser<JpegPlenoSignatureBoxParser>();
   //! [Registering the parser]
+  register_parser<JpegPlenoThumbnailBoxParser>();
   register_parser<FileTypeBoxParser>();
   // Part 2:
   register_parser<ProfileAndLevelBoxParser>();
