@@ -39,3 +39,12 @@
  */
 
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoThumbnailBoxParser.h"
+
+
+std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
+    BoxParserHelperBase& box_parser_helper) {
+  auto& box_parser = BoxParserRegistry::get_instance();
+
+
+  return nullptr;
+}

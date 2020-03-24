@@ -38,7 +38,7 @@
  *  \date     2020-03-23
  */
 
-#include "XMLBoxParser.h"
+#include "Lib/Common/Boxes/Parsers/XMLBoxParser.h"
 
 std::unique_ptr<Box> JPLMBoxParser::XMLBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {

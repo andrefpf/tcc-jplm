@@ -41,4 +41,17 @@
 #ifndef JPLM_LIB_PART1_DECODER_BOXES_JPEG_PLENO_THUMBNAIL_BOX_PARSER_H
 #define JPLM_LIB_PART1_DECODER_BOXES_JPEG_PLENO_THUMBNAIL_BOX_PARSER_H
 
+#include <memory>
+#include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+
+namespace JPLMBoxParser {
+class JpegPlenoThumbnailBoxParser {
+ public:
+  using ParsingBox = JpegPlenoThumbnailBox;
+  static std::unique_ptr<Box> parse(
+      BoxParserHelperBase& box_parser_helper);  //box parser helper
+};
+}  // namespace JPLMBoxParser
+
 #endif  // JPLM_LIB_PART1_DECODER_BOXES_JPEG_PLENO_THUMBNAIL_BOX_PARSER_H
