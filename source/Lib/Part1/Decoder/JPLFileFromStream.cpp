@@ -111,6 +111,7 @@ JPLFileFromStream::get_constrained_box_index() const {
     }
 
     if (id == JpegPlenoThumbnailBox::id) {
+      std::cout << "found a thumbnail box" << std::endl;
       if (max_position > index.thumbnail_box_position) {
         index.thumbnail_box_position = max_position;
       }
