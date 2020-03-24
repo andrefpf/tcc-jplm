@@ -45,6 +45,9 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   auto& box_parser = BoxParserRegistry::get_instance();
 
+  auto image_header_box = box_parser.parse<ImageHeaderBox>(
+      box_parser_helper.get_remaining_stream());
+
   auto bits_per_component_box =
       box_parser_helper.has_data_available()
           ? box_parser.parse<BitsPerComponentBox, false>(
@@ -52,14 +55,17 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
           : nullptr;  //optional, may be nullptr
 
 
-  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+  std::vector<ColourSpecificationBox> colr;
+
 
   while (box_parser_helper.has_data_available()) {
     auto colour_specification_box =
         box_parser.parse<ColourSpecificationBox, false>(
             box_parser_helper.get_remaining_stream());
     if (colour_specification_box) {
-      colr.emplace_back(std::move(colour_specification_box));
+      auto& colour_specification_box_ref = *colour_specification_box;
+      colour_specification_box.release();
+      colr.emplace_back(std::move(colour_specification_box_ref));
     } else {
       break;
     }
@@ -70,6 +76,7 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
     throw JpegPlenoThumbnailBoxParserExceptions::
         AtLeastOneColorSpecificationBoxShallExistException();
   }
+
 
   auto channel_definition_box =
       box_parser_helper.has_data_available()
@@ -85,5 +92,30 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
           : nullptr;
 
 
-  return nullptr;
+  // auto thumbnail_contents = JpegPlenoThumbnailContents();
+  // thumbnail_contents.add_image_header_box(*image_header_box);
+  // if (bits_per_component_box) {
+  //   thumbnail_contents.add_bits_per_component_box(*bits_per_component_box);
+  // }
+  // thumbnail_contents.add_colour_specification_boxes(std::move(colr));
+  // if (channel_definition_box) {
+  //   thumbnail_contents.add_channel_definition_box(*channel_definition_box);
+  // }
+  // if (contigous_codestream_box) {
+  //   auto& contigous_codestream_box_ref = *contigous_codestream_box;
+  //   contigous_codestream_box.release();
+  //   thumbnail_contents.add_contiguous_codestream_box(
+  //       std::move(contigous_codestream_box_ref));
+  // }
+
+  auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
+      bits_per_component_box ? std::make_optional(*bits_per_component_box)
+                             : std::nullopt,
+      colr,  //should be moved...
+      channel_definition_box ? std::make_optional(*channel_definition_box)
+                             : std::nullopt,
+      contigous_codestream_box ? std::make_optional(*contigous_codestream_box)
+                               : std::nullopt);
+
+  return std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
 }
