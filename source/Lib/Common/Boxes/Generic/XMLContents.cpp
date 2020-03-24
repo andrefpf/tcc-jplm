@@ -48,7 +48,6 @@ XMLContents *XMLContents::clone() const {
 
 uint64_t XMLContents::size() const noexcept {
   return contents.size();
-  //4 for ver and location + the size of the string + the null termination char
 }
 
 
@@ -77,17 +76,9 @@ const std::string &XMLContents::get_string_with_contents() const noexcept {
 
 std::vector<std::byte> XMLContents::get_bytes() const noexcept {
   auto bytes = std::vector<std::byte>(this->size());
-  // bytes.reserve(this->size());
-
-  std::cout << "contents.size() = " << contents.size() << std::endl;
-  std::cout << "contents = " << contents << std::endl;
-  std::cout << "bytes size = " << bytes.size() << std::endl;
 
   std::transform(contents.begin(), contents.end(), bytes.begin(),
       [](const auto &character) { return std::byte(character); });
-
-  std::cout << "bytes size = " << bytes.size() << std::endl;
-
   return bytes;
 }
 
