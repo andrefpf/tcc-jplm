@@ -73,3 +73,30 @@ bool XMLContents::operator!=(const XMLContents &other) const {
 const std::string &XMLContents::get_string_with_contents() const noexcept {
   return contents;
 }
+
+
+std::vector<std::byte> XMLContents::get_bytes() const noexcept {
+  auto bytes = std::vector<std::byte>(this->size());
+  // bytes.reserve(this->size());
+
+  std::cout << "contents.size() = " << contents.size() << std::endl;
+  std::cout << "contents = " << contents << std::endl;
+  std::cout << "bytes size = " << bytes.size() << std::endl;
+
+  std::transform(contents.begin(), contents.end(), bytes.begin(),
+      [](const auto &character) { return std::byte(character); });
+
+  std::cout << "bytes size = " << bytes.size() << std::endl;
+
+  return bytes;
+}
+
+
+void XMLContents::set_contents(const std::string &new_content) {
+  contents = new_content;
+}
+
+
+void XMLContents::set_contents(std::string &&new_content) {
+  contents = std::move(new_content);
+}
