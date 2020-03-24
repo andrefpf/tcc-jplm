@@ -45,6 +45,45 @@ std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   auto& box_parser = BoxParserRegistry::get_instance();
 
+  auto bits_per_component_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<BitsPerComponentBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;  //optional, may be nullptr
+
+
+  std::vector<std::unique_ptr<ColourSpecificationBox>> colr;
+
+  while (box_parser_helper.has_data_available()) {
+    auto colour_specification_box =
+        box_parser.parse<ColourSpecificationBox, false>(
+            box_parser_helper.get_remaining_stream());
+    if (colour_specification_box) {
+      colr.emplace_back(std::move(colour_specification_box));
+    } else {
+      break;
+    }
+  }
+
+
+  if (colr.size() == 0) {
+    throw JpegPlenoThumbnailBoxParserExceptions::
+        AtLeastOneColorSpecificationBoxShallExistException();
+  }
+
+  auto channel_definition_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<ChannelDefinitionBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;
+
+
+  auto contigous_codestream_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<ContiguousCodestreamBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;
+
 
   return nullptr;
 }

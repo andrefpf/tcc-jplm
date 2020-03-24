@@ -43,12 +43,12 @@
 
 #include <algorithm>
 #include <numeric>
-#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
 #include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
-#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
 
@@ -63,7 +63,7 @@ class JpegPlenoThumbnailContents : public InMemoryDBox {
  public:
   JpegPlenoThumbnailContents() = default;
 
-  
+
   JpegPlenoThumbnailContents(const JpegPlenoThumbnailContents& other)
       : ihdr(other.ihdr), bpcc(other.bpcc), colr(other.colr), cdef(other.cdef),
         jpc2(other.jpc2) {
@@ -74,6 +74,58 @@ class JpegPlenoThumbnailContents : public InMemoryDBox {
       : ihdr(std::move(other.ihdr)), bpcc(std::move(other.bpcc)),
         colr(std::move(other.colr)), cdef(std::move(other.cdef)),
         jpc2(std::move(other.jpc2)) {
+  }
+
+
+  void add_image_header_box(const ImageHeaderBox& ihdr) {
+    this->ihdr = ihdr;
+  }
+
+
+  void add_image_header_box(ImageHeaderBox&& ihdr) {
+    this->ihdr = std::move(ihdr);
+  }
+
+
+  void add_bits_per_component_box(const BitsPerComponentBox& bpcc) {
+    this->bpcc = bpcc;
+  }
+
+
+  void add_bits_per_component_box(BitsPerComponentBox&& bpcc) {
+    this->bpcc = std::move(bpcc);
+  }
+
+
+  void add_colour_specification_boxes(
+      const std::vector<ColourSpecificationBox>& colr) {
+    this->colr = colr;
+  }
+
+
+  void add_colour_specification_boxes(
+      std::vector<ColourSpecificationBox>&& colr) {
+    this->colr = std::move(colr);
+  }
+
+
+  void add_channel_definition_box(const ChannelDefinitionBox& cdef) {
+    this->cdef = cdef;
+  }
+
+
+  void add_channel_definition_box(ChannelDefinitionBox&& cdef) {
+    this->cdef = std::move(cdef);
+  }
+
+
+  void add_contiguous_codestream_box(const ContiguousCodestreamBox& jpc2) {
+    this->jpc2 = jpc2;
+  }
+
+
+  void add_contiguous_codestream_box(ContiguousCodestreamBox&& jpc2) {
+    this->jpc2 = std::move(jpc2);
   }
 
 

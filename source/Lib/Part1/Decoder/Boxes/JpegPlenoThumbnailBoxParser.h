@@ -43,7 +43,9 @@
 
 #include <memory>
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
+#include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part1/Common/Boxes/JpegPlenoThumbnailBox.h"
+#include "Lib/Part1/Decoder/Boxes/CommonExceptions.h"
 
 namespace JPLMBoxParser {
 class JpegPlenoThumbnailBoxParser {
