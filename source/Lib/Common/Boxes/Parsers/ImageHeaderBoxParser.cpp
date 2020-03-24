@@ -43,5 +43,23 @@
 
 std::unique_ptr<Box> JPLMBoxParser::ImageHeaderBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
-  return nullptr;
+  auto height = box_parser_helper.get_next<uint32_t>();
+  auto width = box_parser_helper.get_next<uint32_t>();
+  auto nc = box_parser_helper.get_next<uint16_t>();
+  auto bpc = box_parser_helper.get_next<uint8_t>();
+  auto c_value = box_parser_helper.get_next<uint8_t>();
+  // c is optional as the conversion may fail
+  auto c = magic_enum::enum_cast<CompressionTypeImage>(c_value);
+  if (!c) {
+    throw ImageHeaderBoxParserExceptions::InvalidCoderTypeFieldException(
+        c_value);
+  }
+  auto unkc = box_parser_helper.get_next<uint8_t>();
+  auto ipr = box_parser_helper.get_next<uint8_t>();
+
+
+  auto image_header_contents =
+      ImageHeaderContents(height, width, nc, bpc, *c, unkc, ipr);
+
+  return std::make_unique<ImageHeaderBox>(std::move(image_header_contents));
 }

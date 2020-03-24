@@ -44,6 +44,7 @@
 #include <memory>
 #include "Lib/Common/Boxes/Parsers/BoxParserHelper.h"
 // #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
+#include <magic_enum.hpp>
 #include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
 
 namespace JPLMBoxParser {
