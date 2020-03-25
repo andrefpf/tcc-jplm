@@ -52,47 +52,121 @@ class BoxParserHelperBase {
   uint32_t t_box_value_in_stream;
   bool has_xl_field = false;
 
+
+  /**
+   * @brief      Gets the l box value from stream.
+   *
+   * @return     The l box value from stream.
+   */
   uint32_t get_l_box_value_from_stream();
 
 
+  /**
+   * @brief      Gets the xl box value from stream.
+   *
+   * @return     The xl box value from stream.
+   */
   uint64_t get_xl_box_value_from_stream();
 
 
+  /**
+   * @brief      Gets the t box value from stream.
+   *
+   * @return     The t box value from stream.
+   */
   uint32_t get_t_box_value_from_stream();
 
 
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param      stream                 The stream
+   * @param[in]  length                 The length
+   * @param[in]  t_box_value_in_stream  The t box value in stream
+   * @param[in]  has_xl_field           Indicates if xl field
+   */
   BoxParserHelperBase(ManagedStream& stream, uint64_t length,
       uint32_t t_box_value_in_stream, bool has_xl_field);
 
 
  public:
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param      stream  The stream
+   */
   BoxParserHelperBase(ManagedStream& stream);
 
 
+  /**
+   * @brief      Gets the helper with protected range.
+   *
+   * @return     The helper with protected range.
+   */
   BoxParserHelperBase get_helper_with_protected_range();
 
 
+  /**
+   * @brief      Gets the length.
+   *
+   * @return     The length.
+   */
   uint64_t get_length() const noexcept;
 
 
+  /**
+   * @brief      Gets the t box value.
+   *
+   * @return     The t box value.
+   */
   uint32_t get_t_box_value() const noexcept;
 
 
+  /**
+   * @brief      Gets the non data length.
+   *
+   * @return     The non data length.
+   */
   uint64_t get_non_data_length() const noexcept;
 
 
+  /**
+   * @brief      Gets the data length.
+   *
+   * @return     The data length.
+   */
   uint64_t get_data_length() const noexcept;
 
 
+  /**
+   * @brief      Gets the data stream.
+   *
+   * @return     The data stream.
+   */
   ManagedStream get_data_stream();
 
 
+  /**
+   * @brief      Gets the remaining stream.
+   *
+   * @return     The remaining stream.
+   */
   ManagedStream get_remaining_stream();
 
 
+  /**
+   * @brief      Determines if data available.
+   *
+   * @return     True if data available, False otherwise.
+   */
   bool has_data_available() const noexcept;
 
 
+  /**
+   * @brief      Determines the current position on the stream
+   *
+   * @return     Current position on the stream
+   */
   uint64_t tell() const noexcept;
 
 
@@ -108,6 +182,15 @@ class BoxParserHelperBase {
   T get_next();
 
 
+  /** 
+   * \brief      Gets the next n values with type T from the stream..
+   *
+   * \tparam     T     The type that must be read from the stream
+   * \tparam     n     { description }
+   *
+   * \return     Vector with n values with type T from the stream.
+   * \sideeffect{The stream position is n*sizeof(T) bytes ahead its position before calling this method}
+   */
   template<typename T, std::size_t n>
   std::vector<T> get_next();
 
@@ -147,9 +230,21 @@ class BoxParserHelperBase {
   //   }
 
   // }
+
+
+  /**
+    * @brief      Determines whether the specified identifier is a box with identifier.
+    *
+    * @param[in]  id    The identifier
+    *
+    * @return     True if the specified identifier is a box with identifier, False otherwise.
+    */
   bool is_a_box_with_id(const uint32_t id);
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~BoxParserHelperBase() = default;
 };
 

@@ -31,46 +31,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.h
+/** \file     ImageHeaderBoxParser.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-03-24
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#include "Lib/Common/Boxes/Parsers/ImageHeaderBoxParser.h"
 
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
 
-template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder
-    : public JPLMLightFieldEncoder<PelType> {
- protected:
-  std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-      prediction_mode_configuration;
-
- public:
-  JPLM4DPredictionModeLightFieldEncoder(
-      std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-          configuration)
-      : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightfieldFromFile<PelType>>(
-                configuration->get_lightfield_io_configurations()),
-            *configuration),
-        JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(configuration) {
+std::unique_ptr<Box> JPLMBoxParser::ImageHeaderBoxParser::parse(
+    BoxParserHelperBase& box_parser_helper) {
+  auto height = box_parser_helper.get_next<uint32_t>();
+  auto width = box_parser_helper.get_next<uint32_t>();
+  auto nc = box_parser_helper.get_next<uint16_t>();
+  auto bpc = box_parser_helper.get_next<uint8_t>();
+  auto c_value = box_parser_helper.get_next<uint8_t>();
+  // c is optional as the conversion may fail
+  auto c = magic_enum::enum_cast<CompressionTypeImage>(c_value);
+  if (!c) {
+    throw ImageHeaderBoxParserExceptions::InvalidCoderTypeFieldException(
+        c_value);
   }
+  auto unkc = box_parser_helper.get_next<uint8_t>();
+  auto ipr = box_parser_helper.get_next<uint8_t>();
 
-  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
 
-  virtual void run() override {
-    throw JPLMCommonExceptions::NotImplementedException(
-        "JPLM4DPredictionModeLightFieldEncoder::run()");
-    //! \todo implement run method for jpl lightfield encoder
-  }
-};
+  auto image_header_contents =
+      ImageHeaderContents(height, width, nc, bpc, *c, unkc, ipr);
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+  return std::make_unique<ImageHeaderBox>(std::move(image_header_contents));
+}

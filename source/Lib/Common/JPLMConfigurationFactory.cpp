@@ -42,7 +42,7 @@
 
 
 //<! \todo: refactor this function and split it into specialized functions
-std::unique_ptr<JPLMConfiguration>
+std::shared_ptr<JPLMEncoderConfiguration>
 JPLMConfigurationFactory::get_encoder_configuration(
     int argc, const char** argv) {
   using Type = CompressionTypeLightField;

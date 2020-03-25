@@ -51,9 +51,6 @@ namespace BoxParserExceptions {
 
 class WrongTBoxValueException : public std::exception {
  protected:
-  // const uint32_t readed_type;
-  // const uint32_t expected_type;
-  // const char* xuxu = "xuxu";
   std::string message;
 
  public:
@@ -71,7 +68,51 @@ class WrongTBoxValueException : public std::exception {
     return message.c_str();
   }
 };
+
+
+class ParserOfRequiredBoxIsNotImplemented : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  ParserOfRequiredBoxIsNotImplemented(const uint32_t expected_type) {
+    auto string_stream = std::stringstream();
+    string_stream
+        << "Error parsing required box. Expected T_BOX to be parsed: 0x"
+        << std::hex << std::setfill('0') << std::setw(8) << expected_type
+        << std::dec
+        << " but there is no parser implemented (registered) for such a box "
+           "type."
+        << std::endl;
+    message = string_stream.str();
+  }
+
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
 }  // namespace BoxParserExceptions
+
+
+namespace ImageHeaderBoxParserExceptions {
+class InvalidCoderTypeFieldException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  InvalidCoderTypeFieldException(const uint8_t field_value)
+      : message(std::string("Error, invalid value for C field (coder type) in "
+                            "Image Header Box. Found value ") +
+                std::to_string(field_value) + ".") {
+  }
+
+
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+}  // namespace ImageHeaderBoxParserExceptions
 
 
 namespace JpegPlenoSignatureBoxParserExceptions {

@@ -31,46 +31,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.h
+/** \file     XMLBox.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-03-20
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_XML_BOX_H
+#define JPLM_LIB_COMMON_BOXES_GENERIC_XML_BOX_H
 
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+#include "Lib/Common/Boxes/Generic/XMLContents.h"
+#include "Lib/Common/Boxes/GenericBox.h"
 
-template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder
-    : public JPLMLightFieldEncoder<PelType> {
- protected:
-  std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-      prediction_mode_configuration;
+/**
+ * \ingroup DefinedBoxes
+ * \brief Definition of a XML Box
+ * \tparam XMLContents
+ * \note This Box is defined by <a href="https://jpeg.org/jpeg2000/">JPEG 2000</a> part 1 standard
+ */
+using XMLBox = GenericBox<0x786D6C20, XMLContents>;
 
- public:
-  JPLM4DPredictionModeLightFieldEncoder(
-      std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-          configuration)
-      : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightfieldFromFile<PelType>>(
-                configuration->get_lightfield_io_configurations()),
-            *configuration),
-        JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(configuration) {
-  }
-
-  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
-
-  virtual void run() override {
-    throw JPLMCommonExceptions::NotImplementedException(
-        "JPLM4DPredictionModeLightFieldEncoder::run()");
-    //! \todo implement run method for jpl lightfield encoder
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+#endif  // JPLM_LIB_COMMON_BOXES_GENERIC_XML_BOX_H

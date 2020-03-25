@@ -43,27 +43,33 @@
 
 #include <algorithm>
 #include <numeric>
-#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
 #include "Lib/Common/Boxes/Generic/BitsPerComponentBox.h"
-#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
-#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
 #include "Lib/Common/Boxes/Generic/ChannelDefinitionBox.h"
+#include "Lib/Common/Boxes/Generic/ColourSpecificationBox.h"
+#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderBox.h"
+#include "Lib/Common/Boxes/Generic/ImageHeaderContents.h"
 #include "Lib/Common/Boxes/InMemoryDBox.h"
 
 
 class JpegPlenoThumbnailContents : public InMemoryDBox {
  protected:
   ImageHeaderBox ihdr;  //image header box
-  BitsPerComponentBox bpcc;
+  std::optional<BitsPerComponentBox> bpcc;
   std::vector<ColourSpecificationBox> colr;
-  ChannelDefinitionBox cdef;
-  ContiguousCodestreamBox jpc2;
+  std::optional<ChannelDefinitionBox> cdef;
+  std::optional<ContiguousCodestreamBox> jpc2;
 
  public:
-  JpegPlenoThumbnailContents() = default;
+  JpegPlenoThumbnailContents(const ImageHeaderBox& ihdr,
+      const std::optional<BitsPerComponentBox>& bpcc,
+      const std::vector<ColourSpecificationBox>& colr,
+      const std::optional<ChannelDefinitionBox>& cdef,
+      const std::optional<ContiguousCodestreamBox>& jpc2)
+      : ihdr(ihdr), bpcc(bpcc), colr(colr), cdef(cdef), jpc2(jpc2) {
+  }
 
-  
+
   JpegPlenoThumbnailContents(const JpegPlenoThumbnailContents& other)
       : ihdr(other.ihdr), bpcc(other.bpcc), colr(other.colr), cdef(other.cdef),
         jpc2(other.jpc2) {

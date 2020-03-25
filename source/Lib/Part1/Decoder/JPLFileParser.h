@@ -37,8 +37,8 @@
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
-#ifndef JPLM_LIB_PART1_JPLFILEPARSER_H
-#define JPLM_LIB_PART1_JPLFILEPARSER_H
+#ifndef JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H
+#define JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H
 
 
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
@@ -54,10 +54,17 @@ class JPLFileParser {
   ManagedStream managed_stream;
   std::unique_ptr<JpegPlenoSignatureBox> temp_signature;
   std::unique_ptr<FileTypeBox> temp_file_type;
-  std::map<uint32_t, std::vector<std::unique_ptr<Box>>> temp_decoded_boxes;
+  uint64_t decoded_boxes = 0;
+  uint64_t file_type_box_index = 0;
+
+
+  std::map<uint32_t, std::vector<std::pair<uint64_t, std::unique_ptr<Box>>>>
+      temp_decoded_boxes;
+  //pair<position of box in the bitstream and box>
 
 
   std::unique_ptr<FileTypeBox> decode_boxes_until_a_file_type_box_is_found();
+
 
   uint64_t decode_boxes();
 
@@ -75,4 +82,4 @@ class JPLFileParser {
 };
 
 
-#endif  //JPLM_LIB_PART1_JPLFILEPARSER_H
+#endif  //JPLM_LIB_PART1_DECODER_JPLFILEPARSER_H

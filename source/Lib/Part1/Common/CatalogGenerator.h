@@ -31,46 +31,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.h
+/** \file     CatalogGenerator.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-03-20
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#ifndef JPLM_LIB_PART1_COMMON_CATALOG_GENERATOR_H
+#define JPLM_LIB_PART1_COMMON_CATALOG_GENERATOR_H
 
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+#include <algorithm>  //std::transform
+#include <locale>  //std::tolower
+#include <magic_enum.hpp>
+#include <sstream>  //std::stringstream
+#include "Lib/Common/Boxes/Generic/XMLBox.h"
+#include "Lib/Part1/Common/Boxes/JpegPlenoCodestreamBox.h"
 
-template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder
-    : public JPLMLightFieldEncoder<PelType> {
- protected:
-  std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-      prediction_mode_configuration;
-
+class CatalogGenerator {
  public:
-  JPLM4DPredictionModeLightFieldEncoder(
-      std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-          configuration)
-      : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightfieldFromFile<PelType>>(
-                configuration->get_lightfield_io_configurations()),
-            *configuration),
-        JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(configuration) {
-  }
+  CatalogGenerator();
 
-  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
 
-  virtual void run() override {
-    throw JPLMCommonExceptions::NotImplementedException(
-        "JPLM4DPredictionModeLightFieldEncoder::run()");
-    //! \todo implement run method for jpl lightfield encoder
-  }
+  virtual ~CatalogGenerator() = default;
+
+
+  static std::unique_ptr<XMLBox> get_xml_box_with_catalog();
+
+
+  static std::unique_ptr<XMLBox> get_xml_box_with_updated_catalog(
+      const std::vector<std::unique_ptr<JpegPlenoCodestreamBox>>&
+          jpeg_pleno_codestreams);
 };
 
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+#endif  // JPLM_LIB_PART1COMMON__CATALOG_GENERATOR_H

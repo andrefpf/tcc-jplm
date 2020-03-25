@@ -51,7 +51,10 @@
 #include "Lib/Common/Boxes/Box.h"
 #include "Lib/Common/Boxes/Parsers/ColourSpecificationBoxParser.h"
 #include "Lib/Common/Boxes/Parsers/ContiguousCodestreamBoxParser.h"
+#include "Lib/Common/Boxes/Parsers/ImageHeaderBoxParser.h"
+#include "Lib/Common/Boxes/Parsers/XMLBoxParser.h"
 #include "Lib/Part1/Decoder/Boxes/FileTypeBoxParser.h"
+#include "Lib/Part1/Decoder/Boxes/JpegPlenoThumbnailBoxParser.h"
 //! [Include the parser header]
 #include "Lib/Part1/Decoder/Boxes/JpegPlenoSignatureBoxParser.h"
 //! [Include the parser header]
@@ -114,7 +117,8 @@ template<class ParsingBox, bool required>
 std::unique_ptr<ParsingBox> BoxParserRegistry::parse(
     ManagedStream&& managed_stream) const {
   // std::cout << "ManagedStream is at: " << managed_stream.tell() << std::endl;
-  // std::cout << "ManagedStream is limited to: " << managed_stream.get_length() << std::endl;
+  // std::cout << "ManagedStream is limited to: " << managed_stream.get_length()
+  // << std::endl;
   // std::cout << typeid(ParsingBox).name() << std::endl;
   auto box_parser_helper =
       BoxParserHelper<ParsingBox, required>(managed_stream);
@@ -132,7 +136,9 @@ std::unique_ptr<ParsingBox> BoxParserRegistry::parse(
     return std::unique_ptr<ParsingBox>(
         static_cast<ParsingBox*>(parsed_box.release()));
   }
-  return nullptr;
+  throw BoxParserExceptions::ParserOfRequiredBoxIsNotImplemented(
+      ParsingBox::id);
+  // return nullptr;
 }
 
 #endif /* end of include guard: JPLM_LIB_COMMON_BOXES_PARSERS_BOXPARSER_H__ */

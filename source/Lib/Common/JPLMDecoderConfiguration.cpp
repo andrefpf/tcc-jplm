@@ -104,6 +104,27 @@ void JPLMDecoderConfiguration::add_options() {
         std::cout << "Output: " << this->output << std::endl;
       },
       this->current_hierarchy_level});
+
+
+  this->add_cli_json_option({"--show-xml-catalog", "-showcat",
+      "Shows the xml box with catalog of the input JPL file (if present).",
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("show-xml-catalog")) {
+          return conf["show-xml-catalog"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->show_xml_box_with_catalog_ = false;
+        } else {
+          this->show_xml_box_with_catalog_ = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
 }
 
-//checking the file extension for showing a warning message
+bool JPLMDecoderConfiguration::show_xml_box_with_catalog() const noexcept {
+  return this->show_xml_box_with_catalog_;
+}

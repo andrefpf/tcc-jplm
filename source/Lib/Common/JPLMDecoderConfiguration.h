@@ -48,12 +48,16 @@ class JPLMDecoderConfiguration : public JPLMConfiguration {
   static constexpr std::size_t current_hierarchy_level = 0;
 
  protected:
+  bool show_xml_box_with_catalog_ = false;
+
   JPLMDecoderConfiguration(int argc, char **argv, std::size_t level);
   virtual void add_options() override;
 
  public:
   JPLMDecoderConfiguration(int argc, char **argv);
   virtual ~JPLMDecoderConfiguration() = default;
+
+  bool show_xml_box_with_catalog() const noexcept;
 };
 
 #endif /* end of include guard: JPLMDECODERCONFIGURATION_H__ */

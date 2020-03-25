@@ -34,34 +34,182 @@
 /** \file     JPLFileFromStream.cpp
  *  \brief    Brief description
  *  \details  Detailed description
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
 
 #include "Lib/Part1/Decoder/JPLFileFromStream.h"
-#include "Lib/Part1/Common/JPLFile.h"
 
+
+bool is_plenoptic(const int id) {
+  if ((id != static_cast<t_box_id_type>(
+                 JpegPlenoCodestreamBoxTypes::LightField)) &&
+      (id != static_cast<t_box_id_type>(
+                 JpegPlenoCodestreamBoxTypes::PointCloud)) &&
+      (id !=
+          static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::Hologram))) {
+    return false;
+  }
+  return true;
+}
+
+
+bool xml_box_has_catalog(const XMLBox& xml_box) {
+  const auto& contents =
+      xml_box.get_ref_to_contents().get_string_with_contents();
+  if (contents.find("<pleno-elements>") == std::string::npos) {
+    return false;
+  }
+  return true;
+}
+
+
+std::pair<uint64_t, uint64_t> get_min_max_positions(
+    const std::vector<std::pair<uint64_t, std::unique_ptr<Box>>>& boxes) {
+  auto compare = [](const auto& pair_a, const auto& pair_b) {
+    return (std::get<0>(pair_a) < std::get<0>(pair_b));
+  };
+
+  auto min_pair = std::min_element(boxes.begin(), boxes.end(), compare);
+  auto max_pair = std::max_element(boxes.begin(), boxes.end(), compare);
+
+  return std::make_pair(std::get<0>(*min_pair), std::get<0>(*max_pair));
+}
+
+
+JPLFileFromStream::ConstrainedBoxIndex
+JPLFileFromStream::get_constrained_box_index() const {
+  auto index = ConstrainedBoxIndex();
+  for (const auto& [id, boxes] : temp_decoded_boxes) {
+    const auto& [min_position, max_position] = get_min_max_positions(boxes);
+
+    if (is_plenoptic(id)) {
+      index.number_of_plenoptic_elements += boxes.size();
+
+      if (min_position < index.fist_plenoptic_box_position) {
+        index.fist_plenoptic_box_position = min_position;
+      }
+      if (max_position > index.last_plenoptic_box_position) {
+        index.last_plenoptic_box_position = max_position;
+      }
+      continue;
+    }
+
+    if (id == JpegPlenoThumbnailBox::id) {
+      if (max_position > index.thumbnail_box_position) {
+        index.thumbnail_box_position = max_position;
+      }
+      continue;
+    }
+
+    if (id == XMLBox::id) {
+      for (const auto& [position, xml_box] : boxes) {
+        if (xml_box_has_catalog(static_cast<const XMLBox&>(*xml_box))) {
+          if (index.xml_box_with_catalog_position) {
+            //already have a xml box with catalog detected... what to do in this case?
+            // \todo define what happens when more than one xml box with catalog is found
+          }
+          index.xml_box_with_catalog_position = position;
+        }
+      }
+    }
+  }
+
+  index.file_type_box_position = this->file_type_box_index;
+
+  return index;
+}
 
 void JPLFileFromStream::check_boxes_constraints() {
+  //restriction 0, no more than one file type box shall exist
   if (auto it = temp_decoded_boxes.find(FileTypeBox::id);
       it != temp_decoded_boxes.end()) {
     throw JPLFileFromStreamExceptions::MoreThanOneFileTypeBoxException();
   }
+
+  // From A.2.3 File organization
+
+  // restriction 1: The JPEG Pleno Signature box shall be the
+  // first box in a JPL file and the File Type box
+  //(defined in ISO/IEC 15444-1) shall immediately follow the
+  // JPEG Pleno Signature box.
+  //
+  // This restriction will not be tested so as the decoder can decode
+  // any file that contains a file type box with the jpl signature in
+  // its compatility list
+
+  auto constrained_box_index = get_constrained_box_index();
+
+  // restriction 2: The JPEG Pleno Thumbnail box shall be signalled
+  // before the JPEG Pleno Light Field, JPEG Pleno
+  // Point Cloud, and JPEG Pleno Hologram superboxes.
+  if (constrained_box_index.thumbnail_box_position) {
+    //a thumbnail box was detected in the codestream
+    if (*(constrained_box_index.thumbnail_box_position) >
+        constrained_box_index.fist_plenoptic_box_position) {
+      throw FileOrganizationExceptions::
+          ThumbnailShallBeSignalledBeforePlenopticDataException(
+              *(constrained_box_index.thumbnail_box_position),
+              constrained_box_index.fist_plenoptic_box_position);
+    }
+  }
+
+
+  // restriction 3: A JPL file can contain an optional XML box
+  // signalling catalog information (see A.5.8). An XML box
+  // containing catalog information should be signalled after
+  // the File Type box and before the first superbox containing plenoptic data.
+  if (constrained_box_index.xml_box_with_catalog_position) {
+    //a xml box with catalog was detected in the codestream
+    if ((*(constrained_box_index.xml_box_with_catalog_position) <
+            constrained_box_index.file_type_box_position) ||
+        (*(constrained_box_index.xml_box_with_catalog_position) >
+            constrained_box_index.fist_plenoptic_box_position)) {
+      throw FileOrganizationExceptions::
+          ACatalogingXLMBoxShallBeSignalledAfterFileTypeBoxAndBeforePlenopticDataException(
+              *(constrained_box_index.xml_box_with_catalog_position),
+              constrained_box_index.file_type_box_position,
+              constrained_box_index.fist_plenoptic_box_position);
+    }
+  }
+
+
+  // restriction 4: The JPEG Pleno Light Field, JPEG Pleno Point Cloud,
+  // and JPEG Pleno Hologram superboxes signalling plenoptic data, shall
+  // be signalled as one monolithic block with no preferred ordering,
+  // and no other boxes shall be signalled in between.
+  //
+  // The comparison with max is to check if a plenoptic box was detected in the file
+  if ((constrained_box_index.fist_plenoptic_box_position !=
+          std::numeric_limits<uint64_t>::max()) &&
+      ((constrained_box_index.last_plenoptic_box_position -
+           constrained_box_index.fist_plenoptic_box_position + 1) !=
+          constrained_box_index.number_of_plenoptic_elements)) {
+    throw FileOrganizationExceptions::InvalidBoxBetweenPlenopticBoxesException(
+        constrained_box_index.fist_plenoptic_box_position,
+        constrained_box_index.last_plenoptic_box_position);
+  }
+
+  // other restrictions may be tested here
 }
 
 
 void JPLFileFromStream::populate_light_field_codestreams() {
   if (auto it = temp_decoded_boxes.find(JpegPlenoLightFieldBox::id);
       it != temp_decoded_boxes.end()) {
-    auto& jpeg_pleno_light_field_boxes = it->second;
-    for (auto& jpeg_pleno_light_field_box : jpeg_pleno_light_field_boxes) {
+    auto& jpeg_pleno_light_field_boxes_pairs = it->second;
+    for (auto& jpeg_pleno_light_field_box_pair :
+        jpeg_pleno_light_field_boxes_pairs) {
+      auto& jpeg_pleno_light_field_box =
+          std::get<1>(jpeg_pleno_light_field_box_pair);
       jpeg_pleno_codestreams.emplace_back(
           std::unique_ptr<JpegPlenoCodestreamBox>(
               static_cast<JpegPlenoCodestreamBox*>(
                   jpeg_pleno_light_field_box.release())));
     }
-    jpeg_pleno_light_field_boxes.clear();
-    jpeg_pleno_light_field_boxes.shrink_to_fit();
+    jpeg_pleno_light_field_boxes_pairs.clear();
+    jpeg_pleno_light_field_boxes_pairs.shrink_to_fit();
   }
 }
 
@@ -73,10 +221,11 @@ void JPLFileFromStream::populate_point_cloud_codestreams() {
   // }
 }
 
+
 void JPLFileFromStream::populate_hologram_codestreams() {
   // if (auto it = temp_decoded_boxes.find(JpegPlenoHologramBox::id);
   //     it != temp_decoded_boxes.end()) {
-  //   //! \todo Implement for Point Cloud Boxes...
+  //   //! \todo Implement for Hologram Boxes...
   // }
 }
 
@@ -104,15 +253,12 @@ JPLFileFromStream::JPLFileFromStream(const std::string& filename)
     throw JPLFileFromStreamExceptions::
         JpegPlenoNotInCompatibilityListException();
   }
-
-  // this->managed_stream.seek(12 + 20);
-  decoded_boxes += decode_boxes();
+  number_of_decoded_boxes += decode_boxes();
   check_boxes_constraints();
   populate_jpl_fields();
-  // std::move(*(this->parser.parse<XMLBoxWithCatalog>()));
 }
 
 
 uint64_t JPLFileFromStream::get_number_of_decoded_boxes() {
-  return decoded_boxes;
+  return number_of_decoded_boxes;
 }

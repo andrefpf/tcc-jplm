@@ -31,46 +31,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JPLM4DPredictionModeLightFieldEncoder.h
+/** \file     XMLBoxParser.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-09
+ *  \date     2020-03-23
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
-#define JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__
+#include "Lib/Common/Boxes/Parsers/XMLBoxParser.h"
 
-#include "Lib/Common/CommonExceptions.h"
-#include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
-#include "source/Lib/Common/JPLMEncoderConfigurationLightField4DPredictionMode.h"
+std::unique_ptr<Box> JPLMBoxParser::XMLBoxParser::parse(
+    BoxParserHelperBase& box_parser_helper) {
+  auto contents = std::string();
 
-template<typename PelType = uint16_t>
-class JPLM4DPredictionModeLightFieldEncoder
-    : public JPLMLightFieldEncoder<PelType> {
- protected:
-  std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-      prediction_mode_configuration;
+  const auto& characters =
+      box_parser_helper.get_next<char>(box_parser_helper.get_data_length());
 
- public:
-  JPLM4DPredictionModeLightFieldEncoder(
-      std::shared_ptr<JPLMEncoderConfigurationLightField4DPredictionMode>
-          configuration)
-      : JPLMLightFieldCodec<PelType>(
-            std::make_unique<LightfieldFromFile<PelType>>(
-                configuration->get_lightfield_io_configurations()),
-            *configuration),
-        JPLMLightFieldEncoder<PelType>(*configuration),
-        prediction_mode_configuration(configuration) {
+  for (const auto& c : characters) {
+    contents += c;
   }
 
-  virtual ~JPLM4DPredictionModeLightFieldEncoder() = default;
+  auto xml_box = std::make_unique<XMLBox>(std::move(contents));
 
-  virtual void run() override {
-    throw JPLMCommonExceptions::NotImplementedException(
-        "JPLM4DPredictionModeLightFieldEncoder::run()");
-    //! \todo implement run method for jpl lightfield encoder
-  }
-};
-
-#endif /* end of include guard: JPLM_LIB_PART2_ENCODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDENCODER_H__ */
+  return xml_box;
+}

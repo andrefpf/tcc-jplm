@@ -61,7 +61,7 @@ class JPLMCodecFactory {
    * @return     The light field encoder.
    */
   static std::unique_ptr<JPLMCodec> get_light_field_encoder(
-      std::unique_ptr<JPLMEncoderConfigurationLightField>&& configuration);
+      std::shared_ptr<JPLMEncoderConfigurationLightField> configuration);
 
  public:
   /**
@@ -72,7 +72,7 @@ class JPLMCodecFactory {
    * @return     The encoder given the desired configuration.
    */
   static std::unique_ptr<JPLMCodec> get_encoder(
-      std::unique_ptr<JPLMEncoderConfiguration>&& configuration);
+      std::shared_ptr<JPLMEncoderConfiguration> configuration);
 
 
   /**

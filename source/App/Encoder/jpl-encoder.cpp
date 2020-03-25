@@ -62,13 +62,17 @@ int main(int argc, char const* argv[]) {
 
   //<! \todo avoid the static cast as the get_encoder_configuration function
   // should return an specialized encoder configuration
-  auto encoder = JPLMCodecFactory::get_encoder(
-      std::move(std::unique_ptr<JPLMEncoderConfiguration>(
-          static_cast<JPLMEncoderConfiguration*>(configuration.release()))));
+  auto encoder = JPLMCodecFactory::get_encoder(configuration);
 
   encoder->run();
 
-  of_stream << encoder->get_ref_to_jpl_file();
+  auto& jpl_file = encoder->get_ref_to_jpl_file();
+
+  if (configuration->must_generate_xml_box_with_catalog()) {
+    jpl_file.enable_catalog();
+  }
+
+  of_stream << jpl_file;
 
   if (show_statistics) {
     run_time_statistics.show_statistics();

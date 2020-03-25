@@ -25,6 +25,8 @@ set(COMMON_BOXES_GENERIC_SOURCES
     UUIDInfoBox.cpp
     UUIDInfoContents.cpp
     UUIDListBox.cpp
-    UUIDListContents.cpp)
+    UUIDListContents.cpp
+    XMLContents.cpp
+    XMLBox.cpp)
 
 add_library(jplm_common_boxes_generic ${COMMON_BOXES_GENERIC_SOURCES})

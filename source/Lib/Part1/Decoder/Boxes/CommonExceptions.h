@@ -31,89 +31,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ContiguousCodestreamCodeInMemory.h
+/** \file     CommonExceptions.h
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-29
+ *  \date     2020-03-24
  */
 
-#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__
-#define JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__
+#ifndef JPLM_LIB_PART1_DECODER_BOXES_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_PART1_DECODER_BOXES_COMMON_EXCEPTIONS_H
 
+#include <exception>
 #include <iostream>
-#include <vector>
-#include "ContiguousCodestreamCode.h"
+#include <string>
 
+namespace JpegPlenoThumbnailBoxParserExceptions {
 
-class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
+class AtLeastOneColorSpecificationBoxShallExistException
+    : public std::exception {
  protected:
-  std::vector<std::byte> bytes;
-  mutable std::size_t current_pos = 0;
+  std::string message_;
 
  public:
-  uint64_t size() const noexcept override;
-
-
-  ContiguousCodestreamCodeInMemory();
-
-
-  explicit ContiguousCodestreamCodeInMemory(uint64_t size);
-
-
-  explicit ContiguousCodestreamCodeInMemory(const std::vector<std::byte>& bytes)
-      : bytes(bytes) {
+  AtLeastOneColorSpecificationBoxShallExistException()
+      : message_(
+            "Found no color specification box in the JPEG Pleno Thumbnail Box. "
+            "ISO/IEC 21794-1 specifies that \"There shall be at least one "
+            "Colour "
+            "Specification box within the JPEG Pleno Thumbnail box.\"") {
   }
 
 
-  explicit ContiguousCodestreamCodeInMemory(std::vector<std::byte>&& bytes)
-      : bytes(std::move(bytes)) {
+  const char* what() const noexcept override {
+    return message_.c_str();
   }
-
-
-  ContiguousCodestreamCodeInMemory(
-      const ContiguousCodestreamCodeInMemory& other)
-      : bytes(other.bytes), current_pos(other.current_pos) {
-    std::cout << "copy of ContiguousCodestreamCodeInMemory " << std::endl;
-  }
-
-
-  ContiguousCodestreamCodeInMemory(ContiguousCodestreamCodeInMemory&& other)
-      : bytes(std::move(other.bytes)), current_pos(other.current_pos) {
-  }
-
-
-  virtual ~ContiguousCodestreamCodeInMemory() = default;
-
-
-  void push_byte(const std::byte byte) override;
-
-
-  std::byte get_byte_at(const uint64_t pos) const override;
-
-
-  std::byte get_next_byte() const override;
-
-
-  std::vector<std::byte> get_next_n_bytes(std::size_t n) const override;
-
-
-  std::byte peek_next_byte() const override;
-
-
-  bool is_next_valid() const override;
-
-
-  void rewind(std::size_t n_bytes_to_rewind) const override;
-
-
-  ContiguousCodestreamCodeInMemory* clone() const override;
-
-
-  bool is_equal(const ContiguousCodestreamCode& other) const override;
-
-
-  std::ostream& write_to(std::ostream& stream) const override;
 };
 
-#endif /* end of include guard: JPLM_LIB_COMMON_BOXES_GENERIC_CONTIGUOUSCODESTREAMCODEINMEMORY_H__ */
+}  // namespace JpegPlenoThumbnailBoxParserExceptions
+
+#endif  // JPLM_LIB_PART1_DECODER_BOXES_COMMON_EXCEPTIONS_H

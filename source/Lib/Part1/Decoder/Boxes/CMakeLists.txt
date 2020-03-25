@@ -1,6 +1,7 @@
 set(PART1_BOXES_DECODER_SOURCES
     JpegPlenoSignatureBoxParser.cpp
     FileTypeBoxParser.cpp
+    JpegPlenoThumbnailBoxParser.cpp
     ../../Common/Boxes/CommonExceptions.cpp
     ../../Common/Boxes/FileTypeBox.cpp
     ../../Common/Boxes/FileTypeContents.cpp

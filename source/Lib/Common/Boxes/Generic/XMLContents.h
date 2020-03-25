@@ -31,42 +31,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoSignatureContents.h
- *  \brief    This files contains the JPEG Pleno Signature Contents class
+/** \file     XMLContents.h
+ *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-09-02
+ *  \date     2020-03-20
  */
 
-#ifndef JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__
-#define JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__
+#ifndef JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
+#define JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H
 
-#include <array>
-#include <cstddef>  //std::byte
-#include <vector>
-#include "Lib/Common/Boxes/GenericBox.h"
+#include <algorithm>  //for std::transform
 #include "Lib/Common/Boxes/InMemoryDBox.h"
+#include "Lib/Utils/Stream/BinaryTools.h"
 
 
-/**
- * @brief      This class describes JPEG Pleno Signature Box contents.
- */
-class JpegPlenoSignatureContents : public InMemoryDBox {
+class XMLContents : public InMemoryDBox {
  protected:
-  const std::array<std::byte, 4> signature = {
-      std::byte{0x0d}, std::byte{0x0a}, std::byte{0x87}, std::byte{0x0a}};
+  std::string contents = "";
 
  public:
   /**
-   * @brief      Constructs a new instance.
+   * @brief      Constructs a new instance having empty content.
    */
-  JpegPlenoSignatureContents() = default;
+  XMLContents() = default;
 
 
   /**
-   * @brief      Destroys the object.
+   * @brief      Constructs a new instance by copying the contents string.
+   *
+   * @param[in]  contents  The contents
    */
-  virtual ~JpegPlenoSignatureContents() = default;
+  XMLContents(const std::string& contents) : contents(contents) {
+  }
+
+
+  /**
+   * @brief      Constructs a new instance by obtaining the ownership of the contents string.
+   *
+   * @param      contents  The contents
+   */
+  XMLContents(std::string&& contents) : contents(std::move(contents)) {
+  }
 
 
   /**
@@ -74,15 +80,21 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
    *
    * @return     Copy of this object.
    */
-  virtual JpegPlenoSignatureContents* clone() const override;
+  XMLContents* clone() const override;
 
 
   /**
-   * @brief      Gets the size (in bytes) of the contents of this JPEG Pleno Signature box
-   *
-   * @return     Size in bytes
+   * @brief      Destroys the object.
    */
-  virtual uint64_t size() const noexcept override;
+  virtual ~XMLContents() = default;
+
+
+  /**
+   * @brief      Gets the size of the XML contents (in bytes)
+   *
+   * @return     Size (in bytes)
+   */
+  uint64_t size() const noexcept override;
 
 
   /**
@@ -92,7 +104,7 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
    *
    * @return     True if the specified other is equal, False otherwise.
    */
-  virtual bool is_equal(const DBox& other) const override;
+  bool is_equal(const DBox& other) const override;
 
 
   /**
@@ -102,7 +114,7 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
    *
    * @return     The result of the equality
    */
-  bool operator==(const JpegPlenoSignatureContents& other) const;
+  bool operator==(const XMLContents& other) const;
 
 
   /**
@@ -112,33 +124,41 @@ class JpegPlenoSignatureContents : public InMemoryDBox {
    *
    * @return     The result of the inequality
    */
-  bool operator!=(const JpegPlenoSignatureContents& other) const;
+  bool operator!=(const XMLContents& other) const;
 
 
   /**
-   * @brief      Determines whether the specified bytes is valid.
-   *
-   * @param[in]  bytes  The bytes
-   *
-   * @return     True if the specified bytes is valid, False otherwise.
+   * @brief      Gets the string with contents.
+   *             
+   *             The XML contains basically a string with a XML code.
+   *             \todo Validate the XML contained in the string
+   * @return     The string with contents.
    */
-  bool is_valid(const std::vector<std::byte>& bytes);
+  const std::string& get_string_with_contents() const noexcept;
 
 
   /**
-   * @brief      Gets the reference to signature.
-   *
-   * @return     The reference to signature.
-   */
-  const std::array<std::byte, 4>& get_ref_to_signature() const noexcept;
-
-
-  /**
-   * @brief      Gets the bytes with the contents of JPEG Pleno Signature Box.
+   * @brief      Gets the bytes.
    *
    * @return     The bytes.
    */
-  virtual std::vector<std::byte> get_bytes() const override;
+  virtual std::vector<std::byte> get_bytes() const noexcept override;
+
+
+  /**
+   * @brief      Sets the contents by copy.
+   *
+   * @param[in]  new_content  The new content
+   */
+  void set_contents(const std::string& new_content);
+
+
+  /**
+   * @brief      Sets the contents by assuming the ownership (move).
+   *
+   * @param      new_content  The new content
+   */
+  void set_contents(std::string&& new_content);
 };
 
-#endif /* end of include guard: JPLM_LIB_PART1_COMMON_BOXES_JPEGPLENOSIGNATURECONTENTS_H__ */
+#endif  // JPLM_LIB_COMMON_BOXES_GENERIC_XML_CONTENTS_H

@@ -58,6 +58,7 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
  protected:
   std::string config;
   JpegPlenoPart part = JpegPlenoPart::Undefined;
+  bool generate_xml_box_with_catalog = false;
 
 
   JPLMEncoderConfiguration(int argc, char **argv, std::size_t level);
@@ -66,7 +67,12 @@ class JPLMEncoderConfiguration : public JPLMConfiguration {
 
  public:
   JpegPlenoPart get_jpeg_pleno_part() const;
+
+
   const std::string &get_config() const;
+
+
+  bool must_generate_xml_box_with_catalog() const;
 
 
   JPLMEncoderConfiguration(int argc, char **argv);

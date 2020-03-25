@@ -41,46 +41,92 @@
 #ifndef JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
 #define JPLM_LIB_PART1_JPLFILEFROMSTREAM_H__
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <magic_enum.hpp>
 #include <string>
 #include "Lib/Common/Boxes/Parsers/BoxParserRegistry.h"
 #include "Lib/Part1/Common/JPLFile.h"
+#include "Lib/Part1/Decoder/CommonExceptions.h"
 #include "Lib/Part1/Decoder/JPLFileParser.h"
 #include "Lib/Utils/Stream/ManagedStream.h"
 
-
 class JPLFileFromStream : public JPLFileParser, public JPLFile {
- protected:
-  uint64_t decoded_boxes =
-      2;  //it has at least decoded the signature and file type...
+ private:
+  struct ConstrainedBoxIndex {
+    std::optional<uint64_t> thumbnail_box_position = std::nullopt;
+    std::optional<uint64_t> xml_box_with_catalog_position = std::nullopt;
+    uint64_t file_type_box_position = 0;
+    uint64_t fist_plenoptic_box_position = std::numeric_limits<uint64_t>::max();
+    uint64_t last_plenoptic_box_position = 0;
+    uint64_t number_of_plenoptic_elements = 0;
+  };
 
+  ConstrainedBoxIndex get_constrained_box_index() const;
+
+ protected:
+  uint64_t number_of_decoded_boxes = 0;
+
+
+  /**
+   * @brief      Checks if the parsed codestream is well formed according to JPEG Pleno Part 1.
+   */
   void check_boxes_constraints();
 
 
+  /**
+   * @brief      Populates the lightfield codestreams list within the JPLFile
+   */
   void populate_light_field_codestreams();
 
 
-  //! \todo Implement for Point Cloud Boxes...
+  /**
+   * @brief      Populates the point clouds codestreams list within the JPLFile
+   * 
+   * \todo Implement for Point Cloud Boxes...
+   */
   void populate_point_cloud_codestreams();
 
 
+  /**
+   * @brief      Populates the hologram codestreams list within the JPLFile
+   */
   void populate_hologram_codestreams();
 
 
+  /**
+   * @brief      Populates the list of codestreams within the JPLFile with Lightfield, Point Clouds or Hologram codestream boxes
+   */
   void populate_codestreams_list();
 
 
+  /**
+   * @brief      Populates the files of the JPLFile with the ones readed from the stream
+   */
   void populate_jpl_fields();
 
  public:
+  /**
+   * @brief      Constructs a new instance.
+   *
+   * @param[in]  filename  The filename
+   */
   JPLFileFromStream(const std::string& filename);
 
 
+  /**
+   * @brief      Gets the number of decoded boxes.
+   *
+   * @return     The number of decoded boxes.
+   */
   uint64_t get_number_of_decoded_boxes();
 
 
+  /**
+   * @brief      Destroys the object.
+   */
   virtual ~JPLFileFromStream() = default;
 };
 

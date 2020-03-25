@@ -51,9 +51,9 @@ uint64_t JpegPlenoThumbnailContents::size() const noexcept {
     return sum + val.size();
   };
 
-  return ihdr.size() + bpcc.size() +
+  return ihdr.size() + bpcc->size() +
          std::accumulate(colr.begin(), colr.end(), 0, sum_colr_sizes) +
-         cdef.size() + jpc2.size();
+         cdef->size() + jpc2->size();
 }
 
 

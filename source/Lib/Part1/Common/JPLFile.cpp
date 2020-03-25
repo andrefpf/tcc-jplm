@@ -40,11 +40,15 @@
 
 #include "Lib/Part1/Common/JPLFile.h"
 
+
 std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   os << *(jpl_file.jpeg_pleno_signature_box) << *(jpl_file.file_type_box);
-  // if(xml_box_with_catalog) {
-  //   os << xml_box_with_catalog;
-  // }
+  if (jpl_file.xml_box_with_catalog) {
+    jpl_file.xml_box_with_catalog =
+        CatalogGenerator::get_xml_box_with_updated_catalog(
+            jpl_file.jpeg_pleno_codestreams);
+    os << (*jpl_file.xml_box_with_catalog);
+  }
   if (jpl_file.jpeg_pleno_thumbnail_box) {
     os << (*jpl_file.jpeg_pleno_thumbnail_box);
   }
@@ -53,6 +57,12 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   }
   if (jpl_file.ipr_box) {
     os << (*jpl_file.ipr_box);
+  }
+  if (jpl_file.xml_boxes) {
+    const auto& xml_boxes = *(jpl_file.xml_boxes);
+    for (const auto& xml_box : xml_boxes) {
+      os << *xml_box;
+    }
   }
   if (jpl_file.uuid_boxes) {
     const auto& uuid_boxes = *(jpl_file.uuid_boxes);
@@ -69,13 +79,26 @@ std::ostream& operator<<(std::ostream& os, const JPLFile& jpl_file) {
   return os;
 }
 
+
+void JPLFile::enable_catalog() const noexcept {
+  this->xml_box_with_catalog =
+      CatalogGenerator::get_xml_box_with_updated_catalog(
+          this->jpeg_pleno_codestreams);
+}
+
+
 std::size_t JPLFile::size() const noexcept {
   std::size_t size = 0;
   size += this->jpeg_pleno_signature_box->size();
   size += this->file_type_box->size();
-  // if(this->xml_box_with_catalog) {
-  //    size+=this->xml_box_with_catalog->size();
-  // }
+  if (this->xml_box_with_catalog) {
+    //first updates the xml box with catalog if it already exists
+    this->xml_box_with_catalog =
+        CatalogGenerator::get_xml_box_with_updated_catalog(
+            this->jpeg_pleno_codestreams);
+    //only then gets the size of the xml box with catalog
+    size += this->xml_box_with_catalog->size();
+  }
   if (this->jpeg_pleno_thumbnail_box) {
     size += this->jpeg_pleno_thumbnail_box->size();
   }
@@ -84,6 +107,12 @@ std::size_t JPLFile::size() const noexcept {
   }
   if (this->ipr_box) {
     size += this->ipr_box->size();
+  }
+  if (this->xml_boxes) {
+    const auto& xml_boxes = *(this->xml_boxes);
+    for (const auto& xml_box : xml_boxes) {
+      size += xml_box->size();
+    }
   }
   if (this->uuid_boxes) {
     const auto& uuid_boxes = *(this->uuid_boxes);

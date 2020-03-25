@@ -31,54 +31,75 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     JpegPlenoLightFieldBoxParser.cpp
+/** \file     JpegPlenoThumbnailBoxParser.cpp
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2019-08-28
+ *  \date     2020-03-24
  */
 
+#include "Lib/Part1/Decoder/Boxes/JpegPlenoThumbnailBoxParser.h"
 
-#include "JpegPlenoLightFieldBoxParser.h"
 
-
-std::unique_ptr<Box> JPLMBoxParser::JpegPlenoLightFieldBoxParser::parse(
+std::unique_ptr<Box> JPLMBoxParser::JpegPlenoThumbnailBoxParser::parse(
     BoxParserHelperBase& box_parser_helper) {
   auto& box_parser = BoxParserRegistry::get_instance();
 
-  auto profile_and_level_box = box_parser.parse<ProfileAndLevelBox>(
+  auto image_header_box = box_parser.parse<ImageHeaderBox>(
       box_parser_helper.get_remaining_stream());
 
-  auto jpeg_pleno_light_field_header_box =
-      box_parser.parse<JpegPlenoLightFieldHeaderBox>(
-          box_parser_helper.get_remaining_stream());
+  auto bits_per_component_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<BitsPerComponentBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;  //optional, may be nullptr
+
+
+  std::vector<ColourSpecificationBox> colr;
+
+
+  while (box_parser_helper.has_data_available()) {
+    auto colour_specification_box =
+        box_parser.parse<ColourSpecificationBox, false>(
+            box_parser_helper.get_remaining_stream());
+    if (colour_specification_box) {
+      auto& colour_specification_box_ref = *colour_specification_box;
+      colour_specification_box.release();
+      colr.emplace_back(std::move(colour_specification_box_ref));
+    } else {
+      break;
+    }
+  }
+
+
+  if (colr.size() == 0) {
+    throw JpegPlenoThumbnailBoxParserExceptions::
+        AtLeastOneColorSpecificationBoxShallExistException();
+  }
+
+
+  auto channel_definition_box =
+      box_parser_helper.has_data_available()
+          ? box_parser.parse<ChannelDefinitionBox, false>(
+                box_parser_helper.get_remaining_stream())
+          : nullptr;
+
 
   auto contigous_codestream_box =
       box_parser_helper.has_data_available()
           ? box_parser.parse<ContiguousCodestreamBox, false>(
                 box_parser_helper.get_remaining_stream())
           : nullptr;
-  if (contigous_codestream_box) {
-    // std::cout << "Decoded" << std::endl;
-  }
-
-  //! \todo decode remaining file
-  // how? creating a map for the boxes if they have no specific order in the file..
-  if (box_parser_helper.has_data_available()) {
-    box_parser_helper.get_remaining_stream().forward();
-  }
-
-  auto jpeg_pleno_light_field_contents =
-      std::make_unique<JpegPlenoLightFieldContents>(
-          std::move(profile_and_level_box),
-          std::move(jpeg_pleno_light_field_header_box));
-  if (contigous_codestream_box) {
-    jpeg_pleno_light_field_contents->add_contiguous_codestream_box(
-        std::move(contigous_codestream_box));
-  }
 
 
-  auto jpeg_pleno_light_field_box = std::make_unique<JpegPlenoLightFieldBox>(
-      std::move(jpeg_pleno_light_field_contents));
-  return jpeg_pleno_light_field_box;
+  auto thumbnail_contents = JpegPlenoThumbnailContents(*image_header_box,
+      bits_per_component_box ? std::make_optional(*bits_per_component_box)
+                             : std::nullopt,
+      colr,  //should be moved...
+      channel_definition_box ? std::make_optional(*channel_definition_box)
+                             : std::nullopt,
+      contigous_codestream_box ? std::make_optional(*contigous_codestream_box)
+                               : std::nullopt);
+
+  return std::make_unique<JpegPlenoThumbnailBox>(std::move(thumbnail_contents));
 }
