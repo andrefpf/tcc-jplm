@@ -136,7 +136,7 @@ endfunction()
 
 git_clone(
     PROJECT_NAME    CppConsoleTable
-    GIT_URL         https://github.com/DenisSamilton/CppConsoleTable.git
+    GIT_URL         http://105.103.253.162:7990/scm/lfc/extdep-cppconsoletable.git
     GIT_BRANCH      master
     DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}"
 )
