@@ -207,6 +207,7 @@ class JPLM4DTransformModeLightFieldEncoder
   void show_error_estimate();
 };
 
+
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::show_error_estimate() {
   auto number_of_channels = ref_to_lightfield.get_number_of_channels_in_view();
@@ -270,6 +271,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
 
   this->show_error_estimate();
 }
+
 
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(

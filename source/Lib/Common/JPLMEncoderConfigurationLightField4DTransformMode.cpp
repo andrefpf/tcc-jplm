@@ -255,7 +255,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
       this->current_hierarchy_level,
       {[this]() -> std::string { return "1000.0"; }}});
 
-  this->add_cli_json_option({"--show-error-estimate", "-see",
+  this->add_cli_json_option({"--show-error-estimate", "-errorest",
       "Shows error estimates computed during RDO. Although close to the real "
       "error figures, they are only estimates (do not account for rounding "
       "errors in the inverse transform, for instance). For proper error "
@@ -272,6 +272,26 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
           this->show_estimated_error_flag = false;
         } else {
           this->show_estimated_error_flag = true;
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "false"; }}});
+
+
+  this->add_cli_json_option({"--insert_codestream_pointer_set", "-pnt",
+      "Inserts a codestream pointer set marker segment before the first 4D "
+      "block. This enables the encoder to known where each 4D block starts. ",
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("insert_codestream_pointer_set")) {
+          return conf["insert_codestream_pointer_set"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        if (arg == "false") {
+          this->insert_codestream_pointer_set_flag = false;
+        } else {
+          this->insert_codestream_pointer_set_flag = true;
         }
       },
       this->current_hierarchy_level,
