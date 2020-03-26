@@ -64,7 +64,7 @@ class JPLM4DTransformModeLightFieldEncoder
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
-  // std::vector<uint64_t>
+  std::vector<uint64_t> byte_index_for_pnt;
 
   std::vector<double> sse_per_channel;
   std::vector<std::size_t>
@@ -121,7 +121,8 @@ class JPLM4DTransformModeLightFieldEncoder
         transform_mode_encoder_configuration->get_maximal_transform_sizes(),
         transform_mode_encoder_configuration->get_transform_scalings());
 
-    // write_initial_data_to_encoded_file();
+
+    // write_initial_data_to_codestream();
     hierarchical_4d_encoder.write_marker(
         Marker::SOC);  //writes the start of codestream
     hierarchical_4d_encoder.write_lightfield_configuration_marker_segment(
@@ -138,6 +139,9 @@ class JPLM4DTransformModeLightFieldEncoder
       sse_per_channel.push_back(0.0);
       bytes_per_channel.push_back(0);
     }
+    //the number of indices will be the number of 4d blocks. Thus,
+    byte_index_for_pnt.reserve(
+        lightfield_configuration_marker_segment.get_number_of_4d_blocks());
   }
 
 
@@ -274,10 +278,10 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
   const auto number_of_bytes_in_codestream_before_encoding_block =
       hierarchical_4d_encoder.get_ref_to_codestream_code().size();
 
-  std::cout << "position in the codestream: "
-            << hierarchical_4d_encoder.get_ref_to_codestream_code().size()
-            << std::endl;
 
+  //adds the size as it points to the first byte of the SOB marker
+  byte_index_for_pnt.push_back(
+      number_of_bytes_in_codestream_before_encoding_block);
   hierarchical_4d_encoder.write_marker(Marker::SOB);
 
   auto block_4d = ref_to_lightfield.get_block_4D_from(channel, position, size);
