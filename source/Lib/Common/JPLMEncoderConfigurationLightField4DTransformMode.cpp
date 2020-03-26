@@ -298,6 +298,17 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
       {[this]() -> std::string { return "false"; }}});
 }
 
+bool JPLMEncoderConfigurationLightField4DTransformMode::show_error_estimate()
+    const noexcept {
+  return show_estimated_error_flag;
+}
+
+
+bool JPLMEncoderConfigurationLightField4DTransformMode::
+    insert_codestream_pointer_set() const noexcept {
+  return insert_codestream_pointer_set_flag;
+}
+
 
 JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(

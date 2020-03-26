@@ -115,14 +115,10 @@ class JPLMEncoderConfigurationLightField4DTransformMode
   BorderBlocksPolicy get_border_blocks_policy();
 
 
-  bool show_error_estimate() const {
-    return show_estimated_error_flag;
-  }
+  bool show_error_estimate() const noexcept;
 
 
-  bool insert_codestream_pointer_set() const {
-    return insert_codestream_pointer_set_flag;
-  }
+  bool insert_codestream_pointer_set() const noexcept;
 
 
   std::tuple<uint32_t, uint32_t, uint32_t, uint32_t>
