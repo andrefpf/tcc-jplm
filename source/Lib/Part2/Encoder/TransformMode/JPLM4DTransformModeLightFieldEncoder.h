@@ -64,6 +64,8 @@ class JPLM4DTransformModeLightFieldEncoder
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
+  // std::vector<uint64_t>
+
   std::vector<double> sse_per_channel;
   std::vector<std::size_t>
       bytes_per_channel;  //<! Accumulates the total number of encoded bytes of each channel. Does not include header information.
@@ -266,6 +268,10 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
   const auto number_of_bytes_in_codestream_before_encoding_block =
       hierarchical_4d_encoder.get_ref_to_codestream_code().size();
 
+  std::cout << "position in the codestream: "
+            << hierarchical_4d_encoder.get_ref_to_codestream_code().size()
+            << std::endl;
+
   hierarchical_4d_encoder.write_marker(Marker::SOB);
 
   auto block_4d = ref_to_lightfield.get_block_4D_from(channel, position, size);
@@ -289,6 +295,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
 
   transform_partition.encode_partition(hierarchical_4d_encoder, lambda);
+
 
   const auto increase_in_bytes =
       hierarchical_4d_encoder.get_ref_to_codestream_code().size() -
