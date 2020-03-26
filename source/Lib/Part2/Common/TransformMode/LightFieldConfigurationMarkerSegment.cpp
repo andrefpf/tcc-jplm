@@ -52,15 +52,22 @@ uint16_t LightFieldConfigurationMarkerSegment::get_length_of_marker_segment()
 }
 
 
-uint32_t LightFieldConfigurationMarkerSegment::get_number_of_4d_blocks() const
-    noexcept {
+uint32_t LightFieldConfigurationMarkerSegment::get_number_of_4d_blocks() const {
   const auto& [T, S, V, U] = lightfield_dimension;
   const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
       block_dimension;
-  return static_cast<uint32_t>(std::ceil(T / ((double) BLOCK_SIZE_t)) *
-                               std::ceil(S / ((double) BLOCK_SIZE_s)) *
-                               std::ceil(V / ((double) BLOCK_SIZE_v)) *
-                               std::ceil(U / ((double) BLOCK_SIZE_u)));
+  const auto n_4d =
+      static_cast<uint32_t>(std::ceil(T / ((double) BLOCK_SIZE_t)) *
+                            std::ceil(S / ((double) BLOCK_SIZE_s)) *
+                            std::ceil(V / ((double) BLOCK_SIZE_v)) *
+                            std::ceil(U / ((double) BLOCK_SIZE_u)) *
+                            get_number_of_colour_components());
+
+  if (n_4d > std::numeric_limits<uint32_t>::max()) {
+    throw LightFieldConfigurationMarker::OverflowInTheNumberOf4DBlocks(n_4d);
+  }
+
+  return static_cast<uint32_t>(n_4d);
 }
 
 

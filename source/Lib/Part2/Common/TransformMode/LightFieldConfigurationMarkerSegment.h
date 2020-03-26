@@ -46,6 +46,7 @@
 #include <vector>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/TransformMode/CommonExceptions.h"
 #include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
@@ -90,7 +91,7 @@ class LightFieldConfigurationMarkerSegment {
   uint16_t get_length_of_marker_segment() const noexcept;
 
 
-  uint32_t get_number_of_4d_blocks() const noexcept;
+  uint32_t get_number_of_4d_blocks() const;
 
 
   const LightfieldDimension<uint32_t>& get_ref_to_block_dimension() const;
