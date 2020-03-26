@@ -32,16 +32,14 @@
  */
 
 /** \file     JPLMEncoderConfigurationLightField4DTransformMode.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
 
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
-
-
-using json = nlohmann::json;
 
 
 void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
@@ -53,14 +51,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_maximum_inter_view_vertical",
       "-TNIv", "Maximum 4D transform size in inter-view vertical direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("maximum")
                                     .at("inter-view")
                                     .at("vertical")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -73,14 +71,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_maximum_inter_view_horizontal",
       "-TMIh", "Maximum 4D transform size in inter-view horizontal direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("maximum")
                                     .at("inter-view")
                                     .at("horizontal")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -93,14 +91,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_maximum_intra_view_vertical",
       "-TMiv", "Maximum 4D transform size in intra-view vertical direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("maximum")
                                     .at("intra-view")
                                     .at("vertical")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -113,14 +111,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_maximum_intra_view_horizontal",
       "-TMih", "Maximum 4D transform size in intra-view horizontal direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("maximum")
                                     .at("intra-view")
                                     .at("horizontal")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -134,14 +132,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_minimum_inter_view_vertical",
       "-TmIv", "Minimum 4D transform size in inter-view vertical direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("minimum")
                                     .at("inter-view")
                                     .at("vertical")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -154,14 +152,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_minimum_inter_view_horizontal",
       "-TmIh", "Minimum 4D transform size in inter-view horizontal direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("minimum")
                                     .at("inter-view")
                                     .at("horizontal")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -174,14 +172,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_minimum_intra_view_vertical",
       "-Tmiv", "Minimum 4D transform size in intra-view vertical direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("minimum")
                                     .at("intra-view")
                                     .at("vertical")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -195,14 +193,14 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--transform_size_minimum_intra_view_horizontal",
       "-Tmih", "Minimum 4D transform size in intra-view horizontal direction.",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         try {
           return std::to_string(conf.at("transform_size")
                                     .at("minimum")
                                     .at("intra-view")
                                     .at("horizontal")
                                     .get<uint32_t>());
-        } catch (json::out_of_range &e) {
+        } catch (nlohmann::json::out_of_range &e) {
         }
         return std::nullopt;
       },
@@ -216,7 +214,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option(
       {"--border_policy", "-B", "Policy to treat border 4D limits.",
-          [this](const json &conf) -> std::optional<std::string> {
+          [this](const nlohmann::json &conf) -> std::optional<std::string> {
             if (conf.contains("border_policy")) {
               return conf["border_policy"].get<std::string>();
             }
@@ -242,7 +240,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
   this->add_cli_json_option({"--lambda", "-l",
       "Lagrangian multiplier used in the RDO process of 4D Transform "
       "mode (floating point value).",
-      [this](const json &conf) -> std::optional<std::string> {
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("lambda")) {
           return std::to_string(conf["lambda"].get<double>());
         }

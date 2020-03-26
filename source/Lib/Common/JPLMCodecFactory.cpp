@@ -32,8 +32,9 @@
  */
 
 /** \file     JPLMCodecFactory.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-05
  */
@@ -86,22 +87,24 @@ std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_encoder(
 }
 
 
+// \todo after implementing the maybe_unused attributes MUST be removed
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_hologram_decoder(
-    std::shared_ptr<JPLFile> jpl_file,
-    const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
-    const std::string &output_filename,
-    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
+    [[maybe_unused]] std::shared_ptr<JPLFile> jpl_file,
+    [[maybe_unused]] const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
+    [[maybe_unused]] const std::string &output_filename,
+    [[maybe_unused]] std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   throw JPLMCommonExceptions::NotImplementedException(
       "JPLMCodecFactory::get_decoders(): "
       "JpegPlenoCodestreamBoxTypes::Hologram");
 }
 
 
+// \todo after implementing the maybe_unused attributes MUST be removed
 std::unique_ptr<JPLMCodec> JPLMCodecFactory::get_point_cloud_decoder(
-    std::shared_ptr<JPLFile> jpl_file,
-    const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
-    const std::string &output_filename,
-    std::shared_ptr<JPLMDecoderConfiguration> configuration) {
+    [[maybe_unused]] std::shared_ptr<JPLFile> jpl_file,
+    [[maybe_unused]] const std::unique_ptr<JpegPlenoCodestreamBox> &codestream,
+    [[maybe_unused]] const std::string &output_filename,
+    [[maybe_unused]] std::shared_ptr<JPLMDecoderConfiguration> configuration) {
   throw JPLMCommonExceptions::NotImplementedException(
       "JPLMCodecFactory::get_decoders(): "
       "JpegPlenoCodestreamBoxTypes::PointCloud");

@@ -34,8 +34,8 @@
 /** \file     JPLMConfiguration.cpp
  *  \brief    Implements JPLMCOnfiguration
  *  \details
- *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2019-11-26
  */
 
