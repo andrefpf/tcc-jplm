@@ -42,6 +42,7 @@
 #define CODESTREAMPOINTERSETMARKERSEGMENT_H__
 
 
+#include <assert.h>
 #include <cmath>
 #include <cstdint>
 #include <variant>
@@ -59,6 +60,7 @@ class CodestreamPointerSetMarkerSegment {
 
  public:
   static constexpr uint8_t SLpnt = 2;
+
   CodestreamPointerSetMarkerSegment(
       const std::vector<std::variant<uint32_t, uint64_t>>& PPnt)
       : PPnt(PPnt) {
@@ -78,6 +80,12 @@ class CodestreamPointerSetMarkerSegment {
 
 
   std::variant<uint32_t, uint64_t> get_pointer_at(std::size_t i);
+
+
+  uint64_t get_length_of_marker_segment() const;
+
+
+  std::vector<std::byte> get_bytes() const;
 };
 
 

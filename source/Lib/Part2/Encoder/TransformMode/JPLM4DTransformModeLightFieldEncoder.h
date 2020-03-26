@@ -45,6 +45,7 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
+#include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
 #include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
@@ -64,11 +65,12 @@ class JPLM4DTransformModeLightFieldEncoder
   LightFieldTransformMode<PelType>& ref_to_lightfield;
   LightFieldConfigurationMarkerSegment lightfield_configuration_marker_segment;
 
-  std::vector<uint64_t> byte_index_for_pnt;
+  std::vector<std::variant<uint32_t, uint64_t>> byte_index_for_pnt;
 
   std::vector<double> sse_per_channel;
   std::vector<std::size_t>
       bytes_per_channel;  //<! Accumulates the total number of encoded bytes of each channel. Does not include header information.
+
 
   virtual uint16_t get_number_of_colour_components() const override {
     return transform_mode_encoder_configuration
@@ -76,7 +78,87 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
 
+  template<typename type_of_pnt_entry>
+  std::size_t get_size_of_pnt() const {
+    // static assert
+    return 12 +
+           lightfield_configuration_marker_segment.get_number_of_4d_blocks() +
+           sizeof(type_of_pnt_entry);
+  }
+
+
+  template<typename type_of_pnt_entry>
+  bool contiguous_codestream_box_will_use_XMBox_field() const noexcept {
+    //begins with 8, which is the size of LBox and TBox, assuming that XLBox is not used.
+    auto n_bytes = std::size_t(8);
+    for (const auto& bytes_in_channel : bytes_per_channel) {
+      n_bytes += bytes_in_channel;
+    }
+    n_bytes += get_size_of_pnt<type_of_pnt_entry>();
+    if (n_bytes > std::numeric_limits<uint32_t>::max()) {
+      return true;
+    }
+    return false;
+  }
+
+
+  template<typename type_of_pnt_entry>
+  uint64_t get_offset_from_box_header_and_pnt() const noexcept {
+    auto offset = uint64_t(
+        contiguous_codestream_box_will_use_XMBox_field<type_of_pnt_entry>()
+            ? 16
+            : 8);
+    offset += get_size_of_pnt<type_of_pnt_entry>();
+    return offset;
+  }
+
+
+  bool is_possible_to_use_32bits_to_encode_all_ptrs() const {
+    //at this point the variant shall contain uint64_t only
+    auto last_index = std::get<uint64_t>(byte_index_for_pnt.back());
+    //the bytes from initial markers are already accounted for.
+    //need to add 8 or 16 bytes (depending on whether the lenght of the codestream box is larger)
+    last_index += get_offset_from_box_header_and_pnt<uint32_t>();
+
+    if (last_index > std::numeric_limits<uint32_t>::max()) {
+      return false;
+    }
+    return true;
+  }
+
+
+  void get_code_with_pnt_marker() {
+    // CodestreamPointerSetMarkerSegment
+    if (is_possible_to_use_32bits_to_encode_all_ptrs()) {
+      const auto& offset = get_offset_from_box_header_and_pnt<uint32_t>();
+      std::transform(byte_index_for_pnt.begin(), byte_index_for_pnt.end(),
+          byte_index_for_pnt.begin(), [offset](const auto v) {
+            return static_cast<uint32_t>(std::get<uint64_t>(v) + offset);
+          });
+    } else {
+      const auto& offset = get_offset_from_box_header_and_pnt<uint64_t>();
+      std::transform(byte_index_for_pnt.begin(), byte_index_for_pnt.end(),
+          byte_index_for_pnt.begin(), [offset](const auto v) {
+            return static_cast<uint64_t>(std::get<uint64_t>(v) + offset);
+          });
+    }
+    const auto pnt = CodestreamPointerSetMarkerSegment(byte_index_for_pnt);
+    std::cout << "before get bytes" << std::endl;
+    const auto bytes = pnt.get_bytes();
+    std::cout << "after get bytes" << std::endl;
+  }
+
+
   std::unique_ptr<ContiguousCodestreamBox> get_contiguous_codestream_box() {
+    std::cout << "get_contiguous_codestream_box" << std::endl;
+    if (transform_mode_encoder_configuration->insert_codestream_pointer_set()) {
+      std::cout << "before get pnt" << std::endl;
+      // const auto& code =
+      get_code_with_pnt_marker();
+      std::cout << "after get pnt" << std::endl;
+    }
+    std::cout << "get_contiguous_codestream_box" << std::endl;
+
     auto codestream_code =
         std::move(hierarchical_4d_encoder.move_codestream_code_out());
     auto contents = std::make_unique<ContiguousCodestreamContents>(
@@ -282,8 +364,10 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
 
   //adds the size as it points to the first byte of the SOB marker
-  byte_index_for_pnt.push_back(
-      number_of_bytes_in_codestream_before_encoding_block);
+  //the cast is to ensure the variant will contain only uint64_t at first
+  //thus avoinding possible overflow with uint32_T
+  byte_index_for_pnt.push_back(static_cast<uint64_t>(
+      number_of_bytes_in_codestream_before_encoding_block));
   hierarchical_4d_encoder.write_marker(Marker::SOB);
 
   auto block_4d = ref_to_lightfield.get_block_4D_from(channel, position, size);
