@@ -41,12 +41,6 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamContents.h"
 
 
-const ContiguousCodestreamCode &
-ContiguousCodestreamContents::get_const_ref_to_code() const {
-  return *code;
-}
-
-
 const ContiguousCodestreamCode &ContiguousCodestreamContents::get_ref_to_code()
     const {
   return *code;

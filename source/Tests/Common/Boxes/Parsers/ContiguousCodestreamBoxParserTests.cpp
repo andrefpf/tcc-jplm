@@ -46,7 +46,6 @@ TEST(BasicTest, ReadsAllDataFromStream) {
 }
 
 
-
 TEST(BasicTest, CodeHasExpectedSize) {
   auto filename = std::string(
       resources_path +
@@ -56,9 +55,10 @@ TEST(BasicTest, CodeHasExpectedSize) {
       ManagedStream(if_stream, std::filesystem::file_size(filename));
   auto box = BoxParserRegistry::get_instance().parse<ContiguousCodestreamBox>(
       std::move(managed_stream));
-  
+
   const auto& contiguous_codestream_box_contents = box->get_ref_to_contents();
-  const auto& contiguous_codestream_box_code = contiguous_codestream_box_contents.get_const_ref_to_code();
+  const auto& contiguous_codestream_box_code =
+      contiguous_codestream_box_contents.get_ref_to_code();
 
   EXPECT_EQ(contiguous_codestream_box_code.size(), 4);
 }
@@ -73,8 +73,9 @@ TEST(BasicTest, ReadsAllExpectedCode) {
       ManagedStream(if_stream, std::filesystem::file_size(filename));
   auto box = BoxParserRegistry::get_instance().parse<ContiguousCodestreamBox>(
       std::move(managed_stream));
-  
-  const auto& contiguous_codestream_box_code = box->get_ref_to_contents().get_const_ref_to_code();
+
+  const auto& contiguous_codestream_box_code =
+      box->get_ref_to_contents().get_ref_to_code();
 
   EXPECT_EQ(contiguous_codestream_box_code.get_byte_at(0), std::byte{25});
   EXPECT_EQ(contiguous_codestream_box_code.get_byte_at(1), std::byte{42});

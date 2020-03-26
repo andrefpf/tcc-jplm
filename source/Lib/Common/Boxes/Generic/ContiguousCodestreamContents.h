@@ -70,12 +70,8 @@ class ContiguousCodestreamContents : public SuperBoxDBox {
       : code(std::unique_ptr<ContiguousCodestreamCode>(other.code->clone())){}
 
 
-            //<! \todo remove this method (it is not necessary to be defined as const in its name)
             [[nodiscard]] const ContiguousCodestreamCode
-        & get_const_ref_to_code() const;
-
-
-  [[nodiscard]] const ContiguousCodestreamCode& get_ref_to_code() const;
+        & get_ref_to_code() const;
 
 
   ContiguousCodestreamCode& get_ref_to_code();
