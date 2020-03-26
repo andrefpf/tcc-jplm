@@ -75,6 +75,16 @@ class JPLM4DTransformModeLightFieldEncoder
         ->get_number_of_colour_channels();
   }
 
+
+  std::unique_ptr<ContiguousCodestreamBox> get_contiguous_codestream_box() {
+    auto codestream_code =
+        std::move(hierarchical_4d_encoder.move_codestream_code_out());
+    auto contents = std::make_unique<ContiguousCodestreamContents>(
+        std::move(codestream_code));
+    return std::make_unique<ContiguousCodestreamBox>(std::move(contents));
+  }
+
+
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::shared_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
@@ -240,6 +250,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::show_error_estimate() {
   }
 }
 
+
 template<typename PelType>
 void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto& codestreams = this->jpl_file->get_reference_to_codestreams();
@@ -249,12 +260,7 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::finalization() {
   auto& lightfield_box_contents =
       first_codestream_as_part2.get_ref_to_contents();
 
-  auto codestream_code =
-      std::move(hierarchical_4d_encoder.move_codestream_code_out());
-  auto contents = std::make_unique<ContiguousCodestreamContents>(
-      std::move(codestream_code));
-  auto codestream_box =
-      std::make_unique<ContiguousCodestreamBox>(std::move(contents));
+  auto codestream_box = get_contiguous_codestream_box();
   lightfield_box_contents.add_contiguous_codestream_box(
       std::move(codestream_box));
 
