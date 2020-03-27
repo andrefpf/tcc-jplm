@@ -38,8 +38,8 @@
  *  \date     2020-01-03
  */
 
-#ifndef CODESTREAMPOINTERSETMARKERSEGMENT_H__
-#define CODESTREAMPOINTERSETMARKERSEGMENT_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_CODESTREAMPOINTERSETMARKERSEGMENT_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_CODESTREAMPOINTERSETMARKERSEGMENT_H__
 
 
 #include <assert.h>
@@ -76,10 +76,10 @@ class CodestreamPointerSetMarkerSegment {
   ~CodestreamPointerSetMarkerSegment() = default;
 
 
-  std::size_t get_number_of_pointers();
+  std::size_t get_number_of_pointers() const;
 
 
-  std::variant<uint32_t, uint64_t> get_pointer_at(std::size_t i);
+  std::variant<uint32_t, uint64_t> get_pointer_at(std::size_t i) const;
 
 
   uint64_t get_length_of_marker_segment() const;
@@ -89,4 +89,4 @@ class CodestreamPointerSetMarkerSegment {
 };
 
 
-#endif /* end of include guard: CODESTREAMPOINTERSETMARKERSEGMENT_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_CODESTREAMPOINTERSETMARKERSEGMENT_H__ */

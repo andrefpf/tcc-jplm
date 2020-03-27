@@ -32,8 +32,9 @@
  */
 
 /** \file     UndefinedContents.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-06
  */
@@ -48,7 +49,7 @@ UndefinedContents *UndefinedContents::clone() const {
 bool UndefinedContents::is_equal(const DBox &other) const {
   if (typeid(*this) != typeid(other))
     return false;
-  const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
+  const auto &cast_other = dynamic_cast<const UndefinedContents &>(other);
   return *this == cast_other;
 }
 

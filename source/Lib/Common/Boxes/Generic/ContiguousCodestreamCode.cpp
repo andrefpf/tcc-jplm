@@ -40,17 +40,20 @@
 
 #include "ContiguousCodestreamCode.h"
 
+
 std::ostream& operator<<(
     std::ostream& stream, const ContiguousCodestreamCode& code) {
   return code.write_to(stream);
 }
 
+
 bool ContiguousCodestreamCode::operator==(
-    const ContiguousCodestreamCode &other) const {
+    const ContiguousCodestreamCode& other) const {
   return this->is_equal(other);
 }
 
+
 bool ContiguousCodestreamCode::operator!=(
-    const ContiguousCodestreamCode &other) const {
+    const ContiguousCodestreamCode& other) const {
   return !this->operator==(other);
 }

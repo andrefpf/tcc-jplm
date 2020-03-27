@@ -32,8 +32,9 @@
  */
 
 /** \file     BoxParserHelperBase.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-06
  */
@@ -64,8 +65,7 @@ uint32_t BoxParserHelperBase::get_t_box_value_from_stream() {
 }
 
 BoxParserHelperBase::BoxParserHelperBase(ManagedStream &stream, uint64_t length,
-                                         uint32_t t_box_value_in_stream,
-                                         bool has_xl_field)
+    uint32_t t_box_value_in_stream, bool has_xl_field)
     : managed_stream(stream.get_sub_managed_stream(length)), length(length),
       t_box_value_in_stream(t_box_value_in_stream), has_xl_field(has_xl_field) {
   managed_stream.seek(get_non_data_length());
@@ -81,7 +81,8 @@ BoxParserHelperBase::BoxParserHelperBase(ManagedStream &stream)
 
 BoxParserHelperBase BoxParserHelperBase::get_helper_with_protected_range() {
   managed_stream.rewind();
-  return BoxParserHelperBase(managed_stream, length, t_box_value_in_stream, has_xl_field);
+  return BoxParserHelperBase(
+      managed_stream, length, t_box_value_in_stream, has_xl_field);
 }
 
 uint64_t BoxParserHelperBase::get_length() const noexcept {

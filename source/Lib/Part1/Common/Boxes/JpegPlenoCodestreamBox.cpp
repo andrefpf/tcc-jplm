@@ -32,8 +32,9 @@
  */
 
 /** \file     JpegPlenoCodestreamBox.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-07
  */
@@ -44,24 +45,25 @@
 void JpegPlenoCodestreamBox::check_type() const {
   if (auto value = this->t_box.get_value();
       (value != static_cast<t_box_id_type>(
-          JpegPlenoCodestreamBoxTypes::LightField)) &&
+                    JpegPlenoCodestreamBoxTypes::LightField)) &&
       (value != static_cast<t_box_id_type>(
-          JpegPlenoCodestreamBoxTypes::PointCloud)) &&
-      (value != static_cast<t_box_id_type>(
-          JpegPlenoCodestreamBoxTypes::Hologram))) {
+                    JpegPlenoCodestreamBoxTypes::PointCloud)) &&
+      (value !=
+          static_cast<t_box_id_type>(JpegPlenoCodestreamBoxTypes::Hologram))) {
     throw JpegPlenoCodestreamBoxExceptions::InvalidJpegPlenoCodestreamTypeId(
         value);
   }
 }
 
 
-JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(TBox t_box, const DBox &d_box) : Box(t_box, d_box) {
+JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(TBox t_box, const DBox &d_box)
+    : Box(t_box, d_box) {
   this->check_type();
 }
 
 
-JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(TBox t_box,
-                                               std::unique_ptr<DBox> &&d_box)
+JpegPlenoCodestreamBox::JpegPlenoCodestreamBox(
+    TBox t_box, std::unique_ptr<DBox> &&d_box)
     : Box(t_box, std::move(d_box)) {
   this->check_type();
 }

@@ -32,11 +32,13 @@
  */
 
 /** \file     CameraParameterContents.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-10
  */
+
 #include "Lib/Part2/Common/Boxes/CameraParameterContents.h"
 
 

@@ -38,8 +38,8 @@
  *  \date     2019-10-16
  */
 
-#ifndef COMPONENTSSIZPARAMETER_H__
-#define COMPONENTSSIZPARAMETER_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMPONENTSSIZPARAMETER_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMPONENTSSIZPARAMETER_H__
 
 #include <cstdint>
 
@@ -68,4 +68,4 @@ class ComponentSsizParameter {
   uint8_t get_component_sample_precision() const noexcept;
 };
 
-#endif /* end of include guard: COMPONENTSSIZPARAMETER_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMPONENTSSIZPARAMETER_H__ */

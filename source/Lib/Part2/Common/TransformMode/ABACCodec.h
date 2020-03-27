@@ -34,6 +34,7 @@
 /** \file     ABACCodec.h
  *  \brief    
  *  \details  
+ *  \author   Murilo Bresciani
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-26
  */

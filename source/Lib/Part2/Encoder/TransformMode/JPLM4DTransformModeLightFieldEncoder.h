@@ -42,10 +42,8 @@
 #define JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__
 
 #include "CppConsoleTable/CppConsoleTable.hpp"
-#include "Lib/Common/Boxes/Generic/ContiguousCodestreamBox.h"
 #include "Lib/Common/JPLMEncoderConfigurationLightField4DTransformMode.h"
 #include "Lib/Part2/Common/TransformMode/BorderBlocksPolicy.h"
-#include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
 #include "Lib/Part2/Common/TransformMode/JPLM4DTransformModeLightFieldCodec.h"
 #include "Lib/Part2/Common/TransformMode/LightFieldConfigurationMarkerSegment.h"
 #include "Lib/Part2/Encoder/JPLMLightFieldEncoder.h"
@@ -81,10 +79,11 @@ class JPLM4DTransformModeLightFieldEncoder
 
   template<typename type_of_pnt_entry>
   std::size_t get_size_of_pnt() const {
+    //here needs to sum 12 instead of 9 because it accounts for the marker and SLmar
     // static assert
-    return 9 +
-           lightfield_configuration_marker_segment.get_number_of_4d_blocks() +
-           sizeof(type_of_pnt_entry);
+    return 12 +
+           (lightfield_configuration_marker_segment.get_number_of_4d_blocks() *
+               sizeof(type_of_pnt_entry));
   }
 
 
@@ -128,8 +127,12 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
 
-  CodestreamPointerSetMarkerSegment get_code_with_pnt_marker() {
+  std::unique_ptr<CodestreamPointerSetMarkerSegment> get_pnt_marker_segment() {
     // CodestreamPointerSetMarkerSegment
+    if (!transform_mode_encoder_configuration
+             ->insert_codestream_pointer_set()) {
+      return nullptr;
+    }
     if (is_possible_to_use_32bits_to_encode_all_ptrs()) {
       const auto& offset = get_offset_from_box_header_and_pnt<uint32_t>();
       std::transform(byte_index_for_pnt.begin(), byte_index_for_pnt.end(),
@@ -143,7 +146,8 @@ class JPLM4DTransformModeLightFieldEncoder
             return static_cast<uint64_t>(std::get<uint64_t>(v) + offset);
           });
     }
-    return CodestreamPointerSetMarkerSegment(byte_index_for_pnt);
+    return std::make_unique<CodestreamPointerSetMarkerSegment>(
+        byte_index_for_pnt);
   }
 
 
@@ -151,15 +155,22 @@ class JPLM4DTransformModeLightFieldEncoder
     auto codestream_code =
         std::move(hierarchical_4d_encoder.move_codestream_code_out());
 
-    if (transform_mode_encoder_configuration->insert_codestream_pointer_set()) {
-      const auto& pnt = get_code_with_pnt_marker();
-      codestream_code->insert_bytes(first_sob_position, pnt.get_bytes());
+    auto pnt = get_pnt_marker_segment();
+    if (pnt) {
+      codestream_code->insert_bytes(first_sob_position, pnt->get_bytes());
     }
 
 
     auto contents = std::make_unique<ContiguousCodestreamContents>(
         std::move(codestream_code));
-    return std::make_unique<ContiguousCodestreamBox>(std::move(contents));
+
+    auto contigous_codestream_box =
+        std::make_unique<ContiguousCodestreamBox>(std::move(contents));
+
+    if (pnt) {
+      this->check_consistency_of_pnt(*contigous_codestream_box, *pnt);
+    }
+    return contigous_codestream_box;
   }
 
 

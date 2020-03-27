@@ -32,21 +32,22 @@
  */
 
 /** \file     CodestreamPointerSetMarkerSegment.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-11
  */
 #include "Lib/Part2/Common/TransformMode/CodestreamPointerSetMarkerSegment.h"
 
 
-std::size_t CodestreamPointerSetMarkerSegment::get_number_of_pointers() {
+std::size_t CodestreamPointerSetMarkerSegment::get_number_of_pointers() const {
   return PPnt.size();
 }
 
 
 std::variant<uint32_t, uint64_t>
-CodestreamPointerSetMarkerSegment::get_pointer_at(std::size_t i) {
+CodestreamPointerSetMarkerSegment::get_pointer_at(std::size_t i) const {
   return PPnt.at(i);
 }
 

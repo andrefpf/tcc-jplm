@@ -45,6 +45,47 @@
 #include <exception>
 #include <string>
 
+// OverflowInTheEntriesOfPNT
+//
+
+namespace CodestreamPointerSetMarker {
+class OverflowInTheEntriesOfPNT : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit OverflowInTheEntriesOfPNT()
+      : message_(
+            "The codestream pointer set marker segment is not well-formed. The "
+            "most probable cause is that an overflow happened during the "
+            "generation of the index. ") {
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+
+class CodestreamPointerSetEntryIsNotPointingToSOB : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit CodestreamPointerSetEntryIsNotPointingToSOB(std::size_t index)
+      : message_(
+            "The codestream pointer set marker segment is not well-formed. "
+            "At least one index (#" +
+            std::to_string(index) +
+            ") is pointing to a non SOB marker group of bytes. ") {
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+}  // namespace CodestreamPointerSetMarker
+
 namespace LightFieldConfigurationMarker {
 class OverflowInTheNumberOf4DBlocks : public std::exception {
  private:

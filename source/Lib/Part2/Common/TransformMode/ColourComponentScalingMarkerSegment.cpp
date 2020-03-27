@@ -32,8 +32,9 @@
  */
 
 /** \file     ColourComponentScalingMarkerSegment.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-12
  */
@@ -44,12 +45,11 @@ ColourComponentScalingMarkerSegment::ColourComponentScalingMarkerSegment(
     bool has_more_than_256_colour_components,
     std::size_t colour_component_index, uint16_t Spscc)
     : more_than_256_colour_components(has_more_than_256_colour_components),
-      colour_component(
-          has_more_than_256_colour_components
-          ? std::variant<uint8_t, uint16_t>(
-              static_cast<uint16_t>(colour_component_index))
-          : std::variant<uint8_t, uint16_t>(
-              static_cast<uint8_t>(colour_component_index))),
+      colour_component(has_more_than_256_colour_components
+                           ? std::variant<uint8_t, uint16_t>(
+                                 static_cast<uint16_t>(colour_component_index))
+                           : std::variant<uint8_t, uint16_t>(
+                                 static_cast<uint8_t>(colour_component_index))),
       exponent(get_exponent_from_Spscc(Spscc)),
       mantissa(get_mantissa_from_Spscc(Spscc)) {
 }
@@ -58,7 +58,7 @@ ColourComponentScalingMarkerSegment::ColourComponentScalingMarkerSegment(
 ColourComponentScalingMarkerSegment::ColourComponentScalingMarkerSegment(
     std::size_t NC, std::size_t colour_component_index, uint16_t Spscc)
     : ColourComponentScalingMarkerSegment(
-    NC > 256 ? true : false, colour_component_index, Spscc) {
+          NC > 256 ? true : false, colour_component_index, Spscc) {
 }
 
 
@@ -78,7 +78,8 @@ ColourComponentScalingMarkerSegment::get_colour_component_index() {
 }
 
 
-bool ColourComponentScalingMarkerSegment::has_more_than_256_colour_components() {
+bool ColourComponentScalingMarkerSegment::
+    has_more_than_256_colour_components() {
   return more_than_256_colour_components;
 }
 

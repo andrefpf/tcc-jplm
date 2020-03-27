@@ -34,6 +34,7 @@
 /** \file     Block4D.h
  *  \brief    
  *  \details  
+ *  \author   Murilo Bresciani
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-26
  *  \note This file must be updated by a new implementation of 4D Block
