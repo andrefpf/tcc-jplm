@@ -46,12 +46,11 @@ UndefinedContents *UndefinedContents::clone() const {
 
 
 bool UndefinedContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other)) {
-    return false;
-  } else {
+  if (typeid(*this) == typeid(other)) {
     const auto &cast_other = dynamic_cast<const UndefinedContents &>(other);
     return *this == cast_other;
   }
+  return false;
 }
 
 
