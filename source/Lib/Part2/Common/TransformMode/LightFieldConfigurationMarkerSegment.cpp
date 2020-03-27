@@ -48,7 +48,8 @@ uint16_t LightFieldConfigurationMarkerSegment::get_number_of_colour_components()
 
 uint16_t LightFieldConfigurationMarkerSegment::get_length_of_marker_segment()
     const noexcept {
-  return 40 + 2 * get_number_of_colour_components();
+  // in the standard it says 40+2*colour components... But it is not accounting for TRNC
+  return 41 + 2 * get_number_of_colour_components();
 }
 
 

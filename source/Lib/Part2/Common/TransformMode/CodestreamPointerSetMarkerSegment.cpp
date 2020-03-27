@@ -53,11 +53,10 @@ CodestreamPointerSetMarkerSegment::get_pointer_at(std::size_t i) {
 
 uint64_t CodestreamPointerSetMarkerSegment::get_length_of_marker_segment()
     const {
-  //the standard mentions 9 instead of 12
   if (std::holds_alternative<uint32_t>(PPnt[0])) {
-    return 12 + PPnt.size() * sizeof(uint32_t);
+    return 9 + PPnt.size() * sizeof(uint32_t);
   }
-  return 12 + PPnt.size() * sizeof(uint64_t);
+  return 9 + PPnt.size() * sizeof(uint64_t);
 }
 
 
@@ -83,7 +82,7 @@ std::vector<std::byte> CodestreamPointerSetMarkerSegment::get_bytes() const {
             const auto& v) { BinaryTools::append_big_endian_bytes(bytes, v); },
         Ppnt_element);
   }
-  assert(bytes.size() == get_length_of_marker_segment());
+  assert((bytes.size() - 3) == get_length_of_marker_segment());
   std::cout << bytes.size() << std::endl;
   return bytes;
 }

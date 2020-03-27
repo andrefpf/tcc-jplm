@@ -84,6 +84,10 @@ class ContiguousCodestreamCode {
   virtual void rewind(std::size_t n_bytes_to_rewind) const = 0;
 
 
+  virtual void insert_bytes(std::size_t initial_position,
+      const std::vector<std::byte>& bytes_to_insert) = 0;
+
+
   bool operator==(const ContiguousCodestreamCode& other) const;
 
 

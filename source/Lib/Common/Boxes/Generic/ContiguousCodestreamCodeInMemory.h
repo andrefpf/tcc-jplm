@@ -107,6 +107,10 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   void rewind(std::size_t n_bytes_to_rewind) const override;
 
 
+  void insert_bytes(std::size_t initial_position,
+      const std::vector<std::byte>& bytes_to_insert) override;
+
+
   ContiguousCodestreamCodeInMemory* clone() const override;
 
 
