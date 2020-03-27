@@ -124,12 +124,11 @@ uint64_t ImageHeaderContents::size() const noexcept {
 
 
 bool ImageHeaderContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other)) {
-    return false;
-  } else {
+  if (typeid(*this) == typeid(other)) {
     const auto &cast_other = dynamic_cast<const ImageHeaderContents &>(other);
     return *this == cast_other;
   }
+  return false;
 }
 
   
