@@ -4,7 +4,7 @@ project(googletest-download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(googletest
-  GIT_REPOSITORY    http://dmz-2.dmz.org.br/scm/lfc/extdep-googletest.git
+  GIT_REPOSITORY    http://dmz-2.dmz.org.br:7990/scm/lfc/extdep-googletest.git
   GIT_TAG           master
   SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
   BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"

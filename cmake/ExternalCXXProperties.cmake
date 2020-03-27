@@ -136,7 +136,7 @@ endfunction()
 
 git_clone(
     PROJECT_NAME    cxxproperties
-    GIT_URL         http://dmz-2.dmz.org.br/scm/lfc/extdep-cxxproperties.git
+    GIT_URL         http://dmz-2.dmz.org.br:7990/scm/lfc/extdep-cxxproperties.git
     GIT_BRANCH      master
     DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}"
 )
