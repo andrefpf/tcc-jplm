@@ -42,33 +42,35 @@
 
 
 bool ChannelDefinitionContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other))
+  if (typeid(*this) != typeid(other)) {
     return false;
-  const auto &cast_other =
-      dynamic_cast<const ChannelDefinitionContents &>(other);
-  return *this == cast_other;
+  } else {
+    const auto &cast_other =
+        dynamic_cast<const ChannelDefinitionContents &>(other);
+    return *this == cast_other;
+  }
 }
 
 
-ChannelDefinitionContents *ChannelDefinitionContents::clone() const {
-  return new ChannelDefinitionContents(*this);
-}
+  ChannelDefinitionContents *ChannelDefinitionContents::clone() const {
+    return new ChannelDefinitionContents(*this);
+  }
 
 
-uint64_t ChannelDefinitionContents::size() const noexcept {
-  //2 is from N (number of channel descriptions)
-  //3 is from the 3 fields in ChannelDescription
-  return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
-}
+  uint64_t ChannelDefinitionContents::size() const noexcept {
+    //2 is from N (number of channel descriptions)
+    //3 is from the 3 fields in ChannelDescription
+    return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
+  }
 
 
-bool ChannelDefinitionContents::operator==(
-    const ChannelDefinitionContents &other) const {
-  return this->channel_descriptions == other.channel_descriptions;
-}
+  bool ChannelDefinitionContents::operator==(
+      const ChannelDefinitionContents &other) const {
+    return this->channel_descriptions == other.channel_descriptions;
+  }
 
 
-bool ChannelDefinitionContents::operator!=(
-    const ChannelDefinitionContents &other) const {
-  return !this->operator==(other);
-}
+  bool ChannelDefinitionContents::operator!=(
+      const ChannelDefinitionContents &other) const {
+    return !this->operator==(other);
+  }

@@ -43,6 +43,12 @@
 
 UniversalUniqueIdentifier::UniversalUniqueIdentifier(
     const std::string &hex_string) {
+  node = 0;
+  clock_seq_low = 0;
+  clock_seq_hi_and_reserved = 0;
+  time_hi_and_version = 0;
+  time_mid = 0;
+  time_low = 0;
   //! \todo implement
   //static_assert(false, "Not implemented");
   std::cerr << "Contructor not implemented yet << " << hex_string << std::endl;
