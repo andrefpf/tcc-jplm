@@ -57,12 +57,11 @@ const std::vector<uint8_t> &CharArrayContents::get_const_ref_to_vector() const {
 
 
 bool CharArrayContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other)) {
-    return false;
-  } else {
+  if (typeid(*this) == typeid(other)) {
     const auto &cast_other = dynamic_cast<const CharArrayContents &>(other);
     return *this == cast_other;
   }
+  return false;
 }
 
 
