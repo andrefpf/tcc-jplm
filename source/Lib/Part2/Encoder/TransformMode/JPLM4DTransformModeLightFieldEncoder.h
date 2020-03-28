@@ -168,7 +168,9 @@ class JPLM4DTransformModeLightFieldEncoder
         std::make_unique<ContiguousCodestreamBox>(std::move(contents));
 
     if (pnt) {
-      this->check_consistency_of_pnt(*contigous_codestream_box, *pnt);
+      this->check_consistency_of_pnt(
+          contigous_codestream_box->get_ref_to_contents().get_ref_to_code(),
+          *pnt);
     }
     return contigous_codestream_box;
   }
@@ -308,9 +310,12 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::show_error_estimate() {
   auto bpp = ref_to_lightfield.get_views_bpp();
 
 
-  std::cout << (this->jpl_file->size() * 8.0) /
-                   static_cast<double>(number_of_pels)
-            << " bpp" << std::endl;
+  if (transform_mode_encoder_configuration->is_verbose()) {
+    std::cout << '\n'
+              << (this->jpl_file->size() * 8.0) /
+                     static_cast<double>(number_of_pels)
+              << " bpp\n";
+  }
 
   if (transform_mode_encoder_configuration->show_error_estimate()) {
     std::cout << "\n############### Estimated error ###############\n";

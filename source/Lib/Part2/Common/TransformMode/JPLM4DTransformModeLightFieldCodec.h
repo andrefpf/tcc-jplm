@@ -73,19 +73,15 @@ class JPLM4DTransformModeLightFieldCodec
   /**
    * \brief      Checks the consistency of pnt
    *
-   * \param[in]  contigous_codestream_box  The contigous codestream box
-   * \param[in]  pnt                       The codestream pointer set marker segment (pnt)
+   * \param[in]  code  The contigous codestream code
+   * \param[in]  pnt   The codestream pointer set marker segment (pnt)
    * 
    * Throws if each pointer is not pointing to a SOB marker.
    * \todo throw if the number of entries is different than the number of 4d blocks
    * 
    */
-  void check_consistency_of_pnt(
-      const ContiguousCodestreamBox& contigous_codestream_box,
+  void check_consistency_of_pnt(const ContiguousCodestreamCode& code,
       const CodestreamPointerSetMarkerSegment& pnt) const {
-    const auto& code =
-        contigous_codestream_box.get_ref_to_contents().get_ref_to_code();
-
     auto n_pointers = pnt.get_number_of_pointers();
 
     for (auto i = decltype(n_pointers){0}; i < n_pointers; ++i) {
@@ -95,11 +91,12 @@ class JPLM4DTransformModeLightFieldCodec
           [&code, &previous_index](auto index) {
             if (index < previous_index) {
               //advancing in the bitstream cannot have a smaller value
-              //if this happened it is most probable caused by an overflow
+              //if this happened it was most probably caused by an overflow
               throw CodestreamPointerSetMarker::OverflowInTheEntriesOfPNT();
             }
             previous_index = index;
             constexpr uint64_t box_lenght_and_type_size = 8;
+
             if (!((code.get_byte_at(index - box_lenght_and_type_size) ==
                       std::byte{0xFF}) &&
                     (code.get_byte_at(index - box_lenght_and_type_size + 1) ==
@@ -111,6 +108,7 @@ class JPLM4DTransformModeLightFieldCodec
           index_var);
     }
   }
+
 
   /**
    * @brief      Gets the number of colour components.

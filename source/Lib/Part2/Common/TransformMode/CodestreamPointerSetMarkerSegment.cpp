@@ -72,9 +72,9 @@ std::vector<std::byte> CodestreamPointerSetMarkerSegment::get_bytes() const {
   BinaryTools::append_big_endian_bytes(bytes, get_length_of_marker_segment());
   //11
   if (std::holds_alternative<uint32_t>(PPnt[0])) {
-    BinaryTools::append_big_endian_bytes(bytes, static_cast<uint8_t>(1));
+    BinaryTools::append_big_endian_bytes(bytes, static_cast<uint8_t>(0));
   } else {
-    BinaryTools::append_big_endian_bytes(bytes, static_cast<uint8_t>(2));
+    BinaryTools::append_big_endian_bytes(bytes, static_cast<uint8_t>(1));
   }
   //12
   for (const auto& Ppnt_element : PPnt) {
@@ -84,6 +84,5 @@ std::vector<std::byte> CodestreamPointerSetMarkerSegment::get_bytes() const {
         Ppnt_element);
   }
   assert((bytes.size() - 3) == get_length_of_marker_segment());
-  std::cout << bytes.size() << std::endl;
   return bytes;
 }

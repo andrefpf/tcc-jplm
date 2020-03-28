@@ -74,7 +74,7 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
   ContiguousCodestreamCodeInMemory(
       const ContiguousCodestreamCodeInMemory& other)
       : bytes(other.bytes), current_pos(other.current_pos) {
-    std::cout << "copy of ContiguousCodestreamCodeInMemory " << std::endl;
+    // std::cout << "copy of ContiguousCodestreamCodeInMemory " << std::endl;
   }
 
 
@@ -102,6 +102,11 @@ class ContiguousCodestreamCodeInMemory : public ContiguousCodestreamCode {
 
 
   bool is_next_valid() const override;
+
+
+  std::size_t get_current_position() const override {
+    return current_pos;
+  }
 
 
   void rewind(std::size_t n_bytes_to_rewind) const override;

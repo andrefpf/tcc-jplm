@@ -63,7 +63,6 @@ class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,
       public JPLMLightFieldDecoder<PelType> {
  protected:
-  // const JpegPlenoLightFieldBox& light_field_box_;
   std::shared_ptr<JPLMDecoderConfiguration>
       transform_mode_decoder_configuration;
   std::unique_ptr<LightFieldConfigurationMarkerSegment>
@@ -186,7 +185,7 @@ class JPLM4DTransformModeLightFieldDecoder
             this->partition_decoder.set_colour_component_scaling_factor(
                 index, scaling_factor);
             std::cout << "Detected scaling factor " << scaling_factor
-                      << " for colour channel " << index << std::endl;
+                      << " for colour channel " << index << '\n';
           },
           index_variant);
     }
@@ -195,14 +194,17 @@ class JPLM4DTransformModeLightFieldDecoder
       auto codestream_pointer_set_marker_segment =
           CodestreamPointerSetMarkerSegmentParser::
               get_codestream_pointer_set_marker_segment(codestream_code);
-      // this->check_consistency_of_pnt(
-      //     light_field_box_.get_ref_to_contents()
-      //         .get_ref_to_contiguous_codestream_box(),
-      //     codestream_pointer_set_marker_segment);
+      this->check_consistency_of_pnt(
+          codestream_code, codestream_pointer_set_marker_segment);
       marker = get_next_marker_bytes();
+      if (transform_mode_decoder_configuration->is_verbose()) {
+        std::cout << "Found a consistent PNT\n";
+      }
     } else {
-      std::cout << "There is no PNT marker segment in the contiguous codestream"
-                << std::endl;
+      if (transform_mode_decoder_configuration->is_verbose()) {
+        std::cout
+            << "There is no PNT marker segment in the contiguous codestream\n";
+      }
     }
     std::cout << "No more optional markers" << std::endl;
   }

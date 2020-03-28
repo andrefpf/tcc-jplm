@@ -105,6 +105,9 @@ class ContiguousCodestreamCode {
   virtual std::byte get_byte_at(const uint64_t pos) const = 0;
 
 
+  virtual std::size_t get_current_position() const = 0;
+
+
   /**
    * \brief      Gets the next byte.
    *
