@@ -137,7 +137,7 @@ endfunction()
 
 git_clone(
     PROJECT_NAME    tqdm-cpp
-    GIT_URL         http://dmz-2.dmz.org.br:7990/scm/lfc/extdep-tqdm-cpp.git
+    GIT_URL         https://gitlab.com/pedrogarcia/tqdm-cpp.git
     GIT_BRANCH      master
     DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}"
 )
