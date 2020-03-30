@@ -4,7 +4,7 @@ project(cppitertools-download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(cppitertools
-  GIT_REPOSITORY    http://dmz-2.dmz.org.br:7990/scm/lfc/extdep-cppitertools.git
+  GIT_REPOSITORY    https://github.com/pedrogarciafreitas/cppitertools.git
   GIT_TAG           master
   SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/cppitertools-src/cppitertools"
   BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/cppitertools-build/cppitertools"
