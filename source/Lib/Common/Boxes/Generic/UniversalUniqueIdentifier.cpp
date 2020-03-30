@@ -43,7 +43,7 @@
 
 UniversalUniqueIdentifier::UniversalUniqueIdentifier(
     const std::string &hex_string) {
-  node = 0;
+  node = { 0, 0 };
   clock_seq_low = 0;
   clock_seq_hi_and_reserved = 0;
   time_hi_and_version = 0;
