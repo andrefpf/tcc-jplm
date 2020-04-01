@@ -77,7 +77,8 @@ We still need to create a inverse lenslet_13x13_shifter to be executed after dec
 Yet, the PSNR between a original dark view and its decoded should be the same as the PSNR between a original brighten view and its decoded (also brighten).
 
 ## Architecture overview
-TODO
+
+![jplm-modules-architecture.png](doc/diagrams/jplm-modules-architecture.png "JPLM Architecture")
 
 ## Build instructions
 
