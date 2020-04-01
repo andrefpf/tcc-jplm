@@ -111,8 +111,8 @@ class PSNRComputerConfiguration : public BasicConfiguration {
         "Direction of shift ('encoder' to be used in the encoder or"
         " 'decoder' to be used after the decoding process). ",
         [this](const nlohmann::json& conf) -> std::optional<std::string> {
-          if (conf.contains("direction")) {
-            return conf["direction"].get<std::string>();
+          if (conf.contains("color_space")) {
+            return conf["color_space"].get<std::string>();
           }
           return std::nullopt;
         },
