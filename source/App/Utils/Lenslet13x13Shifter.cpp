@@ -41,15 +41,102 @@
 #include <filesystem>
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
-#include <sstream>
-#include "Lib/Utils/Image/Image.h"
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
 #include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
 
 
-void shift_view(
-    const std::string& filename_input, const std::string& filename_output, int8_t value) {
+class Lenslet13x13ShifterConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
+
+ protected:
+  std::string input;
+  std::string output;
+  std::string direction;
+
+  Lenslet13x13ShifterConfiguration(int argc, char** argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
+  }
+
+
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
+
+
+    this->add_cli_json_option({"--input", "-i",
+        "Input directory that contains at least three subdirectories with PGX "
+        "files.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("input")) {
+            return conf["input"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--output", "-o",
+        "Output PPM (P6) filename. The name of the output file will be used to "
+        "detect the input name in each channel directory. ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("output")) {
+            return conf["output"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--direction", "-d",
+        "Direction of shift ('encoder' to be used in the encoder or"
+        " 'decoder' to be used after the decoding process). ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("direction")) {
+            return conf["direction"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->direction = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+  }
+
+ public:
+  Lenslet13x13ShifterConfiguration(int argc, char** argv)
+      : Lenslet13x13ShifterConfiguration(argc, argv,
+            Lenslet13x13ShifterConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+  }
+
+
+  virtual ~Lenslet13x13ShifterConfiguration() = default;
+
+
+  const std::string& get_input_filename() const {
+    return input;
+  }
+
+
+  const std::string& get_output_filename() const {
+    return output;
+  }
+
+
+  const std::string& get_direction() const {
+    return direction;
+  }
+};
+
+
+void shift_view(const std::string& filename_input,
+    const std::string& filename_output, int8_t value) {
   auto view_file = PixelMapFileIO::open(filename_input);
   auto view_variant = view_file->read_full_image();
   std::visit(
@@ -105,7 +192,8 @@ bool are_input_and_output_paths_valid(
 }
 
 
-void shift_for_encoding(const std::string& input_path, const std::string& output_path) {
+void shift_for_encoding(
+    const std::string& input_path, const std::string& output_path) {
   auto initial_t = 1;
   auto initial_s = 1;
   auto final_t = initial_t + 13;
@@ -114,22 +202,25 @@ void shift_for_encoding(const std::string& input_path, const std::string& output
   for (auto t = initial_t; t < final_t; ++t) {
     for (auto s = initial_s; s < final_s; ++s) {
       auto input_view_name = get_view_name({t, s});
-      auto output_view_name = get_view_name({t-1, s-1});
+      auto output_view_name = get_view_name({t - 1, s - 1});
       if ((t == initial_t) || (t == final_t - 1)) {
         if ((s == initial_s) || (s == final_s - 1)) {
           std::cout << "Shifting view " << input_view_name << '\n';
-          shift_view({input_path + input_view_name}, {output_path + output_view_name}, 2);
+          shift_view({input_path + input_view_name},
+              {output_path + output_view_name}, 2);
           continue;
         }
       }
       std::cout << "Copying view " << input_view_name << '\n';
-      copy_view({input_path + input_view_name}, {output_path + output_view_name});
+      copy_view(
+          {input_path + input_view_name}, {output_path + output_view_name});
     }
   }
 }
 
 
-void shift_for_decoding(const std::string& input_path, const std::string& output_path) {
+void shift_for_decoding(
+    const std::string& input_path, const std::string& output_path) {
   auto initial_t = 0;
   auto initial_s = 0;
   auto final_t = initial_t + 13;
@@ -138,40 +229,39 @@ void shift_for_decoding(const std::string& input_path, const std::string& output
   for (auto t = initial_t; t < final_t; ++t) {
     for (auto s = initial_s; s < final_s; ++s) {
       auto input_view_name = get_view_name({t, s});
-      auto output_view_name = get_view_name({t+1, s+1});
+      auto output_view_name = get_view_name({t + 1, s + 1});
       if ((t == initial_t) || (t == final_t - 1)) {
         if ((s == initial_s) || (s == final_s - 1)) {
           std::cout << "Shifting view " << input_view_name << '\n';
-          shift_view({input_path + input_view_name}, {output_path + output_view_name}, -2);
+          shift_view({input_path + input_view_name},
+              {output_path + output_view_name}, -2);
           continue;
         }
       }
       std::cout << "Copying view " << input_view_name << '\n';
-      copy_view({input_path + input_view_name}, {output_path + output_view_name});
+      copy_view(
+          {input_path + input_view_name}, {output_path + output_view_name});
     }
   }
 }
 
 
-
 int main(int argc, char const* argv[]) {
-  if (argc < 3) {
-    std::cout << "Expecting 2 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " /path/to/input/directory/ /path/to/output/directory"
-              << " direction"
-              << std::endl;
-    exit(1);
+  auto configuration =
+      Lenslet13x13ShifterConfiguration(argc, const_cast<char**>(argv));
+  if (configuration.is_help_mode()) {
+    exit(0);
   }
 
-  std::string input_path(argv[1]);
-  std::string output_path(argv[2]);
+  std::string input_path = configuration.get_input_filename();
+  std::string output_path = configuration.get_output_filename();
+  std::string direction = configuration.get_direction();
 
   if (!are_input_and_output_paths_valid(input_path, output_path)) {
     exit(1);
   }
 
-  if(std::string(argv[3]) == "decoding") {
+  if (direction == "decode" || direction == "d" || direction == "decoding") {
     shift_for_decoding(input_path, output_path);
   } else {
     shift_for_encoding(input_path, output_path);
