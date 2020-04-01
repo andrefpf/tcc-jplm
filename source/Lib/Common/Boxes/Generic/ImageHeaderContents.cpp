@@ -124,21 +124,22 @@ uint64_t ImageHeaderContents::size() const noexcept {
 
 
 bool ImageHeaderContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other))
-    return false;
-  const auto &cast_other = dynamic_cast<const ImageHeaderContents &>(other);
-  return *this == cast_other;
+  if (typeid(*this) == typeid(other)) {
+    const auto &cast_other = dynamic_cast<const ImageHeaderContents &>(other);
+    return *this == cast_other;
+  }
+  return false;
 }
 
+  
+  bool ImageHeaderContents::operator==(const ImageHeaderContents &other) const {
+    return std::tie(this->height, this->width, this->nc, this->bpc, this->c,
+               this->UnkC, this->IPR) == std::tie(other.height, other.width,
+                                             other.nc, other.bpc, other.c,
+                                             other.UnkC, other.IPR);
+  }
 
-bool ImageHeaderContents::operator==(const ImageHeaderContents &other) const {
-  return std::tie(this->height, this->width, this->nc, this->bpc, this->c,
-             this->UnkC, this->IPR) == std::tie(other.height, other.width,
-                                           other.nc, other.bpc, other.c,
-                                           other.UnkC, other.IPR);
-}
 
-
-bool ImageHeaderContents::operator!=(const ImageHeaderContents &other) const {
-  return !this->operator==(other);
-}
+  bool ImageHeaderContents::operator!=(const ImageHeaderContents &other) const {
+    return !this->operator==(other);
+  }

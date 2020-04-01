@@ -136,7 +136,7 @@ endfunction()
 
 git_clone(
     PROJECT_NAME    cxxproperties
-    GIT_URL         https://github.com/andremaravilha/cxxproperties.git
+    GIT_URL         https://github.com/pedrogarciafreitas/cxxproperties.git
     GIT_BRANCH      master
     DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}"
 )

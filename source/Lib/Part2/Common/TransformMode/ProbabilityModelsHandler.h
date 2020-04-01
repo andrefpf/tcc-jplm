@@ -46,8 +46,8 @@
 
 class ProbabilityModelsHandler {
  protected:
-  static constexpr std::size_t BITPLANE_BYPASS = 0;
-  static constexpr std::size_t BITPLANE_BYPASS_FLAGS = 0;
+  // static constexpr std::size_t BITPLANE_BYPASS = 0;
+  // static constexpr std::size_t BITPLANE_BYPASS_FLAGS = 0;
   static constexpr auto SEGMENTATION_PROB_MODEL_INDEX = 32;
   static constexpr auto number_of_probability_models = 161;
   std::array<ProbabilityModel, number_of_probability_models>
@@ -68,9 +68,9 @@ class ProbabilityModelsHandler {
   double get_rate_of_model_and_update(
       std::size_t bit_position, std::size_t stride) {
     auto rate = probability_models_array[bit_position + stride].get_rate<bit>();
-    if (bit_position >= BITPLANE_BYPASS) {
+    // \todo: remove always true if (bit_position >= BITPLANE_BYPASS) {
       probability_models_array[bit_position + stride].update<bit>();
-    }
+    // }
     return rate;
   }
 
@@ -88,10 +88,10 @@ class ProbabilityModelsHandler {
     const auto position = (bitplane << 1) + SEGMENTATION_PROB_MODEL_INDEX;
     auto rate = probability_models_array[position].get_rate<0>() +
                 probability_models_array[position + 1].get_rate(significance);
-    if (bitplane >= BITPLANE_BYPASS_FLAGS) {
+    // \todo: remove always true if (bitplane >= BITPLANE_BYPASS_FLAGS) {
       probability_models_array[position].update<0>();
       probability_models_array[position + 1].update(significance);
-    }
+    // }
     return rate;
   }
 

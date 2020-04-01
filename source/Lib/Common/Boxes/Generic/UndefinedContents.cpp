@@ -46,43 +46,44 @@ UndefinedContents *UndefinedContents::clone() const {
 
 
 bool UndefinedContents::is_equal(const DBox &other) const {
-  if (typeid(*this) != typeid(other))
-    return false;
-  const auto& cast_other = dynamic_cast<const UndefinedContents&>(other);
-  return *this == cast_other;
+  if (typeid(*this) == typeid(other)) {
+    const auto &cast_other = dynamic_cast<const UndefinedContents &>(other);
+    return *this == cast_other;
+  }
+  return false;
 }
 
 
-uint64_t UndefinedContents::size() const noexcept {
-  return byte_array.size();
-}
+  uint64_t UndefinedContents::size() const noexcept {
+    return byte_array.size();
+  }
 
 
-bool UndefinedContents::operator==(const UndefinedContents &other) const {
-  return this->byte_array == other.byte_array;
-}
+  bool UndefinedContents::operator==(const UndefinedContents &other) const {
+    return this->byte_array == other.byte_array;
+  }
 
 
-bool UndefinedContents::operator!=(const UndefinedContents &other) const {
-  return !this->operator==(other);
-}
+  bool UndefinedContents::operator!=(const UndefinedContents &other) const {
+    return !this->operator==(other);
+  }
 
 
-void UndefinedContents::set_bytes(const std::vector<std::byte> &&bytes) {
-  byte_array = std::move(bytes);
-}
+  void UndefinedContents::set_bytes(const std::vector<std::byte> &&bytes) {
+    byte_array = std::move(bytes);
+  }
 
 
-void UndefinedContents::set_bytes(const std::vector<std::byte> &bytes) {
-  byte_array = bytes;
-}
+  void UndefinedContents::set_bytes(const std::vector<std::byte> &bytes) {
+    byte_array = bytes;
+  }
 
 
-void UndefinedContents::add_bytes(const std::vector<std::byte> &bytes) {
-  byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
-}
+  void UndefinedContents::add_bytes(const std::vector<std::byte> &bytes) {
+    byte_array.insert(byte_array.end(), bytes.begin(), bytes.end());
+  }
 
 
-std::vector<std::byte> UndefinedContents::get_bytes() const noexcept {
-  return byte_array;
-}
+  std::vector<std::byte> UndefinedContents::get_bytes() const noexcept {
+    return byte_array;
+  }
