@@ -89,17 +89,19 @@ Yet, the PSNR between a original dark view and its decoded should be the same as
   ~/jplm/build/$ make -j
   ```
 
-## Library dependencies
+## External Library dependencies
 
-The included lightfield visualization tool depends on the X11 libraries. 
-If they are not present the compilation will fail. 
+JPLM depends of the external libraries mentioned in [NOTICES.md](NOTICES.md) file.
+All dependencies are resolved during the building stage. The only exception is the X11 libraries.
+X11 is needed for building the lightfield visualization tool. 
+The compilation will fail if X11 is not present in the system. 
 To install X11 libraries (must run as sudo):
   ```bash
-  ~$ apt install libx11-*
+  ~$ sudo apt install libx11-*
   ```  
 
-On the other hand, it is possible to skip x11 library install and to avoid failing compilation by disabing the LF visualization tool.
-Fo that, one needs to call cmake as follows: 
+On the other hand, it is possible to skip X11 library install and to avoid failing compilation by disabling the light field visualization tool.
+Building of light field visualization tool can be disabled by adding `-DVISUALIZATION_TOOL=OFF` in `cmake` command, i.e.:
   ```bash
   ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
   ```  
