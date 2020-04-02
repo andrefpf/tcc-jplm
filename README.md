@@ -80,76 +80,45 @@ Yet, the PSNR between a original dark view and its decoded should be the same as
 
 ![jplm-modules-architecture.png](doc/diagrams/jplm-modules-architecture.png "JPLM Architecture")
 
-## Build instructions
 
-  ```bash
-  ~$ cd jplm
-  ~/jplm/$ mkdir build; cd build
-  ~/jplm/build/$ cmake ..
-  ~/jplm/build/$ make -j
-  ```
-
-## External Library dependencies
-
-JPLM depends of the external libraries mentioned in [NOTICES.md](NOTICES.md) file.
-All dependencies are resolved during the building stage. The only exception is the X11 libraries.
-X11 is needed for building the lightfield visualization tool. 
-The compilation will fail if X11 is not present in the system. 
-To install X11 libraries (must run as sudo):
-  ```bash
-  ~$ sudo apt install libx11-*
-  ```  
-
-On the other hand, it is possible to skip X11 library install and to avoid failing compilation by disabling the light field visualization tool.
-Building of light field visualization tool can be disabled by adding `-DVISUALIZATION_TOOL=OFF` in `cmake` command, i.e.:
-  ```bash
-  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
-  ```  
-
-
-## Testing instructions
-
-  ```bash
-  ~/jplm/build/$ ctest
-  ```  
-  
-###  Other usefull commands
-#### Colorfull output
-```bash
-  ~/jplm/build/$ export GTEST_COLOR=1
-  ```
-
-#### To show all tests
-```bash
-  ~/jplm/build/$ ctest --verbose
-  ```
-or the alternative on Windows Powershell
-```powershell
-Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList "../resources" }
-```
-
-#### To run again only failed tests
-
-```bash
-  ~/jplm/build/$ ctest --rerun-failed
-  ```
-or
-```bash
-  ~/jplm/build/$ ctest --verbose --rerun-failed
-  ```
-
-## Deployment instructions
-TODO (check if applicable)
-##  Contribution instructions
-TODO
 ## Directory layout
-For an illustration, see docs/diagrams/PacketDiagram.pdf
+The directories and modules are organized similarly to the architecture.
+See [docs/diagrams/PacketDiagram.pdf](docs/diagrams/PacketDiagram.pdf) for more details.
   - JPLM
+    - *bin*
+      - *tests*
+      - *utils*
+    - *build*
     - cfg
+      - part2
+        - 4DPredictionMode
+          - greek
+          - I01_Bikes
+          - I02_Danger_de_Mort
+          - I04_Stone_Pillars_Outside
+          - I09_Fountain_Vincent_2
+          - img1
+          - img2
+          - img3
+          - poznanlab1
+          - set2
+          - sideboard
+          - tarot
+        - 4DTransformMode
+          - Bikes
+    - cmake
     - doc
       - diagrams
-    - bin
-    - build
+    - *lib*
+    - resources
+      - boxes
+        - invalid
+      - markers
+      - pgx_tests
+      - pixmap_exceptions
+        - not_regular_file
+      - rgb_pattern
+      - small_greek
     - source
       - App
             - Common
@@ -168,6 +137,72 @@ For an illustration, see docs/diagrams/PacketDiagram.pdf
                - Common
                - Encoder
                - Decoder
+
+The above directories highlighted in *italic* are created after the building process.
+
+## Build instructions
+
+  ```bash
+  ~$ cd jplm
+  ~/jplm/$ mkdir build; cd build
+  ~/jplm/build/$ cmake ..
+  ~/jplm/build/$ make -j
+  ```
+
+## External Library dependencies
+
+JPLM depends of the external libraries mentioned in [NOTICES.md](NOTICES.md) file.
+All dependencies are resolved during the building stage. The only exception is the X11 libraries.
+X11 is needed for building the lightfield visualization tool. The compilation will fail if X11 is not present in the system. 
+To install X11 libraries (must run as sudo):
+  ```bash
+  ~$ sudo apt install libx11-*
+  ```  
+
+It is possible to skip X11 library install and to avoid failing compilation by disabling the light field visualization tool.
+Building of light field visualization tool can be disabled by adding `-DVISUALIZATION_TOOL=OFF` in `cmake` command, i.e.:
+  ```bash
+  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
+  ```  
+
+
+## Testing instructions
+
+  ```bash
+  ~/jplm/build/$ ctest
+  ```  
+  
+###  Other usefull commands
+
+The following commands can be useful for checking whether buiding is successfull or for development purposes.
+
+#### Colorfull output
+```bash
+  ~/jplm/build/$ export GTEST_COLOR=1
+  ```
+
+#### To show all tests
+```bash
+  ~/jplm/build/$ ctest --verbose
+  ```
+or the alternative on Windows Powershell
+```powershell
+Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList "../resources" }
+```
+
+#### To run again only failed tests
+
+```bash
+  ~/jplm/build/$ ctest --verbose --rerun-failed
+  ```
+
+## Deployment instructions
+TODO (check if applicable)
+
+##  Contribution instructions
+
+Bug fixes, improvements, and more contributions are welcome. Information on how to get started can be found at [CONTRIBUTING.md](CONTRIBUTING.md).
+
 
 
 
