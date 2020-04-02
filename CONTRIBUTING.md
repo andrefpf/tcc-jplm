@@ -6,6 +6,9 @@ The best and recommended communication channel is a JPEG Pleno list.
 
 When requesting a push or merge, ensure any install or build dependencies are removed before send to this repository.
 
+## Contribution Guidelines
+
+Programming guidelines and practices are defined in [GUIDELINES.md](GUIDELINES.md) file.
 
 ## Responsibilities
 
