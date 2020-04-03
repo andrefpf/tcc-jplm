@@ -7,74 +7,98 @@ JPEG Pleno Model RC
 
 Provides reference implementations for the standardized technologies within the JPEG Pleno framework for purpose of reference for prospective implementers of the standard and compliance testing.
 
-## Scope of the project
+# Scope of the project
 
 The aim is to be recognized by ISO/IEC as JPEG Pleno Reference Software (JPEG Pleno Part 4).
 
-### JPEG Pleno
+# JPEG Pleno
+
 JPEG Pleno aims to provide a standard framework for representing new imaging modalities, such as texture-plus-depth, [light field](https://jpeg.org/jpegpleno/lightfield.html), [point cloud](https://jpeg.org/jpegpleno/pointcloud.html), and [holographic imaging](https://jpeg.org/jpegpleno/holography.html). Such imaging should be understood as light representations inspired by the plenoptic function, regardless of which model captured or created all or part of the content. [Read more](https://jpeg.org/jpegpleno/index.html)
 
-## Licence
+# Licence
 
 [![badge-license]][link-license]
 
 
-## Current Status
+# Prerequisites
 
+- Compiler
+  - Tested with gcc 9. Must support C++ 17.
+- Cmake
+  - Minimum version: 3.10
+- latex (optional)
+  - Latex is required for generating the documentation.
+- Doxygen
+  - Tested with version 1.8.13
 
+# Quick start
 
-## Known issues and limitations
-Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
-
-
-## Prerequisites
-
-#### Compiler
-Tested with gcc 9
-Must support CXX 17
-
-#### Cmake
-Minimum version: 3.10
-
-#### latex (optional)
-Latex is required for generating the documentation.
-
-## Quick start 
 After building this project, you can use the provided software to encode and decode plenoptic images. 
 
-### Lightfield (Part 2)
 
-#### Encoding
-Example:
+## Build instructions
+
   ```bash
-  ~/jplm/build/$ ../bin/TAppEncoder --cfg ../cfg/config.json --input ~/RAW/Greek/ --output ~/output.jpl
-  ```  
-#### Decoding
-Example:
-  ```bash
-  ~/jplm/build/$ ../bin/TAppDecoder --input ~/output.jpl --output ~/decoded/greek/
+  ~$ mkdir -p jplm  
+  ~$ cd jplm  
+  ~/jplm/$ mkdir build; cd build  
+  ~/jplm/build/$ cmake ..  
+  ~/jplm/build/$ make -j  
   ```  
 
 
-#### Encoding Lenslets 13x13 (with darker views)
+## Steps Encode Light Field Data (Part 2)
 
-In VM there are two different treatments for Lenslets 13x13. 
-Firstly, the dataset contains more than 13x13 views, but instead of beginning in 000_000, the encoder begins in 001_001.
-Secondly, there are four views that are much darker then the others.
-To rename the views to start in 000_000 and to brighten the four darker ones, we created a tool called lenslet_13x13_shifter. 
+Using the JPEG Pleno dataset as reference, the steps for encoding a light field consist of (1) adjust input views to a valid format name and with homogeneous luminance for all views, (2) convert views from PPM to PGX image format, and (3) run the encoder with the parameters.
+
+### Shift Input Views Filenames and Adjust Brightness
+
+If the encoded light field is of a 'lenslet' type of JPEG Pleno database, the views must be renamed to start at 000_000. The border views of 'lenslet' datasets must to be brighten because they are too dark. The dataset can be prepared for encoding via `bin/tools/lenslet_13x13_shifter` tool. 
 
 Example:
   ```bash
-  ORIGINALS_INPUT_PATH="/home/RAW/TAU/I01_Bikes/"
-  ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"
+  ORIGINALS_INPUT_PATH="/home/RAW/TAU/I01_Bikes/"  
+  ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"  
+  JPLM_BINS="/home/jpeg-pleno/jplm/bin"  
+
+  ${JPLM_BINS}/tools/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH} encoder
+  ```  
+
+### Convert Views to PGX Image Format
+
+Example:
+  ```bash
+  ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"  
+  CONVERTED_PGX_PATH="/home/RAW/TAU/I01_Bikes_shifted_PGX/"  
+  JPLM_BINS="/home/jpeg-pleno/jplm/bin"  
+
+  for i in ${ORIGINAL_TEMPORARY_PATH}/*;  
+  do  
+    ${JPLM_BINS}/tools/convert_ppm_to_pgx -i $i -o ${CONVERTED_PGX_PATH};  
+  done  
+  ```  
+
+### Run the Encoder
+
+Example:
+  ```bash
+  CONVERTED_PGX_PATH="/home/RAW/TAU/I01_Bikes_shifted_PGX/"
   JPLM_BINS="/home/jpeg-pleno/jplm/bin"
+  OUTPUT_JPL_FILE=/home/RAW/I01_Bikes.jpl
 
-  ${JPLM_BINS}/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH}
-  ${JPLM_BINS}/jpl-encoder-bin --part 2 --type 0 --input ${ORIGINAL_TEMPORARY_PATH} --output ./test_bikes.jpl --transform_size_maximum_inter_view_vertical 13 --transform_size_maximum_inter_view_horizontal 13 --transform_size_maximum_intra_view_vertical 31 --transform_size_maximum_intra_view_horizontal 31 --transform_size_minimum_inter_view_vertical 13 --transform_size_minimum_inter_view_horizontal 13 --transform_size_minimum_intra_view_vertical 4 --transform_size_minimum_intra_view_horizontal 4 --lambda 10000 -t 13 -s 13 -v 434 -u 626
+  ${JPLM_BINS}/jpl-encoder-bin --show-progress-bar --show-runtime-statistics --part 2  \  
+      --type 0 --enum-cs YCbCr_2 -u 625 -v 434 -t 13 -s 13 -nc 3 --show-error-estimate \  
+      --border_policy 1 --lambda 10000 --transform_size_maximum_inter_view_vertical 13 \  
+      --transform_size_maximum_inter_view_horizontal 13                                \  
+      --transform_size_maximum_intra_view_vertical 31                                  \  
+      --transform_size_maximum_intra_view_horizontal 31                                \  
+      --transform_size_minimum_inter_view_vertical 13                                  \  
+      --transform_size_minimum_inter_view_horizontal 13                                \  
+      --transform_size_minimum_intra_view_vertical 4                                   \  
+      --transform_size_minimum_intra_view_horizontal 4                                 \  
+      --input ${CONVERTED_PGX_PATH} --output ${OUTPUT_JPL_FILE}
   ```  
 
-We still need to create a inverse lenslet_13x13_shifter to be executed after decoding. 
-Yet, the PSNR between a original dark view and its decoded should be the same as the PSNR between a original brighten view and its decoded (also brighten).
 
 ## Architecture overview
 
@@ -84,70 +108,64 @@ Yet, the PSNR between a original dark view and its decoded should be the same as
 ## Directory layout
 The directories and modules are organized similarly to the architecture.
 See [docs/diagrams/PacketDiagram.pdf](docs/diagrams/PacketDiagram.pdf) for more details.
-  - JPLM
-    - *bin*
-      - *tests*
-      - *utils*
-    - *build*
-    - cfg
-      - part2
-        - 4DPredictionMode
-          - greek
-          - I01_Bikes
-          - I02_Danger_de_Mort
-          - I04_Stone_Pillars_Outside
-          - I09_Fountain_Vincent_2
-          - img1
-          - img2
-          - img3
-          - poznanlab1
-          - set2
-          - sideboard
-          - tarot
-        - 4DTransformMode
-          - Bikes
-    - cmake
-    - doc
-      - diagrams
-    - *lib*
-    - resources
-      - boxes
-        - invalid
-      - markers
-      - pgx_tests
-      - pixmap_exceptions
-        - not_regular_file
-      - rgb_pattern
-      - small_greek
-    - source
-      - App
-            - Common
-            - Encoder
-            - Decoder
-       - Lib
-           - Part1
-               - Common
-               - Encoder
-               - Decoder
-           - Part2
-               - Common
-               - Encoder
-               - Decoder
-           - PartX
-               - Common
-               - Encoder
-               - Decoder
+
+- JPLM
+  - *bin*
+    - *tests*
+    - *utils*
+  - *build*
+  - cfg
+    - part2
+      - 4DPredictionMode
+        - greek
+        - I01_Bikes
+        - I02_Danger_de_Mort
+        - I04_Stone_Pillars_Outside
+        - I09_Fountain_Vincent_2
+        - img1
+        - img2
+        - img3
+        - poznanlab1
+        - set2
+        - sideboard
+        - tarot
+      - 4DTransformMode
+        - Bikes
+  - cmake
+  - doc
+    - diagrams
+  - *lib*
+  - resources
+    - boxes
+      - invalid
+    - markers
+    - pgx_tests
+    - pixmap_exceptions
+      - not_regular_file
+    - rgb_pattern
+    - small_greek
+  - source
+    - App
+      - Common
+      - Encoder
+      - Decoder
+    - Lib
+      - Part1
+        - Common
+        - Encoder
+        - Decoder
+      - Part2
+        - Common
+        - Encoder
+        - Decoder
+      - PartX
+        - Common
+        - Encoder
+        - Decoder
 
 The above directories highlighted in *italic* are created after the building process.
 
-## Build instructions
 
-  ```bash
-  ~$ cd jplm
-  ~/jplm/$ mkdir build; cd build
-  ~/jplm/build/$ cmake ..
-  ~/jplm/build/$ make -j
-  ```
 
 ## External Library dependencies
 
@@ -196,12 +214,14 @@ Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start
   ~/jplm/build/$ ctest --verbose --rerun-failed
   ```
 
-## Deployment instructions
-TODO (check if applicable)
 
 ##  Contribution instructions
 
 Bug fixes, improvements, and more contributions are welcome. Information on how to get started can be found at [CONTRIBUTING.md](CONTRIBUTING.md).
+
+# Known issues and limitations
+
+Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
 
 
 
