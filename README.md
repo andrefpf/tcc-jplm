@@ -31,7 +31,7 @@ JPEG Pleno aims to provide a standard framework for representing new imaging mod
 - Doxygen
   - Tested with version 1.8.13
 
-# Quick start
+# Quickstart
 
 After building this project, you can use the provided software to encode and decode plenoptic images. 
 
@@ -47,7 +47,57 @@ After building this project, you can use the provided software to encode and dec
   ```  
 
 
-## Steps Encode Light Field Data (Part 2)
+### External Library dependencies
+
+JPLM depends of the external libraries mentioned in [NOTICES.md](NOTICES.md) file.
+All dependencies are resolved during the building stage. The only exception is the X11 libraries.
+X11 is needed for building the lightfield visualization tool. The compilation will fail if X11 is not present in the system. 
+To install X11 libraries (must run as sudo):
+  ```bash
+  ~$ sudo apt install libx11-*
+  ```  
+
+It is possible to skip X11 library install and to avoid failing compilation by disabling the light field visualization tool.
+Building of light field visualization tool can be disabled by adding `-DVISUALIZATION_TOOL=OFF` in `cmake` command, i.e.:
+  ```bash
+  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
+  ```  
+
+
+### Testing instructions
+
+  ```bash
+  ~/jplm/build/$ ctest
+  ```  
+  
+###  Other usefull commands
+
+The following commands can be useful for checking whether buiding is successfull or for development purposes.
+
+### Colorfull output
+```bash
+  ~/jplm/build/$ export GTEST_COLOR=1
+  ```
+
+### To show all tests
+```bash
+  ~/jplm/build/$ ctest --verbose
+  ```
+or the alternative on Windows Powershell
+```powershell
+Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList "../resources" }
+```
+
+### To run again only failed tests
+
+```bash
+  ~/jplm/build/$ ctest --verbose --rerun-failed
+  ```
+
+
+
+
+## Steps to Encode Light Field Data (Part 2)
 
 Using the JPEG Pleno dataset as reference, the steps for encoding a light field consist of (1) adjust input views to a valid format name and with homogeneous luminance for all views, (2) convert views from PPM to PGX image format, and (3) run the encoder with the parameters.
 
@@ -97,6 +147,18 @@ Example:
       --transform_size_minimum_intra_view_vertical 4                                   \  
       --transform_size_minimum_intra_view_horizontal 4                                 \  
       --input ${CONVERTED_PGX_PATH} --output ${OUTPUT_JPL_FILE}
+  ```  
+
+
+## Steps to Decode a JPL file
+
+
+  ```bash
+  INPUT_JPL_FILE="/home/RAW/I01_Bikes.jpl"  
+  OUTPUT_DIRECTORY"=/home/DECODED/I01_Bikes"  
+  JPLM_BINS="/home/jpeg-pleno/jplm/bin"  
+
+  ${JPLM_BINS}/jpl-decoder-bin --input ${INPUT_JPL_FILE} --output ${OUTPUT_DIRECTORY}
   ```  
 
 
@@ -167,59 +229,11 @@ The above directories highlighted in *italic* are created after the building pro
 
 
 
-## External Library dependencies
-
-JPLM depends of the external libraries mentioned in [NOTICES.md](NOTICES.md) file.
-All dependencies are resolved during the building stage. The only exception is the X11 libraries.
-X11 is needed for building the lightfield visualization tool. The compilation will fail if X11 is not present in the system. 
-To install X11 libraries (must run as sudo):
-  ```bash
-  ~$ sudo apt install libx11-*
-  ```  
-
-It is possible to skip X11 library install and to avoid failing compilation by disabling the light field visualization tool.
-Building of light field visualization tool can be disabled by adding `-DVISUALIZATION_TOOL=OFF` in `cmake` command, i.e.:
-  ```bash
-  ~/jplm/build/$ cmake -DVISUALIZATION_TOOL=OFF ..
-  ```  
-
-
-## Testing instructions
-
-  ```bash
-  ~/jplm/build/$ ctest
-  ```  
-  
-###  Other usefull commands
-
-The following commands can be useful for checking whether buiding is successfull or for development purposes.
-
-#### Colorfull output
-```bash
-  ~/jplm/build/$ export GTEST_COLOR=1
-  ```
-
-#### To show all tests
-```bash
-  ~/jplm/build/$ ctest --verbose
-  ```
-or the alternative on Windows Powershell
-```powershell
-Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start-Process -NoNewWindow -PassThru -Wait $_.Fullname -ArgumentList "../resources" }
-```
-
-#### To run again only failed tests
-
-```bash
-  ~/jplm/build/$ ctest --verbose --rerun-failed
-  ```
-
-
-##  Contribution instructions
+##  Contributing 
 
 Bug fixes, improvements, and more contributions are welcome. Information on how to get started can be found at [CONTRIBUTING.md](CONTRIBUTING.md).
 
-# Known issues and limitations
+# Known issues and limitations 
 
 Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
 
