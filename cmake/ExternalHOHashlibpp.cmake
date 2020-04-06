@@ -138,8 +138,8 @@ endfunction()
 git_clone(
     PROJECT_NAME    ho-hashlibpp
     GIT_URL         https://gitlab.com/pedrogarcia/ho-hashlibpp.git
-    GIT_TAG         v0.1
-    DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}/ho-hashlibpp"
+    GIT_TAG         v0.2
+    DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}/"
 )
 set(ho_hashlibpp_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/ho-hashlibpp/source/Lib/)
 include_directories(${ho_hashlibpp_INCLUDE})
