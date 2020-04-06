@@ -49,8 +49,9 @@
 int main(int argc, char const* argv[]) {
   auto configuration =
       JPLMConfigurationFactory::get_encoder_configuration(argc, argv);
-  std::ofstream of_stream(configuration->get_output_filename(),
-      std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
+  std::fstream of_stream(configuration->get_output_filename(),
+      std::fstream::binary | std::fstream::out | std::fstream::in |
+          std::fstream::trunc);
 
   if (configuration->is_verbose()) {
     std::cerr << "JPEG Pleno Model (JPLM) Encoder. \nVerbose mode \"on\"\n";

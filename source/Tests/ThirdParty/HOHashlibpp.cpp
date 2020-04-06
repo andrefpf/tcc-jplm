@@ -31,40 +31,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     EncoderRunTimeStatistics.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-02-10
+/** \file     HOHashlibpp.cpp
+ *  \brief    Tests for the external library Header-Only Hashlib++
+ *  \details  See more details about it at
+ *            https://gitlab.com/pedrogarcia/ho-hashlibpp.git
+ *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
+ *  \date     2020-04-06
  */
-#include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
+
+#include "gtest/gtest.h"
 #include "ho-hashlibpp.h"
 
-EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::fstream &stream)
-    : RunTimeStatistics(), ref_to_stream(stream),
-      initial_of_stream_position(stream.tellp()) {
-  if (!ref_to_stream.is_open()) {
-    std::cerr << "Error opening output file" << std::endl;
-    exit(EXIT_FAILURE);
+class HO_HashlibppStringTests : public ::testing::Test {
+ protected:
+  std::string input;
+
+  void SetUp() override {
+    input = "Hello World";
   }
+};
+
+
+TEST_F(HO_HashlibppStringTests, MD5FromStringTest) {
+  std::string hash = HO_Hashlibpp::MD5(input);
+  EXPECT_EQ("b10a8db164e0754105b7a99be72e3fe5", hash);
 }
 
 
-void EncoderRunTimeStatistics::mark_end() {
-  if (!finished_counting_bytes) {
-    final_of_stream_position = ref_to_stream.tellp();
-    finished_counting_bytes = true;
-  }
-  RunTimeStatistics::mark_end();
+TEST_F(HO_HashlibppStringTests, SHA1FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA1(input);
+  EXPECT_EQ("0a4d55a8d778e5022fab701977c5d840bbc486d0", hash);
 }
 
 
-void EncoderRunTimeStatistics::show_statistics() {
-  RunTimeStatistics::show_statistics();
-  std::cout << "Bytes written to file: "
-            << final_of_stream_position - initial_of_stream_position
-            << " bytes " << std::endl;
+TEST_F(HO_HashlibppStringTests, SHA256FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA256(input);
+  EXPECT_EQ(
+      "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e", hash);
+}
 
-  std::cout << "MD5: " << HO_Hashlibpp::MD5(ref_to_stream) << std::endl;
-  std::cout << "SHA1: " << HO_Hashlibpp::SHA1(ref_to_stream) << std::endl;
+
+TEST_F(HO_HashlibppStringTests, SHA384FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA384(input);
+  EXPECT_EQ(
+      "99514329186b2f6ae4a1329e7ee6c610a729636335174ac6b740f9028396fcc803d0e93"
+      "863a7c3d90f86beee782f4f3f",
+      hash);
+}
+
+
+TEST_F(HO_HashlibppStringTests, SHA512FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA512(input);
+  EXPECT_EQ(
+      "2c74fd17edafd80e8447b0d46741ee243b7eb74dd2149a0ab1b9246fb30382f27e853d8"
+      "585719e0e67cbda0daa8f51671064615d645ae27acb15bfb1447f459b",
+      hash);
+}
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

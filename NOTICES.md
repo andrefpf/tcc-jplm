@@ -10,6 +10,8 @@ This software uses the following Open Source component(s):
 
 * **"Google Test"** version 1.10.0, available at [https://github.com/google/googletest](https://github.com/google/googletest) and distributed under a **BSD 3-Clause "New" or "Revised" License**. Copyright (c) 2008 Google Inc. All rights reserved.
 
+* **"Header-Only Hashlibpp "** version 0.2, available at [https://gitlab.com/pedrogarcia/ho-hashlibpp](https://gitlab.com/pedrogarcia/ho-hashlibpp) and distributed under a **2-Clause "Simplified" BSD License**. Copyright (c) 2020, Pedro Garcia Freitas. All rights reserved.
+
 * **"Magic Enum"** version 0.6.5, available at [https://github.com/Neargye/magic_enum](https://github.com/Neargye/magic_enum) and distributed under a **MIT License**. Copyright (c) 2019 Daniil Goncharov. All rights reserved.
 
 * **"NlohmannJSON"** version 3.6.1, available at [https://github.com/nlohmann/json](https://github.com/nlohmann/json) and distributed under a **MIT License**. Copyright (c) 2013-2019 Niels Lohmann. All rights reserved.
