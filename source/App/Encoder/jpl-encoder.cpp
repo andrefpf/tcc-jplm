@@ -57,7 +57,6 @@ int main(int argc, char const* argv[]) {
     std::cerr << "JPEG Pleno Model (JPLM) Encoder. \nVerbose mode \"on\"\n";
   }
 
-  //<! needed to check here because configuration is unique ptr that will be moved...
   auto show_statistics = configuration->show_runtime_statistics();
   auto run_time_statistics = EncoderRunTimeStatistics(of_stream);
 

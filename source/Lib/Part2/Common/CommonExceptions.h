@@ -50,7 +50,8 @@ namespace LightfieldCoordinateExceptions {
 class UnsignedUnderflowException : public std::exception {
  public:
   const char* what() const noexcept override {
-    return "This operation generated an underflow";
+    return "This operation generated an underflow on the light-field "
+           "coordinate.";
   }
 };
 
@@ -58,7 +59,8 @@ class UnsignedUnderflowException : public std::exception {
 class OverflowException : public std::exception {
  public:
   const char* what() const noexcept override {
-    return "This operation generated an overflow";
+    return "This operation generated an overflow on the light-field "
+           "coordinate";
   }
 };
 
@@ -72,7 +74,8 @@ namespace LightfieldDimensionExceptions {
 class InvalidZeroDimensionException : public std::exception {
  public:
   const char* what() const noexcept override {
-    return "A dimension must be a positive number different than zero.";
+    return "A dimension of the light field must be a positive number different "
+           "than zero. ";
   }
 };
 

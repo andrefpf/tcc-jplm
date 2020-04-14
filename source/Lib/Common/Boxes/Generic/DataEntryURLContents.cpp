@@ -32,8 +32,9 @@
  */
 
 /** \file     DataEntryURLContents.cpp
- *  \brief    Brief description
- *  \details  Detailed description
+ *  \brief    
+ *  \details  
+ *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
  *  \date     2020-02-06
  */
@@ -81,6 +82,6 @@ BinaryTools::uint24_t DataEntryURLContents::get_flag() const noexcept {
 }
 
 
-const char* DataEntryURLContents::get_location() const noexcept {
+const char *DataEntryURLContents::get_location() const noexcept {
   return loc.c_str();
 }

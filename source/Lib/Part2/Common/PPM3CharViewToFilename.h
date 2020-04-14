@@ -47,10 +47,9 @@ class PPM3CharViewToFilename : public ViewToFilenameTranslator {
  public:
   PPM3CharViewToFilename() : ViewToFilenameTranslator(".ppm") {
   }
-  ~PPM3CharViewToFilename() = default;
 
-  // virtual std::string view_position_to_filename(
-  //     const std::pair<std::size_t, std::size_t>& position) const override;
+
+  virtual ~PPM3CharViewToFilename() = default;
 };
 
 #endif  // PPM3CHAR_VIEW_TO_FILENAME_H

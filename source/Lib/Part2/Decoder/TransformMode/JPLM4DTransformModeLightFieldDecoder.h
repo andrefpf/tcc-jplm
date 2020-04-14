@@ -78,7 +78,7 @@ class JPLM4DTransformModeLightFieldDecoder
   BorderBlocksPolicy border_blocks_policy = BorderBlocksPolicy::truncate;
 
   // const JPLFile&
-  //     transform_mode_jpl_file;  //temporaty, need to refactor to use base class jpl file...
+  //     transform_mode_jpl_file;  //temporary, need to refactor to use base class jpl file...
  public:
   JPLM4DTransformModeLightFieldDecoder(
       std::shared_ptr<JPLFile>
@@ -118,6 +118,7 @@ class JPLM4DTransformModeLightFieldDecoder
             {9, 9, 64, 64},
             *configuration),  //temporary
         JPLMLightFieldDecoder<PelType>(*configuration),
+        // light_field_box_(light_field_box),
         transform_mode_decoder_configuration(configuration),
         codestream_code(light_field_box.get_ref_to_contents()
                             .get_ref_to_contiguous_codestream_box()
@@ -126,10 +127,17 @@ class JPLM4DTransformModeLightFieldDecoder
         hierarchical_4d_decoder(codestream_code),
         ref_to_lightfield(static_cast<LightFieldTransformMode<PelType>&>(
             *(this->light_field))) {
-    read_initial_data_from_compressed_file();
+    read_initial_data_from_codestream_code();
     this->setup_transform_coefficients(false,
         hierarchical_4d_decoder.get_transform_dimensions(),
         {1.0, 1.0, 1.0, 1.0});
+
+    // std::cout << "dec LF dimension: " << light_field_box.get_ref_to_contents()
+    //                     .get_ref_to_light_field_header_box()
+    //                     .get_ref_to_contents()
+    //                     .get_ref_to_light_field_header_box()
+    //                     .get_ref_to_contents()
+    //                     .get_light_field_dimension<std::size_t>() << std::endl;
 
     //initializes possible extension lengths
     this->initialize_extension_lengths();
@@ -166,17 +174,6 @@ class JPLM4DTransformModeLightFieldDecoder
 
   void read_optional_markers_and_marker_segments() {
     auto marker = get_next_marker_bytes();
-    // std::cout << std::to_integer<int>(marker[0]) << std::endl;
-    auto bytes_of_pnt_marker = Markers::get_bytes(Marker::PNT);
-    if (marker[1] == bytes_of_pnt_marker[1]) {
-      [[maybe_unused]] auto codestream_pointer_set_marker_segment =
-          CodestreamPointerSetMarkerSegmentParser::
-              get_codestream_pointer_set_marker_segment(codestream_code);
-      marker = get_next_marker_bytes();
-    } else {
-      std::cout << "There is no PNT marker segment in the contiguous codestream"
-                << std::endl;
-    }
     auto bytes_of_scc_marker = Markers::get_bytes(Marker::SCC);
     while (marker[1] == bytes_of_scc_marker[1]) {
       //detected a SCC optional marker
@@ -194,13 +191,35 @@ class JPLM4DTransformModeLightFieldDecoder
           [this, scaling_factor](auto& index) {
             this->partition_decoder.set_colour_component_scaling_factor(
                 index, scaling_factor);
+            if (transform_mode_decoder_configuration->is_verbose()) {
             std::cout << "Detected scaling factor " << scaling_factor
-                      << " for colour channel " << index << std::endl;
+                      << " for colour channel " << index << '\n';
+                    }
           },
           index_variant);
     }
-    std::cout << "No more optional markers" << std::endl;
+    auto bytes_of_pnt_marker = Markers::get_bytes(Marker::PNT);
+    if (marker[1] == bytes_of_pnt_marker[1]) {
+      auto codestream_pointer_set_marker_segment =
+          CodestreamPointerSetMarkerSegmentParser::
+              get_codestream_pointer_set_marker_segment(codestream_code);
+      this->check_consistency_of_pnt(
+          codestream_code, codestream_pointer_set_marker_segment);
+      marker = get_next_marker_bytes();
+      if (transform_mode_decoder_configuration->is_verbose()) {
+        std::cout << "Found a consistent PNT\n";
+      }
+    } else {
+      if (transform_mode_decoder_configuration->is_verbose()) {
+        std::cout
+            << "There is no PNT marker segment in the contiguous codestream\n";
+      }
+    }
+    if (transform_mode_decoder_configuration->is_verbose()) {
+      std::cout << "No more optional markers" << std::endl;
+    }
   }
+
 
 
   void read_mandatory_markers() {
@@ -247,6 +266,7 @@ class JPLM4DTransformModeLightFieldDecoder
                     mNumberOfViewLines, mNumberOfViewColumns] =
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension();
+
     hierarchical_4d_decoder.set_lightfield_dimension(
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension());
@@ -291,7 +311,7 @@ class JPLM4DTransformModeLightFieldDecoder
   }
 
 
-  void read_initial_data_from_compressed_file() {
+  void read_initial_data_from_codestream_code() {
     read_mandatory_markers();
     // LightFieldConfigurationMarkerSegment
     read_light_field_configuration_marker_segment();

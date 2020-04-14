@@ -35,7 +35,7 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \author   Murilo
+ *  \author   Murilo Bresciani
  *  \date     2019-09-26
  */
 
@@ -68,11 +68,12 @@ void ABACEncoder::output_bit_pattern_according_to_condition(bool condition) {
 
 
 /*! encodes a binary symbol using the given probability model */
-void ABACEncoder::encode_bit(bool bit, const ProbabilityModel& probability_model) {
+void ABACEncoder::encode_bit(
+    bool bit, const ProbabilityModel& probability_model) {
   if (bit) {
-      encode_bit<1>(probability_model);
+    encode_bit<1>(probability_model);
   } else {
-      encode_bit<0>(probability_model);
+    encode_bit<0>(probability_model);
   }
 }
 
@@ -87,14 +88,14 @@ void ABACEncoder::output_n_bits(std::size_t n) {
 
 
 ContiguousCodestreamCode& ABACEncoder::get_ref_to_codestream_code() const {
-    return *codestream_code;
+  return *codestream_code;
 }
 
 
 void ABACEncoder::push_current_byte_to_codestream_code() {
-    mask = std::byte{0x01};
-    codestream_code->push_byte(byte_buffer);    
-    byte_buffer = std::byte{0};
+  mask = std::byte{0x01};
+  codestream_code->push_byte(byte_buffer);
+  byte_buffer = std::byte{0};
 }
 
 //outputs bits from the least significant to the most

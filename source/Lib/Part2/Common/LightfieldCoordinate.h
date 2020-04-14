@@ -43,6 +43,7 @@
 
 #include <iostream>
 #include <tuple>
+#include <sstream>
 #include "Lib/Part2/Common/CommonExceptions.h"
 
 template<typename T>
@@ -263,6 +264,14 @@ class LightfieldCoordinate {
     std::cout << get_t() << ", " << get_s() << ", " << get_v() << ", "
               << get_u() << std::endl;
   }
+
+
+  std::string to_string() const {
+    std::stringstream string_stream;
+    string_stream << *this;
+    return string_stream.str();
+  }
+
 
   template<class Type>
   friend std::ostream& operator<<(

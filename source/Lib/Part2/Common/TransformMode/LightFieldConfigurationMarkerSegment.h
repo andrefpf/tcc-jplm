@@ -38,14 +38,15 @@
  *  \date     2019-10-15
  */
 
-#ifndef LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__
-#define LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__
 
 #include <cmath>
 #include <cstdint>
 #include <vector>
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 #include "Lib/Part2/Common/LightfieldDimension.h"
+#include "Lib/Part2/Common/TransformMode/CommonExceptions.h"
 #include "Lib/Part2/Common/TransformMode/ComponentSsizParameter.h"
 #include "Lib/Part2/Common/TransformMode/Markers.h"
 #include "Lib/Utils/Stream/BinaryTools.h"
@@ -90,7 +91,7 @@ class LightFieldConfigurationMarkerSegment {
   uint16_t get_length_of_marker_segment() const noexcept;
 
 
-  uint32_t get_number_of_4d_blocks() const noexcept;
+  uint32_t get_number_of_4d_blocks() const;
 
 
   const LightfieldDimension<uint32_t>& get_ref_to_block_dimension() const;
@@ -117,4 +118,4 @@ class LightFieldConfigurationMarkerSegment {
   std::vector<std::byte> get_bytes() const;
 };
 
-#endif /* end of include guard: LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_LIGHTFIELDCONFIGURATIONMARKERSEGMENT_H__ */

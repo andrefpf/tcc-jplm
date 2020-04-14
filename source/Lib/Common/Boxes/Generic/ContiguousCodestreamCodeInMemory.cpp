@@ -109,6 +109,14 @@ void ContiguousCodestreamCodeInMemory::rewind(
 }
 
 
+void ContiguousCodestreamCodeInMemory::insert_bytes(
+    std::size_t initial_position,
+    const std::vector<std::byte> &bytes_to_insert) {
+  bytes.insert(bytes.begin() + initial_position, bytes_to_insert.begin(),
+      bytes_to_insert.end());
+}
+
+
 ContiguousCodestreamCodeInMemory *ContiguousCodestreamCodeInMemory::clone()
     const {
   std::cout << "ContiguousCodestreamCodeInMemory::clone" << std::endl;

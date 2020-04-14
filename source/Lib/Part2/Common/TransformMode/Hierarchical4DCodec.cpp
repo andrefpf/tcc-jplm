@@ -34,6 +34,7 @@
 /** \file     Hierarchical4DCodec.cpp
  *  \brief    
  *  \details  
+ *  \author   Murilo Bresciani
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-04-11
  */

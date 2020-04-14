@@ -35,51 +35,75 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
- *  \date     2020-03-11
+ *  \date     2020-03-26
  */
 
-#ifndef JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
-#define JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMMON_EXCEPTIONS_H
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMMON_EXCEPTIONS_H
 
+#include <cinttypes>
 #include <exception>
 #include <string>
-#include "Lib/Part2/Common/LightfieldDimension.h"
 
-namespace JPLM4DTransformModeLightFieldEncoderExceptions {
-class InvalidPartitionCode : public std::exception {
- protected:
-  std::string message;
+// OverflowInTheEntriesOfPNT
+//
 
- public:
-  InvalidPartitionCode() : message("Invalid partition code") {
-  }
-
-
-  const char* what() const noexcept override {
-    return message.c_str();
-  }
-}; 
-
-
-template<typename DimType>
-class DimensionFromConfigurationDoesNotMatchFilesException : public std::exception {
- protected:
-  std::string message;
+namespace CodestreamPointerSetMarker {
+class OverflowInTheEntriesOfPNT : public std::exception {
+ private:
+  std::string message_;
 
  public:
-  DimensionFromConfigurationDoesNotMatchFilesException(
-  	const LightfieldDimension<DimType>& size_from_configuration,
-  	const LightfieldDimension<DimType>& size_from_file) 
-  : message("The encoder was configured a light field with size " + size_from_configuration.to_string()
-  	+ ". But the files containing the light field have size " + size_from_file.to_string()) {
+  explicit OverflowInTheEntriesOfPNT()
+      : message_(
+            "The codestream pointer set marker segment is not well-formed. The "
+            "most probable cause is that an overflow happened during the "
+            "generation of the index. ") {
   }
 
-
-  const char* what() const noexcept override {
-    return message.c_str();
+  virtual const char* what() const throw() {
+    return message_.c_str();
   }
 };
 
-}  // namespace JPLM4DTransformModeLightFieldEncoderExceptions
 
-#endif  // JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
+class CodestreamPointerSetEntryIsNotPointingToSOB : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit CodestreamPointerSetEntryIsNotPointingToSOB(std::size_t index)
+      : message_(
+            "The codestream pointer set marker segment is not well-formed. "
+            "At least one index (#" +
+            std::to_string(index) +
+            ") is pointing to a non SOB marker group of bytes. ") {
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+}  // namespace CodestreamPointerSetMarker
+
+namespace LightFieldConfigurationMarker {
+class OverflowInTheNumberOf4DBlocks : public std::exception {
+ private:
+  std::string message_;
+
+ public:
+  explicit OverflowInTheNumberOf4DBlocks(uint64_t n_4d) {
+    message_ = "Overflow in the number of 4D blocks (N_4D). There are " +
+               std::to_string(n_4d) +
+               " blocks for the current configuration, but only " +
+               std::to_string(std::numeric_limits<uint32_t>::max()) +
+               " blocks are supported by the standard.";
+  }
+
+  virtual const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+}  // namespace LightFieldConfigurationMarker
+
+#endif  // JPLM_LIB_PART2_COMMON_TRANSFORMMODE_COMMON_EXCEPTIONS_H

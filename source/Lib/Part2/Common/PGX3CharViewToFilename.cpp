@@ -39,10 +39,3 @@
  */
 
 #include "Lib/Part2/Common/PGX3CharViewToFilename.h"
-
-
-// std::string PGX3CharViewToFilename::view_position_to_filename(
-//     const std::pair<std::size_t, std::size_t>& position) const {
-//   check_for_overflow(position);
-//   return get_name_from_position(position);
-// }

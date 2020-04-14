@@ -50,9 +50,6 @@ class PGX3CharViewToFilename : public ViewToFilenameTranslator {
 
 
   ~PGX3CharViewToFilename() = default;
-
-  // virtual std::string view_position_to_filename(
-  //     const std::pair<std::size_t, std::size_t>& position) const override;
 };
 
 #endif  // PGX3CHAR_VIEW_TO_FILENAME_H

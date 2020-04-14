@@ -38,8 +38,8 @@
  *  \date     2019-10-15
  */
 
-#ifndef MARKERS_H__
-#define MARKERS_H__
+#ifndef JPLM_LIB_PART2_COMMON_TRANSFORMMODE_MARKERS_H__
+#define JPLM_LIB_PART2_COMMON_TRANSFORMMODE_MARKERS_H__
 
 #include <cstddef>  //std::byte
 #include <cstdint>
@@ -61,4 +61,4 @@ std::vector<std::byte> get_bytes(Marker marker);
 bool is_a_known_marker(Marker marker);
 }  // namespace Markers
 
-#endif /* end of include guard: MARKERS_H__ */
+#endif /* end of include guard: JPLM_LIB_PART2_COMMON_TRANSFORMMODE_MARKERS_H__ */

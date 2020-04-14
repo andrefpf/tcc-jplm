@@ -35,6 +35,7 @@
  *  \brief    
  *  \details  
  *  \author   Ismael Seidel <i.seidel@samsung.com>
+ *  \author   Murilo Bresciani
  *  \date     2019-09-26
  */
 
@@ -46,10 +47,10 @@
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCode.h"
 #include "Lib/Common/Boxes/Generic/ContiguousCodestreamCodeInMemory.h"
 #include "Lib/Part2/Common/TransformMode/ABACCodec.h"
-#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 #include "Lib/Part2/Common/TransformMode/Markers.h"
+#include "Lib/Part2/Common/TransformMode/ProbabilityModel.h"
 
-  
+
 class ABACEncoder : public ABACCodec {
  protected:
   mutable std::unique_ptr<ContiguousCodestreamCode> codestream_code;
@@ -75,46 +76,45 @@ class ABACEncoder : public ABACCodec {
   void start(const std::string& filename);
   void encode_bit(bool bit, const ProbabilityModel& probability_model);
 
-    template<bool bit>
-    void encode_bit(const ProbabilityModel& probability_model) {
-        uint64_t length_0 = (((mHigh - mLow + 1) * probability_model.get_frequency_of_zeros()) /
-                             probability_model.get_frequency_of_ones());
+  template<bool bit>
+  void encode_bit(const ProbabilityModel& probability_model) {
+    uint64_t length_0 =
+        (((mHigh - mLow + 1) * probability_model.get_frequency_of_zeros()) /
+            probability_model.get_frequency_of_ones());
 
-        if constexpr (bit) {  //1
-            mLow += length_0;
-        } else {  //0
-            mHigh = mLow + length_0 - 1;
-        }
-
-        while (
-                ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) ||
-                ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
-            if ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
-                output_bit_pattern_according_to_condition((mLow & MSB_MASK) != 0);
-                mask_set_high_reset_low();
-            }
-            if ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK))) {
-                ++number_of_scalings;
-                mask_set_high_reset_low();
-                mLow ^= MSB_MASK;
-                mHigh ^= MSB_MASK;
-            }
-        }
+    if constexpr (bit) {  //1
+      mLow += length_0;
+    } else {  //0
+      mHigh = mLow + length_0 - 1;
     }
 
+    while (
+        ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) ||
+        ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK)))) {
+      if ((mLow & MSB_MASK) == (mHigh & MSB_MASK)) {
+        output_bit_pattern_according_to_condition((mLow & MSB_MASK) != 0);
+        mask_set_high_reset_low();
+      }
+      if ((mLow >= SECOND_MSB_MASK) && (mHigh < (MSB_MASK + SECOND_MSB_MASK))) {
+        ++number_of_scalings;
+        mask_set_high_reset_low();
+        mLow ^= MSB_MASK;
+        mHigh ^= MSB_MASK;
+      }
+    }
+  }
 
 
   ContiguousCodestreamCode& get_ref_to_codestream_code() const;
 
 
-
   void reset() {
     number_of_scalings = 0;
-    mask=std::byte{0x01};
-    byte_buffer=std::byte{0};
-    mLow=0;
-    mHigh=MAXINT;
-    number_of_bits_in_byte=0;
+    mask = std::byte{0x01};
+    byte_buffer = std::byte{0};
+    mLow = 0;
+    mHigh = MAXINT;
+    number_of_bits_in_byte = 0;
   }
 
 

@@ -39,12 +39,3 @@
  */
 
 #include "PPM3CharViewToFilename.h"
-
-// std::string PPM3CharViewToFilename::view_position_to_filename(
-//     const std::pair<std::size_t, std::size_t>& position) const {
-//   check_for_overflow(position);
-
-//   auto string_stream = get_name_from_position(position);
-
-//   return string_stream.str();
-// }
