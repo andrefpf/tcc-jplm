@@ -227,7 +227,26 @@ See [docs/diagrams/PacketDiagram.pdf](docs/diagrams/PacketDiagram.pdf) for more 
 
 The above directories highlighted in *italic* are created after the building process.
 
+##  Citation
 
+If you use this code for your research, please cite our paper.
+
+```
+@inproceedings{plenoConformanceAndReferenceSW2020,
+  author = {Cristian Perra and Pedro Garcia Freitas and Ismael Seidel and Peter Schelkens},
+  title = {{An overview of the emerging JPEG Pleno standard, conformance testing and reference software}},
+  volume = {11353},
+  booktitle = {Optics, Photonics and Digital Technologies for Imaging Applications VI},
+  editor = {Peter Schelkens and Tomasz Kozacki},
+  organization = {International Society for Optics and Photonics},
+  publisher = {SPIE},
+  pages = {207 -- 219},
+  keywords = {JPEG Pleno, Conformance testing, Reference software, Compression, Standard, Light field, Point cloud, Holography},
+  year = {2020},
+  doi = {10.1117/12.2555841},
+  URL = {https://doi.org/10.1117/12.2555841}
+}
+```
 
 ##  Contributing 
 
