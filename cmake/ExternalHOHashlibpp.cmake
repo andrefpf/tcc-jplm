@@ -1,6 +1,6 @@
-message("Configuring tqdm-cpp library.")
+message("Configuring HO-Hashlib++ library.")
 
-project(tqdm-cpp-download NONE)
+project(HO-Hashlibpp-download NONE)
 
 
 # Extracted from https://github.com/tschuchortdev/cmake_git_clone.git
@@ -136,10 +136,10 @@ function(git_clone)
 endfunction()
 
 git_clone(
-    PROJECT_NAME    tqdm-cpp
-    GIT_URL         https://gitlab.com/pedrogarcia/tqdm-cpp.git
-    GIT_BRANCH      master
-    DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}"
+    PROJECT_NAME    ho-hashlibpp
+    GIT_URL         https://gitlab.com/pedrogarcia/ho-hashlibpp.git
+    GIT_TAG         v0.2
+    DIRECTORY       "${CMAKE_CURRENT_BINARY_DIR}/"
 )
-set(tqdm_cpp_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/tqdm_cpp/)
-include_directories(${tqdm_cpp_INCLUDE})
+set(ho_hashlibpp_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/ho-hashlibpp/source/Lib/)
+include_directories(${ho_hashlibpp_INCLUDE})

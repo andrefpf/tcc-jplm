@@ -38,9 +38,9 @@
  *  \date     2020-02-10
  */
 #include "Lib/Utils/Stats/EncoderRunTimeStatistics.h"
+#include "ho-hashlibpp.h"
 
-
-EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::ofstream& stream)
+EncoderRunTimeStatistics::EncoderRunTimeStatistics(std::fstream &stream)
     : RunTimeStatistics(), ref_to_stream(stream),
       initial_of_stream_position(stream.tellp()) {
   if (!ref_to_stream.is_open()) {
@@ -64,4 +64,7 @@ void EncoderRunTimeStatistics::show_statistics() {
   std::cout << "Bytes written to file: "
             << final_of_stream_position - initial_of_stream_position
             << " bytes " << std::endl;
+
+  std::cout << "MD5: " << HO_Hashlibpp::MD5(ref_to_stream) << std::endl;
+  std::cout << "SHA1: " << HO_Hashlibpp::SHA1(ref_to_stream) << std::endl;
 }

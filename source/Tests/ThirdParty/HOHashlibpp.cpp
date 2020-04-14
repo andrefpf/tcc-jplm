@@ -3,7 +3,7 @@
  * and contributor rights, including patent rights, and no such rights are
  * granted under this license.
  *
- * Copyright (c) 2010-2020, ITU/ISO/IEC
+ * Copyright (c) 2010-2019, ITU/ISO/IEC
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,46 +31,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     ChannelDefinitionContents.cpp
- *  \brief    
- *  \details  
- *  \author   Ismael Seidel <i.seidel@samsung.com>
+/** \file     HOHashlibpp.cpp
+ *  \brief    Tests for the external library Header-Only Hashlib++
+ *  \details  See more details about it at
+ *            https://gitlab.com/pedrogarcia/ho-hashlibpp.git
  *  \author   Pedro Garcia Freitas <pedro.gf@samsung.com>
- *  \date     2020-02-06
+ *  \date     2020-04-06
  */
 
-#include "Lib/Common/Boxes/Generic/ChannelDefinitionContents.h"
+#include "gtest/gtest.h"
+#include "ho-hashlibpp.h"
 
+class HO_HashlibppStringTests : public ::testing::Test {
+ protected:
+  std::string input;
 
-bool ChannelDefinitionContents::is_equal(const DBox &other) const {
-  if (typeid(*this) == typeid(other)) {
-    const auto &cast_other =
-        dynamic_cast<const ChannelDefinitionContents &>(other);
-    return *this == cast_other;
+  void SetUp() override {
+    input = "Hello World";
   }
-  return false;
+};
+
+
+TEST_F(HO_HashlibppStringTests, MD5FromStringTest) {
+  std::string hash = HO_Hashlibpp::MD5(input);
+  EXPECT_EQ("b10a8db164e0754105b7a99be72e3fe5", hash);
 }
 
 
-  ChannelDefinitionContents *ChannelDefinitionContents::clone() const {
-    return new ChannelDefinitionContents(*this);
-  }
+TEST_F(HO_HashlibppStringTests, SHA1FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA1(input);
+  EXPECT_EQ("0a4d55a8d778e5022fab701977c5d840bbc486d0", hash);
+}
 
 
-  uint64_t ChannelDefinitionContents::size() const noexcept {
-    //2 is from N (number of channel descriptions)
-    //3 is from the 3 fields in ChannelDescription
-    return 2 + this->channel_descriptions.size() * 3 * sizeof(uint16_t);
-  }
+TEST_F(HO_HashlibppStringTests, SHA256FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA256(input);
+  EXPECT_EQ(
+      "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e", hash);
+}
 
 
-  bool ChannelDefinitionContents::operator==(
-      const ChannelDefinitionContents &other) const {
-    return this->channel_descriptions == other.channel_descriptions;
-  }
+TEST_F(HO_HashlibppStringTests, SHA384FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA384(input);
+  EXPECT_EQ(
+      "99514329186b2f6ae4a1329e7ee6c610a729636335174ac6b740f9028396fcc803d0e93"
+      "863a7c3d90f86beee782f4f3f",
+      hash);
+}
 
 
-  bool ChannelDefinitionContents::operator!=(
-      const ChannelDefinitionContents &other) const {
-    return !this->operator==(other);
-  }
+TEST_F(HO_HashlibppStringTests, SHA512FromStringTest) {
+  std::string hash = HO_Hashlibpp::SHA512(input);
+  EXPECT_EQ(
+      "2c74fd17edafd80e8447b0d46741ee243b7eb74dd2149a0ab1b9246fb30382f27e853d8"
+      "585719e0e67cbda0daa8f51671064615d645ae27acb15bfb1447f459b",
+      hash);
+}
+
+
+int main(int argc, char* argv[]) {
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}

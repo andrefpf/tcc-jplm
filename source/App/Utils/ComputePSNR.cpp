@@ -38,13 +38,14 @@
  *  \date     2019-05-31
  */
 
+#include <algorithm>
 #include <filesystem>
 #include <iomanip>  //std::setw and std::setfill
 #include <iostream>
-#include <sstream>
 #include <map>
-#include <algorithm>
-#include <string> 
+#include <sstream>
+#include <string>
+#include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageMetrics.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
@@ -53,85 +54,176 @@
 std::map<std::string, ImageType> string_to_image_type_map;
 
 void fill_map() {
-  string_to_image_type_map["rgb"]=ImageType::RGB;
-  string_to_image_type_map["bt601"]=ImageType::BT601;
-  string_to_image_type_map["bt709"]=ImageType::BT709;
-  string_to_image_type_map["bt2020"]=ImageType::BT2020;
+  string_to_image_type_map["rgb"] = ImageType::RGB;
+  string_to_image_type_map["bt601"] = ImageType::BT601;
+  string_to_image_type_map["bt709"] = ImageType::BT709;
+  string_to_image_type_map["bt2020"] = ImageType::BT2020;
 }
 
+class PSNRComputerConfiguration : public BasicConfiguration {
+ private:
+  static constexpr std::size_t current_hierarchy_level = 0;
 
-void show_psnr(
-    const std::string& filename_original, const std::string& filename_decoded, const ImageType type=ImageType::RGB) {
+ protected:
+  std::string input;
+  std::string output;
+  std::string colorspace;
+  ImageType type;
+
+  PSNRComputerConfiguration(int argc, char** argv, std::size_t level)
+      : BasicConfiguration(argc, argv, level) {
+  }
+
+
+  virtual void add_options() override {
+    BasicConfiguration::add_options();
+
+
+    this->add_cli_json_option({"--input", "-i",
+        "Input directory that contains at least three subdirectories with PGX "
+        "files.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("input")) {
+            return conf["input"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->input = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--output", "-o",
+        "Output PPM (P6) filename. The name of the output file will be used to "
+        "detect the input name in each channel directory. ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("output")) {
+            return conf["output"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->output = std::any_cast<std::string>(v);
+        },
+        this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--color_space", "-cs",
+        "Direction of shift ('encoder' to be used in the encoder or"
+        " 'decoder' to be used after the decoding process). ",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("color_space")) {
+            return conf["color_space"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this]([[maybe_unused]] std::any v) {
+          this->colorspace = std::any_cast<std::string>(v);
+          std::transform(this->colorspace.begin(), this->colorspace.end(),
+              this->colorspace.begin(), ::tolower);
+
+          this->type = ImageType::RGB;  //default
+          auto it = string_to_image_type_map.find(this->colorspace);
+          if (it == string_to_image_type_map.end()) {
+            std::cerr << "Unable to find color space " << this->colorspace
+                      << ". The available ones are: \n";
+            for (const auto& map_iterator : string_to_image_type_map) {
+              std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
+            }
+            std::cerr << "Using RGB as default:\n";
+          } else {
+            this->type = it->second;
+          }
+        },
+        this->current_hierarchy_level});
+  }
+
+ public:
+  PSNRComputerConfiguration(int argc, char** argv)
+      : PSNRComputerConfiguration(
+            argc, argv, PSNRComputerConfiguration::current_hierarchy_level) {
+    this->init(argc, argv);
+  }
+
+
+  virtual ~PSNRComputerConfiguration() = default;
+
+
+  const std::string& get_input_filename() const {
+    return input;
+  }
+
+
+  const std::string& get_output_filename() const {
+    return output;
+  }
+
+
+  const std::string& get_colorspace() const {
+    return colorspace;
+  }
+
+
+  ImageType get_type() const {
+    return type;
+  }
+};
+
+
+void show_psnr(const std::string& filename_original,
+    const std::string& filename_decoded,
+    const ImageType type = ImageType::RGB) {
   auto original_file = PixelMapFileIO::open(filename_original);
   auto decoded_file = PixelMapFileIO::open(filename_decoded);
 
   auto original_image_variant = original_file->read_full_image();
-  auto original_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
-              uint16_t>(original_image_variant);
+  auto original_image =
+      PixelMapFileIO::extract_image_with_type_from_variant<RGBImage, uint16_t>(
+          original_image_variant);
 
   auto decoded_image_variant = decoded_file->read_full_image();
-  auto decoded_image = PixelMapFileIO::extract_image_with_type_from_variant<RGBImage,
-              uint16_t>(decoded_image_variant);
+  auto decoded_image =
+      PixelMapFileIO::extract_image_with_type_from_variant<RGBImage, uint16_t>(
+          decoded_image_variant);
 
   auto printer = ImageMetrics::visitors::PSNRPrinter();
-  auto max_error_printer= ImageMetrics::visitors::MaximumErrorPrinter();
+  auto max_error_printer = ImageMetrics::visitors::MaximumErrorPrinter();
 
-   switch (type) {
-      case ImageType::RGB:
-        printer(original_image, decoded_image);
-        max_error_printer(original_image, decoded_image);
-        break;
-      case ImageType::BT601:
-        printer.operator()<BT601Image>(original_image, decoded_image);
-        max_error_printer.operator()<BT601Image>(original_image, decoded_image);
-        break;
-      case ImageType::BT709:
-        printer.operator()<BT709Image>(original_image, decoded_image);
-        max_error_printer.operator()<BT709Image>(original_image, decoded_image);
-        break;
-      case ImageType::BT2020:
-        printer.operator()<BT2020Image>(original_image, decoded_image);
-        max_error_printer.operator()<BT2020Image>(original_image, decoded_image);
-        break;
-      default:
-        std::cerr << "Error default" << std::endl;
-    }
-
-
-
+  switch (type) {
+    case ImageType::RGB:
+      printer(original_image, decoded_image);
+      max_error_printer(original_image, decoded_image);
+      break;
+    case ImageType::BT601:
+      printer.operator()<BT601Image>(original_image, decoded_image);
+      max_error_printer.operator()<BT601Image>(original_image, decoded_image);
+      break;
+    case ImageType::BT709:
+      printer.operator()<BT709Image>(original_image, decoded_image);
+      max_error_printer.operator()<BT709Image>(original_image, decoded_image);
+      break;
+    case ImageType::BT2020:
+      printer.operator()<BT2020Image>(original_image, decoded_image);
+      max_error_printer.operator()<BT2020Image>(original_image, decoded_image);
+      break;
+    default:
+      std::cerr << "Error default" << std::endl;
+  }
 }
 
 
 int main(int argc, char const* argv[]) {
-  if (argc < 4) {
-    std::cout << "Expecting 3 params\n";
-    std::cout << "\tUsage: " << argv[0]
-              << " color_space"
-              << " /path/to/input/directory/original.ppm"
-                 " /path/to/output/directory/decoded.ppm"
-              << std::endl;
-    exit(1);
-  }
   fill_map();
 
-  std::string color_space(argv[1]);
-  std::transform(color_space.begin(), color_space.end(), color_space.begin(), ::tolower);
-
-  auto type = ImageType::RGB; //default
-  auto it = string_to_image_type_map.find(color_space);
-  if (it == string_to_image_type_map.end()) {
-    std::cerr << "Unable to find color space " << color_space << ". The available ones are: \n";
-    for(const auto& map_iterator: string_to_image_type_map) {
-      std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
-    }
-    std::cerr << "Using RGB as default:\n";
-  } else {
-    type = it->second;
+  auto configuration =
+      PSNRComputerConfiguration(argc, const_cast<char**>(argv));
+  if (configuration.is_help_mode()) {
+    exit(0);
   }
 
-
-  std::string filename_original(argv[2]);
-  std::string filename_decoded(argv[3]);
+  std::string filename_original = configuration.get_input_filename();
+  std::string filename_decoded = configuration.get_output_filename();
+  std::string color_space = configuration.get_colorspace();
+  ImageType type = configuration.get_type();
 
   show_psnr(filename_original, filename_decoded, type);
 

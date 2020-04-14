@@ -49,13 +49,13 @@
 
 class EncoderRunTimeStatistics : public RunTimeStatistics {
  protected:
-  std::ofstream& ref_to_stream;
+  std::fstream& ref_to_stream;
   const std::iostream::pos_type initial_of_stream_position;
   std::iostream::pos_type final_of_stream_position;
   bool finished_counting_bytes = false;
 
  public:
-  EncoderRunTimeStatistics(std::ofstream& stream);
+  EncoderRunTimeStatistics(std::fstream &stream);
 
   virtual ~EncoderRunTimeStatistics() = default;
 
