@@ -132,6 +132,13 @@ class JPLM4DTransformModeLightFieldDecoder
         hierarchical_4d_decoder.get_transform_dimensions(),
         {1.0, 1.0, 1.0, 1.0});
 
+    // std::cout << "dec LF dimension: " << light_field_box.get_ref_to_contents()
+    //                     .get_ref_to_light_field_header_box()
+    //                     .get_ref_to_contents()
+    //                     .get_ref_to_light_field_header_box()
+    //                     .get_ref_to_contents()
+    //                     .get_light_field_dimension<std::size_t>() << std::endl;
+
     //initializes possible extension lengths
     this->initialize_extension_lengths();
 
@@ -184,8 +191,10 @@ class JPLM4DTransformModeLightFieldDecoder
           [this, scaling_factor](auto& index) {
             this->partition_decoder.set_colour_component_scaling_factor(
                 index, scaling_factor);
+            if (transform_mode_decoder_configuration->is_verbose()) {
             std::cout << "Detected scaling factor " << scaling_factor
                       << " for colour channel " << index << '\n';
+                    }
           },
           index_variant);
     }
@@ -206,8 +215,11 @@ class JPLM4DTransformModeLightFieldDecoder
             << "There is no PNT marker segment in the contiguous codestream\n";
       }
     }
-    std::cout << "No more optional markers" << std::endl;
+    if (transform_mode_decoder_configuration->is_verbose()) {
+      std::cout << "No more optional markers" << std::endl;
+    }
   }
+
 
 
   void read_mandatory_markers() {
@@ -254,6 +266,7 @@ class JPLM4DTransformModeLightFieldDecoder
                     mNumberOfViewLines, mNumberOfViewColumns] =
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension();
+
     hierarchical_4d_decoder.set_lightfield_dimension(
         lightfield_configuration_marker_segment
             .get_ref_to_lightfield_dimension());

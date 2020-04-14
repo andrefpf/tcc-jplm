@@ -146,6 +146,7 @@ class JPLM4DTransformModeLightFieldCodec
    */
   auto get_block_coordinates_and_sizes() const {
     const auto& [T, S, V, U] = lightfield_dimension;
+    // std::cout << "Lf dimension: " << lightfield_dimension << std::endl;
     const auto& [BLOCK_SIZE_t, BLOCK_SIZE_s, BLOCK_SIZE_v, BLOCK_SIZE_u] =
         block_4d_dimension;
 
@@ -180,6 +181,8 @@ class JPLM4DTransformModeLightFieldCodec
       if (std::get<3>(extends_in_direction)) {
         u_sizes.back() = U % BLOCK_SIZE_u;
       }
+      // std::cout << "truncate v: " << v_sizes.back() << std::endl;
+      // std::cout << "truncate u: " << u_sizes.back() << std::endl;
     }
 
     auto&& coordinates_iter = iter::product(

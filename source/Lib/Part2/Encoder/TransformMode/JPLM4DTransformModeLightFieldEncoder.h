@@ -176,6 +176,20 @@ class JPLM4DTransformModeLightFieldEncoder
   }
 
 
+  void check_lightfield_size() const {
+    const auto& size_from_configuration = this->
+        transform_mode_encoder_configuration->
+        get_lightfield_io_configurations().get_size();
+    const auto& size_from_files = this->light_field->get_dimensions();
+    if (size_from_configuration != size_from_files) {
+      throw JPLM4DTransformModeLightFieldEncoderExceptions::
+        DimensionFromConfigurationDoesNotMatchFilesException(
+          size_from_configuration,
+          size_from_files);
+    }
+  }
+
+
  public:
   JPLM4DTransformModeLightFieldEncoder(
       std::shared_ptr<JPLMEncoderConfigurationLightField4DTransformMode>
@@ -203,6 +217,9 @@ class JPLM4DTransformModeLightFieldEncoder
             transform_mode_encoder_configuration
                 ->get_max_bitplanes(),  //max_bitplane
             is_truncated()) {
+
+          check_lightfield_size();
+
     transform_partition.mPartitionData.set_dimension(
         transform_mode_encoder_configuration
             ->get_maximal_transform_dimension());

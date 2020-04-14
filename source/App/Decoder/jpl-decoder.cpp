@@ -53,6 +53,8 @@ int main(int argc, char const* argv[]) {
 
   if (configuration->is_verbose()) {
     std::cerr << "JPEG Pleno Model (JPLM) Decoder. \nVerbose mode \"on\"\n";
+    std::cout << "Input: " << configuration->get_input_filename() << '\n';
+    std::cout << "Output: " << configuration->get_output_filename() << std::endl;
   }
 
   auto jpl_file =

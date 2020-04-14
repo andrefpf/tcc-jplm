@@ -94,14 +94,12 @@ void JPLMDecoderConfiguration::add_options() {
                        "and thus it will be parsed anyway."
                     << std::endl;
         }
-        std::cout << "Input: " << this->input << std::endl;
       },
       this->current_hierarchy_level});
   cli_options.push_back({"--output", "-o",
       "Output directory containing the decoded plenoptic data",
       [this]([[maybe_unused]] std::any v) {
         this->output = std::any_cast<std::string>(v);
-        std::cout << "Output: " << this->output << std::endl;
       },
       this->current_hierarchy_level});
 

@@ -43,6 +43,7 @@
 
 #include <exception>
 #include <string>
+#include "Lib/Part2/Common/LightfieldDimension.h"
 
 namespace JPLM4DTransformModeLightFieldEncoderExceptions {
 class InvalidPartitionCode : public std::exception {
@@ -52,10 +53,33 @@ class InvalidPartitionCode : public std::exception {
  public:
   InvalidPartitionCode() : message("Invalid partition code") {
   }
+
+
   const char* what() const noexcept override {
     return message.c_str();
   }
-};  // namespace JPLM4DTransformModeLightFieldEncoderExceptions
+}; 
+
+
+template<typename DimType>
+class DimensionFromConfigurationDoesNotMatchFilesException : public std::exception {
+ protected:
+  std::string message;
+
+ public:
+  DimensionFromConfigurationDoesNotMatchFilesException(
+  	const LightfieldDimension<DimType>& size_from_configuration,
+  	const LightfieldDimension<DimType>& size_from_file) 
+  : message("The encoder was configured a light field with size " + size_from_configuration.to_string()
+  	+ ". But the files containing the light field have size " + size_from_file.to_string()) {
+  }
+
+
+  const char* what() const noexcept override {
+    return message.c_str();
+  }
+};
+
 }  // namespace JPLM4DTransformModeLightFieldEncoderExceptions
 
 #endif  // JPLM_LIB_PART2_ENCODER_TRANSFORMMODE_COMMON_EXCEPTIONS_H
