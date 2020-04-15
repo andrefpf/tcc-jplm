@@ -103,7 +103,7 @@ Using the JPEG Pleno dataset as reference, the steps for encoding a light field 
 
 ### Shift Input Views Filenames and Adjust Brightness
 
-If the encoded light field is of a 'lenslet' type of JPEG Pleno database, the views must be renamed to start at 000_000. The border views of 'lenslet' datasets must to be brighten because they are too dark. The dataset can be prepared for encoding via `bin/tools/lenslet_13x13_shifter` tool. 
+If the encoded light field is of a 'lenslet' type of JPEG Pleno database, the views must be renamed to start at 000_000. The border views of 'lenslet' datasets must to be brighten because they are too dark. The dataset can be prepared for encoding via `bin/utils/lenslet_13x13_shifter` tool. 
 
 Example:
   ```bash
@@ -111,7 +111,7 @@ Example:
   ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"  
   JPLM_BINS="/home/jpeg-pleno/jplm/bin"  
 
-  ${JPLM_BINS}/tools/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH} encoder
+  ${JPLM_BINS}/utils/lenslet_13x13_shifter ${ORIGINALS_INPUT_PATH} ${ORIGINAL_TEMPORARY_PATH} encoder
   ```  
 
 ### Convert Views to PGX Image Format
@@ -124,7 +124,7 @@ Example:
 
   for i in ${ORIGINAL_TEMPORARY_PATH}/*;  
   do  
-    ${JPLM_BINS}/tools/convert_ppm_to_pgx -i $i -o ${CONVERTED_PGX_PATH};  
+    ${JPLM_BINS}/utils/convert_ppm_to_pgx -i $i -o ${CONVERTED_PGX_PATH};  
   done  
   ```  
 
