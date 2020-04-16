@@ -325,7 +325,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(
         int argc, char **argv, std::size_t level)
     : JPLMEncoderConfigurationLightField(argc, argv, level) {
-  this->message = "Options for Transform mode ( -T,--type=0 ):";
+  this->message = "* Options for Transform mode ( -T,--type=0 ):";
 }
 
 
