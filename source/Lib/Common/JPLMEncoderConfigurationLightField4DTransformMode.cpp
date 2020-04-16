@@ -211,30 +211,43 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
       this->current_hierarchy_level,
       {[this]() -> std::string { return "4"; }}});
 
+  constexpr auto policies = magic_enum::enum_entries<BorderBlocksPolicy>();
+  std::stringstream available_policies_stream;
+  available_policies_stream << " { ";
+  available_policies_stream << std::accumulate(policies.begin(), policies.end(),
+      std::string(), [](const std::string &a, const auto &e) -> std::string {
+        int code = magic_enum::enum_integer(e.first);
+        std::string id = std::to_string(code);
+        std::string name(e.second);
+        return a + (a.length() > 0 ? ", " : "") + name + "=" + id;
+      });
+  available_policies_stream << " } ";
 
-  this->add_cli_json_option(
-      {"--border_policy", "-B", "Policy to treat border 4D limits.",
-          [this](const nlohmann::json &conf) -> std::optional<std::string> {
-            if (conf.contains("border_policy")) {
-              return conf["border_policy"].get<std::string>();
-            }
-            return std::nullopt;
-          },
-          [this](std::string arg) {
-            std::transform(arg.begin(), arg.end(), arg.begin(),
-                [](unsigned char c) { return std::tolower(c); });
-            if (arg == "0" || arg == "padding") {
-              this->border_policy = BorderBlocksPolicy::padding;
-            } else if (arg == "1" || arg == "truncate") {
-              this->border_policy = BorderBlocksPolicy::truncate;
-            } else {
-              std::cerr << "Ill formed parameter in option -B." << std::endl;
-              exit(1);
-              //!< \todo throw exception
-            }
-          },
-          this->current_hierarchy_level,
-          {[this]() -> std::string { return "truncate"; }}});
+  this->add_cli_json_option({"--border_policy", "-B",
+      "Policy to treat border 4D limits. Available border policies:" +
+          available_policies_stream.str(),
+      [this](const nlohmann::json &conf) -> std::optional<std::string> {
+        if (conf.contains("border_policy")) {
+          return conf["border_policy"].get<std::string>();
+        }
+        return std::nullopt;
+      },
+      [this](std::string arg) {
+        std::transform(arg.begin(), arg.end(), arg.begin(),
+            [](unsigned char c) { return std::tolower(c); });
+        if (arg == "0" || arg == "padding") {
+          this->border_policy = BorderBlocksPolicy::padding;
+        } else if (arg == "1" || arg == "truncate") {
+          this->border_policy = BorderBlocksPolicy::truncate;
+        } else {
+          std::cerr << "Ill formed parameter in option -B|--border_policy."
+                    << std::endl;
+          exit(1);
+          //!< \todo throw exception
+        }
+      },
+      this->current_hierarchy_level,
+      {[this]() -> std::string { return "truncate"; }}});
 
 
   this->add_cli_json_option({"--lambda", "-l",
@@ -312,7 +325,7 @@ JPLMEncoderConfigurationLightField4DTransformMode::
     JPLMEncoderConfigurationLightField4DTransformMode(
         int argc, char **argv, std::size_t level)
     : JPLMEncoderConfigurationLightField(argc, argv, level) {
-  this->message = "Options for Transform mode ( -T,--type=0 ):";
+  this->message = "* Options for Transform mode ( -T,--type=0 ):";
 }
 
 
