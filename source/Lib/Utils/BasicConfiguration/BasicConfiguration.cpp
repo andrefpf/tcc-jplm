@@ -123,6 +123,24 @@ void show_help(const std::string &message, ConsoleTable &table) {
 }
 
 
+std::string split_lines(std::string source, std::size_t width) {
+  const std::string whitespace = " \t\r";
+  for (std::size_t c = width - 1; c < source.length(); ++c) {
+    c = source.find_last_of(whitespace, c + 1);
+    if (c == std::string::npos)
+      break;
+    c = source.find_last_not_of(whitespace, c);
+    if (c == std::string::npos)
+      break;
+    std::size_t sizeToElimnate =
+        source.find_first_not_of(whitespace, c + 1) - c - 1;
+    source.replace(c + 1, sizeToElimnate, "\n");
+    c += (width + 1);
+  }
+  return source;
+}
+
+
 /**
  * @brief      Runs the help if help flag is set
  */
@@ -142,7 +160,8 @@ void BasicConfiguration::run_help() const {
       if (option.get_level() == this->hierarchy_level) {
         table[count][1](samilton::Alignment::right) =
             option.get_short_option() + "," + option.get_long_option();
-        table[count][2](samilton::Alignment::left) = option.get_description();
+        table[count][2](samilton::Alignment::left) =
+            split_lines(option.get_description(), 60);
         ++count;
       }
     }
