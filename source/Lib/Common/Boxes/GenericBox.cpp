@@ -39,4 +39,4 @@
  *  \date     2020-02-06
  */
 
-#include "Lib/Common/Boxes/GenericBox.cpp"
+#include "Lib/Common/Boxes/GenericBox.h"
