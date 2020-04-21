@@ -42,14 +42,17 @@
 #define JPLM_LIB_PART2_DECODER_PREDICTIONMODE_JPLM4DPREDICTIONMODELIGHTFIELDDECODER_H__
 
 #include "Lib/Part2/Decoder/JPLMLightFieldDecoder.h"
+#include "Lib/Part2/Decoder/TransformMode/CommonExceptions.h"
 
-class JPLM4DPredictionModeLightFieldDecoder {
+template<typename PelType = uint16_t> 
+class JPLM4DPredictionModeLightFieldDecoder
+  : public JPLMLightFieldDecoder<PelType> {
  public:
   JPLM4DPredictionModeLightFieldDecoder() = default;
   virtual ~JPLM4DPredictionModeLightFieldDecoder() = default;
 
   virtual void run() override {
-    throw CommonExceptions::NotImplementedException(
+    throw JPLMCommonExceptions::NotImplementedException(
         "JPLM4DPredictionModeLightFieldDecoder::run()");
     //! \todo implement run method for jpl lightfield encoder
   }

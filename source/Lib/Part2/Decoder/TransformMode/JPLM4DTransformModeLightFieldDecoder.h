@@ -58,6 +58,7 @@
 #include "Lib/Utils/Stream/BinaryTools.h"
 #include "magic_enum.hpp"
 
+
 template<typename PelType = uint16_t>
 class JPLM4DTransformModeLightFieldDecoder
     : public JPLM4DTransformModeLightFieldCodec<PelType>,

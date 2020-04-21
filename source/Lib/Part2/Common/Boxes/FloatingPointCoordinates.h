@@ -42,6 +42,7 @@
 #define JPLM_LIB_PART2_COMMON_BOXES_FLOATINGPOINTCOORDINATES_H__
 
 #include <tuple>
+#include <cmath>
 #include "Lib/Part2/Common/Boxes/VariablePrecisionFloatingPointCoordinates.h"
 
 
