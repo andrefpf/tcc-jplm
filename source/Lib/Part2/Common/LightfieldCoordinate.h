@@ -44,6 +44,7 @@
 #include <iostream>
 #include <tuple>
 #include <sstream>
+#include <limits>
 #include "Lib/Part2/Common/CommonExceptions.h"
 
 template<typename T>
