@@ -72,7 +72,7 @@ void BasicConfiguration::add_options() {
           this->current_hierarchy_level,
           {[this]() -> std::string { return "false"; }}});
 
-  this->add_cli_option({"--config", "-c", "Path to configuration file in JSON.",
+  this->add_cli_option({"--config", "-c", "Path to a configuration file in JSON.",
       [this](std::string arg) {
         if (!arg.empty()) {
           if (std::filesystem::exists(arg)) {
