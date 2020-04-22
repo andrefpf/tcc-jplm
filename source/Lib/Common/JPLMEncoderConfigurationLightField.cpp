@@ -97,12 +97,6 @@ void JPLMEncoderConfigurationLightField::add_options() {
       this->current_hierarchy_level});
 
 
-  constexpr auto enum_cs_values = magic_enum::enum_names<EnumCS>();
-  std::stringstream available_enum_cs_values_string_stream;
-  for (const auto &enum_cs_value : enum_cs_values) {
-    available_enum_cs_values_string_stream << enum_cs_value << ", ";
-  }
-
   this->add_cli_json_option({"--enum-cs", "-ecs",
       "Enumerated colourspace to be used in the Colour Specification Box. "
       "Currently other methods are not supported. "
