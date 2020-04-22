@@ -107,7 +107,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
       "Enumerated colourspace to be used in the Colour Specification Box. "
       "Currently other methods are not supported. "
       "Available values for EnumCS field: " +
-          available_enum_cs_values_string_stream.str(),
+          this->get_options_from_enum<EnumCS>(),
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("enum-cs")) {
           return conf["enum-cs"].get<std::string>();

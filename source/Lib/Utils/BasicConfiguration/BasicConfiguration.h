@@ -47,6 +47,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <magic_enum.hpp>
 #include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Utils/BasicConfiguration/CLIAndJSONOption.h"
 #include "Lib/Utils/BasicConfiguration/CommonExceptions.h"
@@ -74,6 +75,30 @@ class BasicConfiguration {
   * @brief      Adds options.
   */
   virtual void add_options();
+
+  template<class E>
+  std::string get_options_from_enum() {
+    constexpr auto values = magic_enum::enum_names<E>();
+    std::stringstream available_values_string_stream;
+    for (const auto &enum_value : values) {
+      if(enum_value == values.back()) {
+        available_values_string_stream << "and ";
+      }
+      available_values_string_stream << enum_value;
+      auto enum_from_str = magic_enum::enum_cast<E>(enum_value);
+      if(enum_from_str) {
+        auto enum_int = magic_enum::enum_integer(*enum_from_str);        
+        available_values_string_stream << " (" << enum_int << ")";
+      }      
+      if(enum_value != values.back()) {
+        available_values_string_stream << ", ";
+      } else {
+        available_values_string_stream << ".";
+      }
+    }
+    return available_values_string_stream.str();
+  }
+
   void run_help() const;
   void parse_cli(int argc, char **argv);
   void parse_json(const std::string &path);
