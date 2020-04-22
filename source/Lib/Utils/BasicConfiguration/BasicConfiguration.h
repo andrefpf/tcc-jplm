@@ -77,7 +77,7 @@ class BasicConfiguration {
   virtual void add_options();
 
   template<class E>
-  std::string get_options_from_enum() {
+  std::string get_valid_enumerated_options_str() {
     constexpr auto values = magic_enum::enum_names<E>();
     std::stringstream available_values_string_stream;
     for (const auto &enum_value : values) {
@@ -120,7 +120,7 @@ class BasicConfiguration {
     }    
 
     throw BasicConfigurationExceptions::
-        InvalidEnumeratedOptionException(option, get_options_from_enum<E>());
+        InvalidEnumeratedOptionException(option, get_valid_enumerated_options_str<E>());
   }
 
 
