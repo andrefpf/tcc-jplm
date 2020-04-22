@@ -109,13 +109,14 @@ void JPLMEncoderConfigurationLightField::add_options() {
         return std::nullopt;
       },
       [this](std::string v) {
-        auto enum_cs = magic_enum::enum_cast<EnumCS>(v);
-        if (enum_cs) {
-          this->enum_cs = *enum_cs;
-        } else {
-          //<! \todo throw error
-          std::cerr << "invalid enum cs value" << std::endl;
-        }
+        this->enum_cs = this->parse_enum_option_as<EnumCS>(v);
+        // auto enum_cs = magic_enum::enum_cast<EnumCS>(v);
+        // if (enum_cs) {
+        //   this->enum_cs = *enum_cs;
+        // } else {
+        //   //<! \todo throw error
+        //   std::cerr << "invalid enum cs value" << std::endl;
+        // }
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "YCbCr_2"; }}});
@@ -139,8 +140,8 @@ void JPLMEncoderConfigurationLightField::add_options() {
           {[this]() -> std::string { return "3"; }}});
 
   this->add_cli_json_option({"--type", "-T",
-      "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
-      "prediction_mode=1}",
+      "Codec type (mode). Available options are: " + 
+      this->get_options_from_enum<CompressionTypeLightField>(),
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("type")) {
           return conf["type"].get<std::string>();

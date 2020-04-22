@@ -87,8 +87,10 @@ class BasicConfiguration {
       available_values_string_stream << enum_value;
       auto enum_from_str = magic_enum::enum_cast<E>(enum_value);
       if(enum_from_str) {
-        auto enum_int = magic_enum::enum_integer(*enum_from_str);        
-        available_values_string_stream << " (" << enum_int << ")";
+        auto enum_int = magic_enum::enum_integer(*enum_from_str);  
+        //the static cast is necessary to print the value as a number when the underlying type
+        //of the enum is uint8_t or char      
+        available_values_string_stream << " (" << static_cast<int>(enum_int) << ")";
       }      
       if(enum_value != values.back()) {
         available_values_string_stream << ", ";
@@ -98,6 +100,29 @@ class BasicConfiguration {
     }
     return available_values_string_stream.str();
   }
+
+
+  template<class E>
+  E parse_enum_option_as(const std::string& option) {
+    //first, tries to cast considering as string...
+    auto casted_enum = magic_enum::enum_cast<E>(option);
+    if (casted_enum) {
+      return *casted_enum;
+    }
+    //if it fails, tries to cast from integer value
+    try {
+      auto value = std::stoi(option);  
+      casted_enum = magic_enum::enum_cast<E>(value);
+      if (casted_enum) {
+        return *casted_enum;
+      }
+    } catch (...) { //if failed, do nothing
+    }    
+
+    throw BasicConfigurationExceptions::
+        InvalidEnumeratedOptionException(option, get_options_from_enum<E>());
+  }
+
 
   void run_help() const;
   void parse_cli(int argc, char **argv);
