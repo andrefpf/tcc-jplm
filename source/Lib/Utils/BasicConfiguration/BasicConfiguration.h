@@ -77,11 +77,24 @@ class BasicConfiguration {
   virtual void add_options();
 
   template<class E>
-  std::string get_valid_enumerated_options_str() {
-    constexpr auto values = magic_enum::enum_names<E>();
+  std::string get_valid_enumerated_options_str(std::vector<E> hidden_options = {}) {
+    // constexpr auto values = magic_enum::enum_names<E>();
+    constexpr auto all_values = magic_enum::enum_values<E>();
+    auto not_hidden_values = std::vector<E>();
+
+    for(const auto& value: all_values) {
+      if (std::find(hidden_options.begin(), hidden_options.end(), value) == hidden_options.end()) {
+        not_hidden_values.push_back(value);
+      }
+    }
+    auto values = std::vector<std::string>();
+    std::transform(not_hidden_values.begin(), not_hidden_values.end(), std::back_inserter(values),
+                   [](auto value) -> std::string { return std::string(magic_enum::enum_name(value)); });
+
+
     std::stringstream available_values_string_stream;
     for (const auto &enum_value : values) {
-      if(enum_value == values.back()) {
+      if((enum_value == values.back()) && (values.size() > 1)) {
         available_values_string_stream << "and ";
       }
       available_values_string_stream << enum_value;

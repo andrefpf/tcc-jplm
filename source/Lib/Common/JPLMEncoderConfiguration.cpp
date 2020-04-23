@@ -144,7 +144,9 @@ void JPLMEncoderConfiguration::add_options() {
 
 
   this->add_cli_json_option({"--part", "-p",
-      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
+      "The JPEG Pleno part. Mandatory. Available options are: " + 
+      this->get_valid_enumerated_options_str<JpegPlenoPart>({JpegPlenoPart::Undefined, 
+        JpegPlenoPart::Framework, JpegPlenoPart::ConformanceTest, JpegPlenoPart::ReferenceSoftware}),
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("part")) {
           return conf["part"].get<std::string>();
