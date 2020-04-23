@@ -117,7 +117,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
 
   //<! \todo check coherence of this with enum cs
   this->add_cli_json_option(
-      {"--number-of-colour-channels", "-nc", "Number of colour channels",
+      {"--number-of-colour-channels", "-nc", "Number of colour channels. ",
           [this](const json &conf) -> std::optional<std::string> {
             if (conf.contains("number-of-colour-channels")) {
               return std::to_string(
