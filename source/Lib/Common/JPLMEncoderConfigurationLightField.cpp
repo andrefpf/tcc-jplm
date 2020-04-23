@@ -110,13 +110,6 @@ void JPLMEncoderConfigurationLightField::add_options() {
       },
       [this](std::string v) {
         this->enum_cs = this->parse_enum_option_as<EnumCS>(v);
-        // auto enum_cs = magic_enum::enum_cast<EnumCS>(v);
-        // if (enum_cs) {
-        //   this->enum_cs = *enum_cs;
-        // } else {
-        //   //<! \todo throw error
-        //   std::cerr << "invalid enum cs value" << std::endl;
-        // }
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "YCbCr_2"; }}});
@@ -152,16 +145,12 @@ void JPLMEncoderConfigurationLightField::add_options() {
         auto mode = std::string(arg.size(), ' ');
         std::transform(arg.begin(), arg.end(), mode.begin(),
             [](unsigned char c) { return std::tolower(c); });
-        if (mode == "transform mode" || mode == "transform_mode" ||
-            mode == "mule" || mode == "0") {
+        if (mode == "mule") {
           this->type = CompressionTypeLightField::transform_mode;
-        } else if (mode == "prediction mode" || mode == "prediction_mode" ||
-                   mode == "wasp" || mode == "1") {
+        } else if (mode == "wasp") {
           this->type = CompressionTypeLightField::prediction_mode;
         } else {
-          //! \todo check if this is the right exception to be thown here...
-          throw JPLMConfigurationExceptions::
-              NotImplementedYetInputTypeParseException(mode);
+          this->type = this->parse_enum_option_as<CompressionTypeLightField>(mode);
         }
       },
       this->current_hierarchy_level,
