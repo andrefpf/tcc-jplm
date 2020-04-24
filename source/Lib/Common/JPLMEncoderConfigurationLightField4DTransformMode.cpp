@@ -272,7 +272,7 @@ void JPLMEncoderConfigurationLightField4DTransformMode::add_options() {
 
   this->add_cli_json_option({"--insert-codestream-pointer-set", "-pnt",
       "Inserts a codestream pointer set marker segment before the first 4D "
-      "block. This enables the encoder to known where each 4D block starts. ",
+      "block. This enables the encoder to know where each 4D block starts. ",
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("insert-codestream-pointer-set")) {
           return conf["insert-codestream-pointer-set"].get<std::string>();
