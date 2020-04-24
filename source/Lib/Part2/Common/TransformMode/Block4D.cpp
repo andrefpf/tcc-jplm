@@ -34,7 +34,7 @@
 /** \file     Block4D.cpp
  *  \brief    
  *  \details  
- *  \autor    Murilo Bresciani
+ *  \author    Murilo Bresciani
  *  \author   Ismael Seidel <i.seidel@samsung.com>
  *  \date     2019-09-26
  */
