@@ -133,7 +133,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
           {[this]() -> std::string { return "3"; }}});
 
   this->add_cli_json_option({"--type", "-T",
-      "Codec type (mode). Available options are: " + 
+      "Light-field codec type (mode). Available options are: " + 
       this->get_valid_enumerated_options_str<CompressionTypeLightField>(),
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("type")) {
