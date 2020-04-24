@@ -47,7 +47,7 @@ using ConsoleTable = samilton::ConsoleTable;
  * @brief      Adds the basic options.
  */
 void BasicConfiguration::add_options() {
-  this->add_cli_option({"--help", "-h", "Print this help message and exits.",
+  this->add_cli_option({"--help", "-h", "Prints this help message and exits.",
       [this]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(this->arg_vector[0]);
