@@ -132,9 +132,9 @@ std::string split_lines(std::string source, std::size_t width) {
     c = source.find_last_not_of(whitespace, c);
     if (c == std::string::npos)
       break;
-    std::size_t sizeToElimnate =
+    std::size_t size_to_eliminate =
         source.find_first_not_of(whitespace, c + 1) - c - 1;
-    source.replace(c + 1, sizeToElimnate, "\n");
+    source.replace(c + 1, size_to_eliminate, "\n");
     c += (width + 1);
   }
   return source;
