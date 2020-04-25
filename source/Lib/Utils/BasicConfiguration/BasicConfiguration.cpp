@@ -47,7 +47,7 @@ using ConsoleTable = samilton::ConsoleTable;
  * @brief      Adds the basic options.
  */
 void BasicConfiguration::add_options() {
-  this->add_cli_option({"--help", "-h", "Print this help message and exit",
+  this->add_cli_option({"--help", "-h", "Prints this help message and exits.",
       [this]([[maybe_unused]] std::any v) {
         this->help_mode_flag = true;
         this->executable_name = std::string(this->arg_vector[0]);
@@ -72,7 +72,7 @@ void BasicConfiguration::add_options() {
           this->current_hierarchy_level,
           {[this]() -> std::string { return "false"; }}});
 
-  this->add_cli_option({"--config", "-c", "Path to configuration file in JSON.",
+  this->add_cli_option({"--config", "-c", "Path to a configuration file in JSON.",
       [this](std::string arg) {
         if (!arg.empty()) {
           if (std::filesystem::exists(arg)) {
@@ -132,9 +132,9 @@ std::string split_lines(std::string source, std::size_t width) {
     c = source.find_last_not_of(whitespace, c);
     if (c == std::string::npos)
       break;
-    std::size_t sizeToElimnate =
+    std::size_t size_to_eliminate =
         source.find_first_not_of(whitespace, c + 1) - c - 1;
-    source.replace(c + 1, sizeToElimnate, "\n");
+    source.replace(c + 1, size_to_eliminate, "\n");
     c += (width + 1);
   }
   return source;

@@ -86,7 +86,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
           this->current_hierarchy_level});
 
   this->add_cli_json_option({"--number_of_columns", "-s",
-      "Number of light-field view columns",
+      "Number of light-field view columns. Mandatory.",
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("number_of_columns")) {
           return std::to_string(conf["number_of_columns"].get<uint32_t>());
@@ -97,17 +97,11 @@ void JPLMEncoderConfigurationLightField::add_options() {
       this->current_hierarchy_level});
 
 
-  constexpr auto enum_cs_values = magic_enum::enum_names<EnumCS>();
-  std::stringstream available_enum_cs_values_string_stream;
-  for (const auto &enum_cs_value : enum_cs_values) {
-    available_enum_cs_values_string_stream << enum_cs_value << ", ";
-  }
-
   this->add_cli_json_option({"--enum-cs", "-ecs",
       "Enumerated colourspace to be used in the Colour Specification Box. "
       "Currently other methods are not supported. "
       "Available values for EnumCS field: " +
-          available_enum_cs_values_string_stream.str(),
+          this->get_valid_enumerated_options_str<EnumCS>(),
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("enum-cs")) {
           return conf["enum-cs"].get<std::string>();
@@ -115,13 +109,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
         return std::nullopt;
       },
       [this](std::string v) {
-        auto enum_cs = magic_enum::enum_cast<EnumCS>(v);
-        if (enum_cs) {
-          this->enum_cs = *enum_cs;
-        } else {
-          //<! \todo throw error
-          std::cerr << "invalid enum cs value" << std::endl;
-        }
+        this->enum_cs = this->parse_enum_option_as<EnumCS>(v);
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "YCbCr_2"; }}});
@@ -129,7 +117,7 @@ void JPLMEncoderConfigurationLightField::add_options() {
 
   //<! \todo check coherence of this with enum cs
   this->add_cli_json_option(
-      {"--number-of-colour-channels", "-nc", "Number of colour channels",
+      {"--number-of-colour-channels", "-nc", "Number of colour channels. ",
           [this](const json &conf) -> std::optional<std::string> {
             if (conf.contains("number-of-colour-channels")) {
               return std::to_string(
@@ -145,8 +133,8 @@ void JPLMEncoderConfigurationLightField::add_options() {
           {[this]() -> std::string { return "3"; }}});
 
   this->add_cli_json_option({"--type", "-T",
-      "Codec type enum/CompressionTypeLightField in {transform_mode=0, "
-      "prediction_mode=1}",
+      "Light-field codec type (mode). Available options are: " + 
+      this->get_valid_enumerated_options_str<CompressionTypeLightField>(),
       [this](const json &conf) -> std::optional<std::string> {
         if (conf.contains("type")) {
           return conf["type"].get<std::string>();
@@ -157,16 +145,12 @@ void JPLMEncoderConfigurationLightField::add_options() {
         auto mode = std::string(arg.size(), ' ');
         std::transform(arg.begin(), arg.end(), mode.begin(),
             [](unsigned char c) { return std::tolower(c); });
-        if (mode == "transform mode" || mode == "transform_mode" ||
-            mode == "mule" || mode == "0") {
+        if (mode == "mule") {
           this->type = CompressionTypeLightField::transform_mode;
-        } else if (mode == "prediction mode" || mode == "prediction_mode" ||
-                   mode == "wasp" || mode == "1") {
+        } else if (mode == "wasp") {
           this->type = CompressionTypeLightField::prediction_mode;
         } else {
-          //! \todo check if this is the right exception to be thown here...
-          throw JPLMConfigurationExceptions::
-              NotImplementedYetInputTypeParseException(mode);
+          this->type = this->parse_enum_option_as<CompressionTypeLightField>(mode);
         }
       },
       this->current_hierarchy_level,

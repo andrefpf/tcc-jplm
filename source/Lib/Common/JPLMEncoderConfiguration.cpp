@@ -82,7 +82,7 @@ void JPLMEncoderConfiguration::add_options() {
   this->add_cli_json_option({"--input", "-i",
       "Input directory containing the plenoptic data to be compressed "
       "(according to the JPEG Pleno Part). "
-      "\n\tFor Part 2, light field, the input is a directory containing a "
+      "For Part 2, light field, the input is a directory containing a "
       "set of directories (one for each color channel). Each one of those "
       "directories contains a set of views in PGX format.",
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
@@ -144,7 +144,9 @@ void JPLMEncoderConfiguration::add_options() {
 
 
   this->add_cli_json_option({"--part", "-p",
-      "The JPEG Pleno part. Mandatory. enum/JpegPlenoPart in { LightField=2 }",
+      "The JPEG Pleno part. Mandatory. Available options are: " + 
+      this->get_valid_enumerated_options_str<JpegPlenoPart>({JpegPlenoPart::Undefined, 
+        JpegPlenoPart::Framework, JpegPlenoPart::ConformanceTest, JpegPlenoPart::ReferenceSoftware}),
       [this](const nlohmann::json &conf) -> std::optional<std::string> {
         if (conf.contains("part")) {
           return conf["part"].get<std::string>();
@@ -152,6 +154,7 @@ void JPLMEncoderConfiguration::add_options() {
         return std::nullopt;
       },
       [this](std::string arg) {
+        //!\todo add a proper parsing method here
         auto part = std::string(arg.size(), ' ');
         std::transform(arg.begin(), arg.end(), part.begin(),
             [](unsigned char c) { return std::tolower(c); });

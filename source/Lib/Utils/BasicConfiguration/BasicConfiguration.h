@@ -47,6 +47,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <magic_enum.hpp>
 #include "CppConsoleTable/CppConsoleTable.hpp"
 #include "Lib/Utils/BasicConfiguration/CLIAndJSONOption.h"
 #include "Lib/Utils/BasicConfiguration/CommonExceptions.h"
@@ -74,6 +75,68 @@ class BasicConfiguration {
   * @brief      Adds options.
   */
   virtual void add_options();
+
+  template<class E>
+  std::string get_valid_enumerated_options_str(std::vector<E> hidden_options = {}) {
+    // constexpr auto values = magic_enum::enum_names<E>();
+    constexpr auto all_values = magic_enum::enum_values<E>();
+    auto not_hidden_values = std::vector<E>();
+
+    for(const auto& value: all_values) {
+      if (std::find(hidden_options.begin(), hidden_options.end(), value) == hidden_options.end()) {
+        not_hidden_values.push_back(value);
+      }
+    }
+    auto values = std::vector<std::string>();
+    std::transform(not_hidden_values.begin(), not_hidden_values.end(), std::back_inserter(values),
+                   [](auto value) -> std::string { return std::string(magic_enum::enum_name(value)); });
+
+
+    std::stringstream available_values_string_stream;
+    for (const auto &enum_value : values) {
+      if((enum_value == values.back()) && (values.size() > 1)) {
+        available_values_string_stream << "and ";
+      }
+      available_values_string_stream << enum_value;
+      auto enum_from_str = magic_enum::enum_cast<E>(enum_value);
+      if(enum_from_str) {
+        auto enum_int = magic_enum::enum_integer(*enum_from_str);  
+        //the static cast is necessary to print the value as a number when the underlying type
+        //of the enum is uint8_t or char      
+        available_values_string_stream << " (" << static_cast<int>(enum_int) << ")";
+      }      
+      if(enum_value != values.back()) {
+        available_values_string_stream << ", ";
+      } else {
+        available_values_string_stream << ".";
+      }
+    }
+    return available_values_string_stream.str();
+  }
+
+
+  template<class E>
+  E parse_enum_option_as(const std::string& option) {
+    //first, tries to cast considering as string...
+    auto casted_enum = magic_enum::enum_cast<E>(option);
+    if (casted_enum) {
+      return *casted_enum;
+    }
+    //if it fails, tries to cast from integer value
+    try {
+      auto value = std::stoi(option);  
+      casted_enum = magic_enum::enum_cast<E>(value);
+      if (casted_enum) {
+        return *casted_enum;
+      }
+    } catch (...) { //if failed, do nothing
+    }    
+
+    throw BasicConfigurationExceptions::
+        InvalidEnumeratedOptionException(option, get_valid_enumerated_options_str<E>());
+  }
+
+
   void run_help() const;
   void parse_cli(int argc, char **argv);
   void parse_json(const std::string &path);

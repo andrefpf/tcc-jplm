@@ -49,8 +49,23 @@ class ConfigFileDoesNotExistException : public std::exception {
   std::string msg;
 
  public:
-  ConfigFileDoesNotExistException(std::string m)
+  ConfigFileDoesNotExistException(const std::string& m)
       : msg("Config file " + m + " does not exists.") {
+  }
+
+  const char* what() const throw() {
+    return msg.c_str();
+  }
+};
+
+
+class InvalidEnumeratedOptionException : public std::exception {
+ private:
+  std::string msg;
+
+ public:
+  InvalidEnumeratedOptionException(const std::string& option, const std::string& valid_options)
+      : msg("Invalid enumerated option " + option +". Valid ones are " + valid_options) {
   }
 
   const char* what() const throw() {
