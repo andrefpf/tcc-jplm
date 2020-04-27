@@ -108,7 +108,7 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
  protected:
   std::string input_baseline;
   std::string input_test;
-  Metric metric;
+  Metric metric = Metric::PSNR;
   uint16_t number_of_colour_channels;
 
   std::map<Metric, ReportShowFlags> reports;
@@ -199,7 +199,11 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
             //<! \todo throw error
           }
         },
-        this->current_hierarchy_level});
+        this->current_hierarchy_level,
+        {[this]() -> std::string {
+          auto metric_name = magic_enum::enum_name(this->metric);
+          return std::string(metric_name);
+        }}});
 
 
     this->add_cli_json_option({"--show-report-view-channels", "-srvc",
@@ -280,8 +284,7 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
         this->current_hierarchy_level});
 
     this->add_cli_json_option({"--show-report-average", "-avg",
-        "Summary. Shows a report with the average of all channels of all "
-        "views. "
+        "Summary. Shows a report with the average of all channels of all views."
         "Metric parameter is optional. If not set, all metrics will be shown. "
         "Available metrics: " +
             available_metrics_string_stream.str() +
