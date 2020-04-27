@@ -67,8 +67,7 @@ class PSNRComputerConfiguration : public BasicConfiguration {
  protected:
   std::string input;
   std::string output;
-  std::string colorspace;
-  ImageType type;
+  ImageType type = ImageType::RGB;
 
   PSNRComputerConfiguration(int argc, char** argv, std::size_t level)
       : BasicConfiguration(argc, argv, level) {
@@ -108,8 +107,7 @@ class PSNRComputerConfiguration : public BasicConfiguration {
         this->current_hierarchy_level});
 
     this->add_cli_json_option({"--color_space", "-cs",
-        "Direction of shift ('encoder' to be used in the encoder or"
-        " 'decoder' to be used after the decoding process). ",
+        "Colorspace used in metric computation.",
         [this](const nlohmann::json& conf) -> std::optional<std::string> {
           if (conf.contains("color_space")) {
             return conf["color_space"].get<std::string>();
@@ -117,14 +115,13 @@ class PSNRComputerConfiguration : public BasicConfiguration {
           return std::nullopt;
         },
         [this]([[maybe_unused]] std::any v) {
-          this->colorspace = std::any_cast<std::string>(v);
-          std::transform(this->colorspace.begin(), this->colorspace.end(),
-              this->colorspace.begin(), ::tolower);
+          std::string colorspace = std::any_cast<std::string>(v);
+          std::transform(colorspace.begin(), colorspace.end(),
+              colorspace.begin(), ::tolower);
 
-          this->type = ImageType::RGB;  //default
-          auto it = string_to_image_type_map.find(this->colorspace);
+          auto it = string_to_image_type_map.find(colorspace);
           if (it == string_to_image_type_map.end()) {
-            std::cerr << "Unable to find color space " << this->colorspace
+            std::cerr << "Unable to find color space " << colorspace
                       << ". The available ones are: \n";
             for (const auto& map_iterator : string_to_image_type_map) {
               std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
@@ -134,7 +131,10 @@ class PSNRComputerConfiguration : public BasicConfiguration {
             this->type = it->second;
           }
         },
-        this->current_hierarchy_level});
+        this->current_hierarchy_level, {[this]() -> std::string {
+          auto colorspace_name = magic_enum::enum_name(this->type);
+          return std::string(colorspace_name);
+        }}});
   }
 
  public:
@@ -158,9 +158,9 @@ class PSNRComputerConfiguration : public BasicConfiguration {
   }
 
 
-  const std::string& get_colorspace() const {
-    return colorspace;
-  }
+  //const std::string& get_colorspace() const {
+  //  return colorspace;
+  //}
 
 
   ImageType get_type() const {
@@ -222,7 +222,7 @@ int main(int argc, char const* argv[]) {
 
   std::string filename_original = configuration.get_input_filename();
   std::string filename_decoded = configuration.get_output_filename();
-  std::string color_space = configuration.get_colorspace();
+  //std::string color_space = configuration.get_colorspace();
   ImageType type = configuration.get_type();
 
   show_psnr(filename_original, filename_decoded, type);
