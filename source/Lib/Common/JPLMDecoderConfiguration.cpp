@@ -113,11 +113,7 @@ void JPLMDecoderConfiguration::add_options() {
         return std::nullopt;
       },
       [this](std::string arg) {
-        if (arg == "false") {
-          this->show_xml_box_with_catalog_ = false;
-        } else {
-          this->show_xml_box_with_catalog_ = true;
-        }
+        this->show_xml_box_with_catalog_ = (arg == "false");
       },
       this->current_hierarchy_level,
       {[this]() -> std::string { return "false"; }}});
