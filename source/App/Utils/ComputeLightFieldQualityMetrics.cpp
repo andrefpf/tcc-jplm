@@ -52,6 +52,7 @@
 #include "Lib/Part2/Common/LightfieldIOConfiguration.h"
 #include "Lib/Part2/Common/ViewIOPolicyOneAtATime.h"
 #include "Lib/Utils/BasicConfiguration/BasicConfiguration.h"
+#include "Lib/Utils/BasicConfiguration/CommonExceptions.h"
 #include "Lib/Utils/Image/Image.h"
 #include "Lib/Utils/Image/ImageMetrics.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
@@ -322,16 +323,7 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
           return std::nullopt;
         },
         [this](std::string v) {
-          if (v.empty()) {
-            set_all_reports();
-          } else {
-            auto metric = magic_enum::enum_cast<Metric>(v);
-            if (metric) {
-              set_all_reports(*metric);
-            } else {
-              //<! \todo throw error
-            }
-          }
+          set_all_reports();
         },
         this->current_hierarchy_level});
 
