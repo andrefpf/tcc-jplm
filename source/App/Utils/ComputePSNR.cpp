@@ -86,8 +86,7 @@ class PSNRComputerConfiguration : public BasicConfiguration {
 
 
     this->add_cli_json_option({"--input", "-i",
-        "Input directory that contains at least three subdirectories with PGX "
-        "files.",
+        "Reference PPM file.",
         [this](const nlohmann::json& conf) -> std::optional<std::string> {
           if (conf.contains("input")) {
             return conf["input"].get<std::string>();
@@ -100,8 +99,7 @@ class PSNRComputerConfiguration : public BasicConfiguration {
         this->current_hierarchy_level});
 
     this->add_cli_json_option({"--output", "-o",
-        "Output PPM (P6) filename. The name of the output file will be used to "
-        "detect the input name in each channel directory. ",
+        "Assessed PPM file.",
         [this](const nlohmann::json& conf) -> std::optional<std::string> {
           if (conf.contains("output")) {
             return conf["output"].get<std::string>();
