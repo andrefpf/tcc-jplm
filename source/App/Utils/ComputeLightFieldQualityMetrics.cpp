@@ -297,15 +297,12 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
           return std::nullopt;
         },
         [this](std::string v) {
-          if (v.empty()) {
-            set_report<ReportType::AVERAGE>();
+          std::transform(v.begin(), v.end(), v.begin(), ::toupper);
+          auto metric = magic_enum::enum_cast<Metric>(v);
+          if (metric) {
+            set_report<ReportType::AVERAGE>(*metric);
           } else {
-            auto metric = magic_enum::enum_cast<Metric>(v);
-            if (metric) {
-              set_report<ReportType::AVERAGE>(*metric);
-            } else {
-              //<! \todo throw error
-            }
+            set_report<ReportType::AVERAGE>();
           }
         },
         this->current_hierarchy_level});
@@ -323,7 +320,13 @@ class ComputeLightfieldQualityMetricsConfiguration : public BasicConfiguration {
           return std::nullopt;
         },
         [this](std::string v) {
-          set_all_reports();
+          std::transform(v.begin(), v.end(), v.begin(), ::toupper);
+          auto metric = magic_enum::enum_cast<Metric>(v);
+          if (metric) {
+            set_all_reports(*metric);
+          } else {
+            set_all_reports();
+          }
         },
         this->current_hierarchy_level});
 
