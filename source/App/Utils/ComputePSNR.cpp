@@ -60,6 +60,13 @@ void fill_map() {
   string_to_image_type_map["bt2020"] = ImageType::BT2020;
 }
 
+enum class ValidImageTypes {
+  RGB = ImageType::RGB,
+  BT601 = ImageType::BT601,
+  BT709 = ImageType::BT709,
+  BT2020 = ImageType::BT2020
+};
+
 class PSNRComputerConfiguration : public BasicConfiguration {
  private:
   static constexpr std::size_t current_hierarchy_level = 0;
@@ -107,7 +114,8 @@ class PSNRComputerConfiguration : public BasicConfiguration {
         this->current_hierarchy_level});
 
     this->add_cli_json_option({"--color_space", "-cs",
-        "Colorspace used in metric computation.",
+        "Colorspace used in metric computation. Available colorspaces are: " +
+           this->get_valid_enumerated_options_str<ValidImageTypes>(),
         [this](const nlohmann::json& conf) -> std::optional<std::string> {
           if (conf.contains("color_space")) {
             return conf["color_space"].get<std::string>();
@@ -116,22 +124,13 @@ class PSNRComputerConfiguration : public BasicConfiguration {
         },
         [this]([[maybe_unused]] std::any v) {
           std::string colorspace = std::any_cast<std::string>(v);
-          std::transform(colorspace.begin(), colorspace.end(),
-              colorspace.begin(), ::tolower);
-
-          auto it = string_to_image_type_map.find(colorspace);
-          if (it == string_to_image_type_map.end()) {
-            std::cerr << "Unable to find color space " << colorspace
-                      << ". The available ones are: \n";
-            for (const auto& map_iterator : string_to_image_type_map) {
-              std::cerr << '\t' << std::get<0>(map_iterator) << '\n';
-            }
-            std::cerr << "Using RGB as default:\n";
-          } else {
-            this->type = it->second;
-          }
+          std::transform(colorspace.begin(), colorspace.end(), 
+              colorspace.begin(), ::toupper);
+          this->parse_enum_option_as<ValidImageTypes>(colorspace);
+          this->type = this->parse_enum_option_as<ImageType>(colorspace);
         },
-        this->current_hierarchy_level, {[this]() -> std::string {
+        this->current_hierarchy_level,
+        {[this]() -> std::string {
           auto colorspace_name = magic_enum::enum_name(this->type);
           return std::string(colorspace_name);
         }}});

@@ -46,14 +46,14 @@
 
 //The BT types should also support full and reduced dynamic ranges
 enum ImageType {
-  Invalid,
-  Undefined,
-  GrayScale,
-  RGB,
-  BT601,
-  BT709,
-  BT2020,
-  YCoCg
+  Invalid = 0,
+  Undefined = 1,
+  GrayScale = 2,
+  RGB = 3,
+  BT601 = 4,
+  BT709 = 5,
+  BT2020 = 6,
+  YCoCg = 7
 };
 
 
