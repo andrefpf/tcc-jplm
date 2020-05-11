@@ -276,8 +276,32 @@ void shift_for_decoding(const std::string& input_path,
   auto final_t = initial_t + 13;
   auto final_s = initial_s + 13;
 
-  for (auto t = initial_t; t < final_t; ++t) {
-    for (auto s = initial_s; s < final_s; ++s) {
+
+  auto t_range = iter::range(initial_t, final_t);
+  auto s_range = iter::range(initial_s, final_s);
+  std::vector<std::tuple<int, int>> dimensions;
+
+  for (auto&& coordinate : iter::product(t_range, s_range)) {
+    dimensions.push_back(coordinate);
+  }
+
+
+  if (show_bar) {
+    for (auto&& [t, s] : tq::tqdm(dimensions)) {
+      auto input_view_name = get_view_name({t, s});
+      auto output_view_name = get_view_name({t + 1, s + 1});
+      if ((t == initial_t) || (t == final_t - 1)) {
+        if ((s == initial_s) || (s == final_s - 1)) {
+          shift_view({input_path + input_view_name},
+              {output_path + output_view_name}, -2);
+          continue;
+        }
+      }
+      copy_view(
+          {input_path + input_view_name}, {output_path + output_view_name});
+    }
+  } else {
+    for (auto&& [t, s] : dimensions) {
       auto input_view_name = get_view_name({t, s});
       auto output_view_name = get_view_name({t + 1, s + 1});
       if ((t == initial_t) || (t == final_t - 1)) {
