@@ -2,7 +2,7 @@ stages:
   - build
   - test-and-document
 
-image: gcc
+image: gcc:9.3
 before_script:
  - apt-get update --yes
  - apt-get install --yes cmake graphviz doxygen

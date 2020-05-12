@@ -45,6 +45,9 @@
 #include "Lib/Utils/Image/ImageExceptions.h"
 #include "Lib/Utils/Image/ImageIO.h"
 #include "Lib/Utils/Image/PixelMapFileIO.h"
+#include "cppitertools/product.hpp"
+#include "cppitertools/range.hpp"
+#include "tqdm-cpp/tqdm.hpp"
 
 
 class Lenslet13x13ShifterConfiguration : public BasicConfiguration {
@@ -55,6 +58,7 @@ class Lenslet13x13ShifterConfiguration : public BasicConfiguration {
   std::string input;
   std::string output;
   std::string direction;
+  bool show_progress_bar_flag = false;
 
   Lenslet13x13ShifterConfiguration(int argc, char** argv, std::size_t level)
       : BasicConfiguration(argc, argv, level) {
@@ -106,6 +110,25 @@ class Lenslet13x13ShifterConfiguration : public BasicConfiguration {
           this->direction = std::any_cast<std::string>(v);
         },
         this->current_hierarchy_level});
+
+    this->add_cli_json_option({"--show-progress-bar", "-progress",
+        "Enables the display of a progress bar showing the percentage of "
+        "completion, run time and expected finishing time.",
+        [this](const nlohmann::json& conf) -> std::optional<std::string> {
+          if (conf.contains("show-progress-bar")) {
+            return conf["show-progress-bar"].get<std::string>();
+          }
+          return std::nullopt;
+        },
+        [this](std::string arg) {
+          if (arg == "false") {
+            this->show_progress_bar_flag = false;
+          } else {
+            this->show_progress_bar_flag = true;
+          }
+        },
+        this->current_hierarchy_level,
+        {[this]() -> std::string { return "false"; }}});
   }
 
  public:
@@ -131,6 +154,11 @@ class Lenslet13x13ShifterConfiguration : public BasicConfiguration {
 
   const std::string& get_direction() const {
     return direction;
+  }
+
+
+  bool show_progress_bar() const {
+    return show_progress_bar_flag;
   }
 };
 
@@ -192,15 +220,37 @@ bool are_input_and_output_paths_valid(
 }
 
 
-void shift_for_encoding(
-    const std::string& input_path, const std::string& output_path) {
+void shift_for_encoding(const std::string& input_path,
+    const std::string& output_path, bool show_bar) {
   auto initial_t = 1;
   auto initial_s = 1;
   auto final_t = initial_t + 13;
   auto final_s = initial_s + 13;
 
-  for (auto t = initial_t; t < final_t; ++t) {
-    for (auto s = initial_s; s < final_s; ++s) {
+  auto t_range = iter::range(initial_t, final_t);
+  auto s_range = iter::range(initial_s, final_s);
+  std::vector<std::tuple<int, int>> dimensions;
+
+  for (auto&& coordinate : iter::product(t_range, s_range)) {
+    dimensions.push_back(coordinate);
+  }
+
+  if (show_bar) {
+    for (auto&& [t, s] : tq::tqdm(dimensions)) {
+      auto input_view_name = get_view_name({t, s});
+      auto output_view_name = get_view_name({t - 1, s - 1});
+      if ((t == initial_t) || (t == final_t - 1)) {
+        if ((s == initial_s) || (s == final_s - 1)) {
+          shift_view({input_path + input_view_name},
+              {output_path + output_view_name}, 2);
+          continue;
+        }
+      }
+      copy_view(
+          {input_path + input_view_name}, {output_path + output_view_name});
+    }
+  } else {
+    for (auto&& [t, s] : dimensions) {
       auto input_view_name = get_view_name({t, s});
       auto output_view_name = get_view_name({t - 1, s - 1});
       if ((t == initial_t) || (t == final_t - 1)) {
@@ -219,15 +269,39 @@ void shift_for_encoding(
 }
 
 
-void shift_for_decoding(
-    const std::string& input_path, const std::string& output_path) {
+void shift_for_decoding(const std::string& input_path,
+    const std::string& output_path, bool show_bar) {
   auto initial_t = 0;
   auto initial_s = 0;
   auto final_t = initial_t + 13;
   auto final_s = initial_s + 13;
 
-  for (auto t = initial_t; t < final_t; ++t) {
-    for (auto s = initial_s; s < final_s; ++s) {
+
+  auto t_range = iter::range(initial_t, final_t);
+  auto s_range = iter::range(initial_s, final_s);
+  std::vector<std::tuple<int, int>> dimensions;
+
+  for (auto&& coordinate : iter::product(t_range, s_range)) {
+    dimensions.push_back(coordinate);
+  }
+
+
+  if (show_bar) {
+    for (auto&& [t, s] : tq::tqdm(dimensions)) {
+      auto input_view_name = get_view_name({t, s});
+      auto output_view_name = get_view_name({t + 1, s + 1});
+      if ((t == initial_t) || (t == final_t - 1)) {
+        if ((s == initial_s) || (s == final_s - 1)) {
+          shift_view({input_path + input_view_name},
+              {output_path + output_view_name}, -2);
+          continue;
+        }
+      }
+      copy_view(
+          {input_path + input_view_name}, {output_path + output_view_name});
+    }
+  } else {
+    for (auto&& [t, s] : dimensions) {
       auto input_view_name = get_view_name({t, s});
       auto output_view_name = get_view_name({t + 1, s + 1});
       if ((t == initial_t) || (t == final_t - 1)) {
@@ -256,15 +330,16 @@ int main(int argc, char const* argv[]) {
   std::string input_path = configuration.get_input_filename();
   std::string output_path = configuration.get_output_filename();
   std::string direction = configuration.get_direction();
+  bool show_bar = configuration.show_progress_bar();
 
   if (!are_input_and_output_paths_valid(input_path, output_path)) {
     exit(1);
   }
 
   if (direction == "decode" || direction == "d" || direction == "decoding") {
-    shift_for_decoding(input_path, output_path);
+    shift_for_decoding(input_path, output_path, show_bar);
   } else {
-    shift_for_encoding(input_path, output_path);
+    shift_for_encoding(input_path, output_path, show_bar);
   }
 
   return 0;

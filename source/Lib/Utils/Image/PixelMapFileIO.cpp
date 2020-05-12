@@ -317,7 +317,7 @@ std::unique_ptr<PixelMapFile> PixelMapFileIO::open(const std::string& filename,
 #endif
 
       auto raster_begin = file.tellg();
-      std::cout << "PixMapFileIO -> raster_begin=" << raster_begin << std::endl;
+
       file.flush();
       file.close();
       switch (type) {
