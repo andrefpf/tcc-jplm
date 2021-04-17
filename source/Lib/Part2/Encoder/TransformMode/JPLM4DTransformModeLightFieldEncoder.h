@@ -424,16 +424,15 @@ void JPLM4DTransformModeLightFieldEncoder<PelType>::run_for_block_4d(
 
   transform_partition.encode_partition(hierarchical_4d_encoder, lambda);
 
+  //reset prob models here at the end to ensure no flush is called.
+  //assumes that the prob models are initialized in reset state...
+  hierarchical_4d_encoder.reset_probability_models();
 
   const auto increase_in_bytes =
       hierarchical_4d_encoder.get_ref_to_codestream_code().size() -
       number_of_bytes_in_codestream_before_encoding_block;
 
   bytes_per_channel.at(channel) += increase_in_bytes;
-
-  //reset prob models here at the end to ensure no flush is called.
-  //assumes that the prob models are initialized in reset state...
-  hierarchical_4d_encoder.reset_probability_models();
 }
 
 #endif /* end of include guard: JPLM_LIB_PART2_ENCODER_JPLM4DTRANSFORMMODELIGHTFIELDENCODER_H__ */
