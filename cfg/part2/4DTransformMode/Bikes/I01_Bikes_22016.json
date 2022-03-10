@@ -1,11 +1,12 @@
 {
   "part": "2",
-  "type": "MuLE",
+  "type": "0",
+  "enum-cs": "YCbCr_2",
+  "border_policy": 1,
   "view_height": 434,
-  "view_width": 626,
+  "view_width": 625,
   "number_of_rows": 13,
   "number_of_columns": 13,
-  "is_lenslet13x13": true,
   "lambda": 22016,
   "colorspace": "bt601",
   "use_xml_box": true,
@@ -18,7 +19,7 @@
     "maximum": {
       "intra-view": {
         "vertical": 31,
-        "horizontal": 31
+        "horizontal": 25
       },
       "inter-view": {
         "vertical": 13,
