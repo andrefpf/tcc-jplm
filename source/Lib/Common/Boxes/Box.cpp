@@ -39,6 +39,7 @@
  */
 
 #include "Box.h"
+#include <limits>
 
 std::variant<LBox, XLBox> Box::get_length() const noexcept {
   constexpr uint64_t LBox_size = 4;  //bytes = 32 bits
