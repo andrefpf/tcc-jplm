@@ -94,12 +94,17 @@ Get-ChildItem "..\bin-debug\tests\" -Filter *_tests.exe | Foreach-Object { Start
   ~/jplm/build/$ ctest --verbose --rerun-failed
   ```
 
-
-
-
 ## Steps to Encode Light Field Data (Part 2)
 
 Using the JPEG Pleno dataset as reference, the steps for encoding a light field consist of (1) adjust input views to a valid format name and with homogeneous luminance for all views, (2) convert views from PPM to PGX image format, and (3) run the encoder with the parameters.
+
+The next sections show examples considering the `Bikes` dataset from `JPEG Pleno dataset`. It can be downloaded using the following commands
+```bash
+  ~$ wget http://plenodb.jpeg.org/lf/pleno_lf/Bikes.zip -O /home/RAW/I01_Bikes.zip
+  ~$ unzip /home/RAW/I01_Bikes.zip -d /home/RAW/
+```
+
+
 
 ### Shift Input Views Filenames and Adjust Brightness
 
@@ -107,7 +112,7 @@ If the encoded light field is of a 'lenslet' type of JPEG Pleno database, the vi
 
 Example:
   ```bash
-  ORIGINALS_INPUT_PATH="/home/RAW/TAU/I01_Bikes/"  
+  ORIGINALS_INPUT_PATH="/home/RAW/Bikes/"  
   ORIGINAL_TEMPORARY_PATH="/home/RAW/TAU/I01_Bikes_shifted/"  
   JPLM_BINS="/home/jpeg-pleno/jplm/bin"  
 
