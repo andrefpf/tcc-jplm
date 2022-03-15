@@ -118,40 +118,40 @@ CameraParametersArray::CameraParametersArray(
       n_views(rows * columns), fully_initialized(true),
       camera_parameters(
           {(ext_int & 1) ? camera_parameter(std::vector<float>(n_views, 0.0))
-                         : camera_parameter(0.0),
+                         : camera_parameter(0.0f),
               ((ext_int >> 1) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 2) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 3) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 4) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 5) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 6) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 7) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 8) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 9) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 10) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0),
+                  : camera_parameter(0.0f),
               ((ext_int >> 11) & 1)
                   ? camera_parameter(std::vector<float>(n_views, 0.0))
-                  : camera_parameter(0.0)}) {
+                  : camera_parameter(0.0f)}) {
 }
 
 
