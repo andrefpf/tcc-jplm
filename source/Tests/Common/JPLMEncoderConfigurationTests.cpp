@@ -327,7 +327,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
       argc, const_cast<char**>(argv));
   EXPECT_EQ(31, config.transform_size.maximum.intra_view.vertical);
   EXPECT_EQ(4, config.transform_size.minimum.intra_view.vertical);
-  EXPECT_EQ(31, config.transform_size.maximum.intra_view.horizontal);
+  EXPECT_EQ(25, config.transform_size.maximum.intra_view.horizontal);
   EXPECT_EQ(4, config.transform_size.minimum.intra_view.horizontal);
 
   EXPECT_EQ(13, config.transform_size.maximum.inter_view.vertical);
@@ -347,7 +347,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
       argc, const_cast<char**>(argv));
   EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
   EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
-  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(25, config.get_maximal_transform_size_intra_view_horizontal());
   EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
 
   EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
@@ -368,7 +368,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
       argc, const_cast<char**>(argv));
   EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_vertical());
   EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_vertical());
-  EXPECT_EQ(31, config.get_maximal_transform_size_intra_view_horizontal());
+  EXPECT_EQ(25, config.get_maximal_transform_size_intra_view_horizontal());
   EXPECT_EQ(4, config.get_minimal_transform_size_intra_view_horizontal());
 
   EXPECT_EQ(13, config.get_maximal_transform_size_inter_view_vertical());
@@ -379,7 +379,7 @@ TEST(JPLMEncoderConfigurationLightField4DTransformModeTest,
   EXPECT_EQ(13, config.get_number_of_columns_s());
   EXPECT_EQ(13, config.get_number_of_rows_t());
   EXPECT_EQ(434, config.get_view_height_v());
-  EXPECT_EQ(626, config.get_view_width_u());
+  EXPECT_EQ(625, config.get_view_width_u());
 
   EXPECT_DOUBLE_EQ(22016, config.get_lambda());
 }
