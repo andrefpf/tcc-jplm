@@ -265,4 +265,4 @@ Initially, only Lightfield images are supported in JPLM (JPEG Pleno Model).
 
 
 [badge-license]: https://img.shields.io/badge/license-BSD--3--Clause-blue.svg "BSD 3-clause license"
-[link-license]: https://gitlab.com/smtlightfieldsteam/jplm/blob/master/LICENSE.md "BSD 3-clause license"
+[link-license]: LICENSE.md "BSD 3-clause license"
