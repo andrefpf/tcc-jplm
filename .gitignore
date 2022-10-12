@@ -53,6 +53,7 @@ mule-decoder-bin
 mule-encoder-bin
 
 cmake-build-debug/
+RAW/
 
 *.swp
 *.o
