@@ -151,6 +151,6 @@ def plot_values(path):
 if __name__ == "__main__":
     Path(".temp/").mkdir(parents=True, exist_ok=True)
 
-    store_values(range(1_000, 50_000, 1000))
+    # store_values(range(1_000, 50_000, 1000))
     guess_optimal(300_000)
     plot_values("./.temp/cached_values.json")
