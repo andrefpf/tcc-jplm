@@ -7,6 +7,25 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 
+class JPLM:
+    command = """
+    {jplm_bin}/jpl-encoder-bin --show-progress-bar --show-runtime-statistics --part 2
+    --type 0 --enum-cs YCbCr_2 -u 625 -v 434 -t 13 -s 13 -nc 3 --show-error-estimate
+    --border_policy 1 --lambda 10000 --transform_size_maximum_inter_view_vertical 13
+    --transform_size_maximum_inter_view_horizontal 13
+    --transform_size_maximum_intra_view_vertical 31
+    --transform_size_maximum_intra_view_horizontal 31
+    --transform_size_minimum_inter_view_vertical 13
+    --transform_size_minimum_inter_view_horizontal 13
+    --transform_size_minimum_intra_view_vertical 4
+    --transform_size_minimum_intra_view_horizontal 4
+    --input {input} --output {output}
+    """
+
+    def __init__(self, lightfield_name, lightfield_raw_path, target_bpps, max_cores, jplm_bin=''):
+        pass
+
+
 find_bytes_info = re.compile("Bytes written to file: \d* bytes")
 get_number = re.compile(" \d* ")
 
