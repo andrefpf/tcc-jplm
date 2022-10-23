@@ -20,6 +20,12 @@ RUN apt-get install -y \
         g++ \
         libx11-*
 
+RUN apt-get install -y \
+        python3 \
+        pip
+
+RUN pip install matplotlib
+
 VOLUME /code
 WORKDIR /code
 

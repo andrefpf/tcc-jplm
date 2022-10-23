@@ -1,4 +1,4 @@
-docker run -it --rm \
+docker run -it --rm --privileged \
 -v $(pwd):/code \
 tcc:jplm \
 $@

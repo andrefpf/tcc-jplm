@@ -1,0 +1,7 @@
+{
+	"lightfield_name": "I01_Bikes",
+	"lightfield_raw_path": "../../RAW/encoded/pgx/",
+	"target_bpps": [0.005, 0.006],
+	"max_cores": 4,
+	"jplm_bin": "../../bin"
+}

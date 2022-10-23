@@ -1,33 +1,17 @@
 import json
 import re
-import subprocess
 from itertools import count
+from math import ceil, log2
+
+# Estou usando a versão dummy que usa threads em vez de processos
+# porque já estou usando um processo pra executar o encoder, então
+# isso ainda é efetivamente paralelo apesar do GIL
+from multiprocessing.dummy import Pool
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-
-class JPLM:
-    command = """
-    {jplm_bin}/jpl-encoder-bin --show-progress-bar --show-runtime-statistics --part 2
-    --type 0 --enum-cs YCbCr_2 -u 625 -v 434 -t 13 -s 13 -nc 3 --show-error-estimate
-    --border_policy 1 --lambda 10000 --transform_size_maximum_inter_view_vertical 13
-    --transform_size_maximum_inter_view_horizontal 13
-    --transform_size_maximum_intra_view_vertical 31
-    --transform_size_maximum_intra_view_horizontal 31
-    --transform_size_minimum_inter_view_vertical 13
-    --transform_size_minimum_inter_view_horizontal 13
-    --transform_size_minimum_intra_view_vertical 4
-    --transform_size_minimum_intra_view_horizontal 4
-    --input {input} --output {output}
-    """
-
-    def __init__(self, lightfield_name, lightfield_raw_path, target_bpps, max_cores, jplm_bin=''):
-        pass
-
-
-find_bytes_info = re.compile("Bytes written to file: \d* bytes")
-get_number = re.compile(" \d* ")
+from jplm import JPLM
 
 
 def cache_on_file(path):
@@ -62,13 +46,15 @@ def cache_on_file(path):
     return decorator
 
 
-def bissect(a, b, function, *, error=1e-6):
+def lerp(start, end, t):
+    return start * (1 - t) + end * t
+
+
+def bisect(a, b, function, *, error=1e-6):
     """
     Encontra uma raíz de uma função no intervalo [a, b]
     usando o método da bissecção.
     """
-
-    last = None
 
     for i in count(1):
         x = (a + b) / 2
@@ -88,68 +74,98 @@ def bissect(a, b, function, *, error=1e-6):
                 break
             b = x
 
-        last = fx
-
     return x
 
 
-@cache_on_file("./.temp/cached_values.json")
-def size_from_lambda(lambda_):
+def multisect(a, b, function, *, threads=1, error=1e-6):
     """
-    Codifica o lightfield bikes de acordo com um valor de lambda e
-    retorna o tamanho gerado em bytes.
+    Encontra uma raíz de uma função no intervalo [a, b]
+    usando um método parecido com a bissecção, porém com sub intervalos variáveis.
     """
 
-    pgx_path = "../../RAW/encoded/pgx/"
-    output_path = "./.temp/bikes.jpl"
+    p = Pool(threads)
+    intervals = threads + 1
 
-    # fmt: off
-    command = [
-        "../../bin/jpl-encoder-bin",
-        "--show-progress-bar",
-        "--show-runtime-statistics",
-        "--part", "2",
-        "--type", "0",
-        "--enum-cs", "YCbCr_2",
-        "-u", "625",
-        "-v", "434",
-        "-t", "13",
-        "-s", "13",
-        "-nc", "3",
-        "--show-error-estimate",
-        "--border_policy", "1",
-        "--lambda", str(lambda_),
-        "--transform_size_maximum_inter_view_vertical", "13",
-        "--transform_size_maximum_inter_view_horizontal", "13",
-        "--transform_size_maximum_intra_view_vertical", "31",
-        "--transform_size_maximum_intra_view_horizontal", "31",
-        "--transform_size_minimum_inter_view_vertical", "13",
-        "--transform_size_minimum_inter_view_horizontal", "13",
-        "--transform_size_minimum_intra_view_vertical", "4",
-        "--transform_size_minimum_intra_view_horizontal", "4",
-        "--input", pgx_path,
-        "--output", output_path,
-    ]
-    # fmt: on
+    print(f"Using {threads} threads")
+    print(f"Interpolating between {intervals - 1} values")
 
-    res = subprocess.run(command, capture_output=True)
+    for i in count(1):
+        # Isso serve para interpolar um ponto X entre A e B para cada thread
+        xs = [lerp(a, b, (i + 1) / intervals) for i in range(intervals - 1)]
 
-    if res.returncode != 0:
-        raise Exception(res.stderr)
+        print()
+        print(f"{i=}, {xs=}")
 
-    bytes_info = find_bytes_info.search(str(res.stdout)).group()
-    number_bytes = get_number.search(bytes_info).group()
-    return int(number_bytes)
+        # Mapeia a função para cada x usando threads.
+        fxs = p.map(function, xs)
+
+        for i, (x, fx) in enumerate(zip(xs, fxs)):
+            if abs(fx) <= error:
+                return x
+
+            if (x == a) or (x == b):
+                return x
+
+            if (fx < 0) and (x > a):
+                a = x
+            elif (fx >= 0) and (x < b):
+                b = x
+
+    # Não tem como chegar aqui
 
 
 def store_values(values):
-    for lambda_ in values:
-        size_from_lambda(lambda_)
+    for lambida in values:
+        size_from_lambda(lambida)
 
 
-def guess_optimal(size):
-    function = lambda x: int(size - size_from_lambda(int(x)))
-    bissect(0, 50_000, function, error=100)
+def guess_optimal(
+    target_bpp, jplm_bin, input_raw, lightfield_name, threads=1, **kwargs
+):
+    """
+    Encontra o valor de lambda que corresponde a uma taxa de BBP desejada.
+    """
+
+    jpl = JPLM(jplm_bin)
+
+    u = kwargs.get("u", 625)
+    v = kwargs.get("u", 434)
+    t = kwargs.get("u", 13)
+    s = kwargs.get("u", 13)
+    pixels = u * v * t * s
+
+    @cache_on_file("./.temp/cached_values.json")
+    def bpp_from_lambda(lambida):
+        output = f"./.temp/{lightfield_name}_{lambida}.jpl"
+        jpl.encode(input_raw, output, lambida=lambida, **kwargs)
+        size = Path(output).stat().st_size
+        Path(output).unlink()
+        print(".", end=" ")
+        return size / pixels
+
+    function = lambda x: target_bpp - bpp_from_lambda(int(x))
+    return multisect(0, 50_000, function, threads=threads)
+
+
+def guess_optimal_cfg(config_path):
+    """
+    Encontra o valor de lambda que corresponde a uma taxa de BBP desejada a partir de um arquivo de configuração.
+    """
+
+    with open(config_path, "r") as file:
+        params = json.load(file)
+
+    jplm_bin = params.get("jplm_bin")
+    input_raw = params.get("lightfield_raw_path")
+    lightfield_name = params.get("lightfield_name")
+    threads = params.get("max_cores")
+    targets = params.get("target_bpps")
+
+    for target_bpp in targets:
+        lambida = guess_optimal(
+            target_bpp, jplm_bin, input_raw, lightfield_name, threads=threads
+        )
+        print(f"bpp: {target_bpp} \t lambda: {lambida}")
 
 
 def plot_values(path):
@@ -168,8 +184,5 @@ def plot_values(path):
 
 
 if __name__ == "__main__":
-    Path(".temp/").mkdir(parents=True, exist_ok=True)
-
-    # store_values(range(1_000, 50_000, 1000))
-    guess_optimal(300_000)
-    plot_values("./.temp/cached_values.json")
+    guess_optimal_cfg("params.json")
+    plot_values(".temp/cached_values.json")
