@@ -1,0 +1,7 @@
+{
+	"lightfield_name": "I01_Bikes",
+	"lightfield_raw_path": "/media/ismaelseidel/MP600UNIX/RAW/RAW/LF/I01_Bikes_shifted_PGX/",
+	"target_bpps": [0.001, 0.005, 0.02, 0.1, 0.75],
+	"max_cores": 20,
+	"jplm_bin": "../../bin"
+}

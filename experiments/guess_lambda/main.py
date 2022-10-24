@@ -143,8 +143,8 @@ def guess_optimal(
         print(".", end=" ")
         return size / pixels
 
-    function = lambda x: target_bpp - bpp_from_lambda(int(x))
-    return multisect(0, 50_000, function, threads=threads)
+    function = lambda x: target_bpp - bpp_from_lambda(x)
+    return multisect(0, 200_000, function, threads=threads)
 
 
 def guess_optimal_cfg(config_path):
