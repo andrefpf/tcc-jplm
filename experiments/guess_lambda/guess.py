@@ -128,6 +128,7 @@ def guess_optimal(
 
     jpl = JPLM(jplm_bin)
 
+    del_files = kwargs.get("del_files", False)
     u = kwargs.get("u", 625)
     v = kwargs.get("v", 434)
     t = kwargs.get("t", 13)
@@ -139,7 +140,8 @@ def guess_optimal(
         output = f"./.temp/{lightfield_name}_{lambida}.jpl"
         jpl.encode(input_raw, output, lambida=lambida, **kwargs)
         size = Path(output).stat().st_size
-        # Path(output).unlink()
+        if del_files:
+            Path(output).unlink()
         print(".", end=" ")
         return size / pixels
 
@@ -156,7 +158,7 @@ def guess_optimal_cfg(config_path, *args):
         params = json.load(file)
     
     for path in args:
-        with open(config_path, "r") as file:
+        with open(path, "r") as file:
             params.update(json.load(file))
 
     jplm_bin = params.get("jplm_bin")
