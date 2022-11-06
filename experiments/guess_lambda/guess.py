@@ -156,20 +156,20 @@ def guess_optimal_cfg(config_path, *args):
 
     with open(config_path, "r") as file:
         params = json.load(file)
-    
+
     for path in args:
         with open(path, "r") as file:
             params.update(json.load(file))
 
-    jplm_bin = params.get("jplm_bin")
-    input_raw = params.get("lightfield_raw_path")
-    lightfield_name = params.get("lightfield_name")
-    threads = params.get("max_cores")
-    targets = params.get("target_bpps")
+    jplm_bin = params.pop("jplm_bin")
+    input_raw = params.pop("lightfield_raw_path")
+    lightfield_name = params.pop("lightfield_name")
+    threads = params.pop("max_cores")
+    targets = params.pop("target_bpps")
 
     for target_bpp in targets:
         lambida = guess_optimal(
-            target_bpp, jplm_bin, input_raw, lightfield_name, threads=threads
+            target_bpp, jplm_bin, input_raw, lightfield_name, threads=threads, **params
         )
         print(f"bpp: {target_bpp} \t lambda: {lambida}")
 
